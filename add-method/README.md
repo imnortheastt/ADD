@@ -1,0 +1,87 @@
+# ADD — AI-Driven Development
+
+> A minimal, state-tracked Claude Code skill for building software when the AI
+> writes the code and **you** own the two things it cannot do alone: decide *what*
+> to build, and *verify* it is correct.
+
+ADD is the **orchestration engine** of the AIDD method. It sits on top of a
+context foundation (DDD → SDD → UDD) and runs as a red/green TDD ↔ AI-build loop.
+The full reasoning — *why* every rule exists — is the AIDD book bundled in
+[`docs/`](./docs/README.md). Read it once; keep it open beside you.
+
+```
+  Foundation (context):  DDD  ·  SDD  ·  UDD
+  Engine (this skill):   TDD  ⇄  ADD
+  Flow per feature:  Specify → Scenarios → Contract → Tests → Build → Verify → Observe ↻
+```
+
+## Why ADD (and why it is minimal)
+
+Heavy doc-first methods burn your time writing documents and lose the thread
+across sessions (context rot). ADD fixes both:
+
+- **One file per feature.** Spec, scenarios, contract, test-plan, and gate record
+  all live inline in a single `TASK.md`. No sprawling doc tree.
+- **State on disk, not in chat.** A Python tool tracks where you are in
+  `.add/state.json`, so a fresh session resumes with one command instead of
+  re-reading the repo.
+- **Progressive disclosure.** The skill loads only the guide for the phase you are
+  in — the context window stays lean.
+
+## Install
+
+```bash
+# in your project
+npx @mrq/add init --name "My App" --stage prototype
+```
+
+This installs:
+
+| Path | What |
+|------|------|
+| `.claude/skills/add/` | the `add` skill Claude loads (thin router + per-phase guides) |
+| `.add/tooling/add.py` | scaffolder + state tracker (Python, stdlib only) |
+| `.add/docs/` | the AIDD book — the trust layer |
+| `.add/state.json` | where the project is |
+| `.add/CONVENTIONS.md`, `GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist` | survivor-layer files |
+
+## Use it
+
+```bash
+python3 .add/tooling/add.py status                       # where am I? (resume point)
+python3 .add/tooling/add.py new-task transfer --title "Transfer money"
+```
+
+Then in Claude Code: **"start the ADD task."** The skill orients from
+`state.json`, opens the active `TASK.md`, and drives the current phase. Advance
+with `add.py advance`; close a feature with `add.py gate PASS`.
+
+## The non-negotiables
+
+1. **Direction before speed** — no Build until spec, scenarios, contract, and *red*
+   tests exist.
+2. **Trust evidence, not inspection** — a feature is trusted because its tests pass
+   and the blind spots (concurrency, security, architecture) were checked.
+3. **Never weaken a test or edit a frozen contract** to make the build pass.
+4. **No silent skips** — every Verify records `PASS`, `RISK-ACCEPTED`, or
+   `HARD-STOP`. Security findings are always `HARD-STOP`.
+5. **Ask, don't guess.**
+
+## The artifacts survive; the code is disposable
+
+The durable asset is the decisions — spec, scenarios, contract, tests. The code is
+one implementation that satisfies them and can be regenerated. If the thing you'd
+be upset to lose is "the code," you're still working the old way.
+
+## Read the method
+
+Start at [`docs/README.md`](./docs/README.md) — Foundations → the six steps →
+operating it across a team → templates, prompts, and a full worked example.
+
+## Develop
+
+```bash
+npm test     # runs the Python tests for the tooling (red/green)
+```
+
+License: MIT.

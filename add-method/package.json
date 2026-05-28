@@ -1,0 +1,36 @@
+{
+  "name": "@mrq/add",
+  "version": "1.0.0",
+  "description": "ADD (AI-Driven Development) — a minimal, state-tracked Claude Code skill that drives every feature through Specify → Scenarios → Contract → Tests → Build → Verify → Observe. Ships the AIDD book as its trust layer.",
+  "bin": {
+    "add": "bin/cli.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "python3 tooling/test_add.py"
+  },
+  "files": [
+    "bin/",
+    "skill/",
+    "tooling/",
+    "docs/",
+    "README.md"
+  ],
+  "keywords": [
+    "ai-driven-development",
+    "add",
+    "aidd",
+    "claude-code",
+    "skill",
+    "tdd",
+    "spec-driven",
+    "agent",
+    "methodology"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT"
+}

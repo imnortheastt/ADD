@@ -1,0 +1,7 @@
+# dependencies.allowlist — one package per line; CI rejects anything not listed.
+# Defeats the AI "invented a plausible package name" supply-chain risk.
+#
+# This project is intentionally ZERO third-party dependencies:
+#   - Python tooling uses the standard library only.
+#   - Node installer uses built-in modules only.
+# Add a line here only when a real dependency is approved by Security.

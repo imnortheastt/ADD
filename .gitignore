@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Node
+node_modules/
+*.tgz
+
+# OS
+.DS_Store
+
+# ADD runtime: keep state + tasks + survivor files, but not the bundled book copy
+# (the book source already lives at the repo root / in add-method/docs)
+.add/docs/
+.add/tooling/__pycache__/
+tmp/
