@@ -23,6 +23,7 @@ from pathlib import Path
 
 ROOT_DIRNAME = ".add"
 STATE_FILE = "state.json"
+MILESTONE_FILE = "MILESTONE.md"
 STAGES = ("prototype", "poc", "mvp", "production")
 PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
@@ -153,7 +154,9 @@ def cmd_init(args: argparse.Namespace) -> None:
         "project": args.name or base.name,
         "stage": args.stage,
         "active_task": None,
+        "active_milestone": None,
         "tasks": {},
+        "milestones": {},
         "created": _now(),
         "updated": _now(),
     }
@@ -173,6 +176,12 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     if task_md.exists() and not args.force:
         _die(f"task '{slug}' already exists (use --force to overwrite TASK.md)")
 
+    # link to a milestone (explicit, or the active one) — validate before any write
+    milestone = getattr(args, "milestone", None) or state.get("active_milestone")
+    if milestone and milestone not in state.get("milestones", {}):
+        _die("unknown_milestone")
+    depends_on = _parse_deps(getattr(args, "depends_on", None))
+
     (tdir / "tests").mkdir(parents=True, exist_ok=True)
     (tdir / "src").mkdir(parents=True, exist_ok=True)
     title = args.title or slug.replace("-", " ").replace("_", " ").title()
@@ -183,13 +192,28 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         "title": title,
         "phase": "specify",
         "gate": "none",
+        "milestone": milestone,
+        "depends_on": depends_on,
         "created": _now(),
         "updated": _now(),
     }
     state["active_task"] = slug
     save_state(root, state)
     print(f"created task '{slug}' -> {task_md}")
+    if milestone:
+        print(f"linked to milestone '{milestone}'" +
+              (f", depends-on {depends_on}" if depends_on else ""))
     print("active task set. phase: specify. Fill section 1 (SPECIFY), then: add.py advance")
+
+
+def _parse_deps(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    return [d.strip() for d in raw.split(",") if d.strip()]
+
+
+def _task_done(t: dict) -> bool:
+    return t.get("phase") == "done" and t.get("gate") == "PASS"
 
 
 def _resolve_task(state: dict, slug: str | None) -> str:
@@ -261,17 +285,33 @@ def cmd_status(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
     active = state.get("active_task")
+    tasks = state.get("tasks", {})
     print(f"project : {state['project']}")
     print(f"stage   : {state['stage']}")
+
+    # milestone rollup (only when milestones are in use)
+    milestones = state.get("milestones") or {}
+    active_ms = state.get("active_milestone")
+    if milestones:
+        print("milestones:")
+        for mslug, m in milestones.items():
+            members = [t for t in tasks.values() if t.get("milestone") == mslug]
+            done = sum(1 for t in members if _task_done(t))
+            mark = "*" if mslug == active_ms else " "
+            print(f"  {mark} {mslug:<20} {done}/{len(members)} tasks done"
+                  f"   status={m.get('status', 'active')}")
+
     print(f"active  : {active or '(none)'}")
-    tasks = state.get("tasks", {})
     if not tasks:
         print("tasks   : (none yet) -> add.py new-task <slug>")
         return
     print("tasks   :")
     for slug, t in tasks.items():
         mark = "*" if slug == active else " "
-        print(f"  {mark} {slug:<24} phase={t['phase']:<10} gate={t['gate']}")
+        deps = t.get("depends_on") or []
+        dep_s = f"  deps={','.join(deps)}" if deps else ""
+        ms_s = f"  [{t['milestone']}]" if t.get("milestone") else ""
+        print(f"  {mark} {slug:<24} phase={t['phase']:<10} gate={t['gate']}{ms_s}{dep_s}")
     if active:
         ph = tasks[active]["phase"]
         if ph == "done":
@@ -309,12 +349,33 @@ def cmd_check(args: argparse.Namespace) -> None:
         checks.append((key in state, f"state has key '{key}'", "missing"))
 
     tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
+    milestones = state.get("milestones") if isinstance(state.get("milestones"), dict) else {}
     for slug, t in tasks.items():
         task_md = root / "tasks" / slug / "TASK.md"
         checks.append((task_md.exists(), f"task '{slug}' has TASK.md", "file missing"))
         marker, want = _read_task_phase(root, slug), t.get("phase")
         checks.append((marker == want, f"task '{slug}' marker matches state",
                        f"marker={marker!r} state={want!r}"))
+        # drift: milestone + dependency references must resolve
+        ms = t.get("milestone")
+        if ms is not None:
+            checks.append((ms in milestones, f"task '{slug}' milestone resolves",
+                           f"unknown milestone {ms!r}"))
+        for dep in t.get("depends_on") or []:
+            checks.append((dep in tasks, f"task '{slug}' dep '{dep}' resolves", "unknown task"))
+
+    # drift: a done milestone must have no unfinished tasks
+    for mslug, m in milestones.items():
+        if m.get("status") == "done":
+            unfinished = [s for s, t in tasks.items()
+                          if t.get("milestone") == mslug and not _task_done(t)]
+            checks.append((not unfinished, f"done milestone '{mslug}' fully complete",
+                           f"unfinished: {unfinished}"))
+
+    # dependency graph must be acyclic
+    cycle = _find_cycle(tasks)
+    checks.append((cycle is None, "task dependencies are acyclic",
+                   f"cycle: {' -> '.join(cycle)}" if cycle else ""))
 
     passed = sum(1 for ok, _, _ in checks if ok)
     failed = len(checks) - passed
@@ -323,6 +384,107 @@ def cmd_check(args: argparse.Namespace) -> None:
     print(f"check: {passed} passed, {failed} failed")
     if failed:
         raise SystemExit(1)
+
+
+def cmd_new_milestone(args: argparse.Namespace) -> None:
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    if not slug.replace("-", "").replace("_", "").isalnum():
+        _die("bad_slug")
+    state.setdefault("milestones", {})
+    mdir = root / "milestones" / slug
+    mfile = mdir / MILESTONE_FILE
+    if mfile.exists() and not args.force:
+        _die("milestone_exists")
+    mdir.mkdir(parents=True, exist_ok=True)
+    title = args.title or slug.replace("-", " ").replace("_", " ").title()
+    _atomic_write(mfile, _render_template(
+        "MILESTONE.md", title=title, goal=args.goal or "<goal>",
+        stage=args.stage, date=date.today().isoformat()))
+    state["milestones"][slug] = {
+        "title": title, "goal": args.goal or "", "stage": args.stage,
+        "status": "active", "created": _now(), "updated": _now(),
+    }
+    state["active_milestone"] = slug
+    save_state(root, state)
+    print(f"created milestone '{slug}' -> {mfile}")
+    print(f"active milestone set. Decompose it into tasks: add.py new-task <slug> --depends-on ...")
+
+
+def cmd_ready(args: argparse.Namespace) -> None:
+    root = _require_root()
+    state = load_state(root)
+    tasks = state.get("tasks", {})
+    ready = []
+    for slug, t in tasks.items():
+        if _task_done(t):
+            continue
+        deps = t.get("depends_on") or []
+        if all(_task_done(tasks[d]) for d in deps if d in tasks) and \
+           all(d in tasks for d in deps):
+            ready.append(slug)
+    if not ready:
+        print("ready: (none — all tasks are done or blocked)")
+        return
+    print("ready to start (deps satisfied):")
+    for slug in ready:
+        deps = tasks[slug].get("depends_on") or []
+        suffix = f"  (after {', '.join(deps)})" if deps else ""
+        print(f"  {slug}{suffix}")
+
+
+def cmd_milestone_done(args: argparse.Namespace) -> None:
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    if slug not in state.get("milestones", {}):
+        _die("unknown_milestone")
+    members = {s: t for s, t in state.get("tasks", {}).items() if t.get("milestone") == slug}
+    blockers = [s for s, t in members.items() if not _task_done(t)]
+    if not members:
+        _die("milestone_incomplete")  # nothing attached -> nothing proven
+    if blockers:
+        print(f"milestone '{slug}' has unfinished tasks:", file=sys.stderr)
+        for s in blockers:
+            t = members[s]
+            print(f"  - {s} (phase={t.get('phase')}, gate={t.get('gate')})", file=sys.stderr)
+        _die("milestone_incomplete")
+    state["milestones"][slug]["status"] = "done"
+    state["milestones"][slug]["updated"] = _now()
+    save_state(root, state)
+    print(f"milestone '{slug}' -> done ({len(members)} tasks all PASS).")
+    print("Confirm the MILESTONE.md exit criteria are checked, then archive/start the next.")
+
+
+def _find_cycle(tasks: dict) -> list[str] | None:
+    """Return a cycle path in the depends_on graph, or None. Ignores unknown deps."""
+    WHITE, GRAY, BLACK = 0, 1, 2
+    color = {s: WHITE for s in tasks}
+    stack: list[str] = []
+
+    def visit(node: str) -> list[str] | None:
+        color[node] = GRAY
+        stack.append(node)
+        for dep in tasks[node].get("depends_on") or []:
+            if dep not in tasks:
+                continue
+            if color[dep] == GRAY:
+                return stack[stack.index(dep):] + [dep]
+            if color[dep] == WHITE:
+                found = visit(dep)
+                if found:
+                    return found
+        color[node] = BLACK
+        stack.pop()
+        return None
+
+    for s in tasks:
+        if color[s] == WHITE:
+            found = visit(s)
+            if found:
+                return found
+    return None
 
 
 def _sync_task_marker(root: Path, slug: str, phase: str) -> None:
@@ -360,8 +522,26 @@ def build_parser() -> argparse.ArgumentParser:
     pn = sub.add_parser("new-task", help="scaffold a new task (TASK.md + tests/ + src/)")
     pn.add_argument("slug")
     pn.add_argument("--title", default=None)
+    pn.add_argument("--milestone", default=None, help="attach to a milestone (default: active)")
+    pn.add_argument("--depends-on", dest="depends_on", default=None,
+                    help="comma-separated task slugs this task depends on")
     pn.add_argument("--force", action="store_true", help="overwrite TASK.md if present")
     pn.set_defaults(func=cmd_new_task)
+
+    pm = sub.add_parser("new-milestone", help="scaffold a milestone (SDD living doc)")
+    pm.add_argument("slug")
+    pm.add_argument("--title", default=None)
+    pm.add_argument("--goal", default=None, help="one-sentence outcome")
+    pm.add_argument("--stage", default="mvp", choices=STAGES)
+    pm.add_argument("--force", action="store_true", help="overwrite MILESTONE.md if present")
+    pm.set_defaults(func=cmd_new_milestone)
+
+    pr = sub.add_parser("ready", help="list tasks whose dependencies are satisfied")
+    pr.set_defaults(func=cmd_ready)
+
+    pmd = sub.add_parser("milestone-done", help="exit-gate a milestone (all tasks must PASS)")
+    pmd.add_argument("slug")
+    pmd.set_defaults(func=cmd_milestone_done)
 
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
     pp.add_argument("phase", choices=PHASES)

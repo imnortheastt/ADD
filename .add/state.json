@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "quickstart-guide",
+  "active_task": "milestone-archive",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -16,8 +16,66 @@
       "gate": "PASS",
       "created": "2026-05-28T16:04:44+00:00",
       "updated": "2026-05-28T16:07:50+00:00"
+    },
+    "milestone-layer": {
+      "title": "Milestone (SDD) tier + dependency ordering",
+      "phase": "done",
+      "gate": "PASS",
+      "created": "2026-05-28T16:17:26+00:00",
+      "updated": "2026-05-28T16:22:51+00:00"
+    },
+    "set-milestone-cmd": {
+      "title": "attach existing task to a milestone",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v1-1",
+      "depends_on": [],
+      "created": "2026-05-28T16:22:51+00:00",
+      "updated": "2026-05-28T16:22:51+00:00"
+    },
+    "add-guide-cmd": {
+      "title": "interactive add.py guide",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v1-1",
+      "depends_on": [],
+      "created": "2026-05-28T16:22:51+00:00",
+      "updated": "2026-05-28T16:22:51+00:00"
+    },
+    "vi-quickstart": {
+      "title": "Vietnamese Quickstart for MRQ",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v1-1",
+      "depends_on": [
+        "add-guide-cmd"
+      ],
+      "created": "2026-05-28T16:22:51+00:00",
+      "updated": "2026-05-28T16:22:51+00:00"
+    },
+    "milestone-archive": {
+      "title": "collapse done milestones",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v1-1",
+      "depends_on": [
+        "set-milestone-cmd"
+      ],
+      "created": "2026-05-28T16:22:51+00:00",
+      "updated": "2026-05-28T16:22:51+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-28T16:07:50+00:00"
+  "updated": "2026-05-28T16:23:20+00:00",
+  "milestones": {
+    "v1-1": {
+      "title": "v1.1 \u2014 adoption & ergonomics",
+      "goal": "make ADD easier to adopt and operate",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-05-28T16:23:20+00:00",
+      "updated": "2026-05-28T16:23:20+00:00"
+    }
+  },
+  "active_milestone": "v1-1"
 }
