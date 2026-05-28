@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "add-check",
+  "active_task": "quickstart-guide",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -9,8 +9,15 @@
       "gate": "PASS",
       "created": "2026-05-28T15:40:04+00:00",
       "updated": "2026-05-28T15:49:19+00:00"
+    },
+    "quickstart-guide": {
+      "title": "Runnable Quickstart: GETTING-STARTED.md",
+      "phase": "done",
+      "gate": "PASS",
+      "created": "2026-05-28T16:04:44+00:00",
+      "updated": "2026-05-28T16:07:50+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-28T15:49:19+00:00"
+  "updated": "2026-05-28T16:07:50+00:00"
 }

@@ -9,14 +9,15 @@
     "access": "public"
   },
   "scripts": {
-    "test": "python3 tooling/test_add.py"
+    "test": "python3 -m unittest discover -s tooling -p 'test_*.py'"
   },
   "files": [
     "bin/",
     "skill/",
     "tooling/",
     "docs/",
-    "README.md"
+    "README.md",
+    "GETTING-STARTED.md"
   ],
   "keywords": [
     "ai-driven-development",

@@ -35,6 +35,9 @@ across sessions (context rot). ADD fixes both:
 npx @mrq/add init --name "My App" --stage prototype
 ```
 
+**New here?** Follow the [10-minute Quickstart](./GETTING-STARTED.md) — it walks
+your first feature end to end.
+
 This installs:
 
 | Path | What |
