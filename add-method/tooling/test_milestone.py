@@ -103,6 +103,34 @@ class MilestoneTierTest(unittest.TestCase):
         self._run_capture("status")
         self._run_capture("check")
 
+    # --- set-milestone (attach/move/detach an existing task) ---
+    def test_set_milestone_attaches(self):
+        add.main(["new-task", "t"])               # created before any milestone -> milestone=None
+        self.assertIsNone(self._state()["tasks"]["t"]["milestone"])
+        add.main(["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"])
+        add.main(["set-milestone", "t", "mvp"])
+        self.assertEqual(self._state()["tasks"]["t"]["milestone"], "mvp")
+
+    def test_set_milestone_none_detaches(self):
+        add.main(["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"])
+        add.main(["new-task", "t"])               # auto-linked to active milestone mvp
+        add.main(["set-milestone", "t", "none"])
+        self.assertIsNone(self._state()["tasks"]["t"]["milestone"])
+
+    def test_set_milestone_unknown_task_rejected(self):
+        add.main(["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"])
+        with self.assertRaises(SystemExit) as cm:
+            add.main(["set-milestone", "ghost", "mvp"])
+        self.assertEqual(cm.exception.code, 1)
+
+    def test_set_milestone_unknown_milestone_rejected(self):
+        add.main(["new-task", "t"])
+        before = self._state()["tasks"]["t"].get("milestone")
+        with self.assertRaises(SystemExit) as cm:
+            add.main(["set-milestone", "t", "ghost"])
+        self.assertEqual(cm.exception.code, 1)
+        self.assertEqual(self._state()["tasks"]["t"].get("milestone"), before)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

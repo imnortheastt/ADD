@@ -457,6 +457,24 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     print("Confirm the MILESTONE.md exit criteria are checked, then archive/start the next.")
 
 
+def cmd_set_milestone(args: argparse.Namespace) -> None:
+    root = _require_root()
+    state = load_state(root)
+    task = args.task
+    if task not in state.get("tasks", {}):
+        _die("unknown_task")
+    if args.milestone == "none":
+        new = None
+    elif args.milestone in state.get("milestones", {}):
+        new = args.milestone
+    else:
+        _die("unknown_milestone")
+    state["tasks"][task]["milestone"] = new
+    state["tasks"][task]["updated"] = _now()
+    save_state(root, state)
+    print(f"task '{task}' -> milestone '{new}'" if new else f"task '{task}' -> milestone (none)")
+
+
 def _find_cycle(tasks: dict) -> list[str] | None:
     """Return a cycle path in the depends_on graph, or None. Ignores unknown deps."""
     WHITE, GRAY, BLACK = 0, 1, 2
@@ -542,6 +560,11 @@ def build_parser() -> argparse.ArgumentParser:
     pmd = sub.add_parser("milestone-done", help="exit-gate a milestone (all tasks must PASS)")
     pmd.add_argument("slug")
     pmd.set_defaults(func=cmd_milestone_done)
+
+    psm = sub.add_parser("set-milestone", help="attach/move/detach an existing task")
+    psm.add_argument("task")
+    psm.add_argument("milestone", help="milestone slug, or 'none' to detach")
+    psm.set_defaults(func=cmd_set_milestone)
 
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
     pp.add_argument("phase", choices=PHASES)
