@@ -282,6 +282,49 @@ def cmd_status(args: argparse.Namespace) -> None:
             print(f"          read .add/tasks/{active}/TASK.md and continue that phase.")
 
 
+def _read_task_phase(root: Path, slug: str) -> str | None:
+    """Read the `phase:` marker from a task's TASK.md, or None if absent."""
+    task_md = root / "tasks" / slug / "TASK.md"
+    if not task_md.exists():
+        return None
+    for line in task_md.read_text(encoding="utf-8").splitlines():
+        if line.startswith("phase:"):
+            rest = line[len("phase:"):].strip()
+            return rest.split()[0] if rest else None
+    return None
+
+
+def cmd_check(args: argparse.Namespace) -> None:
+    """Read-only integrity check of the .add project. Exit 1 if anything fails."""
+    root = find_root()
+    if root is None:
+        _die("no_project")
+    try:
+        state = json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        _die("state_invalid")
+
+    checks: list[tuple[bool, str, str]] = []  # (ok, description, reason-if-failed)
+    for key in ("project", "stage", "active_task", "tasks"):
+        checks.append((key in state, f"state has key '{key}'", "missing"))
+
+    tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
+    for slug, t in tasks.items():
+        task_md = root / "tasks" / slug / "TASK.md"
+        checks.append((task_md.exists(), f"task '{slug}' has TASK.md", "file missing"))
+        marker, want = _read_task_phase(root, slug), t.get("phase")
+        checks.append((marker == want, f"task '{slug}' marker matches state",
+                       f"marker={marker!r} state={want!r}"))
+
+    passed = sum(1 for ok, _, _ in checks if ok)
+    failed = len(checks) - passed
+    for ok, desc, reason in checks:
+        print(f"PASS  {desc}" if ok else f"FAIL  {desc}: {reason}")
+    print(f"check: {passed} passed, {failed} failed")
+    if failed:
+        raise SystemExit(1)
+
+
 def _sync_task_marker(root: Path, slug: str, phase: str) -> None:
     """Keep the `phase:` line inside TASK.md in sync with state.json."""
     task_md = root / "tasks" / slug / "TASK.md"
@@ -340,6 +383,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     pst = sub.add_parser("status", help="print where the project is (resume point)")
     pst.set_defaults(func=cmd_status)
+
+    pck = sub.add_parser("check", help="read-only integrity check of the .add project")
+    pck.set_defaults(func=cmd_check)
 
     return p
 

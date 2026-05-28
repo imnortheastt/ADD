@@ -112,6 +112,44 @@ class AddToolTest(unittest.TestCase):
         os.chdir(sub)
         self.assertIsNotNone(add.find_root())
 
+    # --- check (project integrity validator) ---
+    def test_check_passes_on_clean_project(self):
+        self._run("init")
+        self._run("new-task", "t")
+        self.assertEqual(self._run("check"), 0)
+
+    def test_check_detects_missing_task_md(self):
+        self._run("init")
+        self._run("new-task", "t")
+        task_md = Path(self.tmp) / ".add" / "tasks" / "t" / "TASK.md"
+        task_md.unlink()
+        with self.assertRaises(SystemExit) as cm:
+            self._run("check")
+        self.assertEqual(cm.exception.code, 1)  # contract: failure -> exit 1
+        self.assertFalse(task_md.exists())       # read-only: not recreated
+
+    def test_check_detects_phase_mismatch(self):
+        self._run("init")
+        self._run("new-task", "t")
+        st = self._state()
+        st["tasks"]["t"]["phase"] = "build"  # diverge from TASK.md marker (specify)
+        (Path(self.tmp) / ".add" / "state.json").write_text(json.dumps(st))
+        with self.assertRaises(SystemExit) as cm:
+            self._run("check")
+        self.assertEqual(cm.exception.code, 1)
+
+    def test_check_no_project(self):
+        with self.assertRaises(SystemExit) as cm:
+            self._run("check")
+        self.assertEqual(cm.exception.code, 1)  # "no_project"
+
+    def test_check_state_invalid(self):
+        self._run("init")
+        (Path(self.tmp) / ".add" / "state.json").write_text("{ not json")
+        with self.assertRaises(SystemExit) as cm:
+            self._run("check")
+        self.assertEqual(cm.exception.code, 1)  # "state_invalid"
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

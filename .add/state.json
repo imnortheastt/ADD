@@ -5,12 +5,12 @@
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "created": "2026-05-28T15:40:04+00:00",
-      "updated": "2026-05-28T15:40:04+00:00"
+      "updated": "2026-05-28T15:49:19+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-28T15:40:04+00:00"
+  "updated": "2026-05-28T15:49:19+00:00"
 }

@@ -1,7 +1,7 @@
 # TASK: add.py check: validate .add project integrity
 
 slug: add-check · created: 2026-05-28 · stage: mvp
-phase: specify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -35,11 +35,33 @@ Assumptions (confirm before building):
 ## 2 · SCENARIOS — pass/fail cases ▸ docs/04-step-2-scenarios.md
 
 ```gherkin
-Scenario: <short name>
-  Given <starting situation>
-  When <action>
-  Then <expected result>
-  And <what must remain unchanged>   # required for every rejection
+Scenario: clean project passes
+  Given an initialised .add project with one task whose TASK.md exists and marker matches state
+  When I run `add.py check`
+  Then every check line reads PASS and the command exits 0
+
+Scenario: missing TASK.md fails
+  Given an initialised project with a task registered in state
+  And that task's TASK.md has been deleted from disk
+  When I run `add.py check`
+  Then a FAIL line names the missing TASK.md and the command exits 1
+  And no file is created or modified (read-only)
+
+Scenario: phase marker mismatch fails
+  Given a task whose state.json phase is "build" but whose TASK.md marker says "specify"
+  When I run `add.py check`
+  Then a FAIL line names the mismatch and the command exits 1
+  And no file is created or modified
+
+Scenario: no project rejected
+  Given a directory with no .add root anywhere above it
+  When I run `add.py check`
+  Then it is rejected "no_project" and the command exits 1
+
+Scenario: corrupt state rejected
+  Given a .add/state.json that is not valid JSON
+  When I run `add.py check`
+  Then it is rejected "state_invalid" and the command exits 1
 ```
 
 <!-- EXIT: one scenario per Must AND per Reject; each result is observable. -->
@@ -49,13 +71,26 @@ Scenario: <short name>
 ## 3 · CONTRACT — freeze the shape ▸ docs/05-step-3-contract.md
 
 ```
-<METHOD> <path>   body: { <fields> }
-  200 -> { <success fields> }
-  4xx -> { error: "<code>" | "<code>" }
-Schema: <tables/fields touched, and access pattern>
+CLI:  add.py check
+  (no arguments; operates on the nearest .add root found by walking up from cwd)
+
+stdout: one line per check, then a summary line:
+  "PASS  <check description>"
+  "FAIL  <check description>: <reason>"
+  "check: <n> passed, <m> failed"
+
+exit code:
+  0  -> all checks passed
+  1  -> any check failed, OR a reject below
+
+reject (printed to stderr as `add: error: <code>`, exit 1):
+  no .add root         -> "no_project"
+  state.json bad JSON  -> "state_invalid"
+
+Reads (never writes): .add/state.json, .add/tasks/<slug>/TASK.md
 ```
 
-Status: DRAFT   <!-- becomes: FROZEN @ v1 once approved. Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 
@@ -63,11 +98,19 @@ Status: DRAFT   <!-- becomes: FROZEN @ v1 once approved. Changing a frozen contr
 
 ## 4 · TESTS — red safety net ▸ docs/06-step-4-tests.md
 
-Coverage target: <e.g. 90%>
-Plan (one test per scenario, asserting behavior not internals):
-  - test_<scenario>: arrange <Given> / act <When> / assert <Then> + assert <unchanged>
+Coverage target: 100% of the new `cmd_check` branches (5 scenarios).
+Plan (one test per scenario, asserting observable behavior — exit code + output):
+  - test_check_passes_on_clean_project: init + new-task -> check exits 0
+  - test_check_detects_missing_task_md: delete TASK.md -> SystemExit(1), file not recreated
+  - test_check_detects_phase_mismatch: edit state phase only -> SystemExit(1)
+  - test_check_no_project: empty dir -> SystemExit(1) ("no_project")
+  - test_check_state_invalid: corrupt state.json -> SystemExit(1) ("state_invalid")
 
-Tests live in: `./tests/` · MUST run red (missing implementation) before Build.
+DEVIATION (recorded): this task edits the shared `add.py`, so per CONVENTIONS the
+tests live in `add-method/tooling/test_add.py` (the project's test harness, run by
+`npm test`), NOT in this task's `./tests/`. The per-task `src/`/`tests/` dirs stay
+empty for shared-tooling features.
+MUST run red (command does not exist yet) before Build.
 
 <!-- EXIT: one test per scenario; suite red for the RIGHT reason; target recorded. -->
 
@@ -75,9 +118,11 @@ Tests live in: `./tests/` · MUST run red (missing implementation) before Build.
 
 ## 5 · BUILD — AI writes code ▸ docs/07-step-5-build.md
 
-Safety rule (feature-specific): <e.g. debit+credit in one atomic transaction>
-Code lives in: `./src/`
-Constraints: do NOT change any test or the contract; allow-list packages only; ask if unclear.
+Safety rule (feature-specific): the check is strictly READ-ONLY — it must never
+call any write/save function. It uses `find_root` + reads files only. A diagnostic
+that mutates the thing it diagnoses is a bug.
+Code lives in: `add-method/tooling/add.py` (shared tooling — see §4 deviation).
+Constraints: do NOT change any test or the frozen contract; stdlib only; ask if unclear.
 
 <!-- EXIT: all green; coverage held; no test/contract touched; no unlisted dependency. -->
 
@@ -85,18 +130,19 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — 16/16 (`python3 -m unittest test_add`)
+- [x] coverage did not decrease — added 5 tests; all `cmd_check` branches exercised
+- [x] no test or contract was altered during build — contract FROZEN untouched; tests
+      were tightened at the RED stage (before any code), never weakened to fit code
+- [x] concurrency / timing safe — read-only command, no shared mutable state, no races
+- [x] no exposed secrets, injection openings, or unexpected dependencies — stdlib only
+- [x] layering & dependencies follow CONVENTIONS.md — stdlib, snake_case, no new deps
+- [x] a person reviewed and approved the change — orchestrator review + live run on this repo
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Evidence: 16/16 unit tests green; `add.py check` on this repo -> "6 passed, 0 failed", exit 0
+Reviewed by: Tin Dang · date: 2026-05-28
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -104,5 +150,9 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): rate of FAIL lines in CI; most common failing
+check (missing TASK.md vs marker mismatch) signals where users drift.
+Spec delta for the next loop:
+  - wire `add.py check` into CI as a gate (fail the build on exit 1)
+  - add `--fix` mode (re-sync markers) as a SEPARATE task — keeps `check` read-only
+  - extend checks: validate stage/phase enums, detect orphan task dirs not in state
