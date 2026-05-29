@@ -23,18 +23,7 @@ the method already names, made explicit as three concerns.
 
 ## Three concerns, one foundation
 
-```text
-        ┌─────────────────────────────────────────┐
-        │            TDD  ⇄  ADD   (the engine)     │   ← Part II: per-feature loop
-        └─────────────────────────────────────────┘
-                          ▲   feeds context up
-        ┌─────────────────┴───────────────────────┐
-        │  UDD — UI/UX     user flows · UI states   │
-        │  SDD — Spec      what we build now (living)│   ← the foundation
-        │  DDD — Domain    the language & boundaries │      (survivor, cross-milestone)
-        └───────────────────────────────────────────┘
-              any loop may send a correction back down ↓
-```
+![The engine needs ground — the TDD ⇄ ADD engine runs on a DDD · SDD · UDD foundation: context feeds up, and any loop may send a correction back down](./add-foundation.png)
 
 - **DDD — Domain.** The shared, precise language and the boundaries it lives in:
   the core concepts, the modules/contexts they belong to, and the invariants that
@@ -58,17 +47,15 @@ the method already names, made explicit as three concerns.
   test that behaviour; the foundation keeps the design intent that makes a screen
   worth building.
 
-The three foundation competencies, as the method's own diagrams define them:
+These three foundation competencies, together with the **TDD ⇄ ADD** engine of
+[Part II](./02-the-flow.md), are ADD's five. The first four feed context to the
+fifth, where the AI executes on it:
 
-![DDD — Domain-Driven Design: domain model · glossary · context map · EventStorming](./DDD.jpg)
-![SDD — Spec-Driven Development: SPEC.md · acceptance checklist · data model draft](./SDD.jpg)
-![UDD — UI/UX-Driven Development: user flow · UI states · DESIGN.md · prototype](./UDD.jpg)
+![ADD's five competencies — DDD · SDD · UDD · TDD · ADD: the first four are human-led and feed context to ADD, which is AI-led under your direction](./add-competencies.png)
 
-> The diagram's foundation (DDD · SDD · UDD) and the method's own words (survivor
-> layer · living document · ubiquitous language) are the same idea. These three are
-> the first three of ADD's five competencies — DDD · SDD · UDD · **TDD · ADD** — the
-> last two being the per-feature engine of [Part II](./02-the-flow.md). This chapter
-> is where the diagram and the text finally meet.
+> The diagram's foundation (DDD · SDD · UDD) and the method's own words — survivor
+> layer · living document · ubiquitous language — name the same three ideas. This
+> chapter is where the diagram and the text finally meet.
 
 ## One file, not three
 
@@ -106,6 +93,8 @@ The arrow runs both ways, which is the whole point of a re-entrant method:
 The foundation is the **Project tier** of the document hierarchy
 ([Appendix F](./appendix-f-requirements-matrix.md)) — created once, kept for the
 life of the product, owned above any single milestone.
+
+![Three tiers of documents — Project (the foundation, .add/PROJECT.md) → Milestone → Task: scope narrows and lifespan shortens down the stack](./add-hierarchy.png)
 
 | Tier | Lives in | Lifespan | Holds |
 |------|----------|----------|-------|

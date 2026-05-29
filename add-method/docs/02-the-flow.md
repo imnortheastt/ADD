@@ -8,6 +8,8 @@
 
 AIDD is one repeatable flow of six steps, followed by an observation loop. People perform the first four steps (with AI assistance), the AI performs the fifth (under direction), and people perform the sixth.
 
+![The ADD flow — Specify · Scenarios · Contract · Tests · Build · Verify, then Observe loops back to become the next Specify](./add-flow.png)
+
 ```mermaid
 flowchart LR
   S1["1 Specify<br/>the rules"] --> S2["2 Scenarios<br/>pass/fail cases"]
