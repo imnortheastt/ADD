@@ -53,6 +53,14 @@ PHASE_GUIDE = {
     "done":      ("this task is done — pick the next feature",
                   "02-the-flow.md"),
 }
+# Phase -> who owns it, for the `--json` autonomy signal. An autonomous harness may run a
+# phase only when owner=="ai" (stop is false); every other phase is a checkpoint. The map
+# follows the book's who-does-what table (Verify is "human only"); `tests`/`build`/`observe`
+# are AI-led. A phase missing here is `unmapped_phase` (fail closed) — never defaulted.
+PHASE_OWNER = {
+    "specify": "human", "scenarios": "human", "contract": "seam",
+    "tests": "ai", "build": "ai", "verify": "human", "observe": "ai", "done": "human",
+}
 SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist")
 
 # Guideline-injection targets + version-stable markers. NEVER change these marker
@@ -151,6 +159,27 @@ def _require_root() -> Path:
 
 def load_state(root: Path) -> dict:
     return json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+
+
+def _load_state_for_json() -> tuple[Path, dict]:
+    """Fail-closed state load for `--json` paths: a missing project or unparseable
+    state.json -> `no_state` on stderr + exit 1, with EMPTY stdout (never a partial
+    JSON object a harness might parse). Built from State only — reads no docs/ chapter."""
+    root = find_root()
+    if root is None:
+        _die("no_state")
+    try:
+        return root, json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        _die("no_state")
+
+
+def _phase_owner(phase: str) -> str:
+    """Map a phase to its owner (human|seam|ai); `unmapped_phase` if absent (fail closed)."""
+    owner = PHASE_OWNER.get(phase)
+    if owner is None:
+        _die("unmapped_phase")
+    return owner
 
 
 def save_state(root: Path, state: dict) -> None:
@@ -467,6 +496,23 @@ def cmd_stage(args: argparse.Namespace) -> None:
 
 
 def cmd_status(args: argparse.Namespace) -> None:
+    if getattr(args, "json", False):
+        _, state = _load_state_for_json()
+        tasks = state.get("tasks") or {}
+        milestones = state.get("milestones") or {}
+        ms_list = []
+        for mslug, m in milestones.items():
+            members = [t for t in tasks.values() if t.get("milestone") == mslug]
+            ms_list.append({"slug": mslug, "status": m.get("status", "active"),
+                            "done": sum(1 for t in members if _task_done(t)),
+                            "total": len(members)})
+        print(json.dumps({
+            "project": state.get("project"), "stage": state.get("stage"),
+            "active_task": state.get("active_task"),
+            "milestones": ms_list,
+            "tasks": [{"slug": s, "phase": t.get("phase"), "gate": t.get("gate"),
+                       "milestone": t.get("milestone")} for s, t in tasks.items()]}))
+        return
     root = _require_root()
     state = load_state(root)
     active = state.get("active_task")
@@ -523,6 +569,24 @@ def cmd_guide(args: argparse.Namespace) -> None:
 
     Strictly read-only: load_state only — never save_state, never writes a TASK.md.
     """
+    if getattr(args, "json", False):
+        _, state = _load_state_for_json()
+        slug = args.slug or state.get("active_task")
+        if not slug:
+            print(json.dumps({"task": None, "phase": None, "owner": "human", "stop": True,
+                              "next_step": "start your first feature -> add.py new-task <slug>",
+                              "chapter": ".add/docs/02-the-flow.md", "gate": None}))
+            return
+        t = (state.get("tasks") or {}).get(slug)
+        if t is None:
+            _die(f"unknown task '{slug}'")
+        phase = t.get("phase")
+        owner = _phase_owner(phase)            # _die unmapped_phase before any stdout
+        action, chapter = PHASE_GUIDE[phase]   # phase is mapped, so PHASE_GUIDE has it too
+        print(json.dumps({"task": slug, "phase": phase, "owner": owner,
+                          "stop": owner != "ai", "next_step": action,
+                          "chapter": f".add/docs/{chapter}", "gate": t.get("gate")}))
+        return
     root = _require_root()
     state = load_state(root)
     slug = args.slug or state.get("active_task")
@@ -563,13 +627,17 @@ def _read_task_phase(root: Path, slug: str) -> str | None:
 
 def cmd_check(args: argparse.Namespace) -> None:
     """Read-only integrity check of the .add project. Exit 1 if anything fails."""
-    root = find_root()
-    if root is None:
-        _die("no_project")
-    try:
-        state = json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        _die("state_invalid")
+    as_json = getattr(args, "json", False)
+    if as_json:
+        root, state = _load_state_for_json()       # fail closed -> no_state + empty stdout
+    else:
+        root = find_root()
+        if root is None:
+            _die("no_project")
+        try:
+            state = json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            _die("state_invalid")
 
     checks: list[tuple[bool, str, str]] = []  # (ok, description, reason-if-failed)
     for key in ("project", "stage", "active_task", "tasks"):
@@ -619,9 +687,15 @@ def cmd_check(args: argparse.Namespace) -> None:
 
     passed = sum(1 for ok, _, _ in checks if ok)
     failed = len(checks) - passed
-    for ok, desc, reason in checks:
-        print(f"PASS  {desc}" if ok else f"FAIL  {desc}: {reason}")
-    print(f"check: {passed} passed, {failed} failed")
+    if as_json:
+        print(json.dumps({"passed": passed, "failed": failed,
+                          "checks": [{"ok": ok, "name": desc,
+                                      "reason": reason if not ok else ""}
+                                     for ok, desc, reason in checks]}))
+    else:
+        for ok, desc, reason in checks:
+            print(f"PASS  {desc}" if ok else f"FAIL  {desc}: {reason}")
+        print(f"check: {passed} passed, {failed} failed")
     if failed:
         raise SystemExit(1)
 
@@ -653,6 +727,23 @@ def cmd_new_milestone(args: argparse.Namespace) -> None:
 
 
 def cmd_ready(args: argparse.Namespace) -> None:
+    if getattr(args, "json", False):
+        _, state = _load_state_for_json()
+        tasks = state.get("tasks") or {}
+        archived = _archived_task_slugs(state)
+
+        def _ok(d: str) -> bool:
+            return d in archived or (d in tasks and _task_done(tasks[d]))
+
+        ready, blocked = [], []
+        for slug, t in tasks.items():
+            if _task_done(t):
+                continue
+            unmet = [d for d in (t.get("depends_on") or []) if not _ok(d)]
+            (blocked.append({"slug": slug, "waiting_on": unmet})
+             if unmet else ready.append(slug))
+        print(json.dumps({"ready": ready, "blocked": blocked}))
+        return
     root = _require_root()
     state = load_state(root)
     tasks = state.get("tasks", {})
@@ -846,6 +937,7 @@ def build_parser() -> argparse.ArgumentParser:
     pm.set_defaults(func=cmd_new_milestone)
 
     pr = sub.add_parser("ready", help="list tasks whose dependencies are satisfied")
+    pr.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pr.set_defaults(func=cmd_ready)
 
     pmd = sub.add_parser("milestone-done", help="exit-gate a milestone (all tasks must PASS)")
@@ -884,9 +976,11 @@ def build_parser() -> argparse.ArgumentParser:
     ps.set_defaults(func=cmd_stage)
 
     pst = sub.add_parser("status", help="print where the project is (resume point)")
+    pst.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pst.set_defaults(func=cmd_status)
 
     pck = sub.add_parser("check", help="read-only integrity check of the .add project")
+    pck.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pck.set_defaults(func=cmd_check)
 
     psg = sub.add_parser("sync-guidelines",
@@ -895,6 +989,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     pgd = sub.add_parser("guide", help="print the one concrete next step for the active task")
     pgd.add_argument("slug", nargs="?", default=None, help="task slug (default: active task)")
+    pgd.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pgd.set_defaults(func=cmd_guide)
 
     return p
