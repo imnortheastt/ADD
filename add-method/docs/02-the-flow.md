@@ -8,7 +8,7 @@
 
 AIDD is one repeatable flow of six steps, followed by an observation loop. People perform the first four steps (with AI assistance), the AI performs the fifth (under direction), and people perform the sixth.
 
-![The ADD flow — Specify · Scenarios · Contract · Tests · Build · Verify, then Observe loops back to become the next Specify](./add-flow.png)
+![The ADD flow — a solid forward spine Specify→Scenarios→Contract→Tests→Build→Verify→Observe, with dashed backward-correction arrows (any phase may return to an earlier one), a Tests⇄Build red/green engine, and Observe looping back to the next Specify](./add-flow.png)
 
 ```mermaid
 flowchart LR
@@ -18,6 +18,9 @@ flowchart LR
   S4 --> S5["5 Build<br/>AI writes code"]
   S5 --> S6["6 Verify<br/>evidence + checks"]
   S6 --> OBS["Observe<br/>in production"]
+  S5 -. "red / green engine" .-> S4
+  S6 -. "evidence fails → back to Build" .-> S5
+  S5 -. "a missing rule → back to Specify" .-> S1
   OBS -. "what you learn becomes the next spec" .-> S1
   classDef human fill:#FAEEDA,stroke:#BA7517,color:#633806;
   classDef seam fill:#E1F5EE,stroke:#0F6E56,color:#04342C;
@@ -27,14 +30,19 @@ flowchart LR
   class S5,S6 machine;
 ```
 
+> **Solid arrows are the forward spine** — you never start a phase before its input exists (forward-skip forbidden). **Dashed arrows are backward correction** — any phase may return to an earlier one to repair its artifact (the long loop, Observe → Specify, is the same rule at milestone scale). The tight Tests ⇄ Build cycle is the per-feature red/green engine.
+
 ```text
   人 human-led ───────────────►│◄─────────── machine-led ──► 人 verify
-  1 Specify → 2 Scenarios → 3 Contract → 4 Tests → 5 Build → 6 Verify
-                              (freeze)    (red)     (AI)      (people)
-                                                                  │
-                            observe in production  ◄──────────────┘
-                                   │
-                                   └──► becomes the next Specify
+  1 Specify → 2 Scenarios → 3 Contract → 4 Tests ⇄ 5 Build → 6 Verify
+       ▲                        (freeze)   └red/green┘  (AI)     (people)
+       ╎                                                            │
+       ╎╴╴ backward correction (dashed): any phase may return to ╴╴╴┤
+       ╎    an earlier one — e.g. Build exposes a missing rule      │
+       │                                                            │
+       │                  observe in production  ◄──────────────────┘
+       │                         │
+       └─────────────────────────┘  becomes the next Specify
 ```
 
 The shape is deliberate: the human-led steps establish direction, a frozen contract forms the seam in the middle, and the AI-led build runs fast and safely on the far side because everything it needs is already fixed.

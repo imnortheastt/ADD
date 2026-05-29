@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "risk-accepted-gate",
+  "active_task": "flow-diagram-refresh",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -119,10 +119,19 @@
       "depends_on": [],
       "created": "2026-05-29T09:13:33+00:00",
       "updated": "2026-05-29T09:18:04+00:00"
+    },
+    "flow-diagram-refresh": {
+      "title": "Flow diagram shows non-waterfall loopback + nested TDD\u21c4ADD engine",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v2",
+      "depends_on": [],
+      "created": "2026-05-29T09:51:28+00:00",
+      "updated": "2026-05-29T10:57:05+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T09:18:04+00:00",
+  "updated": "2026-05-29T10:57:05+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

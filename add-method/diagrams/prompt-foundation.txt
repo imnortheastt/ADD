@@ -1,0 +1,27 @@
+Create a calm, light, hand-drawn infographic on a pure white (#FAFAFA) background. The style is a thoughtful architect's morning sketch: thin soft-charcoal ink lines (#3d3d3a), generous whitespace, gentle hand-written annotations. Hand-lettered style throughout — no computer fonts. CRITICAL: spell every label EXACTLY as given; do not invent, duplicate, or abbreviate words.
+
+TITLE at top center, clean hand-lettering: "The Engine Needs Ground"
+Subtitle below in lighter gray (#8a8a85) handwriting: "TDD and ADD run on a DDD · SDD · UDD foundation"
+
+LAYOUT — a vertical stack: one engine box on top, then a tall foundation of three stacked bars below it, with arrows running between them.
+
+TOP — a single wide rounded box, cloud-blue tint (#eef3f9), drawn slightly larger as the hero element:
+  big hand-lettering inside: "TDD  ⇄  ADD"
+  small phrase under it: "the engine — per-feature loop"
+
+Between the engine and the foundation, a thin solid arrow pointing UP from the foundation to the engine, with a handwritten label beside it: "feeds context up".
+
+FOUNDATION — three wide rounded bars stacked directly on top of each other (like ground layers), spanning the full width, with a small handwritten bracket on the right labelled "the foundation — survivor, cross-milestone". Each bar holds ONE line of hand-lettered text, written exactly as shown here with no added quote marks or apostrophes:
+  Top bar (cream-lilac tint #f3f0f8) reads exactly:   UDD — UI/UX · user flows · UI states
+  Middle bar (morning-peach tint #faf3ee) reads exactly:   SDD — Spec · what we build now (living)
+  Bottom bar (warm-sand tint #f5f0e8) reads exactly:   DDD — Domain · the language & boundaries
+
+On the left side, a thin DASHED arrow pointing DOWN from the engine into the foundation, with a handwritten label: "any loop may send a correction back down".
+
+One muted-coral (#c47a6a) accent dot on the "feeds context up" label only.
+
+Bottom-center small handwritten margin note in warm gray: "the foundation outlives every milestone".
+
+CONNECTIONS: one solid thin up-arrow, one dashed thin down-arrow. All arrows gentle, never heavy.
+
+WHAT TO AVOID: no solid fills or heavy color blocks (whisper tints only); no bold/thick strokes; no drop shadows, gradients, or glow; no computer-perfect ruler-straight lines; no grid background; no dark backgrounds; no emoji or clipart; no extra words beyond those listed above. Keep it sparse and breathing — accuracy of the listed labels matters more than decoration.

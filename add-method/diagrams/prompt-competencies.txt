@@ -1,0 +1,28 @@
+Create a calm, light, hand-drawn infographic on a pure white (#FAFAFA) background. The style is a thoughtful architect's morning sketch: thin soft-charcoal ink lines (#3d3d3a), generous whitespace, gentle hand-written annotations. Hand-lettered style throughout — no computer fonts. CRITICAL: spell every label EXACTLY as given; do not invent, duplicate, or abbreviate words. The three-letter acronyms must read precisely as written.
+
+TITLE at top center, clean hand-lettering: "ADD — Five Competencies"
+Subtitle below in lighter gray (#8a8a85) handwriting: "Learn by competency, not by tool"
+A thin handwritten banner under the subtitle: "DDD · SDD · UDD · TDD  →  context engine  →  feeds  →  ADD" (with thin arrows)
+
+LAYOUT — five tall rounded cards in a single left-to-right row, evenly spaced with generous gaps. Each card shows, top to bottom: a big hand-lettered ACRONYM, a name, a short phrase in quotes, then two small artifact words separated by a middot.
+
+Card 1 (warm-sand tint #f5f0e8):
+  "DDD"  /  "Domain-Driven"  /  "the language & boundaries"  /  "domain model · context map"
+Card 2 (morning-peach tint #faf3ee):
+  "SDD"  /  "Spec-Driven"  /  "the living document"  /  "SPEC.md · acceptance checklist"
+Card 3 (cream-lilac tint #f3f0f8):
+  "UDD"  /  "UI/UX-Driven"  /  "users use the interface"  /  "user flows · UI states"
+Card 4 (soft-sage tint #eef5ee):
+  "TDD"  /  "Test-Driven"  /  "the failing safety net"  /  "test suite · coverage"
+Card 5 (cloud-blue tint #eef3f9), drawn slightly LARGER as the hero element:
+  "ADD"  /  "AI-Driven"  /  "you command, AI executes"  /  "working code · reviewed PR"
+
+A thin handwritten bracket spanning cards 1-4 with a small label: "human-led (AI assists)".
+A thin handwritten bracket under card 5 with a small label: "AI-led, under your direction".
+One muted-coral (#c47a6a) accent dot beside the "ADD" acronym only.
+
+Bottom-center small handwritten margin note in warm gray: "the first four feed context; the fifth executes on it".
+
+CONNECTIONS: thin gentle arrows in the banner only; the five cards sit in a clean row, separated by whitespace not borders between them.
+
+WHAT TO AVOID: no solid fills or heavy color blocks (whisper tints only); no bold/thick strokes; no drop shadows, gradients, or glow; no computer-perfect ruler-straight lines; no grid background; no dark backgrounds; no emoji or clipart; no extra words beyond those listed above. Keep it sparse and breathing — accuracy of the listed labels and acronyms matters more than decoration.

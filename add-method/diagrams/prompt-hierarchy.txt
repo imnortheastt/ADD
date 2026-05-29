@@ -1,0 +1,34 @@
+Create a calm, light, hand-drawn infographic on a pure white (#FAFAFA) background. The style is a thoughtful architect's morning sketch: thin soft-charcoal ink lines (#3d3d3a), generous whitespace, gentle hand-written annotations. Hand-lettered style throughout — no computer fonts. CRITICAL: spell every label EXACTLY as given, including the file paths; do not invent, duplicate, or abbreviate words.
+
+TITLE at top center, clean hand-lettering: "Three Tiers of Documents"
+Subtitle below in lighter gray (#8a8a85) handwriting: "Project  →  Milestone  →  Task"
+
+LAYOUT — three wide rounded cards stacked vertically, largest at top, slightly narrower each step down (a gentle nested feel). Each card has a bold tier name on the left and three small labelled lines on the right: "lives in:", "lifespan:", "holds:".
+
+Top card (warm-sand tint #f5f0e8), the hero element, slightly larger:
+  Name: "Project"  with small note "(the foundation)"
+  lives in:  ".add/PROJECT.md"
+  lifespan:  "the whole product"
+  holds:     "domain · spec · users · decisions"
+
+Middle card (morning-peach tint #faf3ee):
+  Name: "Milestone"
+  lives in:  ".add/milestones/<slug>/MILESTONE.md"
+  lifespan:  "one depth-bounded goal"
+  holds:     "scope · shared contracts · exit criteria"
+
+Bottom card (cloud-blue tint #eef3f9):
+  Name: "Task"
+  lives in:  ".add/tasks/<slug>/TASK.md"
+  lifespan:  "one feature"
+  holds:     "the seven-step artifacts"
+
+A thin solid arrow runs down the left margin from Project to Milestone to Task, with a small handwritten label: "narrower scope, shorter life".
+
+One muted-coral (#c47a6a) accent dot beside the "Project" name only.
+
+Bottom-center small handwritten margin note in warm gray: "a milestone is a version bump to the foundation, not a fresh start".
+
+CONNECTIONS: one thin vertical arrow down the left side linking the three cards. Gentle, never heavy.
+
+WHAT TO AVOID: no solid fills or heavy color blocks (whisper tints only); no bold/thick strokes; no drop shadows, gradients, or glow; no computer-perfect ruler-straight lines; no grid background; no dark backgrounds; no emoji or clipart; no extra words beyond those listed above. Keep it sparse and breathing — accuracy of the listed labels and file paths matters more than decoration.
