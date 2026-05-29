@@ -354,6 +354,20 @@ def _task_done(t: dict) -> bool:
     return t.get("phase") == "done" and t.get("gate") == "PASS"
 
 
+def _archived_task_slugs(state: dict) -> set[str]:
+    """Slugs of tasks that left active state via archive — all were PASS-done at
+    archive time, so a dep on one of them counts as satisfied (not dangling).
+
+    INVARIANT: this is sound only because cmd_archive_milestone REFUSES to archive a
+    milestone with an incomplete member. Any NEW task-removal path (un-archive/restore,
+    heavy archive) MUST preserve "archived ⇒ was PASS-done" or `ready` will green-light
+    a task whose dependency never completed."""
+    out: set[str] = set()
+    for rec in state.get("archived", []):
+        out.update(rec.get("task_slugs", []))   # .get: pre-v2 records have none
+    return out
+
+
 def _resolve_task(state: dict, slug: str | None) -> str:
     slug = slug or state.get("active_task")
     if not slug:
@@ -487,7 +501,10 @@ def cmd_guide(args: argparse.Namespace) -> None:
     if slug not in state.get("tasks", {}):
         _die(f"unknown task '{slug}'")
     phase = state["tasks"][slug]["phase"]
-    action, chapter = PHASE_GUIDE[phase]
+    entry = PHASE_GUIDE.get(phase)
+    if entry is None:           # corrupted/hand-edited state.json — fail clean, not KeyError
+        _die(f"task '{slug}' has unknown phase '{phase}' (state.json corrupted?)")
+    action, chapter = entry
     print(f"active : {slug}  (phase: {phase})")
     print(f"next   : {action}")
     print(f"read   : .add/docs/{chapter}")
@@ -527,6 +544,7 @@ def cmd_check(args: argparse.Namespace) -> None:
 
     tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
     milestones = state.get("milestones") if isinstance(state.get("milestones"), dict) else {}
+    archived_slugs = _archived_task_slugs(state)   # archived deps still resolve
     for slug, t in tasks.items():
         task_md = root / "tasks" / slug / "TASK.md"
         checks.append((task_md.exists(), f"task '{slug}' has TASK.md", "file missing"))
@@ -539,7 +557,8 @@ def cmd_check(args: argparse.Namespace) -> None:
             checks.append((ms in milestones, f"task '{slug}' milestone resolves",
                            f"unknown milestone {ms!r}"))
         for dep in t.get("depends_on") or []:
-            checks.append((dep in tasks, f"task '{slug}' dep '{dep}' resolves", "unknown task"))
+            checks.append((dep in tasks or dep in archived_slugs,
+                           f"task '{slug}' dep '{dep}' resolves", "unknown task"))
 
     # drift: a done milestone must have no unfinished tasks
     for mslug, m in milestones.items():
@@ -593,13 +612,19 @@ def cmd_ready(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
     tasks = state.get("tasks", {})
+    archived_slugs = _archived_task_slugs(state)   # an archived dep was PASS-done
+
+    def _dep_satisfied(d: str) -> bool:
+        if d in archived_slugs:
+            return True                            # archived ⇒ complete when archived
+        return d in tasks and _task_done(tasks[d]) # in-state dep must be done; else blocked
+
     ready = []
     for slug, t in tasks.items():
         if _task_done(t):
             continue
         deps = t.get("depends_on") or []
-        if all(_task_done(tasks[d]) for d in deps if d in tasks) and \
-           all(d in tasks for d in deps):
+        if all(_dep_satisfied(d) for d in deps):
             ready.append(slug)
     if not ready:
         print("ready: (none — all tasks are done or blocked)")
@@ -647,11 +672,22 @@ def cmd_archive_milestone(args: argparse.Namespace) -> None:
         _die("milestone_not_done")        # run `add.py milestone-done` first; never lose live work
     tasks = state.get("tasks", {})
     members = [s for s, t in tasks.items() if t.get("milestone") == slug]
-    # a COUNT-only summary (never task bodies) so the active state can't regrow
+    # the status flag can go stale (a task attached AFTER milestone-done is still
+    # live); re-check now so archive can never silently delete unfinished work.
+    incomplete = [s for s in members if not _task_done(tasks[s])]
+    if incomplete:
+        print(f"milestone '{slug}' has live unfinished tasks:", file=sys.stderr)
+        for s in incomplete:
+            t = tasks[s]
+            print(f"  - {s} (phase={t.get('phase')}, gate={t.get('gate')})", file=sys.stderr)
+        _die("milestone_has_incomplete_tasks")
+    # a slug-list summary (never task bodies) so the active state can't regrow,
+    # yet cross-milestone deps on these tasks still resolve (see _archived_task_slugs)
     state.setdefault("archived", []).append({
         "slug": slug,
         "title": ms.get("title", slug),
         "tasks": len(members),
+        "task_slugs": members,
         "archived": date.today().isoformat(),
     })
     del state["milestones"][slug]

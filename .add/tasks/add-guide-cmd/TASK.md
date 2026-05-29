@@ -171,3 +171,8 @@ Watch (reuse scenarios as monitors): do users run `guide` and act, or ignore it?
 per-phase next-action wording still true as the method evolves (keep PHASE_GUIDE in sync
 with the chapter EXIT lines)? Spec delta for the next loop: optional `--verbose` that
 prints the phase's EXIT criteria inline; surface `ready` tasks in the no-active-task case.
+
+Post-review hardening (v1-1 adversarial review, 2026-05-29): a hand-corrupted `phase:` value
+in state.json used to raise a raw `KeyError` from `PHASE_GUIDE[phase]`. Now `cmd_guide` uses
+`PHASE_GUIDE.get(phase)` and `_die`s naming the bad phase — covered by
+test_guide_unknown_phase_dies_clean (RED→GREEN). Robustness fix only; the v1 contract is unchanged.

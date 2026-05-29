@@ -6,6 +6,7 @@ task's phase, the one next action, the chapter to read, and the `then:` command 
 and never mutates state. Run: python3 -m unittest test_guide -v
 """
 import io
+import json
 import os
 import tempfile
 import unittest
@@ -85,6 +86,19 @@ class GuideTest(unittest.TestCase):
         self._guide()
         self.assertEqual(self._state().read_bytes(), before,
                          "guide is read-only: state.json must be byte-identical")
+
+    def test_guide_unknown_phase_dies_clean(self):
+        # a hand-corrupted phase value must produce a clean _die, not a raw KeyError
+        add.main(["new-task", "feat-a"])
+        sp = self._state()
+        st = json.loads(sp.read_text(encoding="utf-8"))
+        st["tasks"]["feat-a"]["phase"] = "planning"        # not a real PHASES value
+        sp.write_text(json.dumps(st), encoding="utf-8")
+        err = io.StringIO()
+        with self.assertRaises(SystemExit), redirect_stderr(err):
+            add.main(["guide", "feat-a"])
+        self.assertIn("planning", err.getvalue(),
+                      "guide must _die naming the bad phase, not raise a raw KeyError")
 
 
 if __name__ == "__main__":

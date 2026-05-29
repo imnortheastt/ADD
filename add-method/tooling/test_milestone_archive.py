@@ -109,6 +109,55 @@ class MilestoneArchiveTest(unittest.TestCase):
         self.assertIn("m2", st.get("milestones", {}), "refused milestone must remain")
         self.assertIn("m2-t0", st.get("tasks", {}), "its task must remain")
 
+    # --- review-driven regression guards (v2 contract) -----------------------
+
+    def test_archive_rejects_incomplete_member(self):
+        # A new incomplete task attached to an already-done milestone makes the
+        # `status==done` flag stale. Archiving must NOT silently delete it.
+        self._make_done_milestone("m1", 1)
+        add.main(["new-task", "late", "--milestone", "m1"])   # phase specify, not done
+        before = self._state_path().read_bytes()
+        err = io.StringIO()
+        with self.assertRaises(SystemExit), redirect_stderr(err):
+            add.main(["archive-milestone", "m1"])
+        self.assertIn("milestone_has_incomplete_tasks", err.getvalue(),
+                      "must refuse to archive a milestone with a live incomplete task")
+        st = self._load()
+        self.assertIn("m1", st.get("milestones", {}), "refused: milestone stays")
+        self.assertIn("late", st.get("tasks", {}), "the incomplete task must NOT be destroyed")
+        self.assertEqual(self._state_path().read_bytes(), before,
+                         "reject is pre-mutation: state.json byte-identical")
+
+    def test_archive_preserves_non_member_active_task(self):
+        # clearing active pointers must be conditional — a task from another
+        # milestone that happens to be active must survive the archive.
+        self._make_done_milestone("m1", 1)
+        add.main(["new-milestone", "m2", "--title", "Two"])   # active_milestone -> m2
+        add.main(["new-task", "t-m2", "--milestone", "m2"])   # active_task -> t-m2 (non-member of m1)
+        add.main(["archive-milestone", "m1"])
+        st = self._load()
+        self.assertEqual(st.get("active_task"), "t-m2", "non-member active task must survive")
+        self.assertEqual(st.get("active_milestone"), "m2", "non-member active milestone must survive")
+
+    def test_archive_keeps_cross_milestone_dep_resolvable(self):
+        # a task in m2 depends on a done task in m1; archiving m1 must NOT break
+        # check (false "unknown task") or ready (false "blocked").
+        add.main(["new-milestone", "m1", "--title", "M1"])
+        add.main(["new-task", "auth", "--milestone", "m1"])
+        add.main(["gate", "PASS", "auth"])
+        add.main(["milestone-done", "m1"])
+        add.main(["new-milestone", "m2", "--title", "M2"])
+        add.main(["new-task", "transfer", "--milestone", "m2", "--depends-on", "auth"])
+        add.main(["archive-milestone", "m1"])
+        check_ok = True
+        try:
+            self._capture("check")
+        except SystemExit:
+            check_ok = False
+        self.assertTrue(check_ok, "check must pass after archive (archived dep resolves)")
+        self.assertIn("transfer", self._capture("ready"),
+                      "a task whose only dep is archived/done must be ready")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
