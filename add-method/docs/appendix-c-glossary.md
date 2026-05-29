@@ -34,6 +34,10 @@
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 
+**State surface** — everything an agent loads every session: the `add` skill (router `SKILL.md` + the active phase) and the lean operational docs — `PROJECT.md`, the active `MILESTONE.md` and `TASK.md`, and `state.json`. Kept small to avoid context rot. Contrast **Story surface**.
+
+**Story surface** — the book (`docs/*`): the whole method, read once by a person to trust ADD, then referenced by a pointer and **never auto-loaded** into agent context. Contrast **State surface**.
+
 **Survivor layer** — the set of durable artifacts (conventions, glossary, frozen contracts) that outlive any particular code.
 
 **Trust ladder / autonomy ladder** — the graduated levels of AI autonomy, earned with evidence and verification capacity.

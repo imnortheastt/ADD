@@ -54,6 +54,8 @@ Each step produces exactly one artifact, and each artifact is the input to the n
 
 The single rule of discipline follows directly: **do not begin a step until the previous artifact exists.** Skipping forward means the AI builds against a guess.
 
+The flow runs in two directions under two rules that never conflict. **Backward correction is always allowed:** any phase may send you back to an earlier one to repair its artifact — a failing Build that exposes a missing rule sends you back to Specify, and that is the loop working ([principle 4](./01-principles.md)), not a failure. **Forward-skipping is forbidden:** you never start a phase before its input artifact exists. Correct backward freely; never skip forward.
+
 ## Who does what
 
 | Step | Person's job | AI's job |

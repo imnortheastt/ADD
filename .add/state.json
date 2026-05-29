@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "npm-hygiene",
+  "active_task": "state-story-architecture",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -92,10 +92,19 @@
       "depends_on": [],
       "created": "2026-05-29T03:55:39+00:00",
       "updated": "2026-05-29T04:00:39+00:00"
+    },
+    "state-story-architecture": {
+      "title": "Name the State/Story surfaces and document the loop semantics",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v2",
+      "depends_on": [],
+      "created": "2026-05-29T06:52:29+00:00",
+      "updated": "2026-05-29T06:57:13+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T04:00:39+00:00",
+  "updated": "2026-05-29T06:57:13+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -112,7 +121,15 @@
       "status": "active",
       "created": "2026-05-29T01:24:39+00:00",
       "updated": "2026-05-29T01:24:39+00:00"
+    },
+    "v2": {
+      "title": "Transparent \u00b7 Provable \u00b7 Minimal",
+      "goal": "Make ADD provable and explicitly two-surface (State/Story) without adding context-rot",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-05-29T06:52:24+00:00",
+      "updated": "2026-05-29T06:52:24+00:00"
     }
   },
-  "active_milestone": "v1-2"
+  "active_milestone": "v2"
 }
