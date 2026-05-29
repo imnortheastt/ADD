@@ -1,7 +1,7 @@
 # TASK: Classify a request: new-major | sub-milestone | task (AI proposes, human confirms)
 
 slug: versioning-policy · created: 2026-05-29 · stage: mvp
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -244,7 +244,7 @@ Evidence pre-filled by the AI; the gate signature itself is the human's (Verify 
 - [x] concurrency / timing safe — N/A: a static doc artifact, no code path, no IO, nothing to race
 - [x] no exposed secrets, injection openings, or unexpected dependencies — prose only; secret scan clean; stdlib-only test
 - [x] layering & dependencies follow CONVENTIONS.md — new INTAKE altitude in the skill (loaded surface), no docs/ auto-load; intake.md md5-identical across both skill trees (7db837e), SKILL.md (988d199), glossary across 3 trees (239c4d9)
-- [ ] a person reviewed and approved the change   ← awaiting human gate
+- [x] a person reviewed and approved the change   ← Tin Dang, 2026-05-30 (gate PASS)
 
 Decision to sign at the gate (the one judgment call this task can't unit-test):
   - **The rubric's JUDGMENT** — do the 4 worked examples classify correctly? (dashboard→new-major,
@@ -262,9 +262,12 @@ Hardening applied before the gate (advisor pass):
     SPECIFY is not frozen, so this is an edit, not a change-request.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+The reviewer vouched the rubric's JUDGMENT — the 4 worked-example classifications
+(dashboard→new-major, corridor→sub-milestone, --json→task, str|null→change-request)
+hold against this project's real history. Structural suite 107/107; md5 parity across
+both skill trees + 3 doc trees confirmed. No add.py change (method-only).
+Reviewed by: Tin Dang · date: 2026-05-30
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
