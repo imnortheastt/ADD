@@ -356,7 +356,13 @@ def _parse_deps(raw: str | None) -> list[str]:
 
 
 def _task_done(t: dict) -> bool:
-    return t.get("phase") == "done" and t.get("gate") == "PASS"
+    # Matrix 3: a task is done when Verify reads PASS *or a signed RISK-ACCEPTED*.
+    # Both completing gates advance phase to "done" (cmd_gate), and a waiver is
+    # signed at gate time — so a verdict gate is enough here; we need not re-read
+    # the waiver. HARD-STOP never reaches "done". A bare `phase done` (escape
+    # hatch, gate still "none") deliberately does NOT count: completion needs a
+    # recorded verdict, not just a phase marker.
+    return t.get("phase") == "done" and t.get("gate") in ("PASS", "RISK-ACCEPTED")
 
 
 def _archived_task_slugs(state: dict) -> set[str]:
@@ -417,15 +423,29 @@ def cmd_gate(args: argparse.Namespace) -> None:
     slug = _resolve_task(state, args.slug)
     if args.outcome not in GATES:
         _die(f"outcome must be one of: {', '.join(GATES)}")
-    if args.outcome == "PASS":
-        # No silent skips (principle 7): a PASS gate is the VERIFY step's outcome,
-        # so the task must have reached verify. HARD-STOP / RISK-ACCEPTED stay
-        # recordable from any phase (a security finding is always HARD-STOP). The
-        # deliberate, logged override is `add.py phase verify <slug>`.
+    # Completing outcomes (PASS, RISK-ACCEPTED) are the VERIFY step's verdict, so they
+    # share the verify-phase guard — no silent skips (principle 7). HARD-STOP stays
+    # recordable from any phase (a security finding is always HARD-STOP). The
+    # deliberate, logged override is `add.py phase verify <slug>`.
+    completing = args.outcome in ("PASS", "RISK-ACCEPTED")
+    if completing:
         current = state["tasks"][slug]["phase"]
         if _phase_index(current) < _phase_index("verify"):
-            _die(f"gate_pass_before_verify: task '{slug}' is at '{current}'; reach "
-                 f"the verify phase first (or `add.py phase verify {slug}` to override)")
+            code = ("gate_pass_before_verify" if args.outcome == "PASS"
+                    else "gate_risk_accepted_before_verify")
+            _die(f"{code}: task '{slug}' is at '{current}'; reach the verify phase "
+                 f"first (or `add.py phase verify {slug}` to override)")
+    if args.outcome == "RISK-ACCEPTED":
+        # A waiver must be SIGNED: owner, ticket, expiry (glossary). Stored in state
+        # so a later `check` can read/expire it. Refuse a partial waiver outright.
+        missing = [f for f in ("owner", "ticket", "expires") if not getattr(args, f)]
+        if missing:
+            _die("waiver_incomplete: RISK-ACCEPTED is a signed waiver; supply "
+                 + ", ".join("--" + m for m in missing))
+        state["tasks"][slug]["waiver"] = {
+            "owner": args.owner, "ticket": args.ticket, "expires": args.expires,
+        }
+    if completing:
         state["tasks"][slug]["phase"] = "done"
         _sync_task_marker(root, slug, "done")
     state["tasks"][slug]["gate"] = args.outcome
@@ -668,7 +688,9 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     state["milestones"][slug]["status"] = "done"
     state["milestones"][slug]["updated"] = _now()
     save_state(root, state)
-    print(f"milestone '{slug}' -> done ({len(members)} tasks all PASS).")
+    waived = [s for s, t in members.items() if t.get("gate") == "RISK-ACCEPTED"]
+    tail = f" ({len(waived)} via a signed RISK-ACCEPTED waiver)" if waived else ""
+    print(f"milestone '{slug}' -> done ({len(members)} tasks complete{tail}).")
     print("Confirm the MILESTONE.md exit criteria are checked, then archive/start the next.")
 
 
@@ -841,6 +863,9 @@ def build_parser() -> argparse.ArgumentParser:
     pg = sub.add_parser("gate", help="record a verify gate outcome")
     pg.add_argument("outcome", choices=GATES)
     pg.add_argument("slug", nargs="?", default=None)
+    pg.add_argument("--owner", help="RISK-ACCEPTED waiver: accountable owner")
+    pg.add_argument("--ticket", help="RISK-ACCEPTED waiver: tracking ticket/link")
+    pg.add_argument("--expires", help="RISK-ACCEPTED waiver: expiry date")
     pg.set_defaults(func=cmd_gate)
 
     ps = sub.add_parser("stage", help="set the project stage")

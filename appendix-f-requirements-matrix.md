@@ -114,11 +114,14 @@ The rows above are the method's *promises*. A promise a tool quietly breaks is w
 | A passed task is genuinely done | `gate PASS` at `verify` advances to `done` | `test_gate_pass_at_verify_reaches_done` |
 | Deliberate ≠ silent | the explicit `phase` command is a logged escape hatch the guardrail does not block | `test_phase_override_escape_hatch` |
 | "A security finding is ALWAYS `HARD-STOP`" | `HARD-STOP` is recordable from any phase and never forces `done` | `test_hardstop_recordable_mid_build` |
+| "done … or a signed `RISK-ACCEPTED`" (Matrix 3) | `gate RISK-ACCEPTED` at `verify` advances to `done` (same guard as `PASS`) | `test_risk_accepted_complete_reaches_done` |
+| A waived task **can complete its milestone** (the point of the waiver) | the completeness predicate counts a signed `RISK-ACCEPTED` as done, so `milestone-done` / `ready` / `check` / `archive` accept it — it does not silently block | `test_milestone_done_accepts_a_waived_task` · `test_check_tolerates_a_recorded_waiver` |
+| A waiver is **signed** (owner · ticket · expiry) | `gate RISK-ACCEPTED` is refused without all three; they are stored in state | `test_risk_accepted_requires_waiver` · `test_risk_accepted_partial_waiver_refused` |
 | The book's gate outcomes are the engine's | `PASS` · `RISK-ACCEPTED` · `HARD-STOP` exist in both prose and `GATES` | `test_book_gate_outcomes_match_engine` |
 
-The tests are the source of truth; this table is their index. If a row here is ever unproven, that is a gap in the method, not a detail — the proof-harness exists to make such gaps fail loudly. (Tests: `add-method/tooling/test_proof_harness.py`.)
+The tests are the source of truth; this table is their index. If a row here is ever unproven, that is a gap in the method, not a detail — the proof-harness exists to make such gaps fail loudly. (Tests: `add-method/tooling/test_proof_harness.py`, `test_waiver.py`.)
 
-**Known gap (open):** Matrix 3 says a task is done when Verify reads "`PASS` (or a signed `RISK-ACCEPTED`)", but the engine advances only `PASS` to `done` — a `RISK-ACCEPTED` task stays at `verify` and cannot complete its milestone, and the waiver fields (owner · ticket · expiry) are not yet captured. This is the same Story↔State divergence the harness fixed for `PASS`, one outcome over; closing it is the lead-in to the next audit.
+**Now closed:** an earlier version of this table flagged a `RISK-ACCEPTED` gap — the engine advanced only `PASS` to `done`, so a waived task could not complete its milestone, and the waiver fields were uncaptured. The `RISK-ACCEPTED` rows above close it: a signed waiver (owner · ticket · expiry) now completes a verify-phase task and is stored in state for a later `check` to expire. Closing it took *two* edits, not one — advancing the gate to `done` was necessary but not sufficient, because the shared completeness predicate (`milestone-done` / `ready` / `check` / `archive` all read it) still counted only `PASS`; a waived task reached `done` yet silently blocked its milestone until that predicate was taught to count a signed `RISK-ACCEPTED` too. The end-to-end row above is what catches that class of half-fix — proving the *task* completes is not proving the *milestone* can. The pattern that found it — book-claim → engine-enforces → named test — is the standing way to audit the remaining rows.
 
 ---
 
