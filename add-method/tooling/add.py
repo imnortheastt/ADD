@@ -442,6 +442,14 @@ def cmd_status(args: argparse.Namespace) -> None:
             print(f"  {mark} {mslug:<20} {done}/{len(members)} tasks done"
                   f"   status={m.get('status', 'active')}")
 
+    # archived rollup — one line keeps state visible without re-bloating status
+    archived = state.get("archived") or []
+    if archived:
+        n = len(archived)
+        m_tasks = sum(rec.get("tasks", 0) for rec in archived)
+        print(f"archived: {n} milestone{'s' if n != 1 else ''} "
+              f"({m_tasks} task{'s' if m_tasks != 1 else ''})")
+
     print(f"active  : {active or '(none)'}")
     if not tasks:
         print("tasks   : (none yet) -> add.py new-task <slug>")
@@ -626,6 +634,38 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     print("Confirm the MILESTONE.md exit criteria are checked, then archive/start the next.")
 
 
+def cmd_archive_milestone(args: argparse.Namespace) -> None:
+    """Light archive: collapse a DONE milestone out of active state (files stay)."""
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    # validate before any mutation — a reject must leave state.json byte-for-byte unchanged
+    if slug not in state.get("milestones", {}):
+        _die("unknown_milestone")
+    ms = state["milestones"][slug]
+    if ms.get("status") != "done":
+        _die("milestone_not_done")        # run `add.py milestone-done` first; never lose live work
+    tasks = state.get("tasks", {})
+    members = [s for s, t in tasks.items() if t.get("milestone") == slug]
+    # a COUNT-only summary (never task bodies) so the active state can't regrow
+    state.setdefault("archived", []).append({
+        "slug": slug,
+        "title": ms.get("title", slug),
+        "tasks": len(members),
+        "archived": date.today().isoformat(),
+    })
+    del state["milestones"][slug]
+    for s in members:
+        del tasks[s]
+    if state.get("active_milestone") == slug:
+        state["active_milestone"] = None
+    if state.get("active_task") in members:
+        state["active_task"] = None
+    save_state(root, state)
+    print(f"archived milestone '{slug}' ({len(members)} tasks) — removed from active state.")
+    print("files on disk are untouched; see `add.py status` for the archived rollup.")
+
+
 def cmd_set_milestone(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
@@ -734,6 +774,11 @@ def build_parser() -> argparse.ArgumentParser:
     psm.add_argument("task")
     psm.add_argument("milestone", help="milestone slug, or 'none' to detach")
     psm.set_defaults(func=cmd_set_milestone)
+
+    pam = sub.add_parser("archive-milestone",
+                         help="collapse a done milestone out of active state (files stay on disk)")
+    pam.add_argument("slug")
+    pam.set_defaults(func=cmd_archive_milestone)
 
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
     pp.add_argument("phase", choices=PHASES)

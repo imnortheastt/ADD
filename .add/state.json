@@ -55,14 +55,14 @@
     },
     "milestone-archive": {
       "title": "collapse done milestones",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v1-1",
       "depends_on": [
         "set-milestone-cmd"
       ],
       "created": "2026-05-28T16:22:51+00:00",
-      "updated": "2026-05-28T16:22:51+00:00"
+      "updated": "2026-05-29T03:08:26+00:00"
     },
     "project-foundation": {
       "title": "Cross-milestone PROJECT.md survivor doc + foundation chapter",
@@ -86,7 +86,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T03:02:36+00:00",
+  "updated": "2026-05-29T03:08:26+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
