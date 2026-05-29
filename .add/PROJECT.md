@@ -34,8 +34,8 @@ slug: AIDD-Book · stage: mvp · updated: 2026-05-29
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
      command surface and the text it prints — there is no screen, so this stays short. -->
-- Primary users & jobs: the author (MRQ "Học Ứng Dụng AI" lead) shipping ADD as a
-  product; **AI agents** that load the skill; **developers** adopting ADD who must
+- Primary users & jobs: the author (MRQ maintainer) shipping ADD as a product;
+  **AI agents** that load the skill; **developers** adopting ADD who must
   read/trust/follow the method.
 - The interface (no GUI): the `add.py` command surface + `npx @mrq/add`, and the text
   they print. Core flow: `init` → fill foundation → `new-task` → run the loop →
@@ -54,3 +54,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-05-29
 | 2026-05-29 | foundation = one PROJECT.md (not 3 files) | minimal, GSD-proven | this doc |
 | 2026-05-29 | guideline injection dynamic-by-reference | avoids context-rot (ETH) | v1-2 |
 | 2026-05-29 | UDD = UI/UX-Driven, lives foundation-only | most tasks have no UI; no dead-weight step | this section is UDD's home |
+| 2026-05-29 | docs English-only; drop the Vietnamese translation + non-English branding | single-language product surface, simpler to maintain | vi-quickstart descoped; `guide` covered in the EN Quickstart |
