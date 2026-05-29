@@ -240,7 +240,8 @@ Result: full suite 114/114 (107 prior + 7 new); test_scope_loop 7/7; red proven 
 
 Evidence pre-filled by the AI; the gate signature itself is the human's (Verify owner=human).
 - [x] all tests pass — full suite 114/114 (107 prior + 7 new); test_scope_loop 7/7
-- [x] coverage did not decrease — 7 structural tests added (one per frozen invariant), none removed
+- [x] coverage did not decrease — 7 structural tests added, none removed (NB: the frozen contract
+      lists 8 MUST-contain artifact items; the MILESTONE.md section checklist is the 1 untested one — logged in OBSERVE)
 - [x] no test or contract was altered during build — only scope.md + SKILL.md + glossary added
 - [x] concurrency / timing safe — N/A: a static doc artifact, no code path, no IO, nothing to race
 - [x] no exposed secrets, injection openings, or unexpected dependencies — prose only; secret scan clean; stdlib-only test
@@ -278,3 +279,9 @@ Spec delta for the next loop:
     (reopen this task's frozen Enforcement decision as a change-request — not a silent edit).
   - Residual coverage gap (logged, not blocking): the structural suite guards scope.md's SHAPE;
     it can never assert a drafted milestone is well-sized — that stays a human gate call.
+  - Test/contract gap (advisor-caught, logged not blocking): the frozen contract froze exactly 7
+    tests but lists 8 MUST-contain artifact items — the MILESTONE.md section checklist (goal · Scope
+    In/Out · Shared decisions · Shared contracts · Tasks · Exit criteria), the substantive core, is
+    NOT structurally guarded; deleting that section keeps the suite green. The artifact IS conformant
+    (the section is present), so this is regression-risk, not a defect. Adding an 8th test edits the
+    frozen test list → if wanted, it is a change-request back to CONTRACT, never a silent edit.
