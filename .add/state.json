@@ -144,7 +144,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T14:07:47+00:00",
+  "updated": "2026-05-29T14:38:42+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -166,9 +166,9 @@
       "title": "Transparent \u00b7 Provable \u00b7 Minimal",
       "goal": "Make ADD provable and explicitly two-surface (State/Story) without adding context-rot",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-05-29T06:52:24+00:00",
-      "updated": "2026-05-29T06:52:24+00:00"
+      "updated": "2026-05-29T14:38:42+00:00"
     }
   },
   "active_milestone": "v2"
