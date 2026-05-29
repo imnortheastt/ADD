@@ -5,6 +5,7 @@ The guide is the artifact under test: we assert it exists, documents the real
 commands, and that its golden command spine actually drives a project to a PASS.
 Run: python3 -m unittest test_quickstart -v
 """
+import argparse
 import os
 import re
 import tempfile
@@ -22,6 +23,7 @@ REQUIRED_STRINGS = [
     "add.py advance",
     "add.py gate PASS",
     "add.py check",
+    "add.py guide",
 ]
 
 
@@ -38,10 +40,11 @@ class QuickstartGuideTest(unittest.TestCase):
             self.assertIn(s, text, f"guide must document: {s}")
 
     def test_documented_commands_are_real(self):
-        # every `add.py <word>` mentioned must be a real subcommand
-        valid = set(add.PHASES) | {  # advance targets share names w/ phases; ignore
-            "init", "new-task", "status", "advance", "gate", "phase", "stage", "check",
-        }
+        # every `add.py <word>` mentioned must be a real subcommand — derive the valid
+        # set from the parser (future-proof: new commands are recognised automatically)
+        sub = next(a for a in add.build_parser()._actions
+                   if isinstance(a, argparse._SubParsersAction))
+        valid = set(sub.choices) | set(add.PHASES)
         tokens = set(re.findall(r"add\.py\s+([a-z\-]+)", self._text()))
         unknown = {t for t in tokens if t not in valid}
         self.assertFalse(unknown, f"guide references unknown commands: {unknown}")

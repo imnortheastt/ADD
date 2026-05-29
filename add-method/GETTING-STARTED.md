@@ -52,6 +52,16 @@ with it** — that's how ADD resumes work without re-reading your whole repo.
 > then you can run `add status`, `add advance`, etc. The rest of this guide writes
 > the full `python3 .add/tooling/add.py ...` form so copy-paste always works.
 
+And when you're mid-task and unsure what the current phase needs, ask:
+
+```bash
+python3 .add/tooling/add.py guide
+```
+
+`status` tells you *where* you are; `guide` tells you *what to do next* — the active
+task's phase, the one concrete next action, the chapter to read, and the exact command
+to run once that phase is done.
+
 ---
 
 ## 3 · Start your first feature

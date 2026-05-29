@@ -44,14 +44,14 @@
     },
     "vi-quickstart": {
       "title": "Vietnamese Quickstart for MRQ",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v1-1",
       "depends_on": [
         "add-guide-cmd"
       ],
       "created": "2026-05-28T16:22:51+00:00",
-      "updated": "2026-05-28T16:22:51+00:00"
+      "updated": "2026-05-29T03:18:58+00:00"
     },
     "milestone-archive": {
       "title": "collapse done milestones",
@@ -86,7 +86,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T03:08:26+00:00",
+  "updated": "2026-05-29T03:18:58+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

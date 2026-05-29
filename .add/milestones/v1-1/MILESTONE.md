@@ -9,7 +9,8 @@ stage: mvp · status: active · created: 2026-05-28
 
 ## Scope
 In:  ergonomics + adoption — attach existing tasks to milestones, an interactive
-     next-step guide, a Vietnamese Quickstart for the MRQ community, milestone archiving.
+     next-step guide, a Quickstart (Vietnamese translation descoped → English-only),
+     milestone archiving.
 Out: backlog (999.x) parking; web UI; multi-repo workspaces (later milestones).
 
 ## Shared decisions & glossary deltas   (living — every task must honor these)
@@ -22,13 +23,13 @@ Out: backlog (999.x) parking; web UI; multi-repo workspaces (later milestones).
   (milestone-archive depends on it; freeze it first so the archive task can build against it)
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] set-milestone-cmd   depends-on: none              — attach/move an existing task to a milestone
-- [ ] add-guide-cmd       depends-on: none              — `add.py guide`: print the next concrete step
-- [ ] vi-quickstart       depends-on: add-guide-cmd     — Vietnamese Quickstart (covers guide too)
-- [ ] milestone-archive   depends-on: set-milestone-cmd — collapse a done milestone, keep state small
+- [x] set-milestone-cmd   depends-on: none              — attach/move an existing task to a milestone
+- [x] add-guide-cmd       depends-on: none              — `add.py guide`: print the next concrete step
+- [x] vi-quickstart       depends-on: add-guide-cmd     — DESCOPED to English-only; `guide` now covered in the Quickstart
+- [x] milestone-archive   depends-on: set-milestone-cmd — collapse a done milestone, keep state small
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] User can move an existing task into a milestone without editing JSON   (← set-milestone-cmd)
-- [ ] User can ask the tool "what do I do next?" and get a concrete answer   (← add-guide-cmd)
-- [ ] A Vietnamese speaker can onboard from a translated Quickstart          (← vi-quickstart)
-- [ ] A finished milestone collapses so state.json/status stay small         (← milestone-archive)
+- [x] User can move an existing task into a milestone without editing JSON   (← set-milestone-cmd)
+- [x] User can ask the tool "what do I do next?" and get a concrete answer   (← add-guide-cmd)
+- [~] DESCOPED — kept English-only; the Quickstart now teaches `guide`        (← vi-quickstart)
+- [x] A finished milestone collapses so state.json/status stay small         (← milestone-archive)
