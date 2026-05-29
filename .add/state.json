@@ -175,7 +175,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T18:14:38+00:00",
+  "updated": "2026-05-29T18:28:10+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -216,7 +216,15 @@
       "status": "done",
       "created": "2026-05-29T15:43:23+00:00",
       "updated": "2026-05-29T18:14:38+00:00"
+    },
+    "v5": {
+      "title": "The Self-Improving Foundation",
+      "goal": "Turn ADD's five competencies into a self-improving loop: each task's learnings, tagged by competency and human-confirmed, fold into a versioned PROJECT.md that sharpens DDD\u00b7SDD\u00b7UDD\u00b7TDD\u00b7ADD across milestones",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-05-29T18:28:10+00:00",
+      "updated": "2026-05-29T18:28:10+00:00"
     }
   },
-  "active_milestone": "v4-1"
+  "active_milestone": "v5"
 }
