@@ -20,11 +20,15 @@
 
 **`HARD-STOP`** — a gate outcome meaning work cannot proceed; triggered by any failing test or security finding.
 
+**Intake** — the step *before* a task: sizing a raw request into versioned scope by classifying it into one **request bucket**. The AI proposes `{bucket, rationale, command}`; the human confirms. Lives in the `add` skill's `intake.md` (the intake altitude, above the per-task flow).
+
 **Living document** — an artifact expected to change as the loop learns; never frozen forever (the one exception being a versioned contract, which changes only via a change request).
 
 **Owner (of a phase)** — who drives a phase, exposed by `add.py … --json` as `human`, `seam`, or `ai`. It tells an autonomous harness where it may run (`ai`) and where it must checkpoint to a person (`human`/`seam`), following the who-does-what table (Verify is always `human`).
 
 **Profile** — the intensity at which the method is run: Express, Standard, or Regulated.
+
+**Request bucket** — one of the four intake classifications — `new-major`, `sub-milestone`, `task`, or `change-request` — chosen by the tie-break order (the frozen-scope test runs before the size test). A request too vague to size is rejected `ask_human`; one that touches frozen scope, `frozen_scope`; one spanning buckets, `split_required`.
 
 **`RISK-ACCEPTED`** — a gate outcome meaning work proceeds with a signed waiver (owner, ticket, expiry); allowed for non-security gaps only.
 

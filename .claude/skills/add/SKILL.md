@@ -34,8 +34,16 @@ python3 .add/tooling/add.py status
 - **No `.add/` yet** → go to **phase 0 (setup)**: read `phases/0-setup.md`.
 - **A task is active** → open `.add/tasks/<active>/TASK.md`, look at its `phase:`
   marker, and read the matching `phases/<n>-<phase>.md`. Work *only* that phase.
-- **No active task** → ask the user which feature to build, then
-  `python3 .add/tooling/add.py new-task <slug> --title "..."`.
+- **No active task** → first SIZE the request (see Intake below), then create the
+  right scope: `python3 .add/tooling/add.py new-task <slug> --title "..."`.
+
+## Intake — size a request before creating scope
+
+When the user brings a raw request, classify it BEFORE making a milestone or task:
+read `intake.md` and place it in exactly one bucket — `new-major` · `sub-milestone`
+· `task` · `change-request` — then propose `{ bucket, rationale, command }` and let
+the human confirm. This is the intake altitude (request → versioned scope); see
+`intake.md` for the rubric, the tie-break order, and worked examples.
 
 ## The flow and which file to load
 
