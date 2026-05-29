@@ -39,7 +39,9 @@ Must:
   - The rubric lives in `add-method/skill/add/intake.md` (NEW; a new INTAKE altitude — phases
     0–7 are per-task, intake is request->milestone), loaded only at intake (progressive
     disclosure), with a pointer from `SKILL.md`. No `add.py` change; reads no docs/ chapter to
-    decide (the v2 Minimal pillar holds). Synced to the 3 doc/skill trees like every artifact.
+    decide (the v2 Minimal pillar holds). intake.md is a SKILL artifact, synced byte-identical
+    across the 2 skill trees (canonical + dogfood); the glossary touch is the DOCS artifact,
+    synced across its 3 doc trees.
 Reject (named situations the rubric must NOT mishandle):
   - an ambiguous / underspecified request -> the AI STOPS and asks, never guesses a bucket
     -> "ask_human"  (the skill's "ask, don't guess" rule, at milestone altitude).
@@ -236,8 +238,8 @@ Constraints honored: no test or contract altered during build; no new dependency
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
 Evidence pre-filled by the AI; the gate signature itself is the human's (Verify owner=human).
-- [x] all tests pass — full suite 106/106 (100 prior + 6 new); test_intake_rubric 6/6
-- [x] coverage did not decrease — 6 structural tests added (one per frozen invariant), none removed
+- [x] all tests pass — full suite 107/107 (100 prior + 7 new); test_intake_rubric 7/7
+- [x] coverage did not decrease — 7 structural tests added (one per frozen invariant), none removed
 - [x] no test or contract was altered during build — only intake.md + SKILL.md + glossary added
 - [x] concurrency / timing safe — N/A: a static doc artifact, no code path, no IO, nothing to race
 - [x] no exposed secrets, injection openings, or unexpected dependencies — prose only; secret scan clean; stdlib-only test
@@ -248,10 +250,16 @@ Decision to sign at the gate (the one judgment call this task can't unit-test):
   - **The rubric's JUDGMENT** — do the 4 worked examples classify correctly? (dashboard→new-major,
     corridor→sub-milestone, --json→task, str|null amendment→change-request). The structural test
     proves the artifact is well-formed; only a person can vouch the classifications are sound.
-Blind spots surfaced for the reviewer:
-  - SPECIFY line 42 says "3 doc/skill trees" loosely — the rubric is a SKILL artifact (2 skill
-    trees); the glossary is the docs artifact (3 doc trees). The frozen CONTRACT is precise; this
-    is only an imprecise word in the non-frozen SPECIFY prose. Flagged, not silently edited.
+Hardening applied before the gate (advisor pass):
+  - The structural suite under-covered the frozen CONTRACT — it asserted the 4 bucket NAMES
+    appeared in prose but not that the buckets TABLE or the proposal shape existed (and
+    `assertIn('task')` was near-tautological, "task" being ubiquitous in the prose). Added
+    test_buckets_table_lists_all_four_with_commands (parses the table; goes red if it or a row
+    is deleted — proven: table removed → 0 buckets parsed) and test_proposal_shape_documented.
+    Suite 106→107. The artifact was already conformant; this closes a regression gap, not a defect.
+  - SPECIFY's tree-count wording was imprecise ("3 doc/skill trees"); corrected in place — the
+    rubric is a SKILL artifact (2 skill trees), the glossary the DOCS artifact (3 doc trees).
+    SPECIFY is not frozen, so this is an edit, not a change-request.
 
 ### GATE RECORD
 Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
@@ -264,5 +272,16 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors):
+  - **human-override rate** — how often the human changes the AI's proposed bucket at intake.
+    This is the rubric's true error signal; the structural test cannot see live judgment, only
+    the override rate reveals miscalibration. A rising rate = the rubric or tie-break is drifting.
+  - **per-reject-code rate** — `ask_human` vs `frozen_scope` vs `split_required`. A spike in
+    `split_required` hints the bucket boundaries are too narrow; a spike in `ask_human`, that
+    requests arrive under-specified (an intake-prompt problem, not a rubric one).
+Spec delta for the next loop:
+  - If a recurring request fits no bucket, that is a 5th-bucket signal → reopen this rubric as a
+    change-request (the buckets list is frozen @ v1; growing it is a versioned amendment).
+  - Residual coverage gap (logged, not blocking): the structural suite guards the artifact's
+    SHAPE; it can never assert a classification is *correct* — that stays a human gate call. If
+    overrides cluster on one bucket, add that case to the worked-examples table.

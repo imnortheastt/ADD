@@ -60,6 +60,35 @@ def _parse_examples_table(text: str):
     return buckets
 
 
+def _parse_buckets_table(text: str):
+    """Parse the | Bucket | Decision test | Implied command | table -> {bucket: command}.
+
+    Distinguished from the worked-examples table by a 'command' header column and NO 'request'.
+    """
+    out = {}
+    in_table = False
+    bucket_col = cmd_col = None
+    for line in text.splitlines():
+        s = line.strip()
+        if not s.startswith("|"):
+            in_table = False
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        lowered = [c.lower() for c in cells]
+        if "bucket" in lowered and "request" not in lowered and any("command" in c for c in lowered):
+            in_table = True
+            bucket_col = lowered.index("bucket")
+            cmd_col = next(i for i, c in enumerate(lowered) if "command" in c)
+            continue
+        if not in_table:
+            continue
+        if set("".join(cells)) <= set("-: "):
+            continue
+        if len(cells) > max(bucket_col, cmd_col):
+            out[cells[bucket_col].strip("`")] = cells[cmd_col]
+    return out
+
+
 class IntakeRubricTest(unittest.TestCase):
     def test_intake_exists_in_both_trees_with_md5_parity(self):
         self.assertTrue(CANONICAL_INTAKE.exists(), f"missing {CANONICAL_INTAKE}")
@@ -67,10 +96,26 @@ class IntakeRubricTest(unittest.TestCase):
         self.assertEqual(_md5(CANONICAL_INTAKE), _md5(DOGFOOD_INTAKE),
                          "intake.md differs between the canonical and dogfood skill trees")
 
-    def test_documents_all_four_buckets(self):
+    def test_buckets_table_lists_all_four_with_commands(self):
+        # Contract: the buckets table carries {bucket, decision-test, implied command}.
+        # Guard the TABLE (not just that the names appear in prose) so deleting the
+        # table — or a row — goes red. 'task' as a prose word is near-ubiquitous; as a
+        # table key it is distinctive.
         text = CANONICAL_INTAKE.read_text(encoding="utf-8")
+        table = _parse_buckets_table(text)
+        self.assertEqual(BUCKETS, set(table) & BUCKETS,
+                         f"buckets table must list all 4 buckets as rows; found {set(table)}")
         for b in BUCKETS:
-            self.assertIn(b, text, f"intake.md does not document the '{b}' bucket")
+            self.assertTrue(table[b].strip(), f"buckets table row '{b}' has an empty command cell")
+
+    def test_proposal_shape_documented(self):
+        # Contract: intake.md documents the proposal {bucket, rationale, command} and the
+        # reject {reject, rationale} shapes, plus the per-bucket command mapping.
+        text = CANONICAL_INTAKE.read_text(encoding="utf-8").lower()
+        for field in ("bucket", "rationale", "command", "reject"):
+            self.assertIn(field, text, f"intake.md does not document the proposal field '{field}'")
+        for verb in ("new-milestone", "new-task", "phase"):
+            self.assertIn(verb, text, f"intake.md does not document the '{verb}' command mapping")
 
     def test_documents_all_three_reject_codes(self):
         text = CANONICAL_INTAKE.read_text(encoding="utf-8")
