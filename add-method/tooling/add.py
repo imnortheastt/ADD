@@ -27,7 +27,7 @@ MILESTONE_FILE = "MILESTONE.md"
 STAGES = ("prototype", "poc", "mvp", "production")
 PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
-SETUP_FILES = ("CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist")
+SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist")
 
 # Minimal embedded fallback so the tool still works if templates/ is missing
 # (circuit breaker: never hard-fail just because a template file was deleted).
@@ -141,17 +141,25 @@ def cmd_init(args: argparse.Namespace) -> None:
 
     (root / "tasks").mkdir(parents=True, exist_ok=True)
     today = date.today().isoformat()
+    proj_name = args.name or base.name
 
-    # survivor-layer files — never clobber an existing one
+    # survivor-layer files — never clobber an existing one, never write a blank one
     for fname in SETUP_FILES:
         dest = root / fname
         if dest.exists():
             continue
-        tmpl_name = fname
-        _atomic_write(dest, _render_template(tmpl_name, date=today))
+        rendered = _render_template(fname, date=today, project=proj_name, stage=args.stage)
+        if not rendered.strip():
+            # A missing/stale template rendered to nothing. Skip rather than create
+            # a 0-content survivor file (design-for-failure; circuit breaker so an
+            # upgrade with a stale templates/ dir can't silently produce empty docs).
+            print(f"add: warning: template for {fname} is missing/blank — skipped",
+                  file=sys.stderr)
+            continue
+        _atomic_write(dest, rendered)
 
     state = {
-        "project": args.name or base.name,
+        "project": proj_name,
         "stage": args.stage,
         "active_task": None,
         "active_milestone": None,
@@ -288,6 +296,9 @@ def cmd_status(args: argparse.Namespace) -> None:
     tasks = state.get("tasks", {})
     print(f"project : {state['project']}")
     print(f"stage   : {state['stage']}")
+    # foundation pointer — read the cross-milestone context first (anti-rot)
+    if (root / "PROJECT.md").exists():
+        print("context : .add/PROJECT.md  (foundation: domain · spec · UI/UX — read first)")
 
     # milestone rollup (only when milestones are in use)
     milestones = state.get("milestones") or {}

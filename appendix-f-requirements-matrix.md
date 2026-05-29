@@ -20,7 +20,7 @@ A **project** sets up the survivor-layer documents once. A **milestone** is a de
 
 ```mermaid
 flowchart TD
-  P["PROJECT — the product<br/>CONVENTIONS · GLOSSARY · MODEL_REGISTRY · allowlist · playbook"]
+  P["PROJECT — the product<br/>PROJECT.md (foundation) · CONVENTIONS · GLOSSARY · MODEL_REGISTRY · allowlist · playbook"]
   P --> M1["MILESTONE · Prototype"]
   P --> M2["MILESTONE · POC"]
   P --> M3["MILESTONE · MVP"]
@@ -42,6 +42,7 @@ Which document lives at which level, who is accountable for it, and how long it 
 
 | Document | Level | Created | Lifespan | Accountable owner |
 |----------|:-----:|---------|----------|-------------------|
+| `PROJECT.md` (foundation: domain · spec · UI/UX) | Project | setup, grows | whole project | Product / Architect |
 | `CONVENTIONS.md` | Project | setup | whole project | Architect / Lead |
 | `GLOSSARY.md` | Project | setup, grows | whole project | Product / Domain |
 | `MODEL_REGISTRY.md` | Project | setup | whole project | Architect / Lead |

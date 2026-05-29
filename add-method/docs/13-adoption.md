@@ -1,6 +1,6 @@
 # 13 · Adoption and onboarding
 
-[← 12 Roles](./12-roles.md) · [Contents](./README.md) · Next: [Appendix A Templates →](./appendix-a-templates.md)
+[← 12 Roles](./12-roles.md) · [Contents](./README.md) · Next: [14 The foundation →](./14-foundation.md)
 
 How a team starts using AIDD, and how a new person becomes productive in it.
 

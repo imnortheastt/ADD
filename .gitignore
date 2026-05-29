@@ -9,6 +9,9 @@ node_modules/
 # OS
 .DS_Store
 
+# Tooling / MCP workspace artifacts (not part of the product)
+.serena/
+
 # ADD runtime: keep state + tasks + survivor files, but not the bundled book copy
 # (the book source already lives at the repo root / in add-method/docs)
 .add/docs/

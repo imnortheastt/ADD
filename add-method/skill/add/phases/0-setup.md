@@ -11,6 +11,9 @@ Goal: make every later gate enforceable automatically. Do this once.
    If the tool isn't there yet, the installer (`npx @mrq/add init`) placed it at
    `.add/tooling/add.py`.
 2. Fill the survivor-layer files (they outlive all code):
+   - `.add/PROJECT.md` — **the foundation**: Domain (DDD) · Spec/Living-Document (SDD,
+     → active milestone) · UI/UX (UDD) · Key Decisions. Cross-milestone context the
+     engine reads first. Keep it to one screen. Book: `docs/14-foundation.md`.
    - `.add/CONVENTIONS.md` — language, folders, naming, lint, error-code style, architecture.
    - `.add/GLOSSARY.md` — one name per concept; used in specs, contracts, and code.
    - `.add/MODEL_REGISTRY.md` — which AI model/version writes this project.
@@ -20,6 +23,7 @@ Goal: make every later gate enforceable automatically. Do this once.
 ## Exit gate
 
 - [ ] `.add/state.json` exists (`add.py status` works).
+- [ ] `.add/PROJECT.md` foundation filled (domain · spec · UI/UX).
 - [ ] CONVENTIONS, GLOSSARY, MODEL_REGISTRY, allowlist filled.
 - [ ] Pipeline green on the skeleton.
 

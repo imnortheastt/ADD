@@ -49,6 +49,7 @@ For every feature, before AI writes any code, you write four short artifacts in 
 - [11 · Governance](./11-governance.md)
 - [12 · Roles and responsibilities](./12-roles.md)
 - [13 · Adoption and onboarding](./13-adoption.md)
+- [14 · The foundation: project context across milestones](./14-foundation.md)
 
 **Part IV — Reference**
 - [Appendix A · Templates](./appendix-a-templates.md)

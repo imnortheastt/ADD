@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "milestone-archive",
+  "active_task": "guideline-inject",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -63,10 +63,30 @@
       ],
       "created": "2026-05-28T16:22:51+00:00",
       "updated": "2026-05-28T16:22:51+00:00"
+    },
+    "project-foundation": {
+      "title": "Cross-milestone PROJECT.md survivor doc + foundation chapter",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v1-2",
+      "depends_on": [],
+      "created": "2026-05-29T01:24:39+00:00",
+      "updated": "2026-05-29T01:31:45+00:00"
+    },
+    "guideline-inject": {
+      "title": "Dynamic-by-reference guideline injection into AGENTS.md/CLAUDE.md",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v1-2",
+      "depends_on": [
+        "project-foundation"
+      ],
+      "created": "2026-05-29T01:24:39+00:00",
+      "updated": "2026-05-29T01:24:39+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-28T16:40:50+00:00",
+  "updated": "2026-05-29T01:31:45+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -75,7 +95,15 @@
       "status": "active",
       "created": "2026-05-28T16:23:20+00:00",
       "updated": "2026-05-28T16:23:20+00:00"
+    },
+    "v1-2": {
+      "title": "V1 2",
+      "goal": "Cross-milestone foundation (PROJECT.md) + dynamic CLAUDE.md/AGENTS.md guideline injection",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-05-29T01:24:39+00:00",
+      "updated": "2026-05-29T01:24:39+00:00"
     }
   },
-  "active_milestone": "v1-1"
+  "active_milestone": "v1-2"
 }

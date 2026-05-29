@@ -1,6 +1,6 @@
 # Appendix A · Templates
 
-[← 13 Adoption](./13-adoption.md) · [Contents](./README.md) · Next: [Appendix B Prompts →](./appendix-b-prompts.md)
+[← 14 The foundation](./14-foundation.md) · [Contents](./README.md) · Next: [Appendix B Prompts →](./appendix-b-prompts.md)
 
 Copy-paste blanks. Project-level templates are filled once at setup; feature-level templates are filled once per feature.
 
