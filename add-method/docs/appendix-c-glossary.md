@@ -34,6 +34,8 @@
 
 **Scenario** — a single rule expressed as Given/When/Then; readable by people and checkable by machines; the bridge between spec and tests.
 
+**Scope drafting (scope-loop)** — the second half of **intake**: once a request is classified `new-major`/`sub-milestone`, turning it into a confirmed, well-formed `MILESTONE.md` (goal · scope · exit criteria · breadth-first tasks) through discussion. Every exit criterion maps to a declared task slug; the AI proposes the draft, the human confirms before anything is created. Lives in the `add` skill's `scope.md`.
+
 **Spec (`SPEC.md`)** — the plain-language statement of what a feature must do, must reject, and assumes.
 
 **Spine / continuous concern** — a concern that runs through every step rather than being one step: security, testing, observability, cost.

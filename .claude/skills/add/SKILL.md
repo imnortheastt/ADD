@@ -45,6 +45,11 @@ read `intake.md` and place it in exactly one bucket — `new-major` · `sub-mile
 the human confirm. This is the intake altitude (request → versioned scope); see
 `intake.md` for the rubric, the tie-break order, and worked examples.
 
+Once a request is classified `new-major`/`sub-milestone`, drafting the actual
+`MILESTONE.md` (goal · scope · exit criteria · breadth-first tasks) is the second
+half of intake: read `scope.md` for how to fill it well, the per-outcome behavior,
+and the confirm-before-create rule. You propose the draft; the human confirms.
+
 ## The flow and which file to load
 
 Load the phase guide **only for the phase you are in** (progressive disclosure):
