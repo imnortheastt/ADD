@@ -131,8 +131,10 @@ CLI contract — a `--json` flag added to four existing subcommands. No new subc
 
 ```
 add.py guide --json
-  exit 0 -> {"task": str|null, "phase": str, "owner": "human"|"seam"|"ai",
-             "stop": bool, "next_step": str, "chapter": str, "gate": str}
+  exit 0 -> {"task": str|null, "phase": str|null, "owner": "human"|"seam"|"ai",
+             "stop": bool, "next_step": str, "chapter": str, "gate": str|null}
+  # phase & gate are null IFF task is null (no active task): the honest value, not a
+  # fabricated string. With an active task they are always strings. (amended @ v1.1)
 
 add.py status --json
   exit 0 -> {"project": str, "stage": str, "active_task": str|null,
@@ -167,6 +169,10 @@ stage ∈ {prototype,poc,mvp,production}. The `owner`/`stop` vocabulary is NEW (
 introduces it) — to be added to the glossary as part of build.
 
 Status: FROZEN @ v1   (approved by Tin Dang via AskUserQuestion, 2026-05-29)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Amendment @ v1.1 (PENDING gate approval — surfaced at Verify, not silent): the no-active-task
+case of `guide --json` types `phase` and `gate` as `str|null` (null when task is null). The v1
+text said `str`; the impl always emitted null for the no-task case, so v1.1 makes the contract
+match the honest, already-shipped behavior. Pinned by `test_guide_json_no_active_task_is_parseable`.
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 
@@ -184,7 +190,7 @@ Plan:
   - test_json_output_is_machine_clean — whole stdout parses as ONE json object (all 4 cmds)
   - test_text_mode_is_unchanged — no --json -> human markers present, no JSON leak
   - test_minimal_pillar_holds_for_json — read-spy over the 4 --json cmds: no docs/ read
-  - test_guide_json_no_active_task_is_parseable — task=null, stop=true, exit 0
+  - test_guide_json_no_active_task_is_parseable — task=null, phase=null, gate=null, owner=human, stop=true, exit 0  (pins the v1.1 amendment)
   - test_status_json_fails_closed_on_bad_state — no_state, exit 1, EMPTY stdout
   - test_guide_json_unmapped_phase_fails_closed — unmapped_phase, exit 1, EMPTY stdout
 
@@ -210,11 +216,11 @@ Built:
   - `--json` branch on cmd_guide / cmd_status / cmd_check / cmd_ready (early-return; text path untouched)
   - `--json` flag on the 4 subparsers
   - appendix-c glossary: "Owner (of a phase)" + "Stop signal" entries (3 trees, md5 80536e8)
-Contract deviation (recorded, surfaced at the gate — NOT silent): the frozen contract named
-one error `no_state`. The pre-existing TEXT-mode `check` keeps its finer codes
-(`no_project` / `state_invalid`) for backward compatibility; only the `--json` paths emit
-`no_state`. The frozen INVARIANT (empty stdout + exit 1, never partial JSON) holds in both —
-strictly-better, not a shape change.
+Both invariants satisfied (NOT a deviation — clarified): the frozen contract governs `--json`,
+and `--json` DOES emit `no_state` per the ERRORS table (compliance). Text-mode `check` keeps its
+pre-existing finer codes (`no_project` / `state_invalid`) — which the byte-for-byte-unchanged
+invariant REQUIRES. So the `--json` ERRORS contract and the text-unchanged invariant both hold;
+there is nothing here for the reviewer to "accept".
 Constraints honored: no test or contract altered during build; no new dependency (stdlib `json`).
 
 <!-- EXIT: all green; coverage held; no test/contract touched; no unlisted dependency. -->
@@ -232,9 +238,15 @@ Evidence pre-filled by the AI; the gate signature itself is the human's (Verify 
 - [x] layering & dependencies follow CONVENTIONS.md — mirrors existing cmd_* + helper structure; both add.py copies md5-identical (209182c)
 - [ ] a person reviewed and approved the change   ← awaiting human gate
 
+Decision to sign at the gate (a freeze amendment — the one thing needing your approval):
+  - **Contract amendment @ v1.1** — `guide --json` types `phase`/`gate` as `str|null` (null when
+    there is no active task). v1 said `str`; the impl always emitted null, and faking a string
+    would be dishonest, so v1.1 makes the contract match shipped behavior. Now PINNED by a test
+    assertion (was the gap that let 100/100 hide it). Approving the gate approves this amendment.
 Blind spots surfaced for the reviewer:
-  - the `no_state` contract deviation (see BUILD): --json uses `no_state`; text `check` keeps `no_project`/`state_invalid`. Invariant (empty stdout + exit 1) holds.
   - FORK B exposes `tests=ai`: this task only REPORTS the map; an orchestrator acting on it is UNSAFE until v4-2 ships "tests red before build". Recorded for v4-2.
+  - (NOT a blind spot, clarified) the `no_state` codes: `--json` emits `no_state` per contract;
+    text mode keeps `no_project`/`state_invalid` as the unchanged-invariant requires. Both hold.
 
 ### GATE RECORD
 Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
@@ -247,5 +259,13 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
+Watch (reuse scenarios as monitors):
+  - rate of `no_state` / `unmapped_phase` exits from `--json` (a harness hitting these = it
+    drove into a corrupt or unmapped state — should surface, not silently retry).
+  - **Asserted-not-proven gap (the v2 lesson, one level down):** the byte-for-byte text-mode
+    invariant is guarded by `test_text_mode_is_unchanged`, which checks a few substrings + "no
+    JSON leak" — it would NOT catch a future edit that reworded a text path. The invariant holds
+    today by construction (early-return; text path untouched), but that's a structural argument,
+    not a test. If anyone later touches a text path, this frozen invariant has no real guard.
+    Candidate next-loop fix: a golden-output snapshot test over the text commands.
 Spec delta for the next loop: <what production taught you>

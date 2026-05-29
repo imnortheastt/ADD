@@ -157,6 +157,11 @@ class MachineStateTest(unittest.TestCase):
         d = self._json_only(out)
         self.assertIsNone(d["task"])
         self.assertTrue(d["stop"])
+        # contract conformance (amended @ v1.1): when there is no task, phase and gate
+        # are null — not a fabricated string. A consumer typing them must allow null.
+        self.assertIsNone(d["phase"])
+        self.assertIsNone(d["gate"])
+        self.assertEqual(d["owner"], "human")
 
     def test_status_json_fails_closed_on_bad_state(self):
         (Path(self.tmp) / ".add" / "state.json").write_text("{not valid json",
