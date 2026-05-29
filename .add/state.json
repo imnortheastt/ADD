@@ -175,7 +175,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T18:13:39+00:00",
+  "updated": "2026-05-29T18:14:38+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -213,9 +213,9 @@
       "title": "V4 1",
       "goal": "Make ADD harness-drivable and self-scoping: machine-readable state (--json + owner/stop) plus an AI-facilitated request->versioned-milestone intake loop, framed as ADD",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-05-29T15:43:23+00:00",
-      "updated": "2026-05-29T15:43:23+00:00"
+      "updated": "2026-05-29T18:14:38+00:00"
     }
   },
   "active_milestone": "v4-1"
