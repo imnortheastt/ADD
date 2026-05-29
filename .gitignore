@@ -9,6 +9,9 @@ node_modules/
 # OS
 .DS_Store
 
+# Backups left by `add.py sync-guidelines` when it rewrites an existing file
+*.bak
+
 # Tooling / MCP workspace artifacts (not part of the product)
 .serena/
 

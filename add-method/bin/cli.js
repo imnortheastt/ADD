@@ -73,10 +73,13 @@ function cmdInit(args) {
   // 2. tooling -> .add/tooling  (exclude tests from the installed copy)
   const toolingDest = path.join(target, ".add", "tooling");
   copyDir(path.join(PKG_ROOT, "tooling"), toolingDest, { skipIfExists: false });
-  // installed copy is runtime-only: drop tests and any compiled cache
-  for (const cruft of ["test_add.py", "__pycache__"]) {
-    const p = path.join(toolingDest, cruft);
-    if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true });
+  // installed copy is runtime-only: drop ALL test files and any compiled cache
+  // (glob test_*.py — not just test_add.py — so no test leaks into installs)
+  fs.rmSync(path.join(toolingDest, "__pycache__"), { recursive: true, force: true });
+  for (const entry of fs.readdirSync(toolingDest)) {
+    if (/^test_.*\.py$/.test(entry)) {
+      fs.rmSync(path.join(toolingDest, entry), { force: true });
+    }
   }
   log("  ✓ tooling    -> .add/tooling/add.py (+ templates)");
 
