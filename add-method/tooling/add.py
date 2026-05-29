@@ -28,6 +28,11 @@ STAGES = ("prototype", "poc", "mvp", "production")
 PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
 
+
+def _phase_index(name: str) -> int:
+    """Ordinal of a phase in PHASES; used to enforce forward-skip rules."""
+    return PHASES.index(name)
+
 # `add.py guide` copy: per-phase (concrete next action, book chapter to read).
 # Keep the action wording aligned with each phase's EXIT line in the TASK template.
 PHASE_GUIDE = {
@@ -412,10 +417,18 @@ def cmd_gate(args: argparse.Namespace) -> None:
     slug = _resolve_task(state, args.slug)
     if args.outcome not in GATES:
         _die(f"outcome must be one of: {', '.join(GATES)}")
-    state["tasks"][slug]["gate"] = args.outcome
     if args.outcome == "PASS":
+        # No silent skips (principle 7): a PASS gate is the VERIFY step's outcome,
+        # so the task must have reached verify. HARD-STOP / RISK-ACCEPTED stay
+        # recordable from any phase (a security finding is always HARD-STOP). The
+        # deliberate, logged override is `add.py phase verify <slug>`.
+        current = state["tasks"][slug]["phase"]
+        if _phase_index(current) < _phase_index("verify"):
+            _die(f"gate_pass_before_verify: task '{slug}' is at '{current}'; reach "
+                 f"the verify phase first (or `add.py phase verify {slug}` to override)")
         state["tasks"][slug]["phase"] = "done"
         _sync_task_marker(root, slug, "done")
+    state["tasks"][slug]["gate"] = args.outcome
     state["tasks"][slug]["updated"] = _now()
     save_state(root, state)
     print(f"task '{slug}' gate -> {args.outcome}")

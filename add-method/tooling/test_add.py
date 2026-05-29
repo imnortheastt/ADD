@@ -84,6 +84,8 @@ class AddToolTest(unittest.TestCase):
     def test_gate_pass_marks_done(self):
         self._run("init")
         self._run("new-task", "t")
+        for _ in range(5):  # specify -> ... -> verify: PASS requires verify (no silent skip)
+            self._run("advance")
         self._run("gate", "PASS")
         st = self._state()
         self.assertEqual(st["tasks"]["t"]["gate"], "PASS")

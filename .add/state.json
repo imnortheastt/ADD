@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "state-story-architecture",
+  "active_task": "proof-harness",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -101,10 +101,19 @@
       "depends_on": [],
       "created": "2026-05-29T06:52:29+00:00",
       "updated": "2026-05-29T06:57:13+00:00"
+    },
+    "proof-harness": {
+      "title": "Prove the engine enforces the gate guardrails the book promises",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v2",
+      "depends_on": [],
+      "created": "2026-05-29T08:42:39+00:00",
+      "updated": "2026-05-29T08:49:44+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T06:57:13+00:00",
+  "updated": "2026-05-29T08:49:44+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

@@ -48,6 +48,7 @@ class MilestoneTierTest(unittest.TestCase):
 
     def test_ready_lists_only_unblocked(self):
         add.main(["new-task", "a"])
+        add.main(["phase", "verify", "a"])        # escape hatch: scaffold to verify
         add.main(["gate", "PASS", "a"])           # a is done
         add.main(["new-task", "b", "--depends-on", "a"])
         add.main(["new-task", "c", "--depends-on", "b"])
@@ -68,6 +69,7 @@ class MilestoneTierTest(unittest.TestCase):
     def test_milestone_done_passes_when_all_done(self):
         add.main(["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"])
         add.main(["new-task", "t"])
+        add.main(["phase", "verify", "t"])        # escape hatch: scaffold to verify
         add.main(["gate", "PASS", "t"])
         add.main(["milestone-done", "mvp"])
         self.assertEqual(self._state()["milestones"]["mvp"]["status"], "done")

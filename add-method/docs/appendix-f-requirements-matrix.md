@@ -104,6 +104,24 @@ A task is **done** only when all six documents exist and the Verify record reads
 
 ---
 
+## Matrix 4 — Executable proofs (the claims the engine enforces)
+
+The rows above are the method's *promises*. A promise a tool quietly breaks is worse than none — so the `add` engine ships a proof-harness: each invariant below is pinned by an automated test that fails loudly if the **Story** (this book) and the **State** (the engine) drift apart. This table is the coverage *so far*, not a completeness claim — auditing the rest of the matrix the same way is ongoing work (it is the job of the minimalism-and-coverage audit).
+
+| Claim (where it lives) | The engine enforces | Proof test |
+|------------------------|---------------------|------------|
+| No silent skips (principle 7) · "done only when Verify reads `PASS`" (Matrix 3) | `gate PASS` is **refused** unless the task has reached `verify` | `test_gate_pass_refused_before_verify` |
+| A passed task is genuinely done | `gate PASS` at `verify` advances to `done` | `test_gate_pass_at_verify_reaches_done` |
+| Deliberate ≠ silent | the explicit `phase` command is a logged escape hatch the guardrail does not block | `test_phase_override_escape_hatch` |
+| "A security finding is ALWAYS `HARD-STOP`" | `HARD-STOP` is recordable from any phase and never forces `done` | `test_hardstop_recordable_mid_build` |
+| The book's gate outcomes are the engine's | `PASS` · `RISK-ACCEPTED` · `HARD-STOP` exist in both prose and `GATES` | `test_book_gate_outcomes_match_engine` |
+
+The tests are the source of truth; this table is their index. If a row here is ever unproven, that is a gap in the method, not a detail — the proof-harness exists to make such gaps fail loudly. (Tests: `add-method/tooling/test_proof_harness.py`.)
+
+**Known gap (open):** Matrix 3 says a task is done when Verify reads "`PASS` (or a signed `RISK-ACCEPTED`)", but the engine advances only `PASS` to `done` — a `RISK-ACCEPTED` task stays at `verify` and cannot complete its milestone, and the waiver fields (owner · ticket · expiry) are not yet captured. This is the same Story↔State divergence the harness fixed for `PASS`, one outcome over; closing it is the lead-in to the next audit.
+
+---
+
 ## Worked example — the hierarchy filled in
 
 - **Project:** *Mobile Banking App.* Survivor-layer documents: `CONVENTIONS.md`, `GLOSSARY.md` (defines *account*, *balance*, *transfer*), `MODEL_REGISTRY.md`, `dependencies.allowlist`, `playbook/`.

@@ -47,6 +47,7 @@ class MilestoneArchiveTest(unittest.TestCase):
         for i in range(n):
             t = f"{ms}-t{i}"
             add.main(["new-task", t, "--milestone", ms])
+            add.main(["phase", "verify", t])        # escape hatch: scaffold to verify
             add.main(["gate", "PASS", t])           # gate PASS -> phase done -> _task_done
             members.append(t)
         add.main(["milestone-done", ms])             # status -> done
@@ -144,6 +145,7 @@ class MilestoneArchiveTest(unittest.TestCase):
         # check (false "unknown task") or ready (false "blocked").
         add.main(["new-milestone", "m1", "--title", "M1"])
         add.main(["new-task", "auth", "--milestone", "m1"])
+        add.main(["phase", "verify", "auth"])     # escape hatch: scaffold to verify
         add.main(["gate", "PASS", "auth"])
         add.main(["milestone-done", "m1"])
         add.main(["new-milestone", "m2", "--title", "M2"])
