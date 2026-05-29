@@ -44,10 +44,10 @@ Out: the build corridor and "tests-red-before-build" enforcement (v4-2); the end
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [x] machine-state-json   depends-on: none                 — `guide`/`status --json` expose phase · owner · stop; backward-compatible  (gate PASS 2026-05-29)
 - [x] versioning-policy    depends-on: machine-state-json   — classify a request: new-major | sub-milestone | task (AI proposes, human confirms)  (gate PASS 2026-05-30)
-- [ ] scope-loop           depends-on: versioning-policy    — AI-facilitated request -> versioned `MILESTONE.md` proposal, framed as ADD
+- [x] scope-loop           depends-on: versioning-policy    — AI-facilitated request -> versioned `MILESTONE.md` proposal, framed as ADD  (gate PASS 2026-05-30)
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] `add.py guide --json` and `status --json` emit valid, parseable state incl. owner+stop   (← machine-state-json ✓)
 - [x] the human-text output is unchanged when `--json` is absent (backward compatible)          (← machine-state-json ✓)
 - [x] given a request, the AI proposes a version (major/sub/task) with a recorded rationale      (← versioning-policy ✓)
-- [ ] given a request, the AI produces a confirmed versioned `MILESTONE.md` via discussion        (← scope-loop)
+- [x] given a request, the AI produces a confirmed versioned `MILESTONE.md` via discussion        (← scope-loop ✓)

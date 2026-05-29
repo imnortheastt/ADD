@@ -164,18 +164,18 @@
     },
     "scope-loop": {
       "title": "AI-facilitated request -> versioned MILESTONE.md proposal (consumes the intake rubric)",
-      "phase": "verify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v4-1",
       "depends_on": [
         "versioning-policy"
       ],
       "created": "2026-05-29T17:42:04+00:00",
-      "updated": "2026-05-29T18:06:23+00:00"
+      "updated": "2026-05-29T18:13:39+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T18:06:23+00:00",
+  "updated": "2026-05-29T18:13:39+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

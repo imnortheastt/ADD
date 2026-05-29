@@ -1,7 +1,7 @@
 # TASK: AI-facilitated request -> versioned MILESTONE.md proposal (consumes the intake rubric)
 
 slug: scope-loop · created: 2026-05-30 · stage: mvp
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -246,7 +246,7 @@ Evidence pre-filled by the AI; the gate signature itself is the human's (Verify 
 - [x] concurrency / timing safe — N/A: a static doc artifact, no code path, no IO, nothing to race
 - [x] no exposed secrets, injection openings, or unexpected dependencies — prose only; secret scan clean; stdlib-only test
 - [x] layering & dependencies follow CONVENTIONS.md — scope.md is on the loaded skill (State) surface, no docs/ auto-load; scope.md md5-identical across both skill trees (4a9b158), SKILL.md (e051769), glossary across 3 trees (ebe0ad8)
-- [ ] a person reviewed and approved the change   ← awaiting human gate
+- [x] a person reviewed and approved the change   ← Tin Dang, 2026-05-30 (gate PASS)
 
 Decision to sign at the gate (the one judgment a test can't sign):
   - **The rubric's JUDGMENT** — does scope.md produce SOUND milestones? Two checks: (a) the
@@ -257,9 +257,13 @@ Decision to sign at the gate (the one judgment a test can't sign):
     only a person can vouch the guidance is sound.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+The reviewer vouched the rubric's JUDGMENT — the per-outcome behavior (incl. split_required =
+batch-in-one-pass, creation still gated) and the worked example (faithful to the real
+v4-1/MILESTONE.md: goal, tasks, exit-criteria→slug mapping). The disclosed section-checklist
+coverage gap was accepted as an OBSERVE note (artifact conformant; regression-risk only).
+Structural suite 114/114; md5 parity across both skill trees + 3 doc trees. No add.py change.
+Reviewed by: Tin Dang · date: 2026-05-30
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
