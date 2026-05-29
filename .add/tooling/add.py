@@ -27,6 +27,27 @@ MILESTONE_FILE = "MILESTONE.md"
 STAGES = ("prototype", "poc", "mvp", "production")
 PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
+
+# `add.py guide` copy: per-phase (concrete next action, book chapter to read).
+# Keep the action wording aligned with each phase's EXIT line in the TASK template.
+PHASE_GUIDE = {
+    "specify":   ("state every rule — Must / Reject (+ named code) / After; leave zero open assumptions",
+                  "03-step-1-specify.md"),
+    "scenarios": ("write one Given/When/Then per Must AND per Reject; every result observable",
+                  "04-step-2-scenarios.md"),
+    "contract":  ("freeze the shape — signature, fields, error codes; names match the glossary",
+                  "05-step-3-contract.md"),
+    "tests":     ("write one failing test per scenario; run them RED for the right reason",
+                  "06-step-4-tests.md"),
+    "build":     ("write the minimum code to pass the tests; change no test and no contract",
+                  "07-step-5-build.md"),
+    "verify":    ("run the suite + blind-spot checks, then record the gate",
+                  "08-step-6-verify.md"),
+    "observe":   ("note what to watch + the spec delta for the next loop",
+                  "09-the-loop.md"),
+    "done":      ("this task is done — pick the next feature",
+                  "02-the-flow.md"),
+}
 SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist")
 
 # Guideline-injection targets + version-stable markers. NEVER change these marker
@@ -442,6 +463,34 @@ def cmd_status(args: argparse.Namespace) -> None:
             print(f"          read .add/tasks/{active}/TASK.md and continue that phase.")
 
 
+def cmd_guide(args: argparse.Namespace) -> None:
+    """Answer "what do I do next?" for the active (or named) task.
+
+    Strictly read-only: load_state only — never save_state, never writes a TASK.md.
+    """
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug or state.get("active_task")
+    if not slug:
+        print("active : (none)")
+        print('next   : start your first feature -> add.py new-task <slug> --title "..."')
+        print("read   : .add/docs/02-the-flow.md")
+        return
+    if slug not in state.get("tasks", {}):
+        _die(f"unknown task '{slug}'")
+    phase = state["tasks"][slug]["phase"]
+    action, chapter = PHASE_GUIDE[phase]
+    print(f"active : {slug}  (phase: {phase})")
+    print(f"next   : {action}")
+    print(f"read   : .add/docs/{chapter}")
+    if phase == "verify":
+        print("then   : add.py gate PASS | RISK-ACCEPTED | HARD-STOP")
+    elif phase == "done":
+        print("then   : start the next feature -> add.py new-task <slug>")
+    else:
+        print("then   : add.py advance")
+
+
 def _read_task_phase(root: Path, slug: str) -> str | None:
     """Read the `phase:` marker from a task's TASK.md, or None if absent."""
     task_md = root / "tasks" / slug / "TASK.md"
@@ -713,6 +762,10 @@ def build_parser() -> argparse.ArgumentParser:
     psg = sub.add_parser("sync-guidelines",
                          help="(re)write the ADD guideline block into AGENTS.md + CLAUDE.md")
     psg.set_defaults(func=cmd_sync_guidelines)
+
+    pgd = sub.add_parser("guide", help="print the one concrete next step for the active task")
+    pgd.add_argument("slug", nargs="?", default=None, help="task slug (default: active task)")
+    pgd.set_defaults(func=cmd_guide)
 
     return p
 

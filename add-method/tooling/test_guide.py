@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+"""Red/green tests for `add.py guide` — the focused "what do I do next?" printer.
+
+guide is NON-interactive and STRICTLY read-only: it prints the active (or named)
+task's phase, the one next action, the chapter to read, and the `then:` command —
+and never mutates state. Run: python3 -m unittest test_guide -v
+"""
+import io
+import os
+import tempfile
+import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from pathlib import Path
+
+import add
+
+
+class GuideTest(unittest.TestCase):
+    def setUp(self):
+        self._cwd = Path.cwd()
+        self.tmp = Path(tempfile.mkdtemp(prefix="add-guide-cmd-")).resolve()
+        os.chdir(self.tmp)
+        add.main(["init", "--name", "demo"])
+
+    def tearDown(self):
+        os.chdir(self._cwd)
+
+    def _state(self) -> Path:
+        return self.tmp / ".add" / "state.json"
+
+    def _guide(self, *args) -> str:
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            add.main(["guide", *args])
+        return buf.getvalue()
+
+    def test_guide_specify_phase(self):
+        add.main(["new-task", "feat-a", "--title", "Feat A"])   # active, phase=specify
+        out = self._guide()
+        self.assertIn("phase: specify", out)
+        self.assertIn("03-step-1-specify.md", out)
+        self.assertIn("add.py advance", out)
+
+    def test_guide_verify_points_at_gate(self):
+        add.main(["new-task", "feat-a"])
+        add.main(["phase", "verify", "feat-a"])
+        out = self._guide()
+        self.assertIn("08-step-6-verify.md", out)
+        self.assertIn("add.py gate", out)
+        self.assertNotIn("advance", out, "verify must point at the gate, not advance")
+
+    def test_guide_done_points_at_new_task(self):
+        add.main(["new-task", "feat-a"])
+        add.main(["phase", "done", "feat-a"])
+        out = self._guide()
+        self.assertIn("new-task", out)
+
+    def test_guide_no_active_task(self):
+        before = self._state().read_bytes()
+        out = self._guide()                          # must NOT raise (guidance, not error)
+        self.assertIn("new-task", out)
+        self.assertEqual(self._state().read_bytes(), before, "guide must not mutate state")
+
+    def test_guide_explicit_slug(self):
+        add.main(["new-task", "feat-a"])
+        add.main(["phase", "build", "feat-a"])
+        add.main(["new-task", "feat-b"])             # active becomes feat-b (specify)
+        out = self._guide("feat-a")                  # explicit slug overrides active
+        self.assertIn("phase: build", out)
+        self.assertIn("07-step-5-build.md", out)
+
+    def test_guide_unknown_slug_errors(self):
+        add.main(["new-task", "feat-a"])
+        before = self._state().read_bytes()
+        err = io.StringIO()
+        with self.assertRaises(SystemExit), redirect_stderr(err):
+            add.main(["guide", "does-not-exist"])
+        self.assertIn("unknown task", err.getvalue(),
+                      "must fail for the right reason (unknown task), not a parse error")
+        self.assertEqual(self._state().read_bytes(), before)
+
+    def test_guide_is_read_only(self):
+        add.main(["new-task", "feat-a"])
+        before = self._state().read_bytes()
+        self._guide()
+        self.assertEqual(self._state().read_bytes(), before,
+                         "guide is read-only: state.json must be byte-identical")
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
