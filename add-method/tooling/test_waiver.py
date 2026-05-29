@@ -106,5 +106,62 @@ class WaiverCompletesMilestoneTest(unittest.TestCase):
         add.main(["check"])   # raises SystemExit(1) if any check fails
 
 
+class WaiverExpiryCheckTest(unittest.TestCase):
+    """FINDING-B (minimalism-audit): Matrix 4 promises waiver fields are stored
+    "for a later `check` to expire" — `cmd_check` must FAIL a RISK-ACCEPTED task
+    whose `expires` has passed. A waiver valid when signed but lapsed now is the
+    real case: the gate stored it; `check` is the standing monitor that catches it.
+    Fail-closed: an unparseable `expires` is also a FAIL (never a silent pass)."""
+
+    def setUp(self):
+        self._cwd = Path.cwd()
+        self.tmp = tempfile.mkdtemp(prefix="add-waiver-exp-")
+        os.chdir(self.tmp)
+        add.main(["init", "--name", "demo"])
+
+    def tearDown(self):
+        os.chdir(self._cwd)
+
+    def _waive(self, slug, expires):
+        add.main(["new-task", slug, "--title", slug])
+        add.main(["phase", "verify", slug])
+        add.main(["gate", "RISK-ACCEPTED", slug,
+                  "--owner", "alice", "--ticket", "T-1", "--expires", expires])
+
+    def _run_check(self):
+        """Run check; return (exit_code, combined_output). exit_code 0 == clean."""
+        import contextlib, io
+        buf = io.StringIO()
+        code = 0
+        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+            try:
+                add.main(["check"])
+            except SystemExit as e:
+                code = e.code or 0
+        return code, buf.getvalue()
+
+    def test_check_flags_expired_waiver(self):
+        self._waive("lapsed", "2000-01-01")          # signed once, long expired
+        before = (Path(self.tmp) / ".add" / "state.json").read_text()
+        code, out = self._run_check()
+        self.assertEqual(code, 1, "an expired waiver must fail check")
+        self.assertIn("waiver_expired", out, "the failing reason must name the code")
+        after = (Path(self.tmp) / ".add" / "state.json").read_text()
+        self.assertEqual(before, after, "check must not mutate state")
+
+    def test_check_passes_unexpired_waiver(self):
+        self._waive("valid", "2999-12-31")           # far future
+        code, out = self._run_check()
+        self.assertEqual(code, 0, f"a still-valid waiver must pass check; got:\n{out}")
+        self.assertNotIn("waiver_expired", out)
+
+    def test_check_failclosed_on_unparseable_expires(self):
+        # The gate stores --expires verbatim; a malformed one must not slip past.
+        self._waive("garbled", "not-a-date")
+        code, out = self._run_check()
+        self.assertEqual(code, 1, "an unparseable expires must fail closed")
+        self.assertIn("waiver_expired", out)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

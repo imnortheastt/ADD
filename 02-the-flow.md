@@ -33,7 +33,7 @@ flowchart LR
 > **Solid arrows are the forward spine** — you never start a phase before its input exists (forward-skip forbidden). **Dashed arrows are backward correction** — any phase may return to an earlier one to repair its artifact (the long loop, Observe → Specify, is the same rule at milestone scale). The tight Tests ⇄ Build cycle is the per-feature red/green engine.
 
 ```text
-  人 human-led ───────────────►│◄─────────── machine-led ──► 人 verify
+  human-led ─────────────────►│◄─────────── machine-led ──► human verify
   1 Specify → 2 Scenarios → 3 Contract → 4 Tests ⇄ 5 Build → 6 Verify
        ▲                        (freeze)   └red/green┘  (AI)     (people)
        ╎                                                            │

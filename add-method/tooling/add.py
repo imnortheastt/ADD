@@ -592,6 +592,17 @@ def cmd_check(args: argparse.Namespace) -> None:
         for dep in t.get("depends_on") or []:
             checks.append((dep in tasks or dep in archived_slugs,
                            f"task '{slug}' dep '{dep}' resolves", "unknown task"))
+        # waiver expiry (Matrix 4): a RISK-ACCEPTED waiver whose `expires` has passed is
+        # stale — the gate stored it; `check` is the standing monitor that catches the lapse.
+        # Fail-closed: a missing/unparseable expires is a FAIL, never a silent pass.
+        if t.get("gate") == "RISK-ACCEPTED":
+            exp = (t.get("waiver") or {}).get("expires")
+            try:
+                ok = exp is not None and date.fromisoformat(exp) >= date.today()
+                reason = f"waiver_expired (expires={exp})"
+            except (ValueError, TypeError):
+                ok, reason = False, f"waiver_expired (unparseable expires={exp!r})"
+            checks.append((ok, f"task '{slug}' waiver not expired", reason))
 
     # drift: a done milestone must have no unfinished tasks
     for mslug, m in milestones.items():
