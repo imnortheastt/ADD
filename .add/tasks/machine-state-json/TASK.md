@@ -1,7 +1,7 @@
 # TASK: Machine-readable engine state (--json + owner/stop)
 
 slug: machine-state-json · created: 2026-05-29 · stage: mvp
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -236,7 +236,7 @@ Evidence pre-filled by the AI; the gate signature itself is the human's (Verify 
 - [x] concurrency / timing of the risky operation is safe — all four paths are READ-ONLY (no save_state); nothing to race
 - [x] no exposed secrets, injection openings, or unexpected dependencies — stdlib `json` only; secret scan on the diff clean
 - [x] layering & dependencies follow CONVENTIONS.md — mirrors existing cmd_* + helper structure; both add.py copies md5-identical (209182c)
-- [ ] a person reviewed and approved the change   ← awaiting human gate
+- [x] a person reviewed and approved the change — Tin Dang, PASS (incl. v1.1 amendment), 2026-05-29
 
 Decision to sign at the gate (a freeze amendment — the one thing needing your approval):
   - **Contract amendment @ v1.1** — `guide --json` types `phase`/`gate` as `str|null` (null when
@@ -249,9 +249,8 @@ Blind spots surfaced for the reviewer:
     text mode keeps `no_project`/`state_invalid` as the unchanged-invariant requires. Both hold.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS   (approves the v1.1 contract amendment: guide --json phase/gate are str|null when no active task)
+Reviewed by: Tin Dang · date: 2026-05-29
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -268,4 +267,6 @@ Watch (reuse scenarios as monitors):
     today by construction (early-return; text path untouched), but that's a structural argument,
     not a test. If anyone later touches a text path, this frozen invariant has no real guard.
     Candidate next-loop fix: a golden-output snapshot test over the text commands.
-Spec delta for the next loop: <what production taught you>
+Spec delta for the next loop: none yet — shipped this loop, no production signal. The live
+consumer is v4-1's own next tasks (versioning-policy, scope-loop) + v4-2's corridor; first real
+feedback will come when a harness drives off `--json` for real. Revisit then.
