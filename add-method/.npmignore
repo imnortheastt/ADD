@@ -1,0 +1,7 @@
+# Defense in depth — the `files` allowlist in package.json is the primary filter;
+# this denylist stops OS/build junk from leaking inside any allowlisted directory.
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.swp

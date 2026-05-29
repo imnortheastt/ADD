@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "guideline-inject",
+  "active_task": "npm-hygiene",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -83,10 +83,19 @@
       ],
       "created": "2026-05-29T01:24:39+00:00",
       "updated": "2026-05-29T02:26:11+00:00"
+    },
+    "npm-hygiene": {
+      "title": "Stop dev junk shipping in the npm tarball",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v1-1",
+      "depends_on": [],
+      "created": "2026-05-29T03:55:39+00:00",
+      "updated": "2026-05-29T04:00:39+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T03:18:58+00:00",
+  "updated": "2026-05-29T04:00:39+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
