@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "scope-loop",
+  "active_task": "competency-deltas",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -172,10 +172,19 @@
       ],
       "created": "2026-05-29T17:42:04+00:00",
       "updated": "2026-05-29T18:13:39+00:00"
+    },
+    "competency-deltas": {
+      "title": "Competency Deltas",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v5",
+      "depends_on": [],
+      "created": "2026-05-29T18:30:38+00:00",
+      "updated": "2026-05-30T01:46:09+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-29T18:28:10+00:00",
+  "updated": "2026-05-30T01:46:09+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

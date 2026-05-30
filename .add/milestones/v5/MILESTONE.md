@@ -53,14 +53,14 @@ Out: any AUTOMATED or unattended foundation edit — every fold is human-confirm
   version advances)  -> foundation-update-loop
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] competency-deltas          depends-on: none              — OBSERVE emits learnings tagged by which of the 5 (DDD·SDD·UDD·TDD·ADD) they improve; defines the delta shape
+- [x] competency-deltas          depends-on: none              — OBSERVE emits learnings tagged by which of the 5 (DDD·SDD·UDD·TDD·ADD) they improve; defines the delta shape  (gate PASS 2026-05-30)
 - [ ] competency-driver-tagging  depends-on: competency-deltas — intake/scope tag a task/milestone's primary `*DD` driver; deltas inherit it so they route to the right competency
 - [ ] foundation-update-loop     depends-on: competency-deltas — a ritual gathers confirmed deltas and proposes versioned PROJECT.md edits; human confirms (AI proposes, human folds)
 - [ ] convergence-signal         depends-on: competency-deltas — status shows open vs folded delta counts per competency (the lightest task; cuttable)
 - [ ] resume-command             depends-on: none              — `add.py resume <slug>` re-points active_task; milestone-done clears a stale pointer (the restart-in-the-middle gap)
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] a finished task records competency-tagged deltas in its OBSERVE phase        (← competency-deltas)
+- [x] a finished task records competency-tagged deltas in its OBSERVE phase        (← competency-deltas ✓)
 - [ ] every task/milestone declares its primary `*DD` driver                       (← competency-driver-tagging)
 - [ ] confirmed deltas fold into a versioned PROJECT.md via one human-gated ritual  (← foundation-update-loop)
 - [ ] `add.py status` shows per-competency open/folded delta counts                 (← convergence-signal)

@@ -65,6 +65,11 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | verify | `phases/6-verify.md` | §6 checks + gate record | **human** |
 | observe | `phases/7-observe.md` | §7 spec delta | human + AI |
 
+In **observe**, also emit **competency deltas** — learnings tagged by which of the five
+(`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.
+You write them as `open`; the human folds them into `PROJECT.md`. Read `deltas.md` for the
+grammar and the status lifecycle.
+
 ## Non-negotiable rules (from the method)
 
 1. **Direction before speed.** Never start Build until §1–§4 exist and tests are red.
