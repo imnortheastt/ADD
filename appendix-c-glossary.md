@@ -18,6 +18,8 @@
 
 **Evidence bundle** — the proof attached to a change (passing tests, clean security scan, no coverage loss) that justifies trusting it and may unlock more AI autonomy.
 
+**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed competency deltas are folded into the foundation. It makes the survivor layer's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the fold ritual (see the `add` skill's `fold.md`).
+
 **Gate** — a checkpoint with an explicit pass/fail exit. Its outcome is `PASS`, `RISK-ACCEPTED`, or `HARD-STOP`.
 
 **`HARD-STOP`** — a gate outcome meaning work cannot proceed; triggered by any failing test or security finding.

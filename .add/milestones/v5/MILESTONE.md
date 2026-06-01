@@ -41,8 +41,11 @@ Out: any AUTOMATED or unattended foundation edit — every fold is human-confirm
   live in the already-loaded `TASK.md`; folds append to the already-loaded `PROJECT.md`,
   which stays one screen. v5 adds signal, not surface.
 - **PROJECT.md becomes versioned.** A foundation version marker advances when confirmed
-  deltas fold in; folds are append-only to the relevant competency section + the decisions
-  log, never silent rewrites (the survivor layer stays auditable).
+  deltas fold in; folds are append-only (never silent rewrites), so the survivor layer stays
+  auditable. **Fold routing** (resolved by foundation-update-loop — two of the five competencies
+  have no PROJECT.md section): DDD/SDD/UDD → their `PROJECT.md` section; **TDD/ADD → `CONVENTIONS.md`**
+  (the engine survivor file); EVERY fold also appends a row to `PROJECT.md` §Key Decisions (the
+  universal audit log). The version marker lives in `PROJECT.md`.
 - New glossary terms: **Competency delta**, **Foundation version**, **`*DD` driver**.
 - All design forks are decided with the human (AskUserQuestion) before a contract freezes.
 

@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-05-29
+slug: AIDD-Book · stage: mvp · updated: 2026-05-29 · foundation-version: 1
 
 ---
 
