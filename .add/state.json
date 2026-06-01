@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "competency-deltas",
+  "active_task": "autonomy-dial",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -181,10 +181,84 @@
       "depends_on": [],
       "created": "2026-05-29T18:30:38+00:00",
       "updated": "2026-05-30T01:46:09+00:00"
+    },
+    "foundation-update-loop": {
+      "title": "Foundation Update Loop",
+      "phase": "verify",
+      "gate": "none",
+      "milestone": "v5",
+      "depends_on": [
+        "competency-deltas"
+      ],
+      "created": "2026-05-30T16:10:46+00:00",
+      "updated": "2026-05-30T16:23:49+00:00"
+    },
+    "principle-reframe": {
+      "title": "Reframe book principles 6/7 to admit automated verification",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v6",
+      "depends_on": [],
+      "created": "2026-06-01T14:38:27+00:00",
+      "updated": "2026-06-01T14:42:46+00:00"
+    },
+    "scope-lock-trigger": {
+      "title": "Contract-freeze to autonomous-run handoff (scope-lock)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v6",
+      "depends_on": [],
+      "created": "2026-06-01T14:43:42+00:00",
+      "updated": "2026-06-01T14:47:09+00:00"
+    },
+    "dynamic-run-engine": {
+      "title": "run.md: fan-out build->verify with in-run convergence",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v6",
+      "depends_on": [
+        "scope-lock-trigger"
+      ],
+      "created": "2026-06-01T14:49:16+00:00",
+      "updated": "2026-06-01T14:49:50+00:00"
+    },
+    "evidence-auto-gate": {
+      "title": "The evidence auto-gate: auto-PASS + residue escalation",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v6",
+      "depends_on": [
+        "scope-lock-trigger",
+        "principle-reframe"
+      ],
+      "created": "2026-06-01T14:50:02+00:00",
+      "updated": "2026-06-01T14:50:45+00:00"
+    },
+    "run-emits-deltas": {
+      "title": "Run findings become open competency deltas (v6 run -> v5 fold)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v6",
+      "depends_on": [
+        "dynamic-run-engine"
+      ],
+      "created": "2026-06-01T14:50:52+00:00",
+      "updated": "2026-06-01T14:51:24+00:00"
+    },
+    "autonomy-dial": {
+      "title": "The autonomy dial: per-scope auto-gate setting",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v6",
+      "depends_on": [
+        "evidence-auto-gate"
+      ],
+      "created": "2026-06-01T14:51:30+00:00",
+      "updated": "2026-06-01T14:52:02+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-05-30T01:46:09+00:00",
+  "updated": "2026-06-01T14:52:02+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -233,7 +307,15 @@
       "status": "active",
       "created": "2026-05-29T18:28:10+00:00",
       "updated": "2026-05-29T18:28:10+00:00"
+    },
+    "v6": {
+      "title": "The Self-Driving Run",
+      "goal": "Once a task's contract is frozen, run the build->verify half as a dynamic, self-improving workflow that converges in-run and auto-gates on evidence \u2014 pulling the human in only for the residue tests cannot catch \u2014 without losing ADD's human-led front or its delta learning.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-01T14:22:59+00:00",
+      "updated": "2026-06-01T14:22:59+00:00"
     }
   },
-  "active_milestone": "v5"
+  "active_milestone": "v6"
 }

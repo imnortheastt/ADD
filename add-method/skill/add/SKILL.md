@@ -68,7 +68,16 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 In **observe**, also emit **competency deltas** — learnings tagged by which of the five
 (`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.
 You write them as `open`; the human folds them into `PROJECT.md`. Read `deltas.md` for the
-grammar and the status lifecycle.
+grammar and the status lifecycle. At milestone close (or on demand), run the fold ritual that
+gathers confirmed deltas into a versioned foundation — read `fold.md`.
+
+## The dynamic run (v6)
+
+Once **§3 CONTRACT is FROZEN**, the build→verify half MAY run as a dynamic, auto-gated run —
+fan-out + in-run convergence — instead of a manual build. Read `run.md` for the trigger, the
+touch-boundary, the evidence auto-gate, and the autonomy dial. The human-led front
+(specify·scenarios·contract) is unchanged; the run never edits a frozen contract and never
+auto-passes a security finding.
 
 ## Non-negotiable rules (from the method)
 

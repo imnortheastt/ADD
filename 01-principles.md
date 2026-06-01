@@ -40,13 +40,17 @@ How much you let the AI do is not a single switch. It rises with the evidence av
 
 When an agent produces more than the team can review, the excess is not speed — it is unreviewed risk accumulating. Verification capacity is the real ceiling on throughput.
 
-**Consequence:** if AI output outpaces review, the correct response is to reduce the AI's autonomy or batch size, never to rush or skip the review.
+But *verification* is not the same as *human reading*. The ceiling is what you can trust to a recorded standard, and automated verification raises it: a passing test suite, a contract check, an adversarial verifier are all verification, and they scale in a way human review cannot. This is only principle 2 taken to its limit. What automation cannot cover is the residue principle 2 names — the narrow set tests miss: security, concurrency, and architecture. That residue stays at human speed. So the rule sharpens: you may move as fast as your *automated* verification carries you, and no faster on the part only a human can check.
+
+**Consequence:** if AI output outpaces verification, the correct response is to strengthen the automated checks or reduce the AI's autonomy — never to rush or skip. More autonomy is earned by more verification, not by a lower bar.
 
 ## 7. No silent skips
 
 Every checkpoint resolves explicitly. A step is either passed, or passed with a recorded and signed acceptance of a known risk, or stopped. Nothing is quietly waved through.
 
-**Consequence:** every gate produces a recorded outcome with an accountable owner (see [11 Governance](./11-governance.md)).
+An *automated* pass is still an explicit pass, not a skip — provided it records an outcome and escalates what it cannot judge. A gate may be resolved by evidence rather than by a person when that evidence is sufficient and the result is logged to an accountable owner: a named run, against a recorded standard, is as accountable as a signature. The line between a pass and a skip is the recorded outcome, not who signed it. The exception is absolute: security always escalates to a human and is never auto-passed — a security finding is a hard stop, whatever the evidence says.
+
+**Consequence:** every gate produces a recorded outcome with an accountable owner — a person, or a named automated run — and security always stops for a person (see [11 Governance](./11-governance.md)).
 
 ## 8. Tool-agnostic by construction
 
