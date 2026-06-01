@@ -24,3 +24,15 @@ Architecture:
   - The skill is thin and stateless; ALL state lives in `.add/state.json` (anti-context-rot).
   - The Python tool is the only writer of state; writes are atomic (temp + os.replace) and never clobber.
   - The method is tool-agnostic: gates are enforced by process/CI, not inside the agent.
+
+## Method learnings (folded from OBSERVE deltas)
+
+- (ADD) **Never self-gate a human-led gate.** The agent that built a change cannot also approve it —
+  Verify has no AI role. Trust-layer/method edits especially require a separate human sign-off, and a
+  run's prose guardrails (touch-boundary, autonomy dial) are not enforcement until a CI gate distinct
+  from the agent exists. [v6 dogfood: 6 self-gated PASSes, none human-verified — folded foundation-version 2]
+- (ADD) **Dogfood parity.** The `.add/` runtime mirror and the canonical `add-method/` tree must stay
+  md5-identical for every synced artifact (SKILL.md, run.md, fold.md, …); a structural test asserts it.
+- (TDD) **Words-exist ≠ method-works.** Structural/string tests prove an artifact reads as worded, not
+  that the behavior works or is enforced (recurring gap). Where behavior matters — md5 parity, an
+  enforced default, real convergence — add a behavioral test, not a presence assertion.

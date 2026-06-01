@@ -89,4 +89,4 @@ Spec delta: a dynamic run that emits deltas should also surface a "deltas pendin
 
 ### Competency deltas
 - [ADD · open] v6 emitted 12+ open deltas but provides NO automated nudge to fold them — emission and folding are decoupled, so a fast run can outproduce the human fold capacity (evidence: this v6 run left every task's deltas open; no fold occurred)
-- [SDD · open] the v6/v5 seam works only if the human actually folds — v6 makes the RUN faster but the FOLD is still the human bottleneck (principle 6 in a new place) (evidence: open-delta backlog from this run)
+- [SDD · folded] the v6/v5 seam works only if the human actually folds — v6 makes the RUN faster but the FOLD is still the human bottleneck (principle 6 in a new place) (evidence: open-delta backlog from this run)

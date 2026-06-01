@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-05-29 · foundation-version: 1
+slug: AIDD-Book · stage: mvp · updated: 2026-06-01 · foundation-version: 2
 
 ---
 
@@ -21,6 +21,8 @@ slug: AIDD-Book · stage: mvp · updated: 2026-05-29 · foundation-version: 1
   a FROZEN contract never changes silently (change request → back to SPECIFY);
   survivor files are never clobbered; writes are atomic; the skill stays lean
   (progressive disclosure) and all state lives on disk (anti-context-rot).
+- **Residue** (what an evidence auto-gate must escalate to a human) is not limited to
+  security·concurrency·architecture — **method/trust-layer edits are a residue category** (v6).
 
 ## Spec / Living Document (SDD) — what we are building, now
 - Active milestone → `.add/milestones/v1-2/MILESTONE.md` (foundation + guideline
@@ -30,6 +32,10 @@ slug: AIDD-Book · stage: mvp · updated: 2026-05-29 · foundation-version: 1
 - Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@mrq/add`,
   PROJECT.md foundation, dynamic-by-reference guideline injection. OPEN — interactive
   `add.py guide`, Vietnamese quickstart, milestone archive/rotation.
+- v6 (The Self-Driving Run): DESIGNED + dogfood-tested, **NOT human-validated** — the
+  dynamic run / evidence auto-gate is safe only with a human gate or a CI enforcer separate
+  from the agent (a self-asserted gate is circular); the fold is the new human bottleneck.
+  The principle 6/7 reframe (automated verification) needs human review before it is trusted.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -55,3 +61,5 @@ slug: AIDD-Book · stage: mvp · updated: 2026-05-29 · foundation-version: 1
 | 2026-05-29 | guideline injection dynamic-by-reference | avoids context-rot (ETH) | v1-2 |
 | 2026-05-29 | UDD = UI/UX-Driven, lives foundation-only | most tasks have no UI; no dead-weight step | this section is UDD's home |
 | 2026-05-29 | docs English-only; drop the Vietnamese translation + non-English branding | single-language product surface, simpler to maintain | vi-quickstart descoped; `guide` covered in the EN Quickstart |
+| 2026-06-01 | v6 "Self-Driving Run" scoped + dogfooded full-auto (AI self-gated contracts+verify) | stress-test the auto-gate by running it on the method itself | shipped; 17 open deltas; 14 folded (v2); v6 NOT human-validated |
+| 2026-06-01 | fold v6 learnings → foundation-version 2: never self-gate a human-led gate · dogfood md5 parity · words-exist≠method-works · residue includes method-edits | human-gated fold of v6 dogfood evidence | CONVENTIONS.md + §Domain + §Spec updated; deltas folded |

@@ -155,6 +155,6 @@ Watch (reuse scenarios as monitors): md5 parity across the 3 trees; whether a la
 Spec delta for the next loop: a self-gate that edits the trust layer should require a SECOND human gate before publish (the book is the Story surface users read to trust ADD).
 
 ### Competency deltas
-- [ADD · open] full-auto self-gating let a SHIPPED principle be reworded with zero human review — the gate the method calls "human-led, no AI role" was performed by the AI (evidence: §6 gate record reads "NOT human-verified"; phases/6-verify.md says verify has no AI role)
-- [SDD · open] reframing P7 by self-gate is near-circular — using a not-yet-approved exception to skip the approval P7 demands (evidence: this task's verify gate; v6 evidence-auto-gate contract not yet frozen/confirmed)
-- [TDD · open] structural tests prove the reframe's WORDS exist, not that the reframe is sound — words-exist ≠ method-correct (evidence: 6 green tests assert string presence, none assert philosophical coherence)
+- [ADD · folded] full-auto self-gating let a SHIPPED principle be reworded with zero human review — the gate the method calls "human-led, no AI role" was performed by the AI (evidence: §6 gate record reads "NOT human-verified"; phases/6-verify.md says verify has no AI role)
+- [SDD · folded] reframing P7 by self-gate is near-circular — using a not-yet-approved exception to skip the approval P7 demands (evidence: this task's verify gate; v6 evidence-auto-gate contract not yet frozen/confirmed)
+- [TDD · folded] structural tests prove the reframe's WORDS exist, not that the reframe is sound — words-exist ≠ method-correct (evidence: 6 green tests assert string presence, none assert philosophical coherence)

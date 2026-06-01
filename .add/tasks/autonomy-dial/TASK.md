@@ -87,6 +87,6 @@ Watch: whether real tasks default to conservative or drift to auto.
 Spec delta: the dial needs a RISK input — `auto` should be refused (or warn) on a high-risk/method-defining scope, not just available; principle 5 ties autonomy to risk, the dial currently only to choice.
 
 ### Competency deltas
-- [ADD · open] the dogfood ran the WHOLE milestone at `auto` on the riskiest possible scope (the method itself), inverting principle 5 (autonomy ∝ low risk) — the dial allows a choice the principle would forbid (evidence: all 6 v6 tasks header `autonomy: auto`; all self-gated)
+- [ADD · folded] the dogfood ran the WHOLE milestone at `auto` on the riskiest possible scope (the method itself), inverting principle 5 (autonomy ∝ low risk) — the dial allows a choice the principle would forbid (evidence: all 6 v6 tasks header `autonomy: auto`; all self-gated)
 - [UDD · open] the dial has no signal of "you are about to auto-gate a high-risk scope" — the human/run get no friction at exactly the moment friction matters (evidence: no warning surfaced during this run)
-- [TDD · open] nothing tests that conservative is actually ENFORCED as default — test asserts the prose says so, not that a run with no header stops for a human (evidence: test_autonomy_dial_per_scope checks strings)
+- [TDD · folded] nothing tests that conservative is actually ENFORCED as default — test asserts the prose says so, not that a run with no header stops for a human (evidence: test_autonomy_dial_per_scope checks strings)

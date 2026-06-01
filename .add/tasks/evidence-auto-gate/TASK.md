@@ -98,6 +98,6 @@ Watch: any real auto-PASS — was the residue actually checked, or rubber-stampe
 Spec delta: "edits the method/trust layer" should be an explicit residue class that always escalates — this run proves method-edits are exactly what an auto-gate must NOT self-approve.
 
 ### Competency deltas
-- [ADD · open] the dogfood auto-gated method-defining changes (the book, the rubric) — the one class most needing human judgment — exposing that "what counts as residue" is under-specified (evidence: 5 self-gated PASSes, each editing the trust layer, none human-reviewed)
-- [SDD · open] the auto-gate's security rule is untestable by string checks and was never exercised (no security case in v6) — its most important guarantee is unproven (evidence: §6 security line; test asserts the WORDS only)
-- [DDD · open] "residue" needs a sharper domain definition — security/concurrency/architecture is not exhaustive; method/trust-layer edits are a missing category (evidence: this task's blind-spot finding)
+- [ADD · folded] the dogfood auto-gated method-defining changes (the book, the rubric) — the one class most needing human judgment — exposing that "what counts as residue" is under-specified (evidence: 5 self-gated PASSes, each editing the trust layer, none human-reviewed)
+- [SDD · folded] the auto-gate's security rule is untestable by string checks and was never exercised (no security case in v6) — its most important guarantee is unproven (evidence: §6 security line; test asserts the WORDS only)
+- [DDD · folded] "residue" needs a sharper domain definition — security/concurrency/architecture is not exhaustive; method/trust-layer edits are a missing category (evidence: this task's blind-spot finding)

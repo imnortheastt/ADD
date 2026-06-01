@@ -215,5 +215,5 @@ Spec delta for the next loop: the delta shape held under its own first use (this
 
 ### Competency deltas
 This task is the first dogfood of its own mechanism — real deltas, not the placeholder:
-- [ADD · open] the dogfood `.add/tooling` template can silently diverge from the canonical `add-method` copy; no test guards the parity (evidence: md5 mismatch caught manually this build)
-- [TDD · open] structural tests guard canonical artifacts but not their git-tracked dogfood twins — 3rd recurrence of this gap class (evidence: scope-loop OBSERVE note + this build)
+- [ADD · folded] the dogfood `.add/tooling` template can silently diverge from the canonical `add-method` copy; no test guards the parity (evidence: md5 mismatch caught manually this build)
+- [TDD · folded] structural tests guard canonical artifacts but not their git-tracked dogfood twins — 3rd recurrence of this gap class (evidence: scope-loop OBSERVE note + this build)

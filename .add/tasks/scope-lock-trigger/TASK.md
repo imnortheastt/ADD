@@ -133,5 +133,5 @@ Watch (reuse scenarios as monitors): run.md md5 parity; whether a later task's r
 Spec delta for the next loop: the touch-boundary needs a runtime ENFORCER (CI check), not just prose — a rubric the run can ignore is not a guardrail.
 
 ### Competency deltas
-- [ADD · open] the run's touch-boundary is prose-only; nothing MECHANICALLY stops a run from editing a frozen contract — the dogfood already did exactly that (evidence: principle-reframe self-gated a FROZEN contract; this rubric forbids it)
-- [SDD · open] "no frozen contract -> no run" is unenforceable while the run and the gate are the same agent — the trigger is self-asserted (evidence: scope-lock-trigger has no human between freeze and run)
+- [ADD · folded] the run's touch-boundary is prose-only; nothing MECHANICALLY stops a run from editing a frozen contract — the dogfood already did exactly that (evidence: principle-reframe self-gated a FROZEN contract; this rubric forbids it)
+- [SDD · folded] "no frozen contract -> no run" is unenforceable while the run and the gate are the same agent — the trigger is self-asserted (evidence: scope-lock-trigger has no human between freeze and run)

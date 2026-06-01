@@ -84,4 +84,4 @@ Spec delta: run.md should mark which loops are MANDATORY vs. optional-by-scope �
 
 ### Competency deltas
 - [ADD · open] the rubric prescribes fan-out + adversarial verify, but the dogfood that authored it ran sequential single-pass — prescribed > practiced (evidence: this turn's build had no parallel agents, no skeptic pass)
-- [TDD · open] test_v6_run asserts the loop NAMES exist in prose, not that a run performs them — the hardest property (does it converge?) is unguarded (evidence: test_dynamic_run_fanout_and_convergence checks strings only)
+- [TDD · folded] test_v6_run asserts the loop NAMES exist in prose, not that a run performs them — the hardest property (does it converge?) is unguarded (evidence: test_dynamic_run_fanout_and_convergence checks strings only)
