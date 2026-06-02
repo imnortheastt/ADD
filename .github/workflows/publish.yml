@@ -1,0 +1,118 @@
+# Autonomous release: push a version tag, both registries publish.
+#
+#   git tag v1.0.1 && git push origin v1.0.1
+#
+# The tag (minus the leading `v`) MUST equal BOTH package.json and pyproject.toml
+# versions — the `guard` job fails the release closed if they drift. Only after the
+# full test suite is green and the versions agree do the two publish jobs run.
+#
+# ── One-time setup (do this once, then every tag self-publishes) ──────────────
+#
+# npm  — Settings ▸ Secrets and variables ▸ Actions ▸ New repository secret:
+#          name:  NPM_TOKEN
+#          value: an npm **Automation** token (Account ▸ Access Tokens ▸ Generate ▸
+#                 Automation). It MUST be the *Automation* type — a Classic/Publish
+#                 token fails in CI with EOTP because no 2FA OTP can be entered.
+#        `--provenance` is enabled and works because pilotspace/ADD is a public repo.
+#
+# PyPI — uses OIDC Trusted Publishing (no token to store/rotate). On PyPI:
+#          Account ▸ Publishing ▸ Add a pending publisher (the project add-method
+#          does not exist yet, so use the "pending" form), matching EXACTLY:
+#            PyPI Project Name:  add-method
+#            Owner:              pilotspace
+#            Repository name:    ADD
+#            Workflow name:      publish.yml
+#            Environment name:   pypi
+#        Token fallback (if you prefer a secret over OIDC): add a PYPI_API_TOKEN
+#        secret, drop the `environment:`/`id-token` from the pypi job, and pass
+#        `password: ${{ secrets.PYPI_API_TOKEN }}` to the publish action.
+
+name: publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Test suite + tag/version match
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run tooling test suite (red/green gate)
+        working-directory: add-method
+        run: python3 -m unittest discover -s tooling -p 'test_*.py'
+
+      - name: Tag must equal package.json AND pyproject.toml versions
+        working-directory: add-method
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          TAG="${REF_NAME#v}"
+          PKG="$(python3 -c "import json;print(json.load(open('package.json'))['version'])")"
+          PY="$(python3 - <<'PYEOF'
+          import re, pathlib
+          m = re.search(r'(?m)^version\s*=\s*"([^"]+)"', pathlib.Path("pyproject.toml").read_text())
+          print(m.group(1) if m else "")
+          PYEOF
+          )"
+          echo "tag=$TAG  package.json=$PKG  pyproject=$PY"
+          test "$TAG" = "$PKG" || { echo "::error::tag $TAG != package.json $PKG"; exit 1; }
+          test "$TAG" = "$PY"  || { echo "::error::tag $TAG != pyproject $PY"; exit 1; }
+
+  npm:
+    name: Publish @pilotspace/add to npm
+    needs: guard
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write          # required for npm --provenance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish (no deps — stdlib-only tool, so no install step)
+        working-directory: add-method
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  pypi:
+    name: Publish add-method to PyPI
+    needs: guard
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write          # required for PyPI OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build sdist + wheel (from the committed _bundled tree)
+        working-directory: add-method
+        run: |
+          python3 -m pip install --upgrade build
+          python3 -m build
+
+      - name: Publish via OIDC (no API token stored)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: add-method/dist

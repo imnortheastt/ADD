@@ -28,6 +28,34 @@ For every feature, before AI writes any code, you write four short artifacts in 
 
 ---
 
+## Install and try it
+
+The method ships as an installable Claude Code skill — same skill, tooling, and book
+in both ecosystems:
+
+```bash
+# Node / npm
+npx @pilotspace/add init --name "My App" --stage prototype
+```
+
+```bash
+# Python / pip
+pip install add-method
+add-method init --name "My App" --stage prototype
+```
+
+Then, in Claude Code, run `/add` and describe what you want to build — the agent drives
+the rest. New here? Follow the [**2-minute Getting Started**](./GETTING-STARTED.md), or
+the [full hands-on walkthrough](./add-method/GETTING-STARTED.md) that takes one real
+feature end to end.
+
+- **Package source & development** — [`add-method/`](./add-method/README.md)
+- **What changed** — [`CHANGELOG.md`](./CHANGELOG.md)
+- **Releases** — `@pilotspace/add` on npm · `add-method` on PyPI (one version tag
+  publishes both; see [`.github/workflows/publish.yml`](./.github/workflows/publish.yml))
+
+---
+
 ## Table of contents
 
 **Part I — Foundations**

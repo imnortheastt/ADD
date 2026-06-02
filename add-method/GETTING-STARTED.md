@@ -42,7 +42,7 @@ contract → review the result.** Everything between is the agent.
 
 ## 0 · Prerequisites
 
-- **Node.js ≥ 16** (to install) and **Python 3.12+** (the tool is stdlib-only).
+- **Node.js ≥ 18** (to install) and **Python 3.10+** (the tool is stdlib-only).
 - A project folder. It can be empty or an existing repo.
 
 ---
