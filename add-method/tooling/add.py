@@ -380,6 +380,11 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     if milestone:
         print(f"linked to milestone '{milestone}'" +
               (f", depends-on {depends_on}" if depends_on else ""))
+    else:
+        # warn-never-block: the task is created (escape hatch), but nudge back toward the
+        # intake -> milestone flow. Speaks of STRUCTURE (not attached), never the act.
+        print(f"note: '{slug}' is not attached to a milestone — size it via /add (intake), "
+              "or pass --milestone <id>")
     print("active task set. phase: specify. Fill section 1 (SPECIFY), then: add.py advance")
 
 
@@ -651,6 +656,7 @@ def cmd_check(args: argparse.Namespace) -> None:
     tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
     milestones = state.get("milestones") if isinstance(state.get("milestones"), dict) else {}
     archived_slugs = _archived_task_slugs(state)   # archived deps still resolve
+    warnings: list[tuple[str, str]] = []  # (name, reason) — nudges that NEVER feed `failed`
     for slug, t in tasks.items():
         task_md = root / "tasks" / slug / "TASK.md"
         checks.append((task_md.exists(), f"task '{slug}' has TASK.md", "file missing"))
@@ -662,6 +668,11 @@ def cmd_check(args: argparse.Namespace) -> None:
         if ms is not None:
             checks.append((ms in milestones, f"task '{slug}' milestone resolves",
                            f"unknown milestone {ms!r}"))
+        else:
+            # warn-never-block: a task outside a milestone is a structural nudge back toward
+            # the intake flow — NOT a failure. Names structure, never the act of intake.
+            warnings.append((f"task '{slug}'", "is outside a milestone — size it via the /add "
+                                               "intake flow (or attach with --milestone)"))
         for dep in t.get("depends_on") or []:
             checks.append((dep in tasks or dep in archived_slugs,
                            f"task '{slug}' dep '{dep}' resolves", "unknown task"))
@@ -694,13 +705,21 @@ def cmd_check(args: argparse.Namespace) -> None:
     failed = len(checks) - passed
     if as_json:
         print(json.dumps({"passed": passed, "failed": failed,
+                          "warned": len(warnings),
+                          "warnings": [{"name": name, "reason": reason}
+                                       for name, reason in warnings],
                           "checks": [{"ok": ok, "name": desc,
                                       "reason": reason if not ok else ""}
                                      for ok, desc, reason in checks]}))
     else:
         for ok, desc, reason in checks:
             print(f"PASS  {desc}" if ok else f"FAIL  {desc}: {reason}")
-        print(f"check: {passed} passed, {failed} failed")
+        for name, reason in warnings:
+            print(f"WARN  {name} {reason}")
+        summary = f"check: {passed} passed, {failed} failed"
+        if warnings:
+            summary += f" ({len(warnings)} warnings)"   # frozen §3: summary gains "(N warnings)"
+        print(summary)
     if failed:
         raise SystemExit(1)
 

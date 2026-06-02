@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "milestone-onboarding-docs",
+  "active_task": "orphan-task-guard",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -302,10 +302,19 @@
       "depends_on": [],
       "created": "2026-06-02T01:45:58+00:00",
       "updated": "2026-06-02T03:23:49+00:00"
+    },
+    "orphan-task-guard": {
+      "title": "add.py warns (never blocks) when a task lives outside a milestone",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v8-1",
+      "depends_on": [],
+      "created": "2026-06-02T03:54:28+00:00",
+      "updated": "2026-06-02T04:10:46+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-02T03:24:21+00:00",
+  "updated": "2026-06-02T04:11:06+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -378,7 +387,15 @@
       "status": "done",
       "created": "2026-06-02T01:45:23+00:00",
       "updated": "2026-06-02T03:24:21+00:00"
+    },
+    "v8-1": {
+      "title": "Guard the AI-first flow (runtime)",
+      "goal": "A project nudges work back toward the intake to milestone structure: add.py warns (never blocks) when a task lives outside a milestone, giving the documented AI-first flow a runtime backstop",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-02T03:53:25+00:00",
+      "updated": "2026-06-02T04:11:06+00:00"
     }
   },
-  "active_milestone": "v8"
+  "active_milestone": "v8-1"
 }
