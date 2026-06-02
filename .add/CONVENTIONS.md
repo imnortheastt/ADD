@@ -36,3 +36,11 @@ Architecture:
 - (TDD) **Words-exist ≠ method-works.** Structural/string tests prove an artifact reads as worded, not
   that the behavior works or is enforced (recurring gap). Where behavior matters — md5 parity, an
   enforced default, real convergence — add a behavioral test, not a presence assertion.
+- (ADD) **Stale-guard sweep at milestone close.** Shipping a milestone can falsify a *sibling* task's
+  frozen test — a guard may encode a world-state the ship just changed. At close, run the full suite and
+  re-aim or retire any guard the ship invalidated, as an explicit change-request (human-approved), never
+  a silent weakening to make the suite green. [v7 ship broke test_v8_docs (it required the now-removed
+  v6/v7 caveat); re-aimed → test_docs_post_ship_honesty — folded foundation-version 4]
+- (ADD/SDD) **Docs must not outrun their gate.** A surface may not describe a flow whose verify gate is
+  not yet recorded PASS. The v6/v7 onboarding drift existed precisely because three surfaces claimed v7
+  before its tasks passed. Claim only what the gate has earned. [folded foundation-version 4]
