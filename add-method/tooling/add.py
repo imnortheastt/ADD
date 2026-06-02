@@ -555,7 +555,14 @@ def cmd_status(args: argparse.Namespace) -> None:
 
     print(f"active  : {active or '(none)'}")
     if not tasks:
-        print("tasks   : (none yet) -> add.py new-task <slug>")
+        # First-run panel: a brand-new project's status is the moment a user is most
+        # lost. Lead with the AI-first move (/add), keep the CLI as the escape hatch —
+        # mirrors `init`'s next-hint so the entry point is actionable, not a bare line.
+        print("tasks   : (none yet)")
+        print()
+        print("next    : you're set up. In Claude Code, run /add and say what you want to")
+        print("          build — the `add` skill sizes it into a milestone and drives the")
+        print('          build with you. Escape hatch: add.py new-task <slug> --title "..."')
         return
     print("tasks   :")
     for slug, t in tasks.items():

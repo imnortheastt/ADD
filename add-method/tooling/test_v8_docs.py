@@ -8,8 +8,10 @@ The seven-phase walkthrough STAYS — it is the loop the agent drives — but it
 thing the user is told to hand-type.
 
 Two invariants are enforced:
-  - the HONESTY RULE on prose artifacts: v7-designed one-approval/auto behavior is labelled
-    "as designed in v7" vs shipped v6 (the terse orientation block is exempt; these docs are NOT);
+  - the HONESTY RULE on prose artifacts, re-aimed after v7 shipped (onboarding-align, 2026-06-02):
+    while v7 was designed-not-shipped this meant labelling "as designed in v7" vs v6; now v7 has
+    shipped, so honesty means naming the ONE shipped flow (the one-approval front) with NO stale
+    designed-vs-shipped narration;
   - the glossary defines "On-ramp" and stays byte-identical across both trees.
 
 HONEST SCOPE (same caveat as the other v8 guards): these tests prove the docs' WORDS lead AI-first --
@@ -68,10 +70,17 @@ class V8DocsTest(unittest.TestCase):
                         "README 'Use it' must lead with the `/add` command (talk to the agent)")
 
     # --- prose artifacts label designed-vs-shipped -------------------------
-    def test_docs_label_designed_vs_shipped(self):
+    def test_docs_post_ship_honesty(self):
+        # HONESTY RULE, re-aimed after v7 shipped (onboarding-align, 2026-06-02): while v7 was
+        # designed-but-not-shipped, honesty meant DISCLOSING the gap ("as designed in v7" vs v6).
+        # v7 has now shipped, so that disclaimer is false — honesty now means naming the ONE
+        # shipped flow (the one-approval front) and carrying NO stale designed-vs-shipped narration.
         blob = (GETTING_STARTED.read_text(encoding="utf-8") + README.read_text(encoding="utf-8")).lower()
-        self.assertTrue(re.search(r"as designed in v7|designed in v7|v7.{0,30}not.{0,10}ship|shipped.{0,10}v6", blob),
-                        "onboarding prose must label v7-designed-vs-shipped (honesty rule on prose artifacts)")
+        self.assertIn("one-approval front", blob,
+                      "onboarding prose must name the shipped one-approval front (post-ship honesty)")
+        self.assertFalse(re.search(r"as designed in v7|today's \*\*shipped\*\*|three-gate front", blob),
+                         "onboarding prose must not carry stale designed-vs-shipped narration "
+                         "now that v7 has shipped (post-ship honesty)")
 
     # --- glossary defines On-ramp, both trees identical --------------------
     def test_glossary_defines_onramp(self):

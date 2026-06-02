@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "orphan-task-guard",
+  "active_task": "onboarding-align",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -258,23 +258,23 @@
     },
     "auto-default-dial": {
       "title": "Flip the autonomy default to auto, guard high-risk scope",
-      "phase": "verify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v7",
       "depends_on": [],
       "created": "2026-06-01T16:37:44+00:00",
-      "updated": "2026-06-01T16:48:40+00:00"
+      "updated": "2026-06-02T05:07:40+00:00"
     },
     "one-approval-front": {
       "title": "Compress the front to one approval at the contract-freeze seam",
-      "phase": "verify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v7",
       "depends_on": [
         "auto-default-dial"
       ],
       "created": "2026-06-01T16:37:44+00:00",
-      "updated": "2026-06-01T16:48:40+00:00"
+      "updated": "2026-06-02T05:07:40+00:00"
     },
     "agent-orientation-block": {
       "title": "Rewrite the sync-guidelines orientation block to the AI-first flow",
@@ -311,10 +311,19 @@
       "depends_on": [],
       "created": "2026-06-02T03:54:28+00:00",
       "updated": "2026-06-02T04:10:46+00:00"
+    },
+    "onboarding-align": {
+      "title": "Align onboarding surfaces to the shipped v7 one-approval flow",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": null,
+      "depends_on": [],
+      "created": "2026-06-02T05:24:15+00:00",
+      "updated": "2026-06-02T06:21:12+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-02T04:11:06+00:00",
+  "updated": "2026-06-02T06:21:12+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -376,9 +385,9 @@
       "title": "Auto by default \u2014 the one-approval flow",
       "goal": "Make auto the default autonomy and compress the human-led front to a single approval at the contract-freeze seam, keeping the seam human and security as a HARD-STOP.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-01T16:36:42+00:00",
-      "updated": "2026-06-01T16:36:42+00:00"
+      "updated": "2026-06-02T05:08:07+00:00"
     },
     "v8": {
       "title": "AI-first install & milestone on-ramp",

@@ -36,10 +36,6 @@ From there the agent runs the **on-ramp** for you:
 So a milestone-sized feature is: **describe it → confirm the milestone → approve each
 contract → review the result.** Everything between is the agent.
 
-> *One approval + auto is the flow **as designed in v7**. Today's **shipped** default (v6)
-> is the conservative three-gate front — same seven steps, just more human approvals. The
-> walkthrough below shows the steps by hand so you understand what the agent drives.*
-
 > New term: **On-ramp** — the install→first-milestone path. See `docs/appendix-c-glossary.md`.
 
 ---
@@ -109,7 +105,12 @@ Open `.add/tasks/transfer/TASK.md` in your editor. You'll fill it top to bottom.
 
 ---
 
-## 4 · Walk the seven phases
+## Under the hood — the seven phases by hand (escape hatch)
+
+Everything above is what the agent drives for you through the one-approval front. This
+section is the **escape hatch**: the same seven phases run by hand, so you can see what
+each one produces and step in manually whenever you want to. You never *have* to type
+these — they are the agent's hands, and yours when you take the wheel.
 
 The rhythm is always: **fill the section → run `python3 .add/tooling/add.py advance`.**
 The tool keeps the `phase:` marker at the top of TASK.md in sync.

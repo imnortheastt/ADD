@@ -61,10 +61,6 @@ Scenarios + Contract + Tests as one bundle — and you give **one approval at th
 frozen contract**. A self-driving build→verify run takes it to green; security
 findings always stop back to you.
 
-> *One approval + auto-by-default is the flow **as designed in v7**. Today's **shipped**
-> default (v6) is the conservative three-gate front; the steps are identical, only
-> how many approvals differ.*
-
 Under the hood the agent runs the CLI as its hands — and you can hand-drive it too:
 
 ```bash
