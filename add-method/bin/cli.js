@@ -106,9 +106,9 @@ function cmdInit(args) {
     warn("`add.py init` exited non-zero (state may already exist). Run `add.py status` to check.");
   }
 
-  log("\nDone. In Claude Code, the `add` skill is now available.");
-  log("Next:  python3 .add/tooling/add.py new-task <slug> --title \"<feature>\"");
-  log("Then ask Claude to \"start the ADD task\".");
+  log("\nDone. In Claude Code, the `add` skill is now installed.");
+  log("Next:  open Claude Code, run `/add`, and say what you want to build —");
+  log("       the agent sizes it into a milestone and drives the build with you.");
 }
 
 function main() {

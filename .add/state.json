@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "autonomy-dial",
+  "active_task": "install-onramp",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -255,10 +255,57 @@
       ],
       "created": "2026-06-01T14:51:30+00:00",
       "updated": "2026-06-01T14:52:02+00:00"
+    },
+    "auto-default-dial": {
+      "title": "Flip the autonomy default to auto, guard high-risk scope",
+      "phase": "verify",
+      "gate": "none",
+      "milestone": "v7",
+      "depends_on": [],
+      "created": "2026-06-01T16:37:44+00:00",
+      "updated": "2026-06-01T16:48:40+00:00"
+    },
+    "one-approval-front": {
+      "title": "Compress the front to one approval at the contract-freeze seam",
+      "phase": "verify",
+      "gate": "none",
+      "milestone": "v7",
+      "depends_on": [
+        "auto-default-dial"
+      ],
+      "created": "2026-06-01T16:37:44+00:00",
+      "updated": "2026-06-01T16:48:40+00:00"
+    },
+    "agent-orientation-block": {
+      "title": "Rewrite the sync-guidelines orientation block to the AI-first flow",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v8",
+      "depends_on": [],
+      "created": "2026-06-02T01:45:57+00:00",
+      "updated": "2026-06-02T02:19:38+00:00"
+    },
+    "install-onramp": {
+      "title": "Make init output AI-first: agent next-hint + bundle skill and book",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v8",
+      "depends_on": [],
+      "created": "2026-06-02T01:45:57+00:00",
+      "updated": "2026-06-02T02:31:22+00:00"
+    },
+    "milestone-onboarding-docs": {
+      "title": "Onboarding docs lead with /add and the milestone on-ramp",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v8",
+      "depends_on": [],
+      "created": "2026-06-02T01:45:58+00:00",
+      "updated": "2026-06-02T01:50:21+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-01T14:52:02+00:00",
+  "updated": "2026-06-02T02:31:22+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -315,7 +362,23 @@
       "status": "active",
       "created": "2026-06-01T14:22:59+00:00",
       "updated": "2026-06-01T14:22:59+00:00"
+    },
+    "v7": {
+      "title": "Auto by default \u2014 the one-approval flow",
+      "goal": "Make auto the default autonomy and compress the human-led front to a single approval at the contract-freeze seam, keeping the seam human and security as a HARD-STOP.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-01T16:36:42+00:00",
+      "updated": "2026-06-01T16:36:42+00:00"
+    },
+    "v8": {
+      "title": "AI-first install & milestone on-ramp",
+      "goal": "After install, a user develops with ADD by talking to the agent \u2014 request to milestone to one-approval run \u2014 with no add.py typing in the happy path; install output and onboarding teach that flow",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-02T01:45:23+00:00",
+      "updated": "2026-06-02T01:45:23+00:00"
     }
   },
-  "active_milestone": "v6"
+  "active_milestone": "v8"
 }
