@@ -17,7 +17,9 @@ How much the AI is allowed to do is not one switch; it is a setting chosen per a
 | **Generate-behind-gate** | generates code | reviews the change; it merges only if the contract and tests pass | the normal build |
 | **Auto-with-evidence** | generates and merges | samples and audits; auto-merge allowed only with a full evidence bundle attached | narrow, well-tested areas |
 
-The governing rule, restated from the principles: **operate only at the level your review capacity can sustain.** If the AI produces more than the team can verify, drop a level. Rising autonomy is earned with evidence and accountability, never assumed.
+The governing rule, restated from the principles: **operate only at the level your review capacity can sustain.** If the AI produces more than the team can verify, drop a level.
+
+The **per-scope default is auto-with-evidence behind a one-approval seam**: the AI drafts the front, a human approves the frozen contract once, and the build auto-gates on evidence. You *lower* a scope toward draft-and-review or suggest wherever risk is high or evidence is thin — and a high-risk or method-defining scope is *always* lowered (it is never auto-run). The default sets where you start; review capacity and risk set where you stay.
 
 ## The gate-fail protocol and the three reports
 

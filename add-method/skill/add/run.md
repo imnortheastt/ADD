@@ -4,11 +4,31 @@ Once a task's CONTRACT is frozen (phase 3), the scope is *locked*: the external 
 That lock is ADD's autonomy seam — below it code is disposable; above it nothing breaks. This rubric
 covers what runs on the far side of the seam: the **build->verify half, executed as a dynamic,
 self-improving run** instead of a manual, sequential build. The human-led FRONT (Specify · Scenarios
-· Contract) does not change — the run is what v6 adds.
+· Contract) still owns *direction*, but v7 compresses it to a **single human approval at the seam**
+(see "The one-approval front" below) — the AI drafts the whole front, a human approves it once.
 
 > **Self-improving = within-run convergence + emit v5 deltas** — same definition as v5: tracked,
 > evidence-backed, never autonomous training. The run converges in-turn AND feeds the human-gated
 > fold loop (`deltas.md` · `fold.md`). The engine stays judgment-free: this is a rubric, not `add.py`.
+
+## The one-approval front (v7)
+
+The human-led front used to be three separate approvals — Specify, then Scenarios, then the Contract
+freeze. v7 compresses it to **one**. From the user's input the AI **drafts the whole front as a single
+bundle** — the Spec, the Scenarios, the Contract, and the failing Tests — and presents it together. The
+human gives **one approval, at the frozen contract** (the seam). That single approval is the green light
+for the self-driving run.
+
+Why one approval and not zero: the contract freeze is the autonomy seam, and the seam **stays human**.
+The AI *drafts* the contract but never *freezes its own* — a person approves the frozen shape before any
+auto-run touches code. This is exactly what keeps "never self-gate a human-led gate" true under an auto
+default: the one gate that remains is human. Drop it to zero and the AI would freeze the interface it
+then builds against and self-gate the result — the circular trust v6's dogfood warned against.
+
+What the human is actually approving in that one gate: that the drafted Spec captures the real intent,
+that the Scenarios cover the cases that matter, and that the Contract shape is the one to freeze. Reject
+any part and the bundle goes back to draft — that is backward-correction (principle 4), not failure.
+Approve, and the run begins.
 
 ## When the run begins — the scope-lock trigger
 
@@ -94,15 +114,27 @@ How much a run may auto-gate is a **per-scope setting**, not a global switch (pr
 earned per scope). A task declares its level in its `TASK.md` header:
 
 ```
-autonomy: conservative | auto
+autonomy: auto | conservative
 ```
 
-- **conservative (the default)** — the run does all the work and converges, but STOPS at the verify
-  gate for a human. Auto-PASS is disabled.
-- **auto** — the run may auto-PASS when the evidence + residue checks above are satisfied. Security
-  still always escalates.
+- **auto (the default)** — the run may auto-PASS when the evidence + residue checks above are
+  satisfied. Security still always escalates. This is the default starting point: a frozen contract
+  flips the task into a self-driving run that converges and auto-gates on evidence.
+- **conservative** — the deliberate *lowering*: the run does all the work and converges, but STOPS at
+  the verify gate for a human. Auto-PASS is disabled. Choose it wherever evidence is thin or risk is high.
 
-The default is conservative; raising to `auto` is a deliberate, recorded choice for a low-risk,
-well-tested scope, and can be lowered at any time. The dial is a **rubric convention** read by the
-human and the run — it is **not an `add.py` flag** (the engine stays judgment-free); the level lives in
-the `TASK.md` header where the run already reads.
+> **v7 reversal (recorded, not hidden).** Earlier the default was `conservative` and `auto` was the
+> earned exception; v7 flips this — `auto` is the default, `conservative` is the deliberate lowering.
+> What did **not** change is principle 5: the dial is still **per-scope**, the level still lives in the
+> `TASK.md` header, and you still lower it anywhere risk demands. Only the starting point moved.
+
+**The high-risk guard — `auto` is refused where it matters most.** The dial is not a blank cheque. On a
+**high-risk or method-defining scope** — anything where a wrong-but-plausible result is expensive or
+hard to reverse (auth, money, data-loss paths, the method/trust-layer itself) — `auto` must be lowered
+to `conservative`; leaving it at `auto` there is the reject code **`unguarded_high_risk_auto`**. This
+closes the v6 dogfood blind-spot, where the whole milestone ran at `auto` on the riskiest possible
+scope (defining the method) with no friction. The default is `auto` *for ordinary, well-tested scope*;
+high risk still earns a human gate.
+
+The dial is a **rubric convention** read by the human and the run — it is **not an `add.py` flag** (the
+engine stays judgment-free); the level lives in the `TASK.md` header where the run already reads.

@@ -10,7 +10,7 @@ both skill trees (md5 parity) — it grows one section per v6 task:
   dynamic-run-engine : fan-out + in-run convergence (loop-until-dry · adversarial verify · critic)
   evidence-auto-gate : what auto-PASSes verify, what always escalates (security = human, always)
   run-emits-deltas   : run findings become `open` competency deltas in OBSERVE
-  autonomy-dial      : the run's autonomy is a per-scope setting, conservative by default
+  autonomy-dial      : the run's autonomy is a per-scope setting (v7 flipped the default to auto)
 
 HONEST SCOPE: these tests prove the rubric's WORDS exist as contracted — NOT that the run actually
 converges or that the auto-gate is sound. Those are method/runtime properties a string check cannot
@@ -113,8 +113,9 @@ class V6RunRubricTest(unittest.TestCase):
         low = text.lower()
         self.assertIn("autonomy:", text, "run.md must name the `autonomy:` per-scope setting")
         self.assertIn("conservative", low, "run.md must name the conservative level")
-        self.assertTrue(re.search(r"conservative.{0,60}default|default.{0,60}conservative", low, re.DOTALL),
-                        "run.md must state conservative is the default")
+        # v7: the default flipped conservative -> auto (a deliberate, recorded reversal).
+        self.assertTrue(re.search(r"auto.{0,40}\bdefault\b|\bdefault\b.{0,40}auto", low, re.DOTALL),
+                        "run.md must state auto is the default (v7 reversal)")
         self.assertTrue(re.search(r"not an? add\.py|not a.{0,20}flag|engine stays judgment", low),
                         "run.md must state the dial is a rubric convention, not an add.py flag")
 
