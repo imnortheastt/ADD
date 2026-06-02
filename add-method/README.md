@@ -50,14 +50,26 @@ This installs:
 
 ## Use it
 
-```bash
-python3 .add/tooling/add.py status                       # where am I? (resume point)
-python3 .add/tooling/add.py new-task transfer --title "Transfer money"
-```
+ADD is AI-first: you talk to the agent; it drives the method. In Claude Code, run
+**`/add`** and say what you want to build:
 
-Then in Claude Code: **"start the ADD task."** The skill orients from
-`state.json`, opens the active `TASK.md`, and drives the current phase. Advance
-with `add.py advance`; close a feature with `add.py gate PASS`.
+> `/add` — *"I want to let users transfer money between their own accounts."*
+
+The agent orients from `state.json`, **sizes your request into a milestone** (you
+confirm the shape), then drafts each feature's **one-approval front** — Spec +
+Scenarios + Contract + Tests as one bundle — and you give **one approval at the
+frozen contract**. A self-driving build→verify run takes it to green; security
+findings always stop back to you.
+
+> *One approval + auto-by-default is the flow **as designed in v7**. Today's **shipped**
+> default (v6) is the conservative three-gate front; the steps are identical, only
+> how many approvals differ.*
+
+Under the hood the agent runs the CLI as its hands — and you can hand-drive it too:
+
+```bash
+python3 .add/tooling/add.py status      # where am I? (resume point)
+```
 
 ## The non-negotiables
 

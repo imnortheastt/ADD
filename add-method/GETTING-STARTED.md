@@ -8,8 +8,39 @@ You'll learn the whole loop by doing it once:
 
 > **Specify → Scenarios → Contract → Tests → Build → Verify → Observe**
 
-Every command below is real and copy-pasteable. Deeper "why" for each step lives
-in the book under `.add/docs/` — pointers are inline.
+ADD is **AI-first**: you talk to the agent and it drives the method — you don't
+hand-type the commands. The commands below are the agent's hands (and your escape
+hatch); the rest of this guide shows both so you can see what the agent does.
+
+---
+
+## The fast path — talk to the agent
+
+After installing (step 1 below), the whole on-ramp is one move:
+
+```
+in Claude Code:  /add
+you:             "I want to let users transfer money between their own accounts."
+```
+
+From there the agent runs the **on-ramp** for you:
+
+1. **Orient** — it reads `add.py status` (the resume point), never re-reading your repo.
+2. **Intake** — it sizes your request into versioned scope and proposes a **milestone**
+   (goal · scope · breadth-first tasks · exit criteria). *You confirm the shape.*
+3. **One-approval front** — for each task it drafts Spec + Scenarios + Contract + Tests
+   as one bundle. *You give one approval at the frozen contract.*
+4. **Self-driving run** — build→verify runs to green; a security finding always stops
+   back to you.
+
+So a milestone-sized feature is: **describe it → confirm the milestone → approve each
+contract → review the result.** Everything between is the agent.
+
+> *One approval + auto is the flow **as designed in v7**. Today's **shipped** default (v6)
+> is the conservative three-gate front — same seven steps, just more human approvals. The
+> walkthrough below shows the steps by hand so you understand what the agent drives.*
+
+> New term: **On-ramp** — the install→first-milestone path. See `docs/appendix-c-glossary.md`.
 
 ---
 

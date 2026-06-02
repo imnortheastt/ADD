@@ -60,13 +60,19 @@ Out: any change to the 7-phase sequence or phase semantics (untouched); any rede
   decisions above, every task honors it.
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] agent-orientation-block    depends-on: none   — rewrite the `sync-guidelines` CLAUDE.md/AGENTS.md block → the AI-first 8-step flow; mirror both `add.py` trees
-- [ ] install-onramp             depends-on: none   — `init` next-hint → agent entry; verify+fix that `init` bundles the skill (`.claude/skills/add/`) + book (`.add/docs/`)
-- [ ] milestone-onboarding-docs  depends-on: none   — rewrite `GETTING-STARTED.md` + `README.md` → lead with `/add` + the milestone on-ramp; demote raw `add.py`
+- [x] agent-orientation-block    depends-on: none   — rewrite the `sync-guidelines` CLAUDE.md/AGENTS.md block → the AI-first 8-step flow; mirror both `add.py` trees  · gate PASS
+- [x] install-onramp             depends-on: none   — `init` next-hint → agent entry; verify+fix that `init` bundles the skill (`.claude/skills/add/`) + book (`.add/docs/`)  · gate PASS
+- [x] milestone-onboarding-docs  depends-on: none   — rewrite `GETTING-STARTED.md` + `README.md` → lead with `/add` + the milestone on-ramp; demote raw `add.py`  · gate PASS
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] the CLAUDE.md/AGENTS.md block from `sync-guidelines` describes orient→intake→milestone→one-approval→run, with no manual-only framing   (← agent-orientation-block)
-- [ ] `init` in a clean repo prints an agent-entry next-hint AND leaves `.claude/skills/add/` + `.add/docs/` present                          (← install-onramp)
-- [ ] `GETTING-STARTED.md` opens with the `/add` conversational entry and walks request→milestone→task (not `add.py`-first)                   (← milestone-onboarding-docs)
-- [ ] `README.md` "Use it" leads with talking to the agent; `add.py` shown as the agent's hands / escape hatch                                (← milestone-onboarding-docs)
-- [ ] all four artifacts render the SAME canonical 8-step flow (designed-vs-shipped labelled per the honesty rule)                            (← shared decision, checked across all three tasks)
+- [x] the CLAUDE.md/AGENTS.md block from `sync-guidelines` describes orient→intake→milestone→one-approval→run, with no manual-only framing   (← agent-orientation-block)
+- [x] `init` in a clean repo prints an agent-entry next-hint AND leaves `.claude/skills/add/` + `.add/docs/` present                          (← install-onramp)
+- [x] `GETTING-STARTED.md` opens with the `/add` conversational entry and walks request→milestone→task (not `add.py`-first)                   (← milestone-onboarding-docs)
+- [x] `README.md` "Use it" leads with talking to the agent; `add.py` shown as the agent's hands / escape hatch                                (← milestone-onboarding-docs)
+- [x] all four artifacts render the SAME canonical 8-step flow (designed-vs-shipped labelled per the honesty rule)                            (← shared decision, checked across all three tasks)
+
+## Close note (2026-06-02)
+All three tasks gated PASS; all five exit criteria met. Milestone marked **done**.
+**Release-ordering hold (honors the constraint above):** the npm release of v8 waits until **v7
+reaches `done`** — v7 is still at `verify`, and v8 documents the v7-*designed* one-approval/auto flow.
+Marking v8 done records that the *work* is complete; it does **not** authorize shipping ahead of v7.

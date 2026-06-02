@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "install-onramp",
+  "active_task": "milestone-onboarding-docs",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -296,16 +296,16 @@
     },
     "milestone-onboarding-docs": {
       "title": "Onboarding docs lead with /add and the milestone on-ramp",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v8",
       "depends_on": [],
       "created": "2026-06-02T01:45:58+00:00",
-      "updated": "2026-06-02T01:50:21+00:00"
+      "updated": "2026-06-02T03:23:49+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-02T02:31:22+00:00",
+  "updated": "2026-06-02T03:24:21+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -375,9 +375,9 @@
       "title": "AI-first install & milestone on-ramp",
       "goal": "After install, a user develops with ADD by talking to the agent \u2014 request to milestone to one-approval run \u2014 with no add.py typing in the happy path; install output and onboarding teach that flow",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-02T01:45:23+00:00",
-      "updated": "2026-06-02T01:45:23+00:00"
+      "updated": "2026-06-02T03:24:21+00:00"
     }
   },
   "active_milestone": "v8"
