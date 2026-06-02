@@ -30,9 +30,17 @@ across sessions (context rot). ADD fixes both:
 
 ## Install
 
+Pick your ecosystem — both install the same skill, tooling, and book:
+
 ```bash
-# in your project
+# Node / npm
 npx @mrq/add init --name "My App" --stage prototype
+```
+
+```bash
+# Python / pip
+pip install add-method
+add-method init --name "My App" --stage prototype
 ```
 
 **New here?** Follow the [10-minute Quickstart](./GETTING-STARTED.md) — it walks
