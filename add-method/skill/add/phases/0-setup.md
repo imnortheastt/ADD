@@ -8,7 +8,7 @@ Goal: make every later gate enforceable automatically. Do this once.
    ```bash
    python3 .add/tooling/add.py init --name "<project>" --stage prototype
    ```
-   If the tool isn't there yet, the installer (`npx @mrq/add init`) placed it at
+   If the tool isn't there yet, the installer (`npx @pilotspace/add init`) placed it at
    `.add/tooling/add.py`.
 2. Fill the survivor-layer files (they outlive all code):
    - `.add/PROJECT.md` — **the foundation**: Domain (DDD) · Spec/Living-Document (SDD,

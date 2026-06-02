@@ -36,7 +36,7 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
   `report` / `report --json` (read-only awareness) + `report_data` facts seam;
   `report <task>` / `report <m> <task>` (read-only phase drill-down) + `task_phases` extraction
   seam (per-phase fields + `(empty)` fail-closed; smart milestone-first-else-task resolution).
-- Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@mrq/add`,
+- Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@pilotspace/add`,
   PROJECT.md foundation, dynamic-by-reference guideline injection; **per-phase report
   drill-down** (SHIPPED v9-1: `report <task>` renders each phase's RESULT). OPEN — interactive
   `add.py guide`, Vietnamese quickstart, milestone archive/rotation; cross-task / cross-milestone
@@ -74,7 +74,7 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
 - Primary users & jobs: the author (MRQ maintainer) shipping ADD as a product;
   **AI agents** that load the skill; **developers** adopting ADD who must
   read/trust/follow the method.
-- The interface (no GUI): the `add.py` command surface + `npx @mrq/add`, and the text
+- The interface (no GUI): the `add.py` command surface + `npx @pilotspace/add`, and the text
   they print. Core flow: `init` → fill foundation → `new-task` → run the loop →
   `verify`/gate → resume any session with `status`.
 - "UI states" for a CLI = output states: a clear success line, an empty/idle state
@@ -130,3 +130,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
 | 2026-06-02 | two render idioms by purpose: rollup collapses prose+columns, drill preserves line-structure (UDD) | a drill-down is a READ surface (scenarios/code shape matters), not a scannable digest — `_detail_body` vs `_wrap` diverge deliberately | folded → §UDD; shared frozen thing is the DATA seam, not the layout |
 | 2026-06-02 | fold v9-1 learnings → foundation-version 6 (argparse-binding-trace · freeze-data-paid-off · utf-8+OSError-on-read · two-render-idioms) | human-gated fold of v9-1 dogfood evidence | §Spec + §UDD updated; 4 deltas folded; `[ADD] freeze-data-not-presentation` proven (ragged wrap shipped as disclosed debt, no re-freeze) |
 | 2026-06-02 | reframe Specify as **co-specification** (brainstorm by both → AI drafts → human validates with AI advice); the advice is a ranked **least-sure flag**, bundle-wide at the freeze seam | the one-approval front risked rubber-stamping a flat all-`[x]` assumptions wall (the open §UDD risk); rank the uncertainty + name the 1–2 most-likely-wrong so the single approval is *aimed*, without adding GSD-style ceremony — it reshapes the assumptions list ADD already had | book 03 + appendices A/B/C/D + skill `phases/1-specify` · `run.md` · `phases/3-contract` · `SKILL.md`, all trees byte-identical; 219 tests green; `Framings weighed:` persists the brainstorm; "none material" must still name the biggest risk; **honest limit:** the flag aims the review but cannot *force* engagement (a self-asserted "human engaged" is barred; true enforcement deferred to a CI checker) |
+| 2026-06-02 | publish npm under `@pilotspace/add` (was `@mrq/add`); PyPI ships as `add-method` | the only npm credential is the `pilotspace` account, which has no access to the `@mrq` scope (npm 404'd the publish — `@mrq` was aspirational brand, never registered); `add-method` is taken on npm, `@pilotspace/add` is free and matches the `pilotspace` GitHub org | renamed across package.json · README · GETTING-STARTED · cli.js · skill `phases/0-setup` (+ both mirrors) · 4 tests; 231 tests green; npm = @pilotspace/add@1.0.0, PyPI = add-method 1.0.0 |

@@ -34,7 +34,7 @@ Pick your ecosystem — both install the same skill, tooling, and book:
 
 ```bash
 # Node / npm
-npx @mrq/add init --name "My App" --stage prototype
+npx @pilotspace/add init --name "My App" --stage prototype
 ```
 
 ```bash

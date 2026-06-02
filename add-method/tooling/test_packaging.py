@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Red/green guard for the published @mrq/add tarball — no dev junk ships.
+"""Red/green guard for the published @pilotspace/add tarball — no dev junk ships.
 
 `npm pack --dry-run --json` is the ground truth for what publish would include. We
 parse files[].path and assert the runtime surface is present and that no compiled

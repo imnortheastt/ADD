@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Structural proof of the v8 install on-ramp — the installer greets AI-first, and the brain is bundled.
 
-After `npx @mrq/add init`, the first thing a user reads is the installer's next-hint. v8 re-aims it
+After `npx @pilotspace/add init`, the first thing a user reads is the installer's next-hint. v8 re-aims it
 from bare `new-task` (CLI-first, skips intake) to the AI-first entry: open Claude Code, run `/add`,
 describe what to build; the agent runs intake -> milestone -> one-approval.
 

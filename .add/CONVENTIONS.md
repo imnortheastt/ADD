@@ -6,10 +6,10 @@ Language/framework:
   - Method content: Markdown (the skill + the AIDD book).
 
 Folders:
-  - `add-method/`            the shippable npm package (`@mrq/add`)
+  - `add-method/`            the shippable npm package (`@pilotspace/add`)
     - `skill/add/`           thin router SKILL.md + `phases/*.md` (progressive disclosure)
     - `tooling/`             `add.py` (scaffolder + state tracker) + `templates/` + `test_add.py`
-    - `bin/cli.js`           the `npx @mrq/add init` installer
+    - `bin/cli.js`           the `npx @pilotspace/add init` installer
     - `docs/`                the AIDD book bundled as the trust layer
   - `*.md` (repo root)       the AIDD book source chapters
   - `.add/`                  ADD runtime for THIS repo (dogfooding): state, tasks, survivor files

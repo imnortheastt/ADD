@@ -52,7 +52,7 @@ contract → review the result.** Everything between is the agent.
 From your project root:
 
 ```bash
-npx @mrq/add init --name "My App" --stage prototype
+npx @pilotspace/add init --name "My App" --stage prototype
 ```
 
 This creates `.add/` (your runtime), drops the `add` skill into

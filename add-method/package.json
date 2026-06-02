@@ -1,5 +1,5 @@
 {
-  "name": "@mrq/add",
+  "name": "@pilotspace/add",
   "version": "1.0.0",
   "description": "ADD (AI-Driven Development) — a minimal, state-tracked Claude Code skill that drives every feature through Specify → Scenarios → Contract → Tests → Build → Verify → Observe. Ships the AIDD book as its trust layer.",
   "bin": {
