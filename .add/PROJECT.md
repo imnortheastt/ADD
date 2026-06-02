@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 5
+slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
 
 ---
 
@@ -29,17 +29,18 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 5
   security·concurrency·architecture — **method/trust-layer edits are a residue category** (v6).
 
 ## Spec / Living Document (SDD) — what we are building, now
-- Latest shipped → `.add/milestones/v9/MILESTONE.md` (awareness surface). See `add.py status`
-  for live rollup. (earlier v1.1 polish tasks remain open.)
+- Latest shipped → `.add/milestones/v9-1/MILESTONE.md` (phase-detail drill-down). See
+  `add.py status` for live rollup. (earlier v1.1 polish tasks remain open.)
 - Frozen contracts (survivor): `set-milestone`, `milestone-done`, `check` exit
   codes; the 7-phase task flow; the milestone tier (`MILESTONE.md` + `depends_on`);
-  `report` / `report --json` (read-only awareness) + `report_data` facts seam.
+  `report` / `report --json` (read-only awareness) + `report_data` facts seam;
+  `report <task>` / `report <m> <task>` (read-only phase drill-down) + `task_phases` extraction
+  seam (per-phase fields + `(empty)` fail-closed; smart milestone-first-else-task resolution).
 - Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@mrq/add`,
-  PROJECT.md foundation, dynamic-by-reference guideline injection. OPEN — interactive
-  `add.py guide`, Vietnamese quickstart, milestone archive/rotation; **per-phase report
-  drill-down** — `report` shows the phase ROLLUP, not each phase's RESULT (scenarios set ·
-  contract frozen · verify findings); a `report <m> <task>` / `--phases` view is the next
-  awareness loop (owner-directed 2026-06-02).
+  PROJECT.md foundation, dynamic-by-reference guideline injection; **per-phase report
+  drill-down** (SHIPPED v9-1: `report <task>` renders each phase's RESULT). OPEN — interactive
+  `add.py guide`, Vietnamese quickstart, milestone archive/rotation; cross-task / cross-milestone
+  phase DIFF (explicitly out of v9-1 — the next awareness slice if wanted).
 - v6 (The Self-Driving Run): DESIGNED + dogfood-tested, **NOT human-validated** — the
   dynamic run / evidence auto-gate is safe only with a human gate or a CI enforcer separate
   from the agent (a self-asserted gate is circular); the fold is the new human bottleneck.
@@ -59,6 +60,13 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 5
   data, agent formats); `milestone-done` persists the canonical render to `RETRO.md` fail-closed
   (doc written BEFORE the status commit). 208 tests, dual-tree byte-identical, stdlib-only. Proved
   by dogfood: v9's own close generated its RETRO.md byte-identical to the canonical render.
+- v9-1 (Phase-detail drill-down): **SHIPPED 2026-06-02** — `add.py report <task>` (and explicit
+  `report <m> <task>`) renders a single task's SEVEN phase blocks (specify→observe): each phase's
+  captured §N body + reached/current marker, the verify block's GATE sourced from state.json (never
+  prose), missing/placeholder → `(empty)`. Two pure seams (`task_phases` + `render_task_detail`),
+  smart single-arg CLI (milestone-first-else-task), read-only + fail-closed (utf-8 + OSError guard
+  on the read). Purely additive — the v9 rollup is byte-for-byte unchanged. 219 tests, dual-tree
+  byte-identical. Dogfood-proved: v9-1's own close reported on itself via the v9 surface.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -76,6 +84,11 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 5
   text in `len()`-aligned columns; confine Unicode glyphs to line-END or non-aligned row STARTs
   (bullets). Two glyph tiers (Unicode/ASCII) chosen by stdout encoding/`--plain`. The persisted
   render is PLAIN + fixed-width (canonical); color/adaptive-width are a tty-only skin (v9 · UDD).
+- **Two render idioms, chosen by PURPOSE (v9-1 · UDD)**: a ROLLUP (`report <m>`) is a scannable
+  digest — collapse prose, fit `len()`-aligned columns. A DRILL (`report <task>`) is a READ surface
+  where line-structure (scenarios, contract code) carries meaning — preserve physical lines + each
+  line's indent, soft-wrap only over-long lines, never clip. Don't force one renderer's rules on
+  the other; the shared frozen thing is the DATA seam, not the layout.
 - Design source of truth: the skill prose (`SKILL.md` + `phases/*`) and the book.
 - What "good" feels like: never lose context across sessions; less doc time than GSD;
   one command to know "where am I and what's next".
@@ -106,3 +119,7 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 5
 | 2026-06-02 | fold v9 learnings → foundation-version 5 (freeze-data-not-presentation · verify-rechecks-criteria · no-wcwidth TUI rule · per-phase drill-down OPEN) | human-gated fold of v9 dogfood evidence | §Domain + §Spec + §UDD updated; 7 deltas folded |
 | 2026-06-02 | rule: a surface may not describe a flow whose verify gate is not yet recorded (SDD) | docs outran their gate = the original onboarding drift; honesty = claim only what passed | folded → §Spec; enforced by onboarding-align guards |
 | 2026-06-02 | convention: stale-guard sweep at milestone close (ADD) | shipping a milestone can falsify a sibling task's frozen test (v7 ship broke test_v8_docs) | folded → CONVENTIONS.md |
+| 2026-06-02 | ship v9-1: `report <task>` phase-detail drill-down (7 phase blocks · gate-from-state · `(empty)` fail-closed · smart milestone-first-else-task CLI) | the v9 rollup shows WHICH phase, not WHAT each phase decided — drill answers the other half, read-only + additive | v9-1 SHIPPED 1/1, 2/2 criteria; 219 tests; dogfood-proved (own RETRO via the v9 surface) |
+| 2026-06-02 | trace argparse positional BINDING when a contract adds an optional positional (SDD) | the drafted two-arg `report [m] [task]` made drill-down UNREACHABLE (a lone arg always binds to the 1st positional) — advisor caught it before freeze; chose smart single-arg instead | folded → §Spec CLI seam; the obvious contract shape can silently strand a code path |
+| 2026-06-02 | two render idioms by purpose: rollup collapses prose+columns, drill preserves line-structure (UDD) | a drill-down is a READ surface (scenarios/code shape matters), not a scannable digest — `_detail_body` vs `_wrap` diverge deliberately | folded → §UDD; shared frozen thing is the DATA seam, not the layout |
+| 2026-06-02 | fold v9-1 learnings → foundation-version 6 (argparse-binding-trace · freeze-data-paid-off · utf-8+OSError-on-read · two-render-idioms) | human-gated fold of v9-1 dogfood evidence | §Spec + §UDD updated; 4 deltas folded; `[ADD] freeze-data-not-presentation` proven (ragged wrap shipped as disclosed debt, no re-freeze) |

@@ -1185,6 +1185,141 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
     }
 
 
+def _clean_phase_body(body: str) -> str:
+    """Strip HTML comments (which include the `EXIT:` markers) and surrounding blank
+    lines from a §N body. A body that is empty or ONLY `<...>` angle-placeholders after
+    cleaning -> "(empty)" (fail-closed; never a silent gap). Otherwise the cleaned text
+    is returned with its internal line structure intact (scenarios/code stay readable)."""
+    body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
+    lines = [ln.rstrip() for ln in body.split("\n")]
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+    meaningful = [ln for ln in lines
+                  if ln.strip() and not re.fullmatch(r"\s*<.*>\s*", ln)]
+    return "\n".join(lines) if meaningful else "(empty)"
+
+
+def task_phases(root: Path, slug: str) -> list[dict]:
+    """The frozen per-task PHASE-DETAIL shape (v9-1): parse TASK.md §1–§7 into seven
+    blocks specify→observe. PURE — NO writes. Each entry is
+    { "phase": <name>, "n": <1..7>, "body": <cleaned text | "(empty)"> }.
+
+    Sections are matched on the NUMBER (`^##\\s*<n>\\s*·`, case/locale-proof, the phase
+    word maps n->PHASES[n-1]); a body runs from its heading to the next `## `/`---`/EOF.
+    Missing file / missing section / placeholder-only body -> "(empty)" (fail-closed).
+    KNOWN LIMIT: a §body containing a line-start `## ` or bare `---` truncates early —
+    today's TASK.md bodies don't (box-chars ─═, `### ` sub-heads)."""
+    names = PHASES[:7]  # specify..observe; "done" is a terminal STATE, not a section
+    f = root / "tasks" / slug / "TASK.md"
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:   # missing OR unreadable -> every phase fail-closed to "(empty)"
+        return [{"phase": names[n - 1], "n": n, "body": "(empty)"} for n in range(1, 8)]
+    lines = text.splitlines()
+    head = re.compile(r"^##\s*(\d+)\s*·")
+    starts: dict[int, int] = {}
+    for idx, ln in enumerate(lines):
+        m = head.match(ln)
+        if m:
+            n = int(m.group(1))
+            if 1 <= n <= 7 and n not in starts:
+                starts[n] = idx
+    out = []
+    for n in range(1, 8):
+        if n not in starts:
+            out.append({"phase": names[n - 1], "n": n, "body": "(empty)"})
+            continue
+        body_lines = []
+        for ln in lines[starts[n] + 1:]:
+            if re.match(r"^##\s", ln) or re.match(r"^---\s*$", ln):
+                break
+            body_lines.append(ln)
+        out.append({"phase": names[n - 1], "n": n,
+                    "body": _clean_phase_body("\n".join(body_lines))})
+    return out
+
+
+def _task_title(root: Path, slug: str) -> str:
+    """The task's display title from TASK.md line 1 `# TASK: <title>` (fail-soft: the
+    slug if the file or the header line is missing)."""
+    f = root / "tasks" / slug / "TASK.md"
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:   # missing OR unreadable -> fail-soft to the slug
+        return slug
+    for ln in text.splitlines():
+        m = re.match(r"^#\s*TASK:\s*(.+)", ln)
+        if m:
+            return m.group(1).strip()
+    return slug
+
+
+def _detail_body(body: str, width: int) -> list[str]:
+    """Indent a phase body under its block, soft-wrapping over-long physical lines on
+    spaces while preserving blank lines + each line's leading indent (so scenarios and
+    contract code keep their shape). Drill-down = reading is the point, never clipped."""
+    indent = "   "
+    out: list[str] = []
+    for raw in body.split("\n"):
+        if not raw.strip():
+            out.append("")
+            continue
+        if len(indent) + len(raw) <= width:
+            out.append(indent + raw)
+            continue
+        lead = raw[: len(raw) - len(raw.lstrip())]
+        prefix = indent + lead
+        cur = ""
+        for w in raw.split():
+            cand = f"{cur} {w}".strip()
+            if cur and len(prefix) + len(cand) > width:
+                out.append(prefix + cur)
+                cur = w
+            else:
+                cur = cand
+        if cur:
+            out.append(prefix + cur)
+    return out
+
+
+def render_task_detail(root: Path, state: dict, mslug: str, slug: str, *,
+                       width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
+    """Format ONE task's seven phase blocks (specify→observe) as the read-only PHASE
+    DETAIL: each block shows its number+name, a reached/current/pending marker (from the
+    task's state phase), and its captured §N body (fail-closed to "(empty)"). The verify
+    block additionally prints the recorded GATE from state.json — authoritative, NEVER
+    parsed from prose. Returns PLAIN text (no ANSI); color is a tty-only skin in
+    cmd_report. PURE — NO writes (the v9 read-only discipline, carried)."""
+    g = _ASCII if ascii else _UNICODE
+    W = width
+    banner, rule = g["h"] * W, " " + g["rule"] * (W - 1)
+    t = (state.get("tasks") or {}).get(slug, {})
+    phase = t.get("phase", "specify")
+    gate = t.get("gate", "none")
+    ci = PHASES.index(phase) if phase in PHASES else 0
+
+    L = [banner, f" {mslug} · {slug} · {_task_title(root, slug)}", banner]
+    L.append(f" PHASE {phase}    GATE {gate}")
+    L.append(banner)
+    for p in task_phases(root, slug):
+        i = p["n"] - 1
+        mk = (g["reached"] if (phase == "done" or i < ci)
+              else g["current"] if i == ci else g["pending"])
+        L.append("")
+        L.append(f" {mk} {p['n']} {p['phase'].upper()}")
+        L.append(rule)
+        if p["n"] == 6:   # verify: the recorded gate, sourced from state (not prose)
+            L.append(f"   GATE  {gate}")
+        if p["body"] == "(empty)":
+            L.append("   (empty)")
+        else:
+            L.extend(_detail_body(p["body"], W))
+    L.append(banner)
+    return "\n".join(L)
+
+
 def render_report(root: Path, state: dict, mslug: str, *,
                   width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
     """Format the FACTS (report_data) as the text DASHBOARD — verdict-first header,
@@ -1270,20 +1405,52 @@ def cmd_report(args: argparse.Namespace) -> None:
     forces the pipe/screen-reader-safe tier). Writes nothing, never mutates state."""
     root = _require_root()
     state = load_state(root)
-    mslug = args.milestone or state.get("active_milestone")
-    if not mslug:
-        _die("no_active_milestone: no milestone given and none is active; "
-             "try `add.py report <milestone>`")
-    if mslug not in (state.get("milestones") or {}):
-        _die(f"unknown_milestone: '{mslug}' is not a milestone")
+    milestones = state.get("milestones") or {}
+    tasks = state.get("tasks") or {}
+    name = args.milestone       # 1st positional (SMART: milestone-first, else task)
+    task = getattr(args, "task", None)
+
+    # Resolve to a ROLLUP (mslug) or a DRILL (mslug + drill_task). Drill path is purely
+    # additive; the rollup branches are byte-for-byte the v9 behavior.
+    drill_task = None
+    if task is not None:                          # explicit `report <m> <task>`
+        mslug = name
+        if mslug not in milestones:
+            _die(f"unknown_milestone: '{mslug}' is not a milestone")
+        if tasks.get(task, {}).get("milestone") != mslug:
+            _die(f"unknown_task: '{task}' is not a task of milestone '{mslug}'")
+        drill_task = task
+    elif name is not None:                        # smart single positional
+        if name in milestones:
+            mslug = name                          # -> rollup (unchanged)
+        elif name in tasks:                       # -> drill by task name
+            drill_task = name
+            mslug = tasks[name].get("milestone")
+            if not mslug:
+                _die(f"unknown_milestone: task '{name}' is not attached to a milestone")
+        else:
+            _die(f"unknown_milestone: '{name}' is not a milestone")
+    else:                                         # no positional -> active milestone
+        mslug = state.get("active_milestone")
+        if not mslug:
+            _die("no_active_milestone: no milestone given and none is active; "
+                 "try `add.py report <milestone>`")
+        if mslug not in milestones:
+            _die(f"unknown_milestone: '{mslug}' is not a milestone")
+
     if getattr(args, "json", False):
-        print(json.dumps(report_data(root, state, mslug), ensure_ascii=False, indent=2))
+        # POLYMORPHIC by path: drill -> task_phases list; rollup -> report_data dict.
+        payload = task_phases(root, drill_task) if drill_task \
+            else report_data(root, state, mslug)
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
         return
     plain = getattr(args, "plain", False)
     interactive = sys.stdout.isatty() and not plain
     width = _term_width() if interactive else _DEFAULT_WIDTH
     use_ascii = plain or _use_ascii()
-    out = render_report(root, state, mslug, width=width, ascii=use_ascii)
+    out = (render_task_detail(root, state, mslug, drill_task, width=width, ascii=use_ascii)
+           if drill_task else
+           render_report(root, state, mslug, width=width, ascii=use_ascii))
     if not plain and _color_enabled():
         out = _colorize(out)
     print(out)
@@ -1376,9 +1543,15 @@ def build_parser() -> argparse.ArgumentParser:
     prp = sub.add_parser("report",
                          help="capture/render a milestone's what-happened report (read-only)")
     prp.add_argument("milestone", nargs="?", default=None,
-                     help="milestone slug (default: active milestone)")
+                     help="milestone slug for the rollup, OR a task slug to drill into "
+                          "(smart: tried as a milestone first, then as a task); "
+                          "default: active milestone")
+    prp.add_argument("task", nargs="?", default=None,
+                     help="explicit `report <milestone> <task>`: render that task's "
+                          "per-phase detail instead of the milestone rollup")
     prp.add_argument("--json", action="store_true",
-                     help="emit raw structured data (for an agent to format from a template)")
+                     help="emit raw structured data (rollup -> report_data dict; "
+                          "drill -> task_phases list of 7 phase dicts)")
     prp.add_argument("--plain", action="store_true",
                      help="ASCII, no color, fixed width (pipe / CI / screen-reader safe)")
     prp.set_defaults(func=cmd_report)
