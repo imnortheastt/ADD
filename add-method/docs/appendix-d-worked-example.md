@@ -10,6 +10,7 @@ The running example, assembled in one place so you can see a complete pass throu
 
 ```
 Feature: Transfer money between my own accounts
+Framings weighed: synchronous single-currency transfer (chosen) · queued transfer · multi-currency with FX
 Must:
   - move an amount from one of my accounts to another of mine
   - amount > 0
@@ -22,12 +23,12 @@ Reject:
   - source == destination -> "same_account"
   - balance < amount      -> "insufficient_funds"
   - account not mine      -> "forbidden"
-Assumptions (confirm):
-  - same currency only (no FX) in v1
-  - no daily limit in v1
+Assumptions — least-sure first:
+  ⚠ same currency only (no FX) in v1 — least sure because the ticket never said; if wrong: the amount/rounding model changes and this contract is wrong
+  - [x] no daily limit in v1 — confirmed: out of scope for v1
 ```
 
-The two assumptions were confirmed by the product owner: v1 is single-currency with no daily limit.
+The product owner read the flagged assumption first — the single-currency choice, the one most likely to be wrong and most expensive if it were — and confirmed it: v1 is single-currency with no daily limit.
 
 ## Step 2 — Scenarios → `features/transfer.feature`
 

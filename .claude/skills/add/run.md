@@ -30,6 +30,18 @@ that the Scenarios cover the cases that matter, and that the Contract shape is t
 any part and the bundle goes back to draft — that is backward-correction (principle 4), not failure.
 Approve, and the run begins.
 
+**The least-sure flag — aiming the one approval.** A single approval over a whole bundle invites a
+rubber stamp. So the AI presents the bundle **least-sure first**: of everything it is asking the human
+to freeze, it names the **1–2 points most likely to be wrong**, tagged by part
+(`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`), each with *why* it is uncertain and
+*what it costs if wrong*. The §1 assumptions feed it, but a flag may equally point at an uncovered
+scenario or the contract shape. If nothing is materially uncertain, the AI still names the single
+biggest risk, however small — never a blank "none". Honest about its limit: the flag records that the
+human approved with the soft spots **in front of them**, eyes open; it makes a real review cheap and a
+lazy one visibly negligent, but it cannot *force* engagement — and the AI never asserts that the human
+engaged when it cannot know (a self-asserted gate would just be the rubber stamp one level up). Closing
+that enforcement gap is the job of a CI checker, not of prose.
+
 ## When the run begins — the scope-lock trigger
 
 The trigger is the **frozen contract**, nothing else. A run may start only when:

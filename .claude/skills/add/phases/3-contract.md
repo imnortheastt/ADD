@@ -15,6 +15,11 @@ disposable; above it nothing breaks because the shape does not move. Fill
 Then mark `Status: FROZEN @ v1`. Generate a mock + contract tests so dependent
 work can start before the real code exists.
 
+**The freeze is the one approval.** This seam is where the single human approval lands, over the
+whole bundle (§1–§4). Before asking for it, present the bundle **least-sure first**: the 1–2 points
+most likely wrong (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`) — aim the human's
+eye before they freeze. See `run.md`.
+
 ## AI prompt
 
 > Role: an interface architect; frozen contracts are immutable. Read §1, §2,

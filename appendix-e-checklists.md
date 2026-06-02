@@ -18,7 +18,7 @@ Every exit check in the book, collected for quick use. Print this page.
 - [ ] Every required behavior stated explicitly.
 - [ ] Every rejection has a named error code.
 - [ ] Success state-change described.
-- [ ] Zero unconfirmed assumptions.
+- [ ] Assumptions ranked least-sure first; the 1–2 most-likely-wrong ⚠-flagged with why + cost (or an honest "none material" that still names the single biggest risk).
 
 ## Step 2 — Scenarios
 
@@ -70,7 +70,7 @@ Every exit check in the book, collected for quick use. Print this page.
 
 A feature is shippable only when all are true:
 
-- [ ] Spec complete: behavior stated, rejections named, no open assumptions.
+- [ ] Spec complete: behavior stated, rejections named, assumptions ranked least-sure first with the biggest risk flagged.
 - [ ] Every rule has a scenario.
 - [ ] Contract frozen; contract tests green.
 - [ ] A test per scenario; suite was red before the build.

@@ -14,6 +14,8 @@
 
 **Contract** — the fixed external shape of a feature: interfaces, data structures, names, and error cases. Frozen before the build, it is the surface the AI builds against.
 
+**Co-specification** — how a spec is made in ADD: the AI and the human **brainstorm the shape together** (diverge), the AI **drafts** it, and the human **validates with the AI's advice** (validate). The AI's decisive advice is the *least-sure flag*. It replaces dictation-by-one-side — the human owns the decision, the AI owns surfacing what it does not yet know. See [03 Specify](./03-step-1-specify.md).
+
 **Disposable code** — the view that code is one regenerable implementation of the artifacts, not a durable asset to be preserved.
 
 **Evidence bundle** — the proof attached to a change (passing tests, clean security scan, no coverage loss) that justifies trusting it and may unlock more AI autonomy.
@@ -26,7 +28,11 @@
 
 **Intake** — the step *before* a task: sizing a raw request into versioned scope by classifying it into one **request bucket**. The AI proposes `{bucket, rationale, command}`; the human confirms. Lives in the `add` skill's `intake.md` (the intake altitude, above the per-task flow).
 
+**Least-sure flag** — the AI's ranked declaration of the **1–2 things most likely to be wrong** in what it is asking a human to approve, each carrying *why* it is uncertain and *what it costs if wrong* (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`). It reshapes the old flat assumptions list into a ranked one, so a single approval aims the reviewer's attention at the real risk instead of a wall of equal-looking ticks. Bundle-wide at the one-approval freeze seam; the §1 assumptions are its first feeder. If nothing is materially uncertain it still names the single biggest risk — never a blank "none". It makes a genuine review cheap and a lazy one visibly negligent, but cannot *force* the read. The "AI advises" half of **co-specification**.
+
 **Living document** — an artifact expected to change as the loop learns; never frozen forever (the one exception being a versioned contract, which changes only via a change request).
+
+**On-ramp** — the path a new user walks from install to their first milestone: install → `/add` → describe the goal → the agent runs intake (sizing the request into a milestone the human confirms) → the one-approval front → the self-driving run. The AI-first entry to the method; the human talks to the agent rather than hand-typing `add.py`.
 
 **Owner (of a phase)** — who drives a phase, exposed by `add.py … --json` as `human`, `seam`, or `ai`. It tells an autonomous harness where it may run (`ai`) and where it must checkpoint to a person (`human`/`seam`), following the who-does-what table (Verify is always `human`).
 

@@ -1,6 +1,6 @@
 # Appendix A · Templates
 
-[← 14 The foundation](./14-foundation.md) · [Contents](./README.md) · Next: [Appendix B Prompts →](./appendix-b-prompts.md)
+[← 13 Adoption](./13-adoption.md) · [Contents](./README.md) · Next: [Appendix B Prompts →](./appendix-b-prompts.md)
 
 Copy-paste blanks. Project-level templates are filled once at setup; feature-level templates are filled once per feature.
 
@@ -39,14 +39,16 @@ Notes: re-run the prompt golden-cases before changing this.
 ### `SPEC.md`
 ```
 Feature: <name>
+Framings weighed: <chosen> (chosen) · <alternative> · <alternative>
 Must:
   - <required behavior>
 Reject:
   - <bad input / situation> -> "<error_code>"
 After:
   - <state true once it succeeds>
-Assumptions (confirm before building):
-  - <assumption>
+Assumptions — least-sure first:
+  ⚠ <most-likely-wrong assumption> — least sure because <why>; if wrong: <cost>
+  - [x] <confirmed / low-stakes assumption> — <one line>
 ```
 
 ### `features/<name>.feature`

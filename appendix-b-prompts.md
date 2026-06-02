@@ -8,18 +8,23 @@ The contents of the `playbook/` folder. Each prompt is plain text that names the
 
 ### `playbook/1_specify.md`
 ```
-Role: a domain analyst who asks rather than assumes.
+Role: a domain analyst who brainstorms, then asks rather than assumes.
 Read first: ./PRD/* , ./GLOSSARY.md , ./inputs/ (tickets, interviews, contracts)
-Task: produce SPEC.md. No solutions, no code.
+Task: co-specify SPEC.md WITH me. No solutions, no code.
 Steps:
+  0. Diverge first: surface 2–3 genuine framings of the feature + the open questions, and let
+     me react before you draft. Record the result as `Framings weighed: X (chosen) · Y · Z`.
+     # why: a spec dictated by one side is a guess; brainstormed, it is a decision.
   1. List every required behavior (Must) and every situation to refuse (Reject),
      giving each refusal a named error code.
      # why: named errors become scenarios and contract responses; "handle bad input" does not.
   2. State the success state-change (After).
-  3. List EVERY assumption you had to make, and ask me to confirm or deny each.
-     # why: forces hidden ambiguity into the open before it becomes wrong code.
-Exit: a domain owner disputes none of it; zero unconfirmed assumptions.
-Never: resolve an ambiguity by guessing — ask.
+  3. List the assumptions you had to make, RANKED least-sure first; flag the 1–2 you are least
+     sure about as `⚠ <assumption> — least sure because <why>; if wrong: <cost>`.
+     # why: a flat all-equal list gets rubber-stamped; a ranked one aims my attention at the risk.
+Exit: a domain owner disputes none of it; assumptions ranked least-sure first, the 1–2 ⚠ flags
+      carrying why + cost — or an honest "none material" that still names the single biggest risk.
+Never: resolve an ambiguity by guessing — ask. Never a blank "none" or a flat wall of equal ticks.
 ```
 
 ### `playbook/2_scenarios.md`
