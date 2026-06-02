@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "onboarding-align",
+  "active_task": "retro-artifact",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -320,10 +320,28 @@
       "depends_on": [],
       "created": "2026-06-02T05:24:15+00:00",
       "updated": "2026-06-02T06:21:12+00:00"
+    },
+    "report-render": {
+      "title": "add.py report: render the nested what-happened digest",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v9",
+      "depends_on": [],
+      "created": "2026-06-02T07:10:51+00:00",
+      "updated": "2026-06-02T08:14:18+00:00"
+    },
+    "retro-artifact": {
+      "title": "persist the canonical render to RETRO.md at milestone close",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v9",
+      "depends_on": [],
+      "created": "2026-06-02T08:17:04+00:00",
+      "updated": "2026-06-02T09:07:36+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-02T06:21:12+00:00",
+  "updated": "2026-06-02T09:09:07+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -404,7 +422,15 @@
       "status": "done",
       "created": "2026-06-02T03:53:25+00:00",
       "updated": "2026-06-02T04:11:06+00:00"
+    },
+    "v9": {
+      "title": "Awareness surface \u2014 render what happened",
+      "goal": "A person can see what just happened, what it cost, and what was learned \u2014 per-task phase results rolled up under a milestone retrospective \u2014 rendered on demand to stdout and persisted as RETRO.md at milestone close, without reading prose by hand",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-02T07:09:19+00:00",
+      "updated": "2026-06-02T09:09:07+00:00"
     }
   },
-  "active_milestone": "v8-1"
+  "active_milestone": "v9"
 }

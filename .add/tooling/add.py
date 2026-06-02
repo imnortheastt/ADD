@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import date, datetime, timezone
@@ -818,12 +819,20 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
             t = members[s]
             print(f"  - {s} (phase={t.get('phase')}, gate={t.get('gate')})", file=sys.stderr)
         _die("milestone_incomplete")
+    # Fail-closed: render+persist the exit report (RETRO.md) BEFORE committing the
+    # status flip, so a write failure rolls back naturally (status never commits ->
+    # no done-without-retro state). The retro step is read-only on state.json.
+    try:
+        retro_path = _write_retro(root, state, slug)
+    except OSError:
+        _die("retro_write_failed")
     state["milestones"][slug]["status"] = "done"
     state["milestones"][slug]["updated"] = _now()
     save_state(root, state)
     waived = [s for s, t in members.items() if t.get("gate") == "RISK-ACCEPTED"]
     tail = f" ({len(waived)} via a signed RISK-ACCEPTED waiver)" if waived else ""
     print(f"milestone '{slug}' -> done ({len(members)} tasks complete{tail}).")
+    print(f"wrote {retro_path.relative_to(root.parent)}  (milestone exit report)")
     print("Confirm the MILESTONE.md exit criteria are checked, then archive/start the next.")
 
 
@@ -939,6 +948,347 @@ def _sync_task_marker(root: Path, slug: str, phase: str) -> None:
 
 # --- arg parsing -------------------------------------------------------------
 
+# --- report: the read-only "what happened" dashboard (v9) --------------------
+#
+# A milestone digest a human can scan: banner header · per-task PHASE TRACK ·
+# rollup footer (exit-criteria · waivers · carried deltas). render_report() is
+# PURE — it performs NO writes — so v9's retro-artifact can persist the SAME
+# string to RETRO.md. Structured fields (phase/gate/waiver/status) come from
+# state.json; prose (observe delta, deltas) is parsed from each TASK.md and
+# fails CLOSED to `(unknown)` rather than omitting silently.
+
+_DEFAULT_WIDTH = 72       # fixed width for the persisted/canonical render (RETRO.md)
+# Two glyph tiers. Alignment is correct only with ASCII in column-positioned
+# cells (every ASCII char is 1 display cell); Unicode glyphs sit at line-END
+# (the PROGRESS track) or in non-aligned rows, where width can't break columns.
+_UNICODE = {"reached": "●", "current": "◉", "pending": "○", "h": "═", "rule": "─", "bullet": "•"}
+_ASCII = {"reached": "#", "current": ">", "pending": ".", "h": "=", "rule": "-", "bullet": "*"}
+_GATE_SHORT = {"PASS": "PASS", "RISK-ACCEPTED": "RISK", "HARD-STOP": "STOP", "none": "—"}
+_ANSI = {"green": "\x1b[32m", "yellow": "\x1b[33m", "red": "\x1b[31m",
+         "dim": "\x1b[2m", "reset": "\x1b[0m"}
+
+
+def _bar(num: int, den: int, cells: int, g: dict) -> str:
+    """A progress bar; 0/0 -> all-empty (no divide-by-zero)."""
+    filled = 0 if den <= 0 else round(num / den * cells)
+    filled = max(0, min(cells, filled))
+    return g["reached"] * filled + g["pending"] * (cells - filled)
+
+
+def _phase_track(phase: str, g: dict) -> str:
+    """Compact 8-cell pipeline (no labels — a single legend explains it):
+    reached · current · pending. A done task -> all reached."""
+    try:
+        ci = PHASES.index(phase)
+    except ValueError:
+        ci = 0
+    cells = []
+    for i in range(len(PHASES)):
+        if phase == "done" or i < ci:
+            cells.append(g["reached"])
+        elif i == ci:
+            cells.append(g["current"])
+        else:
+            cells.append(g["pending"])
+    return "".join(cells)
+
+
+def _use_ascii() -> bool:
+    """ASCII tier when the terminal can't render Unicode (non-UTF-8 / dumb)."""
+    enc = (getattr(sys.stdout, "encoding", "") or "").lower()
+    return ("utf" not in enc) or (os.environ.get("TERM") == "dumb")
+
+
+def _color_enabled() -> bool:
+    """Color only on an interactive tty, honoring NO_COLOR and TERM."""
+    return (sys.stdout.isatty() and not os.environ.get("NO_COLOR")
+            and os.environ.get("TERM", "") not in ("dumb", ""))
+
+
+def _term_width() -> int:
+    try:
+        import shutil
+        return min(max(shutil.get_terminal_size().columns, 64), 100)
+    except Exception:
+        return _DEFAULT_WIDTH
+
+
+def _colorize(s: str) -> str:
+    """Apply ANSI to status tokens — redundant to the text, never the sole signal.
+    Applied ONLY to tty stdout; the persisted RETRO.md string stays plain."""
+    c = _ANSI
+    s = re.sub(r"\bDONE\b", c["green"] + "DONE" + c["reset"], s)
+    s = re.sub(r"\bBLOCKED\b", c["red"] + "BLOCKED" + c["reset"], s)
+    s = re.sub(r"\bPASS\b", c["green"] + "PASS" + c["reset"], s)
+    s = re.sub(r"\bRISK\b", c["yellow"] + "RISK" + c["reset"], s)
+    s = re.sub(r"\bSTOP\b", c["red"] + "STOP" + c["reset"], s)
+    return s
+
+
+def _milestone_doc(root: Path, mslug: str) -> tuple[str, str]:
+    """(title, goal) from MILESTONE.md; ('(unknown)','(unknown)') if the doc is gone."""
+    f = root / "milestones" / mslug / MILESTONE_FILE
+    if not f.exists():
+        return "(unknown)", "(unknown)"
+    title, goal = "(unknown)", "(unknown)"
+    for line in f.read_text(encoding="utf-8").splitlines():
+        if line.startswith("# MILESTONE:"):
+            title = line.split(":", 1)[1].strip() or "(unknown)"
+        elif line.startswith("goal:"):
+            goal = line.split(":", 1)[1].strip() or "(unknown)"
+            break
+    return title, goal
+
+
+def _exit_criteria(root: Path, mslug: str) -> tuple[int, int]:
+    """(met, total) checkbox tally inside MILESTONE.md's 'Exit criteria' section."""
+    f = root / "milestones" / mslug / MILESTONE_FILE
+    if not f.exists():
+        return 0, 0
+    m = re.search(r"## Exit criteria.*?(?=\n## |\Z)", f.read_text(encoding="utf-8"), re.S)
+    if not m:
+        return 0, 0
+    sec = m.group(0)
+    met = len(re.findall(r"- \[x\]", sec))
+    total = met + len(re.findall(r"- \[ \]", sec))
+    return met, total
+
+
+def _tests_count(root: Path, slug: str) -> int:
+    d = root / "tasks" / slug / "tests"
+    if not d.is_dir():
+        return 0
+    return sum(len(re.findall(r"^\s*def test_", f.read_text(encoding="utf-8"), re.M))
+               for f in d.glob("*.py"))
+
+
+def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
+    """(observe_delta, [delta lines]) from the task's TASK.md §7 — captured at FULL
+    fidelity: both fields wrap across physical lines in real files, so continuation
+    lines are JOINED. Scoped to the OBSERVE section so we read the FIELD, not §1 prose
+    that names it. Fail-closed to '(unknown)' on a missing file / `<...>` placeholder."""
+    f = root / "tasks" / slug / "TASK.md"
+    if not f.exists():
+        return "(unknown)", []
+    text = f.read_text(encoding="utf-8")
+    m7 = re.search(r"##\s*7\s*·\s*OBSERVE.*\Z", text, re.S)
+    lines = (m7.group(0) if m7 else text).splitlines()
+    _delta_start = re.compile(r"\s*-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$")
+
+    # observe: the field value + continuation lines until a blank line / heading / list
+    observe = "(unknown)"
+    for i, ln in enumerate(lines):
+        m = re.match(r"\s*Spec delta for the next loop:\s*(.*)", ln)
+        if not m:
+            continue
+        parts = [m.group(1).strip()]
+        for nxt in lines[i + 1:]:
+            t = nxt.strip()
+            if not t or t.startswith("#") or t.startswith("- ") or t.startswith("Watch"):
+                break
+            parts.append(t)
+        joined = " ".join(p for p in parts if p).strip()
+        if joined and not joined.startswith("<"):
+            observe = joined
+        break
+
+    # deltas: each "- [COMP · status] ..." plus its indented continuation lines
+    deltas, i = [], 0
+    while i < len(lines):
+        m = _delta_start.match(lines[i])
+        if not m:
+            i += 1
+            continue
+        parts, j = [m.group(3).strip()], i + 1
+        while j < len(lines):
+            t = lines[j].strip()
+            if not t or t.startswith("#") or _delta_start.match(lines[j]):
+                break
+            parts.append(t)
+            j += 1
+        deltas.append(f"{m.group(1)} · {m.group(2)} · {' '.join(parts).strip()}")
+        i = j
+    return observe, deltas
+
+
+def _clip(s: str, maxlen: int) -> str:
+    """Trim a string to fit a fixed-width frame, ellipsizing if it overruns."""
+    return s if len(s) <= maxlen else s[:maxlen - 1].rstrip() + "…"
+
+
+def _wrap(text: str, width: int, label: str) -> list[str]:
+    """Wrap `text` to `width`; the first line carries `label`, continuations are
+    blank-indented to the same width (so a multi-line goal shows 'goal' once)."""
+    cont = " " * len(label)
+    lines, cur = [], ""
+    for w in text.split():
+        if cur and len(cur) + 1 + len(w) > width:
+            lines.append(cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}".strip()
+    if cur:
+        lines.append(cur)
+    lines = lines or ["(unknown)"]
+    return [(label if i == 0 else cont) + ln for i, ln in enumerate(lines)]
+
+
+def report_data(root: Path, state: dict, mslug: str) -> dict:
+    """The single source of FACTS for a milestone report — pure, NO writes.
+    Both the text dashboard (render_report) and `report --json` render from this,
+    so the human view and the raw data can never disagree. This is the 'raw data
+    capture' the agent formats into a templated report."""
+    ms = (state.get("milestones") or {}).get(mslug, {})
+    title, goal = _milestone_doc(root, mslug)
+    tasks = state.get("tasks") or {}
+    members = [(s, t) for s, t in tasks.items() if t.get("milestone") == mslug]
+    met, total_ec = _exit_criteria(root, mslug)
+
+    task_rows, waivers, all_deltas = [], [], []
+    for slug, t in members:
+        observe, deltas = _task_prose(root, slug)
+        phase = t.get("phase", "specify")
+        gate = t.get("gate", "none")
+        row = {
+            "slug": slug,
+            "title": t.get("title", slug),
+            "phase": phase,
+            "phase_index": PHASES.index(phase) if phase in PHASES else 0,
+            "done": _task_done(t),
+            "gate": gate,
+            "tests": _tests_count(root, slug),
+            "observe": observe,
+            "deltas": deltas,
+            "waiver": t.get("waiver"),
+        }
+        task_rows.append(row)
+        if t.get("waiver"):
+            w = t["waiver"]
+            waivers.append({"slug": slug, "owner": w.get("owner", "?"),
+                            "ticket": w.get("ticket", "?"), "expires": w.get("expires", "?")})
+        all_deltas.extend(deltas)
+
+    return {
+        "milestone": {"slug": mslug, "title": title, "goal": goal,
+                      "status": ms.get("status", "active")},
+        "summary": {
+            "tasks_done": sum(1 for r in task_rows if r["done"]),
+            "tasks_total": len(task_rows),
+            "gates": {"PASS": sum(1 for r in task_rows if r["gate"] == "PASS"),
+                      "RISK-ACCEPTED": sum(1 for r in task_rows if r["gate"] == "RISK-ACCEPTED"),
+                      "HARD-STOP": sum(1 for r in task_rows if r["gate"] == "HARD-STOP")},
+            "exit_criteria": {"met": met, "total": total_ec},
+        },
+        "tasks": task_rows,
+        "waivers": waivers,
+        "deltas": all_deltas,
+    }
+
+
+def render_report(root: Path, state: dict, mslug: str, *,
+                  width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
+    """Format the FACTS (report_data) as the text DASHBOARD — verdict-first header,
+    left-aligned ASCII columns (alignment-safe on any locale), Unicode/ASCII glyph
+    tier, one legend. Returns PLAIN text (no ANSI); color is a tty-only layer in
+    cmd_report so the persisted RETRO.md string stays plain. NO writes."""
+    d = report_data(root, state, mslug)
+    g = _ASCII if ascii else _UNICODE
+    W = width
+    banner, rule = g["h"] * W, g["rule"] * W
+    m, s = d["milestone"], d["summary"]
+    done, total = s["tasks_done"], s["tasks_total"]
+    gates, ec = s["gates"], s["exit_criteria"]
+
+    verdict = ("BLOCKED" if gates["HARD-STOP"]
+               else "DONE" if total and done == total else "ACTIVE")
+    gbits = []
+    if gates["PASS"]:
+        gbits.append(f"{gates['PASS']} PASS")
+    if gates["RISK-ACCEPTED"]:
+        gbits.append(f"{gates['RISK-ACCEPTED']} RISK")
+    if gates["HARD-STOP"]:
+        gbits.append(f"{gates['HARD-STOP']} STOP")
+    gate_txt = " ".join(gbits) if gbits else "none"
+    waiver_txt = f"{len(d['waivers'])}" if d["waivers"] else "none"
+
+    # Header: title in the banner, then a 2-col aligned label grid (ASCII-safe cells,
+    # so no width breakage) — VERDICT leads on its own line for emphasis.
+    L = [banner, f" {m['slug']} · {m['title']}", banner]
+    L.append(f" {'VERDICT':<9} {verdict}")
+    L.append(f" {'TASKS':<9} {f'{done}/{total} done':<18} {'CRITERIA':<9} {ec['met']}/{ec['total']} met")
+    L.append(f" {'GATES':<9} {gate_txt:<18} {'WAIVERS':<9} {waiver_txt}")
+    L.append("")
+    L.extend(_wrap(m["goal"], W - 7, " goal  "))
+    L.append("")
+    if d["tasks"]:
+        L.append(f" {'TASK':<27} {'PHASE':<9} {'GATE':<4} {'TESTS':<5} PROGRESS")
+        L.append(" " + g["rule"] * (W - 1))
+        for r in d["tasks"]:
+            slug = _clip(r["slug"], 27)
+            gate = _GATE_SHORT.get(r["gate"], r["gate"])
+            L.append(f" {slug:<27} {r['phase']:<9} {gate:<4} "
+                     f"{str(r['tests']):<5} {_phase_track(r['phase'], g)}")
+        L.append(f" legend  {g['reached']} reached  {g['current']} current  "
+                 f"{g['pending']} pending   spec→…→done")
+    else:
+        L.append(" (no tasks yet)")
+    L.append("")
+    L.append(f" EXIT CRITERIA  {_bar(ec['met'], ec['total'], 10, g)} {ec['met']}/{ec['total']} met")
+    if d["waivers"]:   # header grid carries the count; show DETAILS here only when present
+        L.append("")
+        L.append(f" WAIVERS ({len(d['waivers'])})")
+        for w in d["waivers"]:
+            L.extend(_wrap(f"{w['slug']}: {w['owner']} · {w['ticket']} · expires {w['expires']}",
+                           W - 5, f"   {g['bullet']} "))
+    L.append("")
+    if d["deltas"]:    # the retro's payload — word-wrapped to FULL readable text, never clipped
+        L.append(f" LEARNINGS ({len(d['deltas'])} carried)")
+        for x in d["deltas"]:
+            L.extend(_wrap(x, W - 5, f"   {g['bullet']} "))
+    else:
+        L.append(" LEARNINGS      none")
+    L.append(banner)
+    return "\n".join(L)
+
+
+def _write_retro(root: Path, state: dict, mslug: str) -> Path:
+    """Persist the milestone's CANONICAL render to .add/milestones/<mslug>/RETRO.md
+    (the spec'd 'Milestone exit report', appendix-f). Reuses the ONE frozen renderer
+    at its canonical args (width 72, ascii=False) so the doc is byte-identical to a
+    piped `report <mslug>`. PURE on state: reads via render_report, writes exactly
+    this one file with explicit utf-8 (the canonical carries Unicode glyphs — never
+    trust the locale default), never mutates state.json."""
+    content = render_report(root, state, mslug, width=_DEFAULT_WIDTH, ascii=False)
+    path = root / "milestones" / mslug / "RETRO.md"
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
+def cmd_report(args: argparse.Namespace) -> None:
+    """Read-only: capture a milestone's raw data (--json) or render the text
+    dashboard (color on a tty, ASCII when the terminal can't do Unicode, --plain
+    forces the pipe/screen-reader-safe tier). Writes nothing, never mutates state."""
+    root = _require_root()
+    state = load_state(root)
+    mslug = args.milestone or state.get("active_milestone")
+    if not mslug:
+        _die("no_active_milestone: no milestone given and none is active; "
+             "try `add.py report <milestone>`")
+    if mslug not in (state.get("milestones") or {}):
+        _die(f"unknown_milestone: '{mslug}' is not a milestone")
+    if getattr(args, "json", False):
+        print(json.dumps(report_data(root, state, mslug), ensure_ascii=False, indent=2))
+        return
+    plain = getattr(args, "plain", False)
+    interactive = sys.stdout.isatty() and not plain
+    width = _term_width() if interactive else _DEFAULT_WIDTH
+    use_ascii = plain or _use_ascii()
+    out = render_report(root, state, mslug, width=width, ascii=use_ascii)
+    if not plain and _color_enabled():
+        out = _colorize(out)
+    print(out)
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="add.py", description="ADD scaffolder + state tracker")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -1022,6 +1372,16 @@ def build_parser() -> argparse.ArgumentParser:
     pgd.add_argument("slug", nargs="?", default=None, help="task slug (default: active task)")
     pgd.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pgd.set_defaults(func=cmd_guide)
+
+    prp = sub.add_parser("report",
+                         help="capture/render a milestone's what-happened report (read-only)")
+    prp.add_argument("milestone", nargs="?", default=None,
+                     help="milestone slug (default: active milestone)")
+    prp.add_argument("--json", action="store_true",
+                     help="emit raw structured data (for an agent to format from a template)")
+    prp.add_argument("--plain", action="store_true",
+                     help="ASCII, no color, fixed width (pipe / CI / screen-reader safe)")
+    prp.set_defaults(func=cmd_report)
 
     return p
 

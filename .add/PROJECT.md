@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 4
+slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 5
 
 ---
 
@@ -18,20 +18,28 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 4
   engine), **skill** (router `SKILL.md` + on-demand `phases/*` — what Claude loads),
   **book** (`docs/*` — the trust layer users read).
 - Invariants that must always hold: the `phase:` marker in TASK.md == `state.json`;
-  a FROZEN contract never changes silently (change request → back to SPECIFY);
-  survivor files are never clobbered; writes are atomic; the skill stays lean
+  a FROZEN contract never changes silently (change request → back to SPECIFY) — the freeze
+  binds the **data/interface seam** (fields · reject codes · behavior); a **presentation/layout**
+  layer iterates freely WITHOUT a re-freeze (v9: the report render re-skinned v2→v3→v4 with zero
+  data-seam change); survivor files are never clobbered; writes are atomic; the skill stays lean
   (progressive disclosure) and all state lives on disk (anti-context-rot).
+- **Verify re-checks the milestone's frozen exit criteria** after a task changes shape — a
+  shared-contract drift turns a gate red, not slips silently to milestone close (v9 · SDD).
 - **Residue** (what an evidence auto-gate must escalate to a human) is not limited to
   security·concurrency·architecture — **method/trust-layer edits are a residue category** (v6).
 
 ## Spec / Living Document (SDD) — what we are building, now
-- Active milestone → `.add/milestones/v7/MILESTONE.md` (auto by default + one-approval
-  front). See `add.py status` for live rollup. (earlier v1.1 polish tasks remain open.)
+- Latest shipped → `.add/milestones/v9/MILESTONE.md` (awareness surface). See `add.py status`
+  for live rollup. (earlier v1.1 polish tasks remain open.)
 - Frozen contracts (survivor): `set-milestone`, `milestone-done`, `check` exit
-  codes; the 7-phase task flow; the milestone tier (`MILESTONE.md` + `depends_on`).
+  codes; the 7-phase task flow; the milestone tier (`MILESTONE.md` + `depends_on`);
+  `report` / `report --json` (read-only awareness) + `report_data` facts seam.
 - Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@mrq/add`,
   PROJECT.md foundation, dynamic-by-reference guideline injection. OPEN — interactive
-  `add.py guide`, Vietnamese quickstart, milestone archive/rotation.
+  `add.py guide`, Vietnamese quickstart, milestone archive/rotation; **per-phase report
+  drill-down** — `report` shows the phase ROLLUP, not each phase's RESULT (scenarios set ·
+  contract frozen · verify findings); a `report <m> <task>` / `--phases` view is the next
+  awareness loop (owner-directed 2026-06-02).
 - v6 (The Self-Driving Run): DESIGNED + dogfood-tested, **NOT human-validated** — the
   dynamic run / evidence auto-gate is safe only with a human gate or a CI enforcer separate
   from the agent (a self-asserted gate is circular); the fold is the new human bottleneck.
@@ -45,6 +53,12 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 4
   describe this single flow; the v6/v7 doc drift is resolved.
   Enforcement is still PROSE, not engine (DEFERRED, tracked in v7 MILESTONE: a CI enforcer + tests
   that a high-risk scope actually lowers and the one-approval seam is honored).
+- v9 (Awareness surface): **SHIPPED 2026-06-02** — `add.py report [milestone]` rolls per-task
+  phase results up under a milestone retrospective (verdict-first label grid · phase track ·
+  exit-criteria · waivers · carried learnings); `--json` is the stable facts seam (tool captures
+  data, agent formats); `milestone-done` persists the canonical render to `RETRO.md` fail-closed
+  (doc written BEFORE the status commit). 208 tests, dual-tree byte-identical, stdlib-only. Proved
+  by dogfood: v9's own close generated its RETRO.md byte-identical to the canonical render.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -57,6 +71,11 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 4
   `verify`/gate → resume any session with `status`.
 - "UI states" for a CLI = output states: a clear success line, an empty/idle state
   (nothing to do), and actionable errors with named exit codes — never a bare trace.
+- **TUI rendering house rule (no `wcwidth`/`rich`, stdlib-only)**: carry richness on
+  width-neutral channels (color on a tty only, honoring `NO_COLOR`/`TERM`); put only ASCII-safe
+  text in `len()`-aligned columns; confine Unicode glyphs to line-END or non-aligned row STARTs
+  (bullets). Two glyph tiers (Unicode/ASCII) chosen by stdout encoding/`--plain`. The persisted
+  render is PLAIN + fixed-width (canonical); color/adaptive-width are a tty-only skin (v9 · UDD).
 - Design source of truth: the skill prose (`SKILL.md` + `phases/*`) and the book.
 - What "good" feels like: never lose context across sessions; less doc time than GSD;
   one command to know "where am I and what's next".
@@ -80,5 +99,10 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 4
 | 2026-06-01 | v7: compress the human-led front to ONE approval at the contract-freeze seam (AI drafts Spec+Scenarios+Contract+Tests bundle) | reduce human-led front to "approve the spec/contract once" per user | run.md "one-approval front"; seam stays human |
 | 2026-06-01 | v7: keep the seam human + guard high-risk scope (`unguarded_high_risk_auto`); security stays HARD-STOP | preserve the v6 learning under an auto default — autonomy ∝ low risk (principle 5 substance) | high-risk guard in run.md; deferred: a CI enforcer (prose≠enforcement) |
 | 2026-06-02 | ship v7: both gates driven to PASS (human diff review, conservative scope), milestone done; then align onboarding to the one shipped flow | earn the gate before the docs claim it — the v6/v7 doc drift existed because docs outran their verify gate | v7 SHIPPED; onboarding-align PASS; drift resolved; foundation-version 4 |
+| 2026-06-02 | ship v9: `report` + `RETRO.md` awareness surface (per-task phase rollup under a milestone retro; `--json` facts seam; close writes the retro fail-closed) | a human should see "what happened / what it cost / what we learned" without reading four files by hand | v9 SHIPPED 2/2, 4/4 criteria; 208 tests; dogfood-proved (own RETRO.md == canonical) |
+| 2026-06-02 | freeze the DATA seam, not the presentation | the report layout re-skinned v2→v3→v4 (visual → terminal-correct → human-review) with ZERO data-seam change — pixels iterate, facts are the contract | foundation invariant updated; report-render status = "data seam frozen @ v1 · presentation iterate-freely" |
+| 2026-06-02 | verify must re-check the milestone's frozen exit criteria after a task changes shape | a task-contract drift (v3 made `report` stdout multi-valued) silently falsified a v9 exit criterion — caught by the advisor, not a gate | new SDD invariant in §Domain; the criterion was re-pinned to the canonical render |
+| 2026-06-02 | TDD house patterns: test pure renderers at canonical args (not via tier-sensitive CLI capture); prove "abort-before-mutate" by monkeypatch-raise + assert-no-commit | StringIO capture auto-selected the ASCII tier; the fail-closed retro write needed its rollback proven, not just read | folded from v9 `[TDD]` deltas; applied in test_report.py + test_retro.py |
+| 2026-06-02 | fold v9 learnings → foundation-version 5 (freeze-data-not-presentation · verify-rechecks-criteria · no-wcwidth TUI rule · per-phase drill-down OPEN) | human-gated fold of v9 dogfood evidence | §Domain + §Spec + §UDD updated; 7 deltas folded |
 | 2026-06-02 | rule: a surface may not describe a flow whose verify gate is not yet recorded (SDD) | docs outran their gate = the original onboarding drift; honesty = claim only what passed | folded → §Spec; enforced by onboarding-align guards |
 | 2026-06-02 | convention: stale-guard sweep at milestone close (ADD) | shipping a milestone can falsify a sibling task's frozen test (v7 ship broke test_v8_docs) | folded → CONVENTIONS.md |

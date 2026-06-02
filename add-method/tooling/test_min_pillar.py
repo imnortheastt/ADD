@@ -54,6 +54,7 @@ LIFECYCLE = [
     ["check"],
     ["ready"],
     ["guide", "t"],
+    ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
     ["sync-guidelines"],
     ["milestone-done", "mvp"],
     ["archive-milestone", "mvp"],              # mvp is done by now -> archivable
