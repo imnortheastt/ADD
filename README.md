@@ -28,10 +28,18 @@ For every feature, before AI writes any code, you write four short artifacts in 
 
 ---
 
-## Install and try it
+## Install and run your first feature
 
-The method ships as an installable Claude Code skill — same skill, tooling, and book
-in both ecosystems:
+ADD ships as an installable Claude Code skill — you install it once, then **talk to the
+agent and it drives the method**. Here is the whole path, from nothing to your first
+running feature.
+
+> **Prerequisites:** Node ≥ 18 *(npm path)* or Python ≥ 3.10 *(pip path)* — the tool
+> itself is Python stdlib-only — plus [Claude Code](https://claude.ai/code).
+
+### 1 · Install into your project
+
+From your project root (an empty folder or an existing repo), pick either ecosystem:
 
 ```bash
 # Node / npm
@@ -44,15 +52,49 @@ pip install pilotspace-add
 pilotspace-add init --name "My App" --stage prototype
 ```
 
-Then, in Claude Code, run `/add` and describe what you want to build — the agent drives
-the rest. New here? Follow the [**2-minute Getting Started**](./GETTING-STARTED.md), or
-the [full hands-on walkthrough](./add-method/GETTING-STARTED.md) that takes one real
-feature end to end.
+Pick the `--stage` that matches your intent — `prototype` · `poc` · `mvp` ·
+`production` (you can change it later). This drops in, **without ever clobbering
+existing state**:
 
-- **Package source & development** — [`add-method/`](./add-method/README.md)
-- **What changed** — [`CHANGELOG.md`](./CHANGELOG.md)
-- **Releases** — `@pilotspace/add` on npm · `pilotspace-add` on PyPI (one version tag
-  publishes both; see [`.github/workflows/publish.yml`](./.github/workflows/publish.yml))
+| Path | What |
+|------|------|
+| `.claude/skills/add/` | the `add` skill Claude Code loads |
+| `.add/tooling/add.py` | scaffolder + state tracker (stdlib-only) |
+| `.add/docs/` | the AIDD book — the trust layer |
+| `.add/state.json` | where the project is (the resume point) |
+
+### 2 · Spawn your first feature — talk to the agent
+
+In Claude Code, run **`/add`** and say what you want to build:
+
+> `/add` — *"I want to let users transfer money between their own accounts."*
+
+From there the agent runs the on-ramp for you:
+
+1. **Orients** from `add.py status` (the resume point) — never re-reading your repo.
+2. **Sizes** your request into a **milestone** (goal · scope · breadth-first tasks ·
+   exit criteria) — *you confirm the shape.*
+3. Drafts each feature's **one-approval front** — Spec + Scenarios + Contract + Tests
+   as one bundle — *you give one approval at the frozen contract.*
+4. Runs **build → verify** to green; a security finding always stops back to you.
+
+So your first feature is: **describe it → confirm the milestone → approve the contract
+→ review the result.** Everything in between is the agent.
+
+### 3 · Resume anytime
+
+```bash
+python3 .add/tooling/add.py status   # where am I? (your home base; the escape hatch is yours too)
+```
+
+State lives on disk, not in the chat — close your laptop, come back tomorrow, and this
+tells you exactly where you left off. No context rot.
+
+**Go deeper:** the [2-minute Getting Started](./GETTING-STARTED.md) · the
+[full hands-on walkthrough](./add-method/GETTING-STARTED.md) (one real feature, end to
+end) · [package source](./add-method/README.md) · [`CHANGELOG`](./CHANGELOG.md).
+Releases: `@pilotspace/add` (npm) · `pilotspace-add` (PyPI) — one tag publishes both
+(see [`.github/workflows/publish.yml`](./.github/workflows/publish.yml)).
 
 ---
 
