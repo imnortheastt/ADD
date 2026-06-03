@@ -348,16 +348,16 @@
     },
     "deltas-lint": {
       "title": "'add.py check' delta-grammar/routing guard (fail-closed)",
-      "phase": "specify",
+      "phase": "tests",
       "gate": "none",
       "milestone": "v10",
       "depends_on": [],
       "created": "2026-06-03T07:33:38+00:00",
-      "updated": "2026-06-03T07:33:38+00:00"
+      "updated": "2026-06-03T08:20:58+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-03T08:20:36+00:00",
+  "updated": "2026-06-03T08:20:58+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
