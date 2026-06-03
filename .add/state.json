@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "deltas-lint",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -327,26 +327,53 @@
       "depends_on": [],
       "created": "2026-06-02T09:24:24+00:00",
       "updated": "2026-06-02T10:07:13+00:00"
+    },
+    "ship-clean": {
+      "title": "prepublishOnly guard + add.py project (v3 ship-clean residuals)",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v3",
+      "depends_on": [],
+      "created": "2026-06-03T05:25:49+00:00",
+      "updated": "2026-06-03T05:25:49+00:00"
+    },
+    "deltas-report": {
+      "title": "Read-only 'add.py deltas' report (open deltas grouped by competency)",
+      "phase": "tests",
+      "gate": "none",
+      "milestone": "v10",
+      "depends_on": [],
+      "created": "2026-06-03T07:33:38+00:00",
+      "updated": "2026-06-03T07:43:52+00:00"
+    },
+    "deltas-lint": {
+      "title": "'add.py check' delta-grammar/routing guard (fail-closed)",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v10",
+      "depends_on": [],
+      "created": "2026-06-03T07:33:38+00:00",
+      "updated": "2026-06-03T07:33:38+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-03T04:48:09+00:00",
+  "updated": "2026-06-03T07:43:52+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
       "goal": "make ADD easier to adopt and operate",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-05-28T16:23:20+00:00",
-      "updated": "2026-05-28T16:23:20+00:00"
+      "updated": "2026-06-03T05:17:28+00:00"
     },
     "v1-2": {
       "title": "V1 2",
       "goal": "Cross-milestone foundation (PROJECT.md) + dynamic CLAUDE.md/AGENTS.md guideline injection",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-05-29T01:24:39+00:00",
-      "updated": "2026-05-29T01:24:39+00:00"
+      "updated": "2026-06-03T05:17:28+00:00"
     },
     "v2": {
       "title": "Transparent \u00b7 Provable \u00b7 Minimal",
@@ -376,9 +403,9 @@
       "title": "The Self-Driving Run",
       "goal": "Once a task's contract is frozen, run the build->verify half as a dynamic, self-improving workflow that converges in-run and auto-gates on evidence \u2014 pulling the human in only for the residue tests cannot catch \u2014 without losing ADD's human-led front or its delta learning.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-01T14:22:59+00:00",
-      "updated": "2026-06-01T14:22:59+00:00"
+      "updated": "2026-06-03T05:17:28+00:00"
     },
     "v7": {
       "title": "Auto by default \u2014 the one-approval flow",
@@ -419,9 +446,17 @@
       "status": "done",
       "created": "2026-06-02T09:24:23+00:00",
       "updated": "2026-06-02T10:07:35+00:00"
+    },
+    "v10": {
+      "title": "Dogfood parallel-streams on fold-support tooling",
+      "goal": "Validate the new streams orchestration by shipping two independent fold-support features through it",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-03T07:33:38+00:00",
+      "updated": "2026-06-03T07:33:38+00:00"
     }
   },
-  "active_milestone": "v9-1",
+  "active_milestone": "v10",
   "archived": [
     {
       "slug": "v5",
