@@ -152,10 +152,12 @@ Spec delta for the next loop: the rendered block claims a flow the agent must ho
 deferred CI/runtime enforcer (v7 carry-forward) so the seam is checked, not just described.
 
 ### Competency deltas
-- [ADD · open] No CLI verb re-points `active_task` among parallel tasks — `new-task` sets it, but
+- [ADD · folded] No CLI verb re-points `active_task` among parallel tasks — `new-task` sets it, but
   switching to an existing sibling needs `phase <p> <slug>` by explicit slug, and `status` then
   reports a stale active task. Evidence: had to drive this whole task by slug while `active_task`
   stayed `milestone-onboarding-docs`. Candidate: `add.py activate <slug>` (engine bookkeeping, not judgment).
-- [ADD · open] The orientation block now describes the one-approval/auto flow that is v7-*designed*
+  [folded foundation-version 8 → PROJECT.md §Spec OPEN "add.py activate <slug>" (deferred feature)]
+- [ADD · folded] The orientation block now describes the one-approval/auto flow that is v7-*designed*
   but not shipped (v7 at verify). Evidence: this build labels designed-vs-shipped in prose only —
   the block itself can't. Watch whether new users hit the gap; the honesty rule lives in the docs tasks.
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Docs must not outrun their gate"]

@@ -53,3 +53,14 @@ Architecture:
   content anchors (required section present + ordering) + cross-tree byte-identity (canonical ==
   bundled == dogfood mirror), not behavior. Write the assertion red before the edit; a parity test
   backstops drift. [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7]
+- (ADD) **Verify a gap against the shipped path.** A finding seen through the wrong entry point isn't
+  real — bare `add.py init` bypasses `bin/cli.js` (which does the bundling), so "init doesn't bundle the
+  skill+book" was a test artifact. Reproduce a gap on the SHIPPED path before scoping a fix.
+  [install-onramp — folded foundation-version 8]
+- (ADD) **A frozen guard that fails mid-build is fixed in the BUILD output, never the matcher.** Widening
+  a frozen matcher inline — even to fix a real false-negative — is self-ratifying a frozen-contract change;
+  route it as a human-ratified change-request at test-design time (Rule 3, phase 4), not a silent inline
+  edit logged as "no test weakened". [milestone-onboarding-docs — folded foundation-version 8]
+- (TDD) **Assert a message-specific phrase, not an ambient token.** A substring that paths/scaffold/harness
+  can also contain false-GREENs (a `/add` match off the tmpdir name); assert a phrase only the real
+  behavior emits ("not attached to a milestone"). [orphan-task-guard — folded foundation-version 8]

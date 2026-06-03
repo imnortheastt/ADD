@@ -87,5 +87,7 @@ Spec delta: may need a lightweight "front checklist" the human ticks at the sing
 compression does not silently drop scenario/edge review.
 
 ### Competency deltas
-- [UDD · open] one approval may rush the human past Scenarios/Contract review they'd have done separately — the seam needs a surfaced checklist so the single gate stays a real gate, not a rubber stamp (evidence: design-level risk, unobserved in real use yet)
-- [ADD · open] "seam stays human" is prose — nothing prevents an over-eager run from drafting AND treating the contract as frozen without a recorded human approval (evidence: no add.py gate records the seam approval distinctly from verify)
+- [UDD · folded] one approval may rush the human past Scenarios/Contract review they'd have done separately — the seam needs a surfaced checklist so the single gate stays a real gate, not a rubber stamp (evidence: design-level risk, unobserved in real use yet)
+  [folded foundation-version 8 → PROJECT.md §Spec OPEN "one-approval review checklist" (deferred feature)]
+- [ADD · folded] "seam stays human" is prose — nothing prevents an over-eager run from drafting AND treating the contract as frozen without a recorded human approval (evidence: no add.py gate records the seam approval distinctly from verify)
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Never self-gate a human-led gate"]

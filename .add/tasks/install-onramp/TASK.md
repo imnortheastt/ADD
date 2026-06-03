@@ -147,10 +147,12 @@ Spec delta for the next loop: the install greeting + the block both now promise 
 the deferred CI/runtime enforcer (v7 carry-forward) should check the seam is honored, not just printed.
 
 ### Competency deltas
-- [ADD · open] A planning-phase verification overturned a stated finding: "init doesn't bundle the
+- [ADD · folded] A planning-phase verification overturned a stated finding: "init doesn't bundle the
   skill+book" was a TEST ARTIFACT (bare `add.py init` bypasses `bin/cli.js`, which does the bundling).
   Evidence: `node bin/cli.js init` installs skill+book; bare `add.py init` does not. Lesson — verify a
   gap against the REAL entry path before scoping a fix. Candidate book note: "test the shipped path."
-- [ADD · open] Two next-hint emitters (cli.js + add.py) print on the same install (stdio inherited) —
+  [folded foundation-version 8 → CONVENTIONS.md "Verify a gap against the shipped path"]
+- [ADD · folded] Two next-hint emitters (cli.js + add.py) print on the same install (stdio inherited) —
   drift risk if only one is updated. Evidence: both had to change for a consistent greeting. Candidate:
   single-source the hint, or a guard that both match.
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Dogfood parity" (single-source duplicated output)]

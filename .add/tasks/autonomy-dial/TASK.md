@@ -88,5 +88,6 @@ Spec delta: the dial needs a RISK input — `auto` should be refused (or warn) o
 
 ### Competency deltas
 - [ADD · folded] the dogfood ran the WHOLE milestone at `auto` on the riskiest possible scope (the method itself), inverting principle 5 (autonomy ∝ low risk) — the dial allows a choice the principle would forbid (evidence: all 6 v6 tasks header `autonomy: auto`; all self-gated)
-- [UDD · open] the dial has no signal of "you are about to auto-gate a high-risk scope" — the human/run get no friction at exactly the moment friction matters (evidence: no warning surfaced during this run)
+- [UDD · folded] the dial has no signal of "you are about to auto-gate a high-risk scope" — the human/run get no friction at exactly the moment friction matters (evidence: no warning surfaced during this run)
+  [folded foundation-version 8 → PROJECT.md §Spec OPEN "high-risk-auto friction signal" (deferred feature)]
 - [TDD · folded] nothing tests that conservative is actually ENFORCED as default — test asserts the prose says so, not that a run with no header stops for a human (evidence: test_autonomy_dial_per_scope checks strings)

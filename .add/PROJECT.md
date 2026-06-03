@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-03 · foundation-version: 7
+slug: AIDD-Book · stage: mvp · updated: 2026-06-03 · foundation-version: 8
 
 ---
 
@@ -40,11 +40,17 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-03 · foundation-version: 7
   `report` / `report --json` (read-only awareness) + `report_data` facts seam;
   `report <task>` / `report <m> <task>` (read-only phase drill-down) + `task_phases` extraction
   seam (per-phase fields + `(empty)` fail-closed; smart milestone-first-else-task resolution).
+- Surfaces evolve **additively**: a new output tier or field (a WARN level; `warnings`/`warned` in
+  `--json`) leaves existing semantics + exit codes unchanged, so no existing consumer breaks — additive
+  is the backward-safe way to extend a frozen seam (orphan-task-guard v8-1).
 - Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@pilotspace/add`,
   PROJECT.md foundation, dynamic-by-reference guideline injection; **per-phase report
   drill-down** (SHIPPED v9-1: `report <task>` renders each phase's RESULT). OPEN — interactive
   `add.py guide`, Vietnamese quickstart, milestone archive/rotation; cross-task / cross-milestone
-  phase DIFF (explicitly out of v9-1 — the next awareness slice if wanted).
+  phase DIFF (explicitly out of v9-1 — the next awareness slice if wanted); **deferred enforcement/UX
+  from the v6–v8 fold** — `add.py activate <slug>` (re-point the active task among siblings), a
+  high-risk-auto friction signal at the dial, a surfaced one-approval review checklist, an automated
+  fold-nudge (emission outpaces human fold capacity).
 - v6 (The Self-Driving Run): DESIGNED + dogfood-tested, **NOT human-validated** — the
   dynamic run / evidence auto-gate is safe only with a human gate or a CI enforcer separate
   from the agent (a self-asserted gate is circular); the fold is the new human bottleneck.
@@ -137,3 +143,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-03 · foundation-version: 7
 | 2026-06-02 | publish npm under `@pilotspace/add` (was `@mrq/add`); PyPI ships as `add-method` | the only npm credential is the `pilotspace` account, which has no access to the `@mrq` scope (npm 404'd the publish — `@mrq` was aspirational brand, never registered); `add-method` is taken on npm, `@pilotspace/add` is free and matches the `pilotspace` GitHub org | renamed across package.json · README · GETTING-STARTED · cli.js · skill `phases/0-setup` (+ both mirrors) · 4 tests; 231 tests green; npm = @pilotspace/add@1.0.0, PyPI = add-method 1.0.0 |
 | 2026-06-03 | sync names: rename PyPI dist + console script `add-method` → `pilotspace-add` (npm `@pilotspace/add` unchanged); publish jobs made idempotent, version held at 1.0.0 | user asked to align the two install names; PyPI has no scopes so exact parity is impossible — `pilotspace-add` mirrors the npm scope and (unlike npm `@pilotspace/add@1.0.0`, already live) PyPI was unpublished so the rename costs nothing; idempotent npm/pypi publish lets a single `v1.0.0` tag debut PyPI at 1.0.0 while npm safely skips, keeping both registries at 1.0.0 | import pkg `add_method` kept (src/installer/_bundled untouched); renamed pyproject name+script · `_cli`/`__init__`/`__main__`/`_installer` · root+pkg README · root GETTING-STARTED · CHANGELOG · publish.yml; 234 tests green; `npx @pilotspace/add` + `pip install pilotspace-add` |
 | 2026-06-03 | fold v5 learnings → foundation-version 7 (co-specify-at-every-altitude · prose-guides-are-TDD-able · elicitation-driven-SDD) | human-gated fold of cospecify-lift dogfood evidence | §Spec + CONVENTIONS updated; 3 deltas folded (ADD/TDD → CONVENTIONS, SDD → §Spec) |
+| 2026-06-03 | fold v6–v8 learnings → foundation-version 8 (18 open deltas: 4 new conventions · 9 reinforce existing via flip-cite · 4 deferred to §Spec OPEN) | human-gated bulk fold of the v6/v7/v8/v8-1 open-delta backlog; consolidate not append-18-bullets (lean foundation, one screen) | +3 CONVENTIONS bullets (verify-shipped-path · frozen-guard→fix-build-not-matcher · message-specific-assert) + 1 §Spec bullet (additive-evolution); reinforcements flip-cited append-only (no dup text); backlog → §Spec OPEN; onboarding-align [TDD] left open (human-deferred 2026-06-02) |

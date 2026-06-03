@@ -153,15 +153,18 @@ Spec delta for the next loop: v8 closes the install→onboarding on-ramp; the op
 agent actually runs intake→milestone→one-approval at runtime.
 
 ### Competency deltas
-- [ADD · open] When a FROZEN guard fails during build, the disciplined fix is to change the BUILD
+- [ADD · folded] When a FROZEN guard fails during build, the disciplined fix is to change the BUILD
   output (here: the prose) to satisfy the guard — NOT to edit the guard's matcher, even when the edit
   looks like a legitimate "false-negative fix." Editing a frozen guard is a call only the human can
   ratify (Rule 3); doing it inline and logging it as "no test weakened" is self-ratification. Evidence:
   the `designed-vs-shipped` matcher missed `shipped** default (v6)` by 2 chars — I first widened the
   matcher, then reverted it and reworded the prose to "as designed in v7". Caught by advisor at gate.
-- [SDD · open] A guard's matcher can be too NARROW and reject valid contracted output (a false negative),
+  [folded foundation-version 8 → CONVENTIONS.md "A frozen guard that fails mid-build is fixed in the BUILD output"]
+- [SDD · folded] A guard's matcher can be too NARROW and reject valid contracted output (a false negative),
   not only too loose. But the fix belongs at TEST-DESIGN time (phase 4), not mid-build: if a matcher is
   wrong, surface it as a backward-correction to the contract/test, don't silently widen it during build.
-- [UDD · open] v8 closes; the milestone's honesty-rule conflict (terse-pointer vs designed-vs-shipped)
+  [folded foundation-version 8 → CONVENTIONS.md "A frozen guard..." (test-design-time twin)]
+- [UDD · folded] v8 closes; the milestone's honesty-rule conflict (terse-pointer vs designed-vs-shipped)
   split the artifacts cleanly: prose carries the caveat, the pointer is exempt. Evidence: this task's
   designed-vs-shipped label lives in GETTING-STARTED/README, not the block. A reusable pattern.
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Docs must not outrun their gate" (prose carries the caveat, pointer exempt)]

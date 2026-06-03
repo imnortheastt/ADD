@@ -208,15 +208,18 @@ new orphans. Bigger open thread (unchanged from v8): nothing yet proves an agent
 runtime — this guards the footprint, the honest limit of what a CLI can observe.
 
 ### Competency deltas
-- [TDD · open] A behavioral test's substring assertion can false-GREEN off its OWN test harness —
+- [TDD · folded] A behavioral test's substring assertion can false-GREEN off its OWN test harness —
   the tmpdir was named `add-orphan-guard-XXXX`, so a `/add` assertion matched the absolute path the
   tool prints, not any nudge. Lesson: assert a message-specific phrase ("not attached to a milestone")
   the environment can't accidentally satisfy; never a token that also appears in paths/scaffold.
   Evidence: `test_new_task_orphan_nudges_and_creates` passed pre-build until hardened. Caught at RED.
-- [ADD · open] A runtime guard can only observe STRUCTURE (state.json `milestone is null`), never the
+  [folded foundation-version 8 → CONVENTIONS.md "Assert a message-specific phrase, not an ambient token"]
+- [ADD · folded] A runtime guard can only observe STRUCTURE (state.json `milestone is null`), never the
   ACT (did an intake conversation happen). Naming this at SPEC time — "nudge", not "proof" — kept the
   Must satisfiable and avoided a build-time weakened test. Evidence: the option's pitch said "proves an
   agent ran intake"; the buildable spec is narrower and honest. (advisor-surfaced before drafting.)
-- [SDD · open] Adding a third output tier (WARN) to a pass/fail surface stays backward-safe when it is
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Never self-gate" (a guard sees structure, not the act)]
+- [SDD · folded] Adding a third output tier (WARN) to a pass/fail surface stays backward-safe when it is
   ADDITIVE: `--json` gained `warnings`/`warned`, `passed`/`failed` semantics unchanged, exit code
   unchanged — so no existing consumer (machine_state tests) broke. Evidence: full suite 173 OK.
+  [folded foundation-version 8 → PROJECT.md §Spec "Surfaces evolve additively"]

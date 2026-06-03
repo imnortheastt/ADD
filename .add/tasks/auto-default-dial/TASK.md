@@ -95,6 +95,9 @@ Spec delta: the high-risk guard needs an ENFORCER (a CI check / add.py warning) 
 same words-exist≠method-works gap v6 hit; this task itself ran at `autonomy: conservative` (it is method-editing).
 
 ### Competency deltas
-- [ADD · open] the high-risk guard `unguarded_high_risk_auto` is prose, not enforcement — nothing stops a high-risk scope staying at `auto` (evidence: no add.py/CI check; relies on the human/run reading run.md)
-- [TDD · open] tests assert the dial's WORDS, not that a header-less or high-risk run actually behaves — words-exist≠method-works recurs from v6 (evidence: test_v7 is structural string-matching)
-- [SDD · open] v7 reverses a foundation-v2 learning by human direction but is itself NOT yet validated in a real (non-method) project — the auto default is unproven outside the dogfood (evidence: only this milestone uses it)
+- [ADD · folded] the high-risk guard `unguarded_high_risk_auto` is prose, not enforcement — nothing stops a high-risk scope staying at `auto` (evidence: no add.py/CI check; relies on the human/run reading run.md)
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Never self-gate a human-led gate" (prose≠enforcement)]
+- [TDD · folded] tests assert the dial's WORDS, not that a header-less or high-risk run actually behaves — words-exist≠method-works recurs from v6 (evidence: test_v7 is structural string-matching)
+  [folded foundation-version 8 → reinforces CONVENTIONS.md "Words-exist ≠ method-works"]
+- [SDD · folded] v7 reverses a foundation-v2 learning by human direction but is itself NOT yet validated in a real (non-method) project — the auto default is unproven outside the dogfood (evidence: only this milestone uses it)
+  [folded foundation-version 8 → reinforces PROJECT.md §Spec "v6/v7 NOT human-validated outside dogfood"]
