@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "add-method"
+name = "pilotspace-add"
 version = "1.0.0"
 description = "ADD (AI-Driven Development) — install the ADD skill, tooling, and AIDD book into any project"
 readme = "README.md"
@@ -37,7 +37,7 @@ Repository = "https://github.com/pilotspace/ADD"
 Issues = "https://github.com/pilotspace/ADD/issues"
 
 [project.scripts]
-add-method = "add_method._cli:main"
+pilotspace-add = "add_method._cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

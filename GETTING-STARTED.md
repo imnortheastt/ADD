@@ -17,8 +17,8 @@ npx @pilotspace/add init --name "My App" --stage prototype
 
 ```bash
 # Python / pip
-pip install add-method
-add-method init --name "My App" --stage prototype
+pip install pilotspace-add
+pilotspace-add init --name "My App" --stage prototype
 ```
 
 > **Prerequisites:** Node ≥ 18 (npm path) or Python ≥ 3.10 (pip path). The tool itself

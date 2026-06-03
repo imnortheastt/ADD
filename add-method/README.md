@@ -39,8 +39,8 @@ npx @pilotspace/add init --name "My App" --stage prototype
 
 ```bash
 # Python / pip
-pip install add-method
-add-method init --name "My App" --stage prototype
+pip install pilotspace-add
+pilotspace-add init --name "My App" --stage prototype
 ```
 
 **New here?** Follow the [10-minute Quickstart](./GETTING-STARTED.md) — it walks

@@ -4,7 +4,7 @@ All notable changes to the ADD method — the book, the skill, and the published
 packages — are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html). One version tag publishes
-both distribution channels: `@pilotspace/add` (npm) and `add-method` (PyPI).
+both distribution channels: `@pilotspace/add` (npm) and `pilotspace-add` (PyPI).
 
 ## [Unreleased]
 
@@ -17,7 +17,7 @@ complete AIDD book as its trust layer.
 
 ### Added
 
-- **The method, shippable.** `npx @pilotspace/add init` (npm) and `add-method init`
+- **The method, shippable.** `npx @pilotspace/add init` (npm) and `pilotspace-add init`
   (PyPI) drop the `add` skill into `.claude/skills/add/`, the state-tracked tooling
   into `.add/tooling/`, and the full book into `.add/docs/` — without ever clobbering
   existing project state.
@@ -33,7 +33,7 @@ complete AIDD book as its trust layer.
   a team, and copy-paste reference appendices (templates, prompts, glossary, a fully
   worked money-transfer example, checklists, and the requirements matrix).
 - **Dual-ecosystem packaging.** npm package `@pilotspace/add` and PyPI package
-  `add-method`, both at 1.0.0, built from one byte-identical bundled tree guarded by
+  `pilotspace-add`, both at 1.0.0, built from one byte-identical bundled tree guarded by
   parity tests.
 - **Autonomous release CI** (`.github/workflows/publish.yml`): a version tag runs the
   full test suite, asserts the tag matches both manifests, then publishes to npm
@@ -43,7 +43,7 @@ complete AIDD book as its trust layer.
 ### Release channels
 
 - **npm** — `@pilotspace/add@1.0.0` is published and installable.
-- **PyPI** — `add-method` 1.0.0 publishes on the first version tag once the trusted
+- **PyPI** — `pilotspace-add` 1.0.0 publishes on the first version tag once the trusted
   publisher is configured (see `.github/workflows/publish.yml`).
 
 [Unreleased]: https://github.com/pilotspace/ADD/compare/v1.0.0...HEAD
