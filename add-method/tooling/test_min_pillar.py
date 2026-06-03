@@ -55,6 +55,7 @@ LIFECYCLE = [
     ["ready"],
     ["guide", "t"],
     ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
+    ["deltas"],                                # read-only: open competency deltas report
     ["sync-guidelines"],
     ["milestone-done", "mvp"],
     ["archive-milestone", "mvp"],              # mvp is done by now -> archivable

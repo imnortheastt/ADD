@@ -2,7 +2,7 @@
 
 slug: deltas-report · created: 2026-06-03 · stage: mvp
 autonomy: auto   <!-- read-only, deterministic, decides nothing (risk ≈ status). Worker may auto-PASS on evidence. -->
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -138,9 +138,11 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 - [ ] a person reviewed and approved the change
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS  (auto-resolved under autonomy=auto by stream-worker A, then orchestrator-verified at merge)
+Evidence: full suite 249 green excluding the not-yet-built deltas-lint tests; deltas-report 5/5;
+          parity guards (tree/bundle/cospecify) green; no test weakened; contract §1-§3 untouched; read-only.
+Residue: none security/concurrency/architecture (read-only report). One DRY smell folded to a delta below.
+Reviewed by: orchestrator (manual diff review of cmd_deltas + test_min_pillar) · date: 2026-06-03
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -154,4 +156,11 @@ Spec delta for the next loop: <what production taught you>
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [ADD · open] cmd_deltas duplicated the delta grammar as a new module-level _DELTA_RE instead of
+  reusing the existing one — two unguarded sources of truth for the regex (evidence: worker A residue;
+  _DELTA_RE added alongside the original ~add.py:1079).
+- [TDD · open] the report shows only a delta's first line; a multi-line open delta's text is truncated
+  (evidence: onboarding-align's wrapped open delta; report tests do not cover the multi-line shape).
+- [ADD · open] the streams spawn forked the worker's worktree from a STALE base (e7e2171, pre-v10), not
+  current HEAD — the worker had to recreate the frozen test byte-identically; streams.md should add
+  "verify worktree base == HEAD after committing the front" (evidence: worker A worktree HEAD = e7e2171).

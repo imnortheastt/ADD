@@ -1402,6 +1402,90 @@ def _write_retro(root: Path, state: dict, mslug: str) -> Path:
     return path
 
 
+_COMPETENCY_ORDER = ("DDD", "SDD", "UDD", "TDD", "ADD")
+
+# Reuse the same grammar as _task_prose's _delta_start; anchored at line-start
+# via re.match. Skips comment lines and malformed lines naturally.
+_DELTA_RE = re.compile(
+    r"-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$"
+)
+_EVIDENCE_RE = re.compile(r"^(.*?)\s*\(evidence:\s*(.*?)\)\s*$")
+
+
+def _collect_open_deltas(root: Path) -> dict[str, list[dict]]:
+    """Scan every .add/tasks/*/TASK.md for open competency deltas.
+
+    Returns a dict keyed by competency in canonical order; each value is a list
+    of {task, text, evidence} dicts. READ-ONLY — never mutates any file."""
+    by_comp: dict[str, list[dict]] = {c: [] for c in _COMPETENCY_ORDER}
+    tasks_dir = root / "tasks"
+    if not tasks_dir.is_dir():
+        return by_comp
+    for task_md in sorted(tasks_dir.glob("*/TASK.md")):
+        slug = task_md.parent.name
+        try:
+            text = task_md.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        # Locate the "### Competency deltas" block (may appear anywhere in the file).
+        block_match = re.search(r"###\s*Competency deltas\s*\n(.*?)(?=\n##|\Z)", text, re.S)
+        if not block_match:
+            continue
+        block = block_match.group(1)
+        for line in block.splitlines():
+            # Skip HTML-comment lines (<!-- ... -->) and blank lines.
+            stripped = line.strip()
+            if not stripped or stripped.startswith("<!--"):
+                continue
+            m = _DELTA_RE.match(stripped)
+            if not m:
+                continue  # malformed — skip silently
+            comp, status, tail = m.group(1), m.group(2), m.group(3).strip()
+            if status != "open":
+                continue
+            # Split off "(evidence: ...)" suffix if present.
+            em = _EVIDENCE_RE.match(tail)
+            if em:
+                delta_text, evidence = em.group(1).strip(), em.group(2).strip()
+            else:
+                delta_text, evidence = tail, ""
+            by_comp[comp].append({"task": slug, "text": delta_text, "evidence": evidence})
+    return by_comp
+
+
+def cmd_deltas(args: argparse.Namespace) -> None:
+    """Read-only: report all open competency deltas grouped by competency.
+
+    Scans every .add/tasks/*/TASK.md '### Competency deltas' block for lines
+    matching the delta grammar; shows only `open` entries in canonical competency
+    order (DDD·SDD·UDD·TDD·ADD). --json emits one JSON object. Exit 0 ALWAYS.
+    Writes NOTHING."""
+    root = _require_root()
+    by_comp = _collect_open_deltas(root)
+    total = sum(len(v) for v in by_comp.values())
+
+    if getattr(args, "json", False):
+        payload: dict = {
+            "total": total,
+            "by_competency": {c: v for c, v in by_comp.items() if v},
+        }
+        print(json.dumps(payload, ensure_ascii=False))
+        return
+
+    if total == 0:
+        print("no open deltas.")
+        return
+
+    print(f"open competency deltas ({total} total):")
+    for comp in _COMPETENCY_ORDER:
+        entries = by_comp[comp]
+        if not entries:
+            continue
+        print(f"  {comp} ({len(entries)}):")
+        for e in entries:
+            print(f"    - {e['text']}  [{e['task']}]")
+
+
 def cmd_report(args: argparse.Namespace) -> None:
     """Read-only: capture a milestone's raw data (--json) or render the text
     dashboard (color on a tty, ASCII when the terminal can't do Unicode, --plain
@@ -1558,6 +1642,11 @@ def build_parser() -> argparse.ArgumentParser:
     prp.add_argument("--plain", action="store_true",
                      help="ASCII, no color, fixed width (pipe / CI / screen-reader safe)")
     prp.set_defaults(func=cmd_report)
+
+    pdt = sub.add_parser("deltas",
+                         help="read-only report: open competency deltas grouped by competency")
+    pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
+    pdt.set_defaults(func=cmd_deltas)
 
     return p
 

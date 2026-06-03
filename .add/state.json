@@ -339,12 +339,12 @@
     },
     "deltas-report": {
       "title": "Read-only 'add.py deltas' report (open deltas grouped by competency)",
-      "phase": "tests",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v10",
       "depends_on": [],
       "created": "2026-06-03T07:33:38+00:00",
-      "updated": "2026-06-03T07:43:52+00:00"
+      "updated": "2026-06-03T08:20:36+00:00"
     },
     "deltas-lint": {
       "title": "'add.py check' delta-grammar/routing guard (fail-closed)",
@@ -357,7 +357,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-03T07:43:52+00:00",
+  "updated": "2026-06-03T08:20:36+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
