@@ -16,9 +16,9 @@
 #        `--provenance` is enabled and works because pilotspace/ADD is a public repo.
 #
 # PyPI — uses OIDC Trusted Publishing (no token to store/rotate). On PyPI:
-#          Account ▸ Publishing ▸ Add a pending publisher (the project add-method
+#          Account ▸ Publishing ▸ Add a pending publisher (the project pilotspace-add
 #          does not exist yet, so use the "pending" form), matching EXACTLY:
-#            PyPI Project Name:  add-method
+#            PyPI Project Name:  pilotspace-add
 #            Owner:              pilotspace
 #            Repository name:    ADD
 #            Workflow name:      publish.yml
@@ -85,14 +85,21 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Publish (no deps — stdlib-only tool, so no install step)
+      - name: Publish if this version is new (idempotent — safe to re-run a tag)
         working-directory: add-method
-        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          if npm view "@pilotspace/add@${VERSION}" version >/dev/null 2>&1; then
+            echo "@pilotspace/add@${VERSION} already on the registry — skipping (no deps)."
+          else
+            npm publish --access public --provenance
+          fi
 
   pypi:
-    name: Publish add-method to PyPI
+    name: Publish pilotspace-add to PyPI
     needs: guard
     runs-on: ubuntu-latest
     environment: pypi
@@ -112,7 +119,8 @@ jobs:
           python3 -m pip install --upgrade build
           python3 -m build
 
-      - name: Publish via OIDC (no API token stored)
+      - name: Publish via OIDC (no API token stored; idempotent re-runs)
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: add-method/dist
+          skip-existing: true

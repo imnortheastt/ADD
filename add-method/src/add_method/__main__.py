@@ -1,4 +1,4 @@
-"""Support `python -m add_method` as an alias for the `add-method` console script."""
+"""Support `python -m add_method` as an alias for the `pilotspace-add` console script."""
 import sys
 
 from add_method._cli import main

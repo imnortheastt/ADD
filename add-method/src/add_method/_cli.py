@@ -1,8 +1,8 @@
-"""Console-script entry point: add-method.
+"""Console-script entry point: pilotspace-add.
 
 Mirrors bin/cli.js command structure:
-    add-method init [targetDir] [--force] [--stage STAGE] [--name NAME]
-    add-method help
+    pilotspace-add init [targetDir] [--force] [--stage STAGE] [--name NAME]
+    pilotspace-add help
 """
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import sys
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Entry point registered as the `add-method` console script."""
+    """Entry point registered as the `pilotspace-add` console script."""
     raw = argv if argv is not None else sys.argv[1:]
 
     # Pull off the subcommand (default: init), matching cli.js behaviour.
@@ -21,16 +21,16 @@ def main(argv: list[str] | None = None) -> int:
         cmd, rest = "init", raw
 
     if cmd in ("help", "--help", "-h"):
-        print("usage: add-method init [targetDir] [--force] [--stage STAGE] [--name NAME]")
+        print("usage: pilotspace-add init [targetDir] [--force] [--stage STAGE] [--name NAME]")
         return 0
 
     if cmd != "init":
-        print(f"add-method: error: unknown command '{cmd}'. Try: add-method init",
+        print(f"pilotspace-add: error: unknown command '{cmd}'. Try: pilotspace-add init",
               file=sys.stderr)
         return 1
 
     parser = argparse.ArgumentParser(
-        prog="add-method",
+        prog="pilotspace-add",
         description="Install the ADD method into a target project.",
     )
     parser.add_argument(

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Guard: the npm and PyPI packages ship the SAME version.
 
-The release is one tag → two registries (@pilotspace/add on npm, add-method on
+The release is one tag → two registries (@pilotspace/add on npm, pilotspace-add on
 PyPI). The publish workflow refuses to ship if the git tag disagrees with either
 manifest — but that check only runs in CI, at tag time. This test brings the same
 invariant local and into the suite: package.json `version` MUST equal pyproject.toml

@@ -93,10 +93,12 @@ class V7AutoDefaultTest(unittest.TestCase):
 
     # --- the book principle reframe ---------------------------------------
     def test_principle_five_reframed_to_start_auto(self):
-        for p in (PRINCIPLES, PRINCIPLES_DOGFOOD):
-            self.assertTrue(p.exists(), f"missing {p}")
-        self.assertEqual(_md5(PRINCIPLES), _md5(PRINCIPLES_DOGFOOD),
-                         "01-principles.md differs between canonical and dogfood trees")
+        self.assertTrue(PRINCIPLES.exists(), f"missing {PRINCIPLES}")
+        # .add/docs is the gitignored dogfood mirror — parity is checked only where
+        # a dogfood install has materialised it (absent on a clean checkout / CI).
+        if PRINCIPLES_DOGFOOD.exists():
+            self.assertEqual(_md5(PRINCIPLES), _md5(PRINCIPLES_DOGFOOD),
+                             "01-principles.md differs between canonical and dogfood trees")
         low = PRINCIPLES.read_text(encoding="utf-8").lower()
         self.assertTrue(re.search(r"start.{0,20}auto|auto.{0,30}default|default.{0,30}auto", low, re.DOTALL),
                         "principle 5 must reframe to start-auto-lower-on-risk")

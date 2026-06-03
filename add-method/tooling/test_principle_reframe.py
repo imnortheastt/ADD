@@ -51,10 +51,14 @@ def _section(text: str, heading_no: int) -> str:
 
 class PrincipleReframeTest(unittest.TestCase):
     def test_all_three_trees_md5_identical(self):
-        for p in PRINCIPLES:
-            self.assertTrue(p.exists(), f"missing {p}")
-        h = {_md5(p) for p in PRINCIPLES}
-        self.assertEqual(len(h), 1, "01-principles.md copies diverge across the three doc trees")
+        # `.add/docs` is the gitignored dogfood mirror — absent on a clean checkout
+        # (CI). Check the trees that exist: root + shipped are committed and MUST
+        # agree; the mirror joins the parity check only where a dogfood install has
+        # materialised it. (Same tolerance test_flow_diagram already uses.)
+        present = [p for p in PRINCIPLES if p.exists()]
+        self.assertGreaterEqual(len(present), 2, "root + shipped 01-principles.md must exist")
+        h = {_md5(p) for p in present}
+        self.assertEqual(len(h), 1, "01-principles.md copies diverge across the doc trees")
 
     def test_p6_admits_automated_verification(self):
         low = _section(_text(), 6).lower()

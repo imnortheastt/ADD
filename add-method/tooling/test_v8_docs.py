@@ -84,10 +84,12 @@ class V8DocsTest(unittest.TestCase):
 
     # --- glossary defines On-ramp, both trees identical --------------------
     def test_glossary_defines_onramp(self):
-        for p in (GLOSSARY, GLOSSARY_DOGFOOD):
-            self.assertTrue(p.exists(), f"missing {p}")
-        self.assertEqual(_md5(GLOSSARY), _md5(GLOSSARY_DOGFOOD),
-                         "appendix-c-glossary.md differs between canonical and dogfood trees")
+        self.assertTrue(GLOSSARY.exists(), f"missing {GLOSSARY}")
+        # .add/docs is the gitignored dogfood mirror — parity is checked only where
+        # a dogfood install has materialised it (absent on a clean checkout / CI).
+        if GLOSSARY_DOGFOOD.exists():
+            self.assertEqual(_md5(GLOSSARY), _md5(GLOSSARY_DOGFOOD),
+                             "appendix-c-glossary.md differs between canonical and dogfood trees")
         low = GLOSSARY.read_text(encoding="utf-8").lower()
         self.assertTrue(re.search(r"\*\*on-ramp\*\*", low),
                         "glossary must define the term **On-ramp**")

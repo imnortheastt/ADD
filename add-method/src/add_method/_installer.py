@@ -146,7 +146,7 @@ def install(
         if code != 0:
             _warn(
                 "`add.py init` exited non-zero (state may already exist). "
-                "Run `add-method` status, or `add.py status`, to check."
+                "Run `pilotspace-add` status, or `add.py status`, to check."
             )
     except Exception as exc:  # noqa: BLE001
         _warn(f"`add.py init` raised an unexpected error: {exc}")
