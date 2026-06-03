@@ -330,12 +330,12 @@
     },
     "ship-clean": {
       "title": "prepublishOnly guard + add.py project (v3 ship-clean residuals)",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v3",
       "depends_on": [],
       "created": "2026-06-03T05:25:49+00:00",
-      "updated": "2026-06-03T05:25:49+00:00"
+      "updated": "2026-06-03T16:32:35+00:00"
     },
     "deltas-report": {
       "title": "Read-only 'add.py deltas' report (open deltas grouped by competency)",
@@ -357,7 +357,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-03T08:41:27+00:00",
+  "updated": "2026-06-03T16:32:35+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

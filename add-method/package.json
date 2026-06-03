@@ -9,7 +9,8 @@
     "access": "public"
   },
   "scripts": {
-    "test": "python3 -m unittest discover -s tooling -p 'test_*.py'"
+    "test": "python3 -m unittest discover -s tooling -p 'test_*.py'",
+    "prepublishOnly": "python3 -m unittest discover -s tooling -p 'test_packaging.py'"
   },
   "files": [
     "bin/",

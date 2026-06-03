@@ -1594,6 +1594,18 @@ def cmd_deltas(args: argparse.Namespace) -> None:
             print(f"    - {e['text']}  [{e['task']}]")
 
 
+def cmd_project(args: argparse.Namespace) -> None:
+    """Read-only: print .add/PROJECT.md (the read-first foundation) in one command.
+
+    Fail-closed: a missing foundation dies with a clear stderr message + a non-zero
+    exit, never a silent empty print. Writes NOTHING."""
+    root = _require_root()
+    foundation = root / "PROJECT.md"
+    if not foundation.exists():
+        _die("missing foundation: .add/PROJECT.md (run `add.py init` to scaffold it)")
+    print(foundation.read_text(encoding="utf-8"), end="")
+
+
 def cmd_report(args: argparse.Namespace) -> None:
     """Read-only: capture a milestone's raw data (--json) or render the text
     dashboard (color on a tty, ASCII when the terminal can't do Unicode, --plain
@@ -1755,6 +1767,9 @@ def build_parser() -> argparse.ArgumentParser:
                          help="read-only report: open competency deltas grouped by competency")
     pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pdt.set_defaults(func=cmd_deltas)
+
+    ppj = sub.add_parser("project", help="print .add/PROJECT.md (the read-first foundation)")
+    ppj.set_defaults(func=cmd_project)
 
     return p
 
