@@ -2,7 +2,7 @@
 
 slug: deltas-lint · created: 2026-06-03 · stage: mvp
 autonomy: conservative   <!-- a fail-closed guard feeding the fold decision; Verify STOPS for the human (no auto-PASS). -->
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -156,9 +156,10 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 - [ ] a person reviewed and approved the change
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS  (conservative dial: worker B returned ESCALATE — NOT auto-resolved; a human recorded this gate)
+Evidence: full suite 256 green (deltas-lint 7/7); the real repo's own `add.py check` emits 17 "deltas
+          well-formed" PASS checks, 0 failed; read-only guard, no test weakened, contract §1-§3 untouched.
+Reviewed by: human (Tin) via orchestrator-presented evidence + diff review · date: 2026-06-03
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -166,10 +167,16 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): the count of `deltas well-formed` FAIL checks in CI `add.py check`
+Spec delta for the next loop: a malformed FOLDED delta is currently never caught (open-only) — if history
+hygiene ever matters, a `--strict` mode could lint all statuses.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [ADD · open] the conservative autonomy dial got its first real parallel-run exercise: worker B returned
+  ESCALATE (not PASS) and a human recorded the verify gate — the dial's "stop for the human" row works
+  (evidence: v10 deltas-lint gate is human-recorded; deltas-report ran auto in the same milestone).
+- [TDD · open] linting a grammar needs TWO regexes — a broad attempt-detector and the strict valid-shape
+  one; conflating them would either miss malformed attempts or false-skip them (evidence: worker B's
+  _TAG_BROAD_RE vs _DELTA_RE split, accepted at review as distinct abstractions).

@@ -348,16 +348,16 @@
     },
     "deltas-lint": {
       "title": "'add.py check' delta-grammar/routing guard (fail-closed)",
-      "phase": "verify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v10",
       "depends_on": [],
       "created": "2026-06-03T07:33:38+00:00",
-      "updated": "2026-06-03T08:38:51+00:00"
+      "updated": "2026-06-03T08:40:48+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-03T08:38:51+00:00",
+  "updated": "2026-06-03T08:41:27+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -451,9 +451,9 @@
       "title": "Dogfood parallel-streams on fold-support tooling",
       "goal": "Validate the new streams orchestration by shipping two independent fold-support features through it",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-03T07:33:38+00:00",
-      "updated": "2026-06-03T07:33:38+00:00"
+      "updated": "2026-06-03T08:41:27+00:00"
     }
   },
   "active_milestone": "v10",

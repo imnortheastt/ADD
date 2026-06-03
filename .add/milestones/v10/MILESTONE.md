@@ -43,7 +43,26 @@ Out: an `add.py fold` command (deliberately none — the engine stays judgment-f
 - [ ] deltas-lint     depends-on: none   autonomy: conservative  — `add.py check` guard: delta grammar + competency routing, fail-closed
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `add.py deltas` lists every `open` delta grouped by competency, with counts            (← deltas-report)
-- [ ] `add.py check` FAILS on a malformed or unroutable delta and passes on valid ones        (← deltas-lint)
-- [ ] both tasks were built as parallel worktree workers, then merged serially + integration-verified  (← streams dogfood)
-- [ ] a RETRO/delta records what the streams flow validated and what it did NOT (portability)  (← honesty)
+- [x] `add.py deltas` lists every `open` delta grouped by competency, with counts            (← deltas-report)
+- [x] `add.py check` FAILS on a malformed or unroutable delta and passes on valid ones        (← deltas-lint)
+- [x] both tasks were built as parallel worktree workers, then merged serially + integration-verified  (← streams dogfood)
+- [x] a RETRO/delta records what the streams flow validated and what it did NOT (portability)  (← close note below)
+
+## Close note (2026-06-03)
+Both tasks gated PASS; all four exit criteria met. Milestone **done**.
+
+**What the streams dogfood VALIDATED** (Claude Code `Task()` workers):
+- ready→worker→verdict→serial-merge→integration-verify→gate, end to end on two real features;
+- **pipelining** — worker A built while the orchestrator drafted B's front (reviewer never blocked on a build);
+- **both dial rows** — `deltas-report` (auto) self-PASSed on evidence; `deltas-lint` (conservative) returned
+  ESCALATE and a human recorded its verify gate;
+- **the one-approval front caught a real spec defect before any code** — the line-based delta grammar would
+  have red-ed the repo; corrected to multi-line/open-only at the front (backward-correction);
+- **the guard's first catch** — a real malformed OPEN delta (`onboarding-align`, no evidence) found + fixed.
+
+**What it did NOT validate (honesty):**
+- spawn-template **portability** — both workers were Claude Code `Task()`; Codex/opencode/pi-mono adapters stay
+  UNVERIFIED (illustrative only in `streams.md`);
+- **stale worktree base** — both agent worktrees forked from a pre-v10 commit; A recreated the frozen test, B
+  needed a `git merge main` step 0. `streams.md` should add an explicit "verify worktree base == HEAD" step.
+  (filed as an `[ADD · open]` delta on deltas-report.)
