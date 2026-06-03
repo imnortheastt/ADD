@@ -9,7 +9,9 @@ the rubric exists in both skill trees (md5 parity), documents the ritual, the fo
 five competencies (DDD/SDD/UDD→PROJECT.md sections, TDD/ADD→CONVENTIONS.md, all→§Key Decisions), the
 status transitions, append-only+version-bump, the trigger convention, and the three reject codes;
 add.py gains NO fold command; PROJECT.md carries the version marker; the worked example cites real
-history. Exactly 11 tests — frozen @ v1. (The mechanical delta counter is convergence-signal.)
+history; and the "Foundation version" glossary entry is present across the three doc trees. Exactly
+12 tests — frozen @ v2 (test 12 added by change-request 2026-06-03, closing the v5 disclosed gap:
+the glossary entry was built but unguarded). (The mechanical delta counter is convergence-signal.)
 
 Run: python3 -m unittest test_foundation_update_loop -v
 """
@@ -29,6 +31,14 @@ CANONICAL_SKILL = _ADD_METHOD / "skill" / "add" / "SKILL.md"
 DOGFOOD_SKILL = _REPO / ".claude" / "skills" / "add" / "SKILL.md"
 ADD_PY = _ADD_METHOD / "tooling" / "add.py"
 PROJECT_MD = _REPO / ".add" / "PROJECT.md"
+
+# The three shipped doc trees the contract names — canonical, bundled (published package), dogfood.
+# (Byte-parity across trees is test_bundle_parity.py's job; here we guard the ENTRY's presence.)
+GLOSSARY_TREES = (
+    _ADD_METHOD / "docs" / "appendix-c-glossary.md",
+    _ADD_METHOD / "src" / "add_method" / "_bundled" / "docs" / "appendix-c-glossary.md",
+    _REPO / ".add" / "docs" / "appendix-c-glossary.md",
+)
 
 COMPETENCIES = {"DDD", "SDD", "UDD", "TDD", "ADD"}
 REJECT_CODES = {"no_open_deltas", "unconfirmed_fold", "unroutable_delta"}
@@ -121,6 +131,17 @@ class FoundationUpdateLoopTest(unittest.TestCase):
         self.assertTrue(section, "fold.md has no 'worked example' section")
         self.assertIn("competency-deltas", section,
                       "fold.md's worked example should cite the real competency-deltas task")
+
+    def test_glossary_defines_foundation_version_in_all_three_trees(self):
+        # Change-request test 12 (frozen @ v2): the contract ships a "Foundation version" glossary
+        # entry across three doc trees; v5 built it but left it unguarded. Guard its PRESENCE here
+        # (byte-parity stays test_bundle_parity.py's job — no redundant md5 check).
+        for tree in GLOSSARY_TREES:
+            self.assertTrue(tree.exists(), f"missing glossary tree {tree}")
+            self.assertIsNotNone(
+                re.search(r"\*\*Foundation version\*\*", tree.read_text(encoding="utf-8"),
+                          re.IGNORECASE),
+                f"{tree} has no 'Foundation version' entry")
 
 
 if __name__ == "__main__":

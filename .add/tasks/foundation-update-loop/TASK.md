@@ -1,7 +1,7 @@
 # TASK: Foundation Update Loop
 
 slug: foundation-update-loop · created: 2026-05-30 · stage: mvp
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -132,7 +132,7 @@ ARTIFACTS (method-only; the mechanical delta counter is convergence-signal):
   SKILL.md (both trees)  — a pointer to fold.md
   appendix-c-glossary.md (3 doc trees)  — a "Foundation version" entry
 
-STRUCTURAL GUARD — tooling/test_foundation_update_loop.py — EXACTLY these 11 tests (frozen):
+STRUCTURAL GUARD — tooling/test_foundation_update_loop.py — EXACTLY these 12 tests (frozen):
    1. fold.md exists in BOTH skill trees and is md5-identical
    2. fold.md documents the ritual sequence: gather → propose → human confirm → write
    3. fold.md documents fold routing — all 5 competencies map to a target (DDD/SDD/UDD→PROJECT.md
@@ -145,9 +145,13 @@ STRUCTURAL GUARD — tooling/test_foundation_update_loop.py — EXACTLY these 11
    9. .add/PROJECT.md carries a `foundation-version:` marker
   10. SKILL.md links fold.md in both trees AND the two SKILL.md are byte-identical
   11. fold.md's worked example references the real `competency-deltas` task (provable vs history)
+  12. the "Foundation version" entry is present in all 3 doc trees (canonical · bundled · dogfood);
+      ENTRY-presence only — byte-parity stays test_bundle_parity.py's job (no redundant md5 check)
 ```
 
-Status: FROZEN @ v1   (human-approved 2026-05-30)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v2   (human-approved 2026-05-30; change-request 2026-06-03 added test 12 — closes
+the v5 disclosed gap: the "Foundation version" glossary entry was built but unguarded)
+<!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 
@@ -155,12 +159,13 @@ Status: FROZEN @ v1   (human-approved 2026-05-30)   <!-- Changing a frozen contr
 
 ## 4 · TESTS — red safety net ▸ docs/06-step-4-tests.md
 
-Coverage target: structural — all 11 frozen invariants asserted (method/docs task; coverage = the
+Coverage target: structural — all 12 frozen invariants asserted (method/docs task; coverage = the
 contract surface, not LOC).
-Plan (the 11 frozen tests, one assertion-cluster each): exists+md5 parity · ritual sequence ·
+Plan (the 12 frozen tests, one assertion-cluster each): exists+md5 parity · ritual sequence ·
 routing (5 competencies + Key Decisions) · status transitions · append-only+version-bump · trigger
 convention · NO engine fold command · 3 reject codes · PROJECT.md foundation-version marker ·
-SKILL.md links+identical · worked-example references real competency-deltas history.
+SKILL.md links+identical · worked-example references real competency-deltas history ·
+"Foundation version" glossary entry present in all 3 doc trees (added by change-request, frozen @ v2).
 
 Tests live in: `add-method/tooling/test_foundation_update_loop.py` · MUST run red (artifacts absent)
 before Build.
@@ -185,7 +190,7 @@ parity); ask if unclear.
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [x] all tests pass — 11/11 new GREEN; full suite 133 OK (was 122, +11, no regressions)
+- [x] all tests pass — 12/12 GREEN (11 @ build + 1 by change-request); full suite 243 OK, no regressions
 - [x] coverage did not decrease — all 11 frozen invariants asserted; proven RED first (10 red,
       artifact-absent; the 11th — no engine fold command — correctly already green as an invariant)
 - [x] no test or contract was altered during build — frozen 11-test list built to, not edited
@@ -197,16 +202,18 @@ parity); ask if unclear.
       skill trees + 3 glossary trees md5-identical; routing folded back into v5 MILESTONE.md
 - [x] a person reviewed and approved the change — awaiting the human verify gate (owner=human)
 
-Disclosed gap (does NOT block — regression-risk, not present-falsehood): the contract's artifact
-list includes a "Foundation version" glossary entry (built, all 3 trees identical) but the 11 frozen
-tests do NOT guard it (I enumerated PROJECT.md's marker as test 9 but not the glossary entry). Same
-recurring class as competency-deltas' parity note. Adding a 12th test = editing a frozen contract =
-a change-request. Captured as a competency delta in §7.
+Disclosed gap — CLOSED by change-request (2026-06-03): the contract's artifact list includes a
+"Foundation version" glossary entry (built, all 3 trees) that the original 11 frozen tests did NOT
+guard. Per the human's "PASS + close the gap first" decision, the frozen contract was reopened
+SPECIFY→v2 and test 12 added (entry-presence across all 3 doc trees), proven RED first (canonical
+entry removed → red → restored → green). The recurring parity-note class is now guarded, not just
+disclosed. No longer a regression risk.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Reviewed by: Tin Dang · date: 2026-06-03
+Note: gated after the disclosed glossary-guard gap was closed by change-request (contract v1→v2,
+test 12, proven red-first). No risk accepted; no open gap remains.
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -214,10 +221,17 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): per-fold reject-code rate (no_open_deltas / unconfirmed_fold /
+unroutable_delta); foundation-version growth vs. new-deltas-per-milestone (convergence signal).
+Spec delta for the next loop: when a contract enumerates a shipped artifact (e.g. a glossary entry
+across N trees), enumerate a guard test for it in the SAME contract — don't let "built but unguarded"
+become a disclosed gap. This loop proved the change-request path works; the cheaper fix is to not
+need it.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [TDD · folded] a contract that lists a shipped artifact MUST also list its guard test, or the
+  artifact ships unguarded (evidence: this task's v1 contract enumerated the "Foundation version"
+  glossary entry as an artifact but not as a test → disclosed gap → required a v2 change-request).
+  Folded 2026-06-03 via the change-request that added test 12 (entry-presence in all 3 doc trees).
