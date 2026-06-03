@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
+slug: AIDD-Book · stage: mvp · updated: 2026-06-03 · foundation-version: 7
 
 ---
 
@@ -31,6 +31,10 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
 ## Spec / Living Document (SDD) — what we are building, now
 - Latest shipped → `.add/milestones/v9-1/MILESTONE.md` (phase-detail drill-down). See
   `add.py status` for live rollup. (earlier v1.1 polish tasks remain open.)
+- SDD is elicitation-driven, not template-driven: co-specify (Diverge→Converge→Validate
+  + ranked least-sure flag) drives drafting at EVERY altitude — foundation (0-setup),
+  milestone (scope.md), task (§1); named diverge seeds + foundation lenses make
+  "ask before draft" checkable (cospecify-lift v5).
 - Frozen contracts (survivor): `set-milestone`, `milestone-done`, `check` exit
   codes; the 7-phase task flow; the milestone tier (`MILESTONE.md` + `depends_on`);
   `report` / `report --json` (read-only awareness) + `report_data` facts seam;
@@ -132,3 +136,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-02 · foundation-version: 6
 | 2026-06-02 | reframe Specify as **co-specification** (brainstorm by both → AI drafts → human validates with AI advice); the advice is a ranked **least-sure flag**, bundle-wide at the freeze seam | the one-approval front risked rubber-stamping a flat all-`[x]` assumptions wall (the open §UDD risk); rank the uncertainty + name the 1–2 most-likely-wrong so the single approval is *aimed*, without adding GSD-style ceremony — it reshapes the assumptions list ADD already had | book 03 + appendices A/B/C/D + skill `phases/1-specify` · `run.md` · `phases/3-contract` · `SKILL.md`, all trees byte-identical; 219 tests green; `Framings weighed:` persists the brainstorm; "none material" must still name the biggest risk; **honest limit:** the flag aims the review but cannot *force* engagement (a self-asserted "human engaged" is barred; true enforcement deferred to a CI checker) |
 | 2026-06-02 | publish npm under `@pilotspace/add` (was `@mrq/add`); PyPI ships as `add-method` | the only npm credential is the `pilotspace` account, which has no access to the `@mrq` scope (npm 404'd the publish — `@mrq` was aspirational brand, never registered); `add-method` is taken on npm, `@pilotspace/add` is free and matches the `pilotspace` GitHub org | renamed across package.json · README · GETTING-STARTED · cli.js · skill `phases/0-setup` (+ both mirrors) · 4 tests; 231 tests green; npm = @pilotspace/add@1.0.0, PyPI = add-method 1.0.0 |
 | 2026-06-03 | sync names: rename PyPI dist + console script `add-method` → `pilotspace-add` (npm `@pilotspace/add` unchanged); publish jobs made idempotent, version held at 1.0.0 | user asked to align the two install names; PyPI has no scopes so exact parity is impossible — `pilotspace-add` mirrors the npm scope and (unlike npm `@pilotspace/add@1.0.0`, already live) PyPI was unpublished so the rename costs nothing; idempotent npm/pypi publish lets a single `v1.0.0` tag debut PyPI at 1.0.0 while npm safely skips, keeping both registries at 1.0.0 | import pkg `add_method` kept (src/installer/_bundled untouched); renamed pyproject name+script · `_cli`/`__init__`/`__main__`/`_installer` · root+pkg README · root GETTING-STARTED · CHANGELOG · publish.yml; 234 tests green; `npx @pilotspace/add` + `pip install pilotspace-add` |
+| 2026-06-03 | fold v5 learnings → foundation-version 7 (co-specify-at-every-altitude · prose-guides-are-TDD-able · elicitation-driven-SDD) | human-gated fold of cospecify-lift dogfood evidence | §Spec + CONVENTIONS updated; 3 deltas folded (ADD/TDD → CONVENTIONS, SDD → §Spec) |

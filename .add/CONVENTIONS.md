@@ -44,3 +44,12 @@ Architecture:
 - (ADD/SDD) **Docs must not outrun their gate.** A surface may not describe a flow whose verify gate is
   not yet recorded PASS. The v6/v7 onboarding drift existed precisely because three surfaces claimed v7
   before its tasks passed. Claim only what the gate has earned. [folded foundation-version 4]
+- (ADD) **Co-specify at every altitude.** The brainstorm move — Diverge (framings + open questions) →
+  Converge (draft the whole artifact) → Validate (show the ranked least-sure flag first) — is not
+  task-only; it drives foundation (0-setup → PROJECT.md) and milestone (scope.md → MILESTONE.md)
+  drafting too. One flag grammar across all three; each guide self-contained (progressive disclosure).
+  Elicit before drafting; never draft from thin input. [cospecify-lift — folded foundation-version 7]
+- (TDD) **Prose-guide tasks are red→green-testable.** A docs/guideline change is TDD-able by asserting
+  content anchors (required section present + ordering) + cross-tree byte-identity (canonical ==
+  bundled == dogfood mirror), not behavior. Write the assertion red before the edit; a parity test
+  backstops drift. [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7]

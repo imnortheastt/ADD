@@ -193,11 +193,14 @@ Spec delta for the next loop: co-specify is no longer a task-only move — it's 
   three restatements start drifting.
 
 ### Competency deltas
-- [ADD · open] the human↔AI brainstorm was specified only at task §1; lifting the same three-move to
+- [ADD · folded] the human↔AI brainstorm was specified only at task §1; lifting the same three-move to
   the milestone (scope.md) and foundation (0-setup.md) altitudes closed the "template-driven, not
   dialogue-driven" gap at intake/setup (evidence: this task — scope.md + 0-setup.md now teach diverge-before-draft).
-- [SDD · open] the spec/foundation is shaped by elicitation quality, not just template prompts; naming
+  [folded foundation-version 7 → CONVENTIONS.md "Co-specify at every altitude"]
+- [SDD · folded] the spec/foundation is shaped by elicitation quality, not just template prompts; naming
   the five diverge seeds and four foundation lenses makes the SDD layer's "ask before draft" enforceable
   (evidence: test_cospecify_lift asserts the seeds/lenses are present).
-- [TDD · open] prose-guide tasks are red/green-testable too: assert content anchors + cross-tree byte-identity
+  [folded foundation-version 7 → PROJECT.md §Spec "SDD is elicitation-driven"]
+- [TDD · folded] prose-guide tasks are red/green-testable too: assert content anchors + cross-tree byte-identity
   instead of behavior (evidence: test_cospecify_lift went red→green; test_bundle_parity backstops drift).
+  [folded foundation-version 7 → CONVENTIONS.md "Prose-guide tasks are red→green-testable"]
