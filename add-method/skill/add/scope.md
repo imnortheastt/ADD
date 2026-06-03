@@ -20,6 +20,24 @@ scope drafting honors intake's classification — it never re-sizes a request:
 means one drafting pass, NOT auto-creation. Nothing is written to disk — single draft or the
 whole batch — until the human confirms. You propose; you wait.
 
+## Brainstorm before you draft — co-specify at milestone altitude
+
+Don't draft a MILESTONE.md from thin input. Run the same three-move co-specify as a
+task's §1 (`phases/1-specify.md`) — Diverge (framings + open questions) → Converge
+(draft + rank) → Validate (show flags first) — raised to milestone scope. Ask only
+what moves the goal, the In/Out line, or the task list; skip what PROJECT.md settles.
+Draft the WHOLE milestone before showing; nothing hits disk until the human confirms.
+
+Diverge seeds (pick the live ones):
+- **Outcome** — done means a user can do *what* they can't today? (goal sentence)
+- **Edge of scope** — nearest thing assumed IN that you want OUT? (Out list)
+- **Riskiest seam** — which contract, if wrong, costs the most rework? (freeze-first)
+- **Done-looks-like** — how do we SEE each outcome without reading code? (exit criteria)
+- **First slice** — which task unblocks the rest? (breadth-first order)
+
+Rank assumptions least-sure first; the top 1–2 get the flag the human reads at confirm:
+`⚠ <assumption> — least sure because <why>; if wrong: <cost>`.
+
 ## Drafting a good MILESTONE.md (section by section)
 
 - **goal** — ONE sentence, an outcome not an output ("a user can size any request", not "write

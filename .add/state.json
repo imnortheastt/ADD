@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "phase-detail-render",
+  "active_task": "cospecify-lift",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -347,10 +347,19 @@
       "depends_on": [],
       "created": "2026-06-02T09:24:24+00:00",
       "updated": "2026-06-02T10:07:13+00:00"
+    },
+    "cospecify-lift": {
+      "title": "Lift co-specify brainstorm to milestone and foundation altitudes",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v5",
+      "depends_on": [],
+      "created": "2026-06-03T03:30:05+00:00",
+      "updated": "2026-06-03T03:43:30+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-02T10:07:35+00:00",
+  "updated": "2026-06-03T03:43:30+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
