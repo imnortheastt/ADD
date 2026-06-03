@@ -41,8 +41,15 @@ Out: gate-time waiver refusal (superseded by the `check` monitor); the ASCII doc
 - All design forks are decided with the human (AskUserQuestion) before a contract freezes.
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] ship-clean   depends-on: none   — bundle the two v3 residuals: `prepublishOnly` wired to the manifest guard, and `add.py project` opens the foundation. (Independent concerns; split into two tasks if a single frozen contract proves awkward.)
+- [x] ship-clean   depends-on: none   — bundle the two v3 residuals: `prepublishOnly` wired to the manifest guard, and `add.py project` opens the foundation. (Independent concerns; split into two tasks if a single frozen contract proves awkward.)
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `npm publish` from a dirty/incomplete tree is blocked by the guard via `prepublishOnly`  (← ship-clean)
-- [ ] `add.py project` prints (or opens) the foundation in one command                          (← ship-clean)
+- [x] `npm publish` from a dirty/incomplete tree is blocked by the guard via `prepublishOnly`  (← ship-clean)
+- [x] `add.py project` prints (or opens) the foundation in one command                          (← ship-clean)
+
+## Close note (2026-06-03)
+ship-clean gated PASS (conservative dial — human-recorded after evidence review); both exit
+criteria met. Milestone **done**. v3 was planned as 5 tasks but the scope audit found 3 already
+superseded/delivered/obsolete; only the 2 residuals were real, bundled into one task. One accepted
+limitation carried forward: concern (A) is wiring-linkage proof, not a live `npm publish` (see
+ship-clean §6 / OBSERVE — `npm pack` + tarball-content assertion is the next rung if it ever bites).
