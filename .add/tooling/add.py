@@ -698,6 +698,13 @@ def cmd_check(args: argparse.Namespace) -> None:
             except (ValueError, TypeError):
                 ok, reason = False, f"waiver_expired (unparseable expires={exp!r})"
             checks.append((ok, f"task '{slug}' waiver not expired", reason))
+        # delta-lint: validate all OPEN entries in the "### Competency deltas" block.
+        # Fail-closed; folded/rejected entries are skipped (open-only). Only emits a
+        # check when at least one delta-attempt is present in the block.
+        lint_result = _lint_task_deltas(root, slug)
+        if lint_result is not None:
+            ok, reason = lint_result
+            checks.append((ok, f"task '{slug}' deltas well-formed", reason))
 
     # drift: a done milestone must have no unfinished tasks
     for mslug, m in milestones.items():
@@ -1403,6 +1410,7 @@ def _write_retro(root: Path, state: dict, mslug: str) -> Path:
 
 
 _COMPETENCY_ORDER = ("DDD", "SDD", "UDD", "TDD", "ADD")
+_DELTA_STATUSES = ("open", "folded", "rejected")
 
 # Reuse the same grammar as _task_prose's _delta_start; anchored at line-start
 # via re.match. Skips comment lines and malformed lines naturally.
@@ -1410,6 +1418,106 @@ _DELTA_RE = re.compile(
     r"-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$"
 )
 _EVIDENCE_RE = re.compile(r"^(.*?)\s*\(evidence:\s*(.*?)\)\s*$")
+
+# Broad structural tag detector: finds ANY "- [tok · tok]" line (valid OR malformed).
+# A line with a `· ` bracket separator is a delta-attempt. Does NOT enumerate
+# competencies or statuses — a different abstraction from _DELTA_RE (no DRY violation).
+_TAG_BROAD_RE = re.compile(r"^\s*-\s*\[\s*([^\]·]+?)\s*·\s*([^\]·]+?)\s*\]\s*(.*)$")
+
+
+def _lint_task_deltas(root: Path, slug: str) -> tuple[bool, str] | None:
+    """Lint all open delta entries in a task's '### Competency deltas' block.
+
+    Returns:
+        None                    — no delta-attempts found; no check emitted.
+        (True, "")              — all open entries pass.
+        (False, "<code> -> <tag line>") — first failing entry with its failure code.
+
+    Contract rules (frozen §3, v1):
+    - SKIP HTML-comment lines and blank lines (they are never tag lines).
+    - Group lines into ENTRIES: a broad tag line starts an entry; following lines
+      until next tag / blank / end-of-block are its continuation.
+    - A line without a '· ' separator inside brackets (e.g. '- [x]') is NOT a tag.
+    - For each entry, skip folded/rejected (open-only — history not retrofitted).
+    - Validate the remaining (open) entries: COMP in _COMPETENCY_ORDER,
+      status in _DELTA_STATUSES, and '(evidence:' present SOMEWHERE in the unit.
+    - Fail-closed: an unparseable attempt FAILS (never silently passes).
+    """
+    task_md = root / "tasks" / slug / "TASK.md"
+    if not task_md.exists():
+        return None
+    try:
+        text = task_md.read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+    # Locate the "### Competency deltas" block.
+    block_match = re.search(r"###\s*Competency deltas\s*\n(.*?)(?=\n##|\Z)", text, re.S)
+    if not block_match:
+        return None
+
+    block = block_match.group(1)
+    raw_lines = block.splitlines()
+
+    # First pass: collect entries (tag line + continuations).
+    # HTML-comment lines are skipped entirely (invisible to the guard).
+    # Blank lines terminate the current entry, but are not tags themselves.
+    entries: list[tuple[str, list[str]]] = []  # (tag_line, [tag_line, *continuations])
+    current: list[str] | None = None
+    for raw_line in raw_lines:
+        stripped = raw_line.strip()
+        # Skip HTML-comment lines.
+        if stripped.startswith("<!--"):
+            continue
+        # Blank line terminates the current entry.
+        if not stripped:
+            current = None
+            continue
+        # Broad tag detection: any "- [tok · tok]" line starts a new entry.
+        m = _TAG_BROAD_RE.match(raw_line)
+        if m:
+            current = [stripped]
+            entries.append((stripped, current))
+        elif current is not None:
+            # Continuation line of the current entry.
+            current.append(stripped)
+        # else: non-blank, non-comment, non-tag line with no prior entry — ignore.
+
+    if not entries:
+        return None  # no delta-attempts → no check emitted
+
+    # Second pass: validate each entry.
+    for tag_line, unit_lines in entries:
+        m = _TAG_BROAD_RE.match(tag_line)
+        if not m:
+            # Should not happen, but fail-closed.
+            return False, f"malformed_delta -> {tag_line}"
+        raw_comp = m.group(1).strip()
+        raw_status = m.group(2).strip()
+
+        # Step 1: skip historical entries (folded/rejected) — open-only enforcement.
+        # MUST happen before competency/status validation per §3: "history not retrofitted".
+        if raw_status in ("folded", "rejected"):
+            continue
+
+        # Step 2: use _DELTA_RE (the canonical grammar, single source of truth) to test
+        # whether the tag line is a fully-valid delta shape. If it matches, check evidence
+        # only. If it fails, classify the failure via the raw tokens (never a parallel grammar).
+        unit_text = " ".join(unit_lines)
+        if _DELTA_RE.match(tag_line):
+            # Valid comp + status + non-empty tail — check evidence in the joined unit.
+            if "(evidence:" not in unit_text:
+                return False, f"no_evidence -> {tag_line}"
+        else:
+            # Classify why _DELTA_RE rejected it (open entries only — folded/rejected skipped).
+            if raw_comp not in _COMPETENCY_ORDER:
+                return False, f"unknown_competency -> {tag_line}"
+            if raw_status not in _DELTA_STATUSES:
+                return False, f"unknown_status -> {tag_line}"
+            # Comp and status are valid but the line still failed _DELTA_RE (e.g. empty tail).
+            return False, f"malformed_delta -> {tag_line}"
+
+    return True, ""
 
 
 def _collect_open_deltas(root: Path) -> dict[str, list[dict]]:
