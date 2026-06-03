@@ -1,0 +1,17 @@
+# MANIFEST.in — controls sdist (source distribution) inclusion.
+# python -m build builds the wheel FROM the sdist, so files missing here
+# can be silently absent from the wheel too. This is the primary trap to avoid.
+
+# The generated bundle — the only non-Python data this package ships.
+graft src/add_method/_bundled
+
+# Top-level prose
+include README.md
+include GETTING-STARTED.md
+include LICENSE
+
+# Global excludes — keep the distributions clean
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .DS_Store
+global-exclude *.egg-info

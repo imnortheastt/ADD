@@ -1,5 +1,5 @@
 {
-  "name": "@mrq/add",
+  "name": "@pilotspace/add",
   "version": "1.0.0",
   "description": "ADD (AI-Driven Development) — a minimal, state-tracked Claude Code skill that drives every feature through Specify → Scenarios → Contract → Tests → Build → Verify → Observe. Ships the AIDD book as its trust layer.",
   "bin": {
@@ -34,5 +34,14 @@
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Tin Dang <tindang.ht97@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pilotspace/ADD.git"
+  },
+  "homepage": "https://github.com/pilotspace/ADD#readme",
+  "bugs": {
+    "url": "https://github.com/pilotspace/ADD/issues"
+  }
 }

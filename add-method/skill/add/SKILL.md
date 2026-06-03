@@ -57,7 +57,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | Phase | Guide | Produces (TASK.md section) | Who leads |
 |-------|-------|----------------------------|-----------|
 | setup | `phases/0-setup.md` | `.add/` + survivor files | human |
-| specify | `phases/1-specify.md` | §1 rules + named rejections | human |
+| specify | `phases/1-specify.md` | §1 rules + ranked least-sure flag | human + AI (co-specify) |
 | scenarios | `phases/2-scenarios.md` | §2 Given/When/Then | human |
 | contract | `phases/3-contract.md` | §3 frozen shape | human + AI |
 | tests | `phases/4-tests.md` | §4 + red suite in `tests/` | human sets, AI writes |

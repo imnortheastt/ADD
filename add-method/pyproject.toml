@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "add-method"
+version = "1.0.0"
+description = "ADD (AI-Driven Development) — install the ADD skill, tooling, and AIDD book into any project"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Tin Dang", email = "tindang.ht97@gmail.com" },
+]
+keywords = [
+  "ai-driven-development", "add", "aidd", "claude-code",
+  "skill", "tdd", "spec-driven", "agent", "methodology",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development",
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/pilotspace/ADD"
+Repository = "https://github.com/pilotspace/ADD"
+Issues = "https://github.com/pilotspace/ADD/issues"
+
+[project.scripts]
+add-method = "add_method._cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+# Belt-and-suspenders: declare explicitly so the wheel always ships _bundled/
+# regardless of whether files are git-tracked or MANIFEST.in is processed.
+add_method = [
+  "_bundled/**/*",
+]

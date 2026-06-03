@@ -37,7 +37,7 @@ def _phase_index(name: str) -> int:
 # `add.py guide` copy: per-phase (concrete next action, book chapter to read).
 # Keep the action wording aligned with each phase's EXIT line in the TASK template.
 PHASE_GUIDE = {
-    "specify":   ("state every rule — Must / Reject (+ named code) / After; leave zero open assumptions",
+    "specify":   ("state every rule — Must / Reject (+ named code) / After; rank assumptions least-sure first and flag the biggest risk",
                   "03-step-1-specify.md"),
     "scenarios": ("write one Given/When/Then per Must AND per Reject; every result observable",
                   "04-step-2-scenarios.md"),
@@ -79,10 +79,13 @@ slug: {slug} · created: {date} · stage: {stage}
 phase: specify
 
 ## 1 · SPECIFY
+Feature:
+Framings weighed:
 Must:
 Reject:
 After:
-Assumptions (confirm before building):
+Assumptions — least-sure first:
+  ⚠ <most likely wrong> — least sure because <why>; if wrong: <cost>
 
 ## 2 · SCENARIOS
 ## 3 · CONTRACT

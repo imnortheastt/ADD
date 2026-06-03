@@ -49,7 +49,7 @@ def _before_phase_walk(text: str) -> str:
 
 
 class V8DocsTest(unittest.TestCase):
-    # match the slash-COMMAND /add only — not the path .../add.py nor the package @mrq/add
+    # match the slash-COMMAND /add only — not the path .../add.py nor the package @pilotspace/add
     SLASH_ADD = re.compile(r"(?<![\w@/])/add(?![\w.])")
 
     # --- GETTING-STARTED leads AI-first ------------------------------------

@@ -17,7 +17,7 @@ import add
 GUIDE = Path(__file__).resolve().parent.parent / "GETTING-STARTED.md"
 
 REQUIRED_STRINGS = [
-    "npx @mrq/add init",
+    "npx @pilotspace/add init",
     "add.py status",
     "add.py new-task",
     "add.py advance",

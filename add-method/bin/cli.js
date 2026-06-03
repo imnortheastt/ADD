@@ -2,9 +2,9 @@
 "use strict";
 
 /**
- * @mrq/add installer.
+ * @pilotspace/add installer.
  *
- *   npx @mrq/add init [targetDir] [--force] [--stage <stage>] [--name <name>]
+ *   npx @pilotspace/add init [targetDir] [--force] [--stage <stage>] [--name <name>]
  *
  * Installs the ADD skill + tooling + book into a target project:
  *   <target>/.claude/skills/add/   (the skill Claude loads)
@@ -121,10 +121,10 @@ function main() {
       break;
     case "help":
     case "--help":
-      log("usage: npx @mrq/add init [targetDir] [--force] [--stage <s>] [--name <n>]");
+      log("usage: npx @pilotspace/add init [targetDir] [--force] [--stage <s>] [--name <n>]");
       break;
     default:
-      fail("unknown command '" + cmd + "'. Try: npx @mrq/add init");
+      fail("unknown command '" + cmd + "'. Try: npx @pilotspace/add init");
   }
 }
 
