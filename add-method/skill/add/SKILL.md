@@ -79,6 +79,16 @@ touch-boundary, the evidence auto-gate, and the autonomy dial. The human-led fro
 (specify·scenarios·contract) is unchanged; the run never edits a frozen contract and never
 auto-passes a security finding.
 
+## Parallel streams — pipelining independent tasks (opt-in)
+
+The default is one task at a time. When a milestone has several tasks whose `deps=` are
+already `PASS` and a human is ready to review, you MAY run them concurrently: read
+`streams.md`. It changes no `add.py` code — you compute a READY-QUEUE from `status`,
+spawn one worker per ready task (each in a worktree, building behind its own frozen
+contract), and keep the human seams (front approval · escalated Verify) on one serial
+REVIEW-QUEUE. The honest gain is pipelining (the reviewer never waits on a build), not
+N× speed; the autonomy dial sets how much actually overlaps.
+
 ## Non-negotiable rules (from the method)
 
 1. **Direction before speed.** Never start Build until §1–§4 exist and tests are red.
