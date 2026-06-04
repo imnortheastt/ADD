@@ -233,12 +233,12 @@ inferred convention, not written spec.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [SDD · open] the `Tests live in:` grammar (backticked tokens, sibling shorthand) is engine-parsed
+  - [SDD · folded] the `Tests live in:` grammar (backticked tokens, sibling shorthand) is engine-parsed
     but nowhere written as spec — the TASK.md template/§4 guide should state it (evidence: §1 ⚠ flag
     had to infer the sibling rule from 3 observed lines)
-  - [SDD · open] declared tokens can name paths outside the project root (read-only, leaks only a
+  - [SDD · folded] declared tokens can name paths outside the project root (read-only, leaks only a
     def-count integer — reviewed at §6, no finding); a confinement Reject rule is a candidate for a
     future contract version (evidence: §6 security note, gate PASS)
-  - [ADD · open] an item the AI itself wrote on the §6 security line was auto-reclassified
+  - [ADD · folded] an item the AI itself wrote on the §6 security line was auto-reclassified
     "no finding" and auto-gated — security-category judgment always belongs to the human gate,
     whatever the apparent severity (evidence: gate record correction, Tin confirmed PASS post-hoc)

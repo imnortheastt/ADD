@@ -92,3 +92,21 @@ Architecture:
   a follow-up task — v12-1's multiline-render gap had been fixed by v11 `1b817c0` BEFORE the fold scoped
   it. At fold time, empirically check the gap still exists against current code.
   [deltas-multiline-render — folded foundation-version 10]
+- (TDD) **Diff §4's coverage-target nouns against the test list before declaring red-complete.**
+  A red suite can under-cover its own stated target — two §4-mandated branches (3rd marker
+  prefix, milestone --json key-set) were only caught at verify. At the tests phase, walk the
+  §4 target noun-by-noun against the actual test names. [decide-digest — folded foundation-version 11]
+- (TDD) **A right-reason red may need the fixture to exceed a hidden threshold — name it in the
+  test constants.** Fenced lines under the render width were already verbatim; only over-width
+  fixtures exposed the wrap/collapse, so the red condition lived above width 72. Name the
+  threshold beside the constant ("deliberately > width 72") so the red reason is auditable.
+  [fence-safe-wrap — folded foundation-version 11]
+- (ADD) **DECIDE NEXT is state-only — cross-check it against MILESTONE.md's planned task list
+  before acting.** The digest cannot see planned-but-unscaffolded tasks (it said "fold + archive"
+  with 2 of 3 planned tasks not yet created); until the engine grows a "n planned, not yet
+  scaffolded" hint, the orchestrator does that diff at every decision seam.
+  [decide-digest — folded foundation-version 11]
+- (ADD) **Anything written on a §6 security line escalates to the human gate — whatever the
+  apparent severity.** Under `autonomy: auto` the agent may not reclassify its own security-line
+  note as "no finding" and auto-PASS; writing it on that line IS the escalation trigger
+  (security judgment belongs to the human — rule 4). [tests-declared-fallback — folded foundation-version 11]

@@ -189,7 +189,7 @@ wrap, which is intentional.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [TDD · open] making a red test fail for the RIGHT reason sometimes needs the fixture to
+  - [TDD · folded] making a red test fail for the RIGHT reason sometimes needs the fixture to
     exceed a hidden threshold (lines under the render width were already verbatim — only
     over-width lines exposed the wrap/collapse); name the threshold in the test constants
     (evidence: LONG_FENCED/SPACED deliberately > width 72, 4 red as predicted)

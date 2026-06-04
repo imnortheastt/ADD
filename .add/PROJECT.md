@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 10
+slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 11
 
 ---
 
@@ -77,6 +77,14 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 10
   smart single-arg CLI (milestone-first-else-task), read-only + fail-closed (utf-8 + OSError guard
   on the read). Purely additive — the v9 rollup is byte-for-byte unchanged. 219 tests, dual-tree
   byte-identical. Dogfood-proved: v9-1's own close reported on itself via the v9 surface.
+- v13 (Decision-seam reports): **SHIPPED 2026-06-05** — decide digest (DECIDE NEXT + frozen
+  facts seam) · §4-declared tests fallback (`†` footnote) · fence-safe drill-down (fenced
+  blocks render byte-verbatim). Two SDD residues OPEN: (a) the `Tests live in:` declaration
+  grammar (backticked tokens · `./` task-relative · root-relative with `/` · bare sibling
+  shorthand · directory → non-recursive `*.py`) is engine-parsed but stated nowhere — write
+  it into the §4 template/guide; (b) declared tokens may name paths outside the project root
+  (read-only; leaks only an integer def-count — reviewed at §6, human-confirmed) — a
+  confinement Reject rule is a candidate for a future contract version.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -151,3 +159,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 10
 | 2026-06-04 | validated: the conservative autonomy dial's escalation path works under real concurrency — worker B returned ESCALATE (not auto-PASS) and a human recorded the verify gate | the dial's "stop for the human" row had never been exercised in a real parallel run until v10's deltas-lint/deltas-report | confirms run.md's conservative row; no code change — folded foundation-version 9 |
 | 2026-06-04 | fold v10+v12 learnings → foundation-version 9 (9 open deltas: 4 new conventions · 1 dial-validated note · 3 → v12-1 follow-up tasks · 1 onboarding-words closed via flip-cite) | human-gated fold clearing the v10/v12 open-delta backlog at v12 close; consolidate not append-9-bullets (lean foundation) | +4 CONVENTIONS bullets (publish-hook-subprocess · two-regex-grammar-lint · worktree-from-HEAD · scope-audit-unscaffolded-close); cmd_status-hint + multiline-delta-render + _DELTA_RE-dedup → v12-1 tasks; onboarding-align [TDD] folded (reinforces existing Words-exist≠method-works); deltas flipped open→folded |
 | 2026-06-04 | fold v12-1 learnings → foundation-version 10 (5 open deltas: 3 new conventions · 1 worktree-from-HEAD reinforcement flip-cite · 1 UDD one-next-step bullet) | human-gated fold at v12-1 close; all 5 confirmed (none rejected) | +3 CONVENTIONS bullets (comment-literal-phantom-dup · dedup-absorbs-deleted-form · reverify-routed-delta-gap); worktree-from-HEAD flip-cited (the check must EXECUTE pre-spawn); §UDD one-next-step; deltas flipped open→folded |
+| 2026-06-05 | fold v13 learnings → foundation-version 11 (6 open deltas: 4 new conventions · 1 §Spec v13-shipped bullet carrying 2 SDD residues) | human-gated fold at v13 close; all 6 confirmed (none rejected); the 3 actionable residues (Tests-live-in grammar doc · confinement Reject rule · DECIDE-NEXT planned-task hint) stay visible as §Spec OPEN pending a next-milestone intake | +4 CONVENTIONS bullets (diff-§4-target-nouns · red-fixture-exceeds-hidden-threshold · decide-next-is-state-only · security-line-always-escalates); §Spec v13 bullet; deltas flipped open→folded |
