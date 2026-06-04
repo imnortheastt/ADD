@@ -1197,12 +1197,65 @@ def _exit_criteria(root: Path, mslug: str) -> tuple[int, int]:
     return met, total
 
 
+def _count_test_defs(f: Path) -> int:
+    """`def test_` occurrences in one file — the ONE counting regex (primary and
+    §4-declared fallback share it by construction). OSError -> 0, fail-closed."""
+    try:
+        return len(re.findall(r"^\s*def test_", f.read_text(encoding="utf-8"), re.M))
+    except OSError:
+        return 0
+
+
 def _tests_count(root: Path, slug: str) -> int:
     d = root / "tasks" / slug / "tests"
     if not d.is_dir():
         return 0
-    return sum(len(re.findall(r"^\s*def test_", f.read_text(encoding="utf-8"), re.M))
-               for f in d.glob("*.py"))
+    return sum(_count_test_defs(f) for f in d.glob("*.py"))
+
+
+def _declared_tests_count(root: Path, slug: str) -> int:
+    """Count tests at the §4 'Tests live in:' declared path(s). PURE, fail-closed 0.
+    Tokens are the backticked spans on the FIRST declaring line of the raw §4 body.
+    Resolution: './…' -> task dir · contains '/' -> project root (parent of .add) ·
+    bare name -> sibling of the previous resolved token (else task dir). A directory
+    token counts the *.py files directly inside it; resolved files are deduped."""
+    body = _raw_phase_bodies(root, slug).get(4, "")
+    m = re.search(r"^\s*Tests live in:.*$", body, re.M)
+    if not m:
+        return 0
+    tdir = root / "tasks" / slug
+    files: list[Path] = []
+    prev_dir = None
+    for tok in re.findall(r"`([^`]+)`", m.group(0)):
+        tok = tok.strip()
+        if tok.startswith("./"):
+            p = tdir / tok[2:]
+        elif "/" in tok:
+            p = root.parent / tok
+        else:
+            p = (prev_dir or tdir) / tok
+        try:
+            if p.is_dir():
+                cand, prev_dir = sorted(p.glob("*.py")), p
+            elif p.is_file() and p.suffix == ".py":
+                cand, prev_dir = [p], p.parent
+            else:
+                continue
+        except OSError:
+            continue
+        files.extend(f for f in cand if f not in files)
+    return sum(_count_test_defs(f) for f in files)
+
+
+def _tests_info(root: Path, slug: str) -> tuple[int, bool]:
+    """(count, declared). The tests/ dir count ALWAYS wins when > 0; otherwise the
+    §4-declared fallback — flagged True only when it supplied a non-zero count, so
+    a true zero stays a bare, honest 0."""
+    primary = _tests_count(root, slug)
+    if primary > 0:
+        return primary, False
+    declared = _declared_tests_count(root, slug)
+    return (declared, True) if declared > 0 else (0, False)
 
 
 def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
@@ -1290,6 +1343,7 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
         observe, deltas = _task_prose(root, slug)
         phase = t.get("phase", "specify")
         gate = t.get("gate", "none")
+        n_tests, t_declared = _tests_info(root, slug)
         row = {
             "slug": slug,
             "title": t.get("title", slug),
@@ -1297,7 +1351,8 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
             "phase_index": PHASES.index(phase) if phase in PHASES else 0,
             "done": _task_done(t),
             "gate": gate,
-            "tests": _tests_count(root, slug),
+            "tests": n_tests,
+            "tests_declared": t_declared,
             "observe": observe,
             "deltas": deltas,
             "waiver": t.get("waiver"),
@@ -1519,10 +1574,13 @@ def render_report(root: Path, state: dict, mslug: str, *,
         for r in d["tasks"]:
             slug = _clip(r["slug"], 27)
             gate = _GATE_SHORT.get(r["gate"], r["gate"])
+            tests = f"{r['tests']}†" if r.get("tests_declared") else str(r["tests"])
             L.append(f" {slug:<27} {r['phase']:<9} {gate:<4} "
-                     f"{str(r['tests']):<5} {_phase_track(r['phase'], g)}")
+                     f"{tests:<5} {_phase_track(r['phase'], g)}")
         L.append(f" legend  {g['reached']} reached  {g['current']} current  "
                  f"{g['pending']} pending   spec→…→done")
+        if any(r.get("tests_declared") for r in d["tasks"]):
+            L.append(" † counted at the §4-declared path")
     else:
         L.append(" (no tasks yet)")
     L.append("")
@@ -1620,7 +1678,7 @@ def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
     facts = {"phase": phase, "gate": gate,
              "deps": [{"slug": d, "gate": tasks.get(d, {}).get("gate", "none")}
                       for d in t.get("depends_on", [])],
-             "tests": _tests_count(root, slug)}
+             "tests": _tests_info(root, slug)[0]}
 
     if seam == "gate":
         unlocks = f"gate PASS -> task done -> milestone {min(done + 1, total)}/{total}"

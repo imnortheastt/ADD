@@ -39,18 +39,18 @@ Out: NO auto-gating — the digest renders, it never records a gate; no engine
   -> owning task decide-digest
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] decide-digest            depends-on: none — `report --decide` seam digest + rollup DECIDE NEXT footer
-- [ ] tests-declared-fallback  depends-on: none — TESTS column falls back to counting tests at the §4 `Tests live in:` path, footnoted `†declared`
+- [x] decide-digest            depends-on: none — `report --decide` seam digest + rollup DECIDE NEXT footer
+- [x] tests-declared-fallback  depends-on: none — TESTS column falls back to counting tests at the §4 `Tests live in:` path, footnoted `†declared`
 - [ ] fence-safe-wrap          depends-on: none — `_detail_body` leaves fenced ``` blocks unwrapped so contract/gherkin blocks round-trip on copy-paste
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `report <ms> <task> --decide` renders: the seam (from state), NEEDS YOUR
+- [x] `report <ms> <task> --decide` renders: the seam (from state), NEEDS YOUR
       JUDGMENT with every ⚠/[~]/[ ] marker verbatim, ENGINE FACTS, UNLOCKS, and
       the decide command — at the contract seam it renders the §1–§4 front
       (ranked flags first) instead of the gate digest        (← decide-digest)
-- [ ] The milestone rollup ends with DECIDE NEXT naming the next human decision
+- [x] The milestone rollup ends with DECIDE NEXT naming the next human decision
       (fold+archive when DONE · the seam-blocked task when ACTIVE)   (← decide-digest)
-- [ ] When `tasks/<slug>/tests/` is empty but §4 declares `Tests live in:`, the
+- [x] When `tasks/<slug>/tests/` is empty but §4 declares `Tests live in:`, the
       TESTS column shows the count found at the declared path with a `†`
       footnote — never a bare misleading 0        (← tests-declared-fallback)
 - [ ] A fenced block in any §body renders byte-identical inside the drill-down

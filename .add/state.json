@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "decide-digest",
+  "active_task": "tests-declared-fallback",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -427,10 +427,19 @@
       "depends_on": [],
       "created": "2026-06-04T15:37:05+00:00",
       "updated": "2026-06-04T15:59:37+00:00"
+    },
+    "tests-declared-fallback": {
+      "title": "TESTS column falls back to the \u00a74 'Tests live in:' declared path",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v13",
+      "depends_on": [],
+      "created": "2026-06-04T16:08:40+00:00",
+      "updated": "2026-06-04T16:25:09+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-04T15:59:37+00:00",
+  "updated": "2026-06-04T16:25:09+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
