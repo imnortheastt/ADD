@@ -29,6 +29,9 @@ node_modules/
 .add/tooling/__pycache__/
 tmp/
 
+# Agent worktree scratch (isolation: worktree runs) — local, never committed
+.claude/worktrees/
+
 # add-method/ is the PACKAGE SOURCE, never an ADD-managed project. A stray
 # `init` there (e.g. during installer smoke tests) must never be committed.
 add-method/.add/
