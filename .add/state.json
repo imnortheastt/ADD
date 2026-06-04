@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "decide-digest",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,10 +418,19 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
+    },
+    "decide-digest": {
+      "title": "report --decide seam digest + rollup DECIDE NEXT footer",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v13",
+      "depends_on": [],
+      "created": "2026-06-04T15:37:05+00:00",
+      "updated": "2026-06-04T15:59:37+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-04T14:53:47+00:00",
+  "updated": "2026-06-04T15:59:37+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -526,9 +535,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v13": {
+      "title": "Decision-seam reports \u2014 decisive facts first, engine-sourced",
+      "goal": "A reviewer at any decision seam (contract approval \u00b7 verify gate \u00b7 milestone-done) gets the decisive facts first from one rendered, engine-sourced report \u2014 instead of digging through chat prose or a 250-line phase dump.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-04T15:36:30+00:00",
+      "updated": "2026-06-04T15:36:30+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "v13",
   "archived": [
     {
       "slug": "v5",

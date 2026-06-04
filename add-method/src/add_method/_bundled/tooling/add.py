@@ -1342,22 +1342,13 @@ def _clean_phase_body(body: str) -> str:
     return "\n".join(lines) if meaningful else "(empty)"
 
 
-def task_phases(root: Path, slug: str) -> list[dict]:
-    """The frozen per-task PHASE-DETAIL shape (v9-1): parse TASK.md §1–§7 into seven
-    blocks specify→observe. PURE — NO writes. Each entry is
-    { "phase": <name>, "n": <1..7>, "body": <cleaned text | "(empty)"> }.
-
-    Sections are matched on the NUMBER (`^##\\s*<n>\\s*·`, case/locale-proof, the phase
-    word maps n->PHASES[n-1]); a body runs from its heading to the next `## `/`---`/EOF.
-    Missing file / missing section / placeholder-only body -> "(empty)" (fail-closed).
+def _phase_spans(text: str) -> dict[int, str]:
+    """Split a TASK.md into RAW §1–§7 bodies keyed by section number — the ONE
+    canonical heading scan (`^##\\s*<n>\\s*·`, case/locale-proof); a body runs from
+    its heading to the next `## `/`---`/EOF. RAW = byte-faithful lines, no cleaning:
+    the decision-marker extractor (decide-digest) depends on byte-verbatim text.
     KNOWN LIMIT: a §body containing a line-start `## ` or bare `---` truncates early —
     today's TASK.md bodies don't (box-chars ─═, `### ` sub-heads)."""
-    names = PHASES[:7]  # specify..observe; "done" is a terminal STATE, not a section
-    f = root / "tasks" / slug / "TASK.md"
-    try:
-        text = f.read_text(encoding="utf-8")
-    except OSError:   # missing OR unreadable -> every phase fail-closed to "(empty)"
-        return [{"phase": names[n - 1], "n": n, "body": "(empty)"} for n in range(1, 8)]
     lines = text.splitlines()
     head = re.compile(r"^##\s*(\d+)\s*·")
     starts: dict[int, int] = {}
@@ -1367,19 +1358,45 @@ def task_phases(root: Path, slug: str) -> list[dict]:
             n = int(m.group(1))
             if 1 <= n <= 7 and n not in starts:
                 starts[n] = idx
-    out = []
-    for n in range(1, 8):
-        if n not in starts:
-            out.append({"phase": names[n - 1], "n": n, "body": "(empty)"})
-            continue
+    out: dict[int, str] = {}
+    for n, idx in starts.items():
         body_lines = []
-        for ln in lines[starts[n] + 1:]:
+        for ln in lines[idx + 1:]:
             if re.match(r"^##\s", ln) or re.match(r"^---\s*$", ln):
                 break
             body_lines.append(ln)
-        out.append({"phase": names[n - 1], "n": n,
-                    "body": _clean_phase_body("\n".join(body_lines))})
+        out[n] = "\n".join(body_lines)
     return out
+
+
+def _raw_phase_bodies(root: Path, slug: str) -> dict[int, str]:
+    """RAW §bodies for one task (byte-faithful, for marker extraction). PURE.
+    Missing/unreadable TASK.md -> {} (fail-closed, like task_phases)."""
+    f = root / "tasks" / slug / "TASK.md"
+    try:
+        return _phase_spans(f.read_text(encoding="utf-8"))
+    except OSError:
+        return {}
+
+
+def task_phases(root: Path, slug: str) -> list[dict]:
+    """The frozen per-task PHASE-DETAIL shape (v9-1): parse TASK.md §1–§7 into seven
+    blocks specify→observe. PURE — NO writes. Each entry is
+    { "phase": <name>, "n": <1..7>, "body": <cleaned text | "(empty)"> }.
+
+    The heading scan lives in _phase_spans (shared with the decide digest); this view
+    CLEANS each body. Missing file / missing section / placeholder-only body ->
+    "(empty)" (fail-closed)."""
+    names = PHASES[:7]  # specify..observe; "done" is a terminal STATE, not a section
+    f = root / "tasks" / slug / "TASK.md"
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:   # missing OR unreadable -> every phase fail-closed to "(empty)"
+        return [{"phase": names[n - 1], "n": n, "body": "(empty)"} for n in range(1, 8)]
+    spans = _phase_spans(text)
+    return [{"phase": names[n - 1], "n": n,
+             "body": _clean_phase_body(spans[n]) if n in spans else "(empty)"}
+            for n in range(1, 8)]
 
 
 def _task_title(root: Path, slug: str) -> str:
@@ -1523,6 +1540,178 @@ def render_report(root: Path, state: dict, mslug: str, *,
             L.extend(_wrap(x, W - 5, f"   {g['bullet']} "))
     else:
         L.append(" LEARNINGS      none")
+    L.append("")   # DECIDE NEXT footer (v13): always present, APPEND-ONLY
+    L.extend(_wrap(_decide_next(state, d), W - 15, " DECIDE NEXT  "))
+    L.append(banner)
+    return "\n".join(L)
+
+
+# ---- decide digest (v13 decide-digest, frozen §3) ---------------------------
+# Decision markers: prose conventions surfaced VERBATIM. The engine EXTRACTS; it
+# never interprets, scores, or filters — add.py stays judgment-free, the human
+# signature is the gate.
+_MARKER_PREFIXES = (("⚠", "⚠"), ("- [~]", "[~]"), ("- [ ]", "[ ]"))
+_FRONT_PHASES = ("specify", "scenarios", "contract", "tests")
+
+
+def _decision_markers(body: str, section: int) -> list[dict]:
+    """Extract decision markers from a RAW §body: a line whose first non-space chars
+    are `⚠` / `- [~]` / `- [ ]`, PLUS its continuation lines (immediately following
+    non-blank lines indented deeper than the marker). text is BYTE-VERBATIM — never
+    re-wrapped, never clipped. Fail-open by design (a differently-worded item is
+    missed); the always-printed count keeps that visible."""
+    items: list[dict] = []
+    lines = body.split("\n")
+    i = 0
+    while i < len(lines):
+        ln = lines[i]
+        stripped = ln.lstrip()
+        tag = next((t for p, t in _MARKER_PREFIXES if stripped.startswith(p)), None)
+        if tag is None:
+            i += 1
+            continue
+        indent = len(ln) - len(stripped)
+        block = [ln]
+        j = i + 1
+        while j < len(lines):
+            nxt = lines[j]
+            ns = nxt.lstrip()
+            if ns and (len(nxt) - len(ns)) > indent:
+                block.append(nxt)
+                j += 1
+            else:
+                break
+        items.append({"marker": tag, "section": section, "text": "\n".join(block)})
+        i = j
+    return items
+
+
+def _contract_frozen(raw3: str) -> bool:
+    """§3's `Status:` line is the freeze signal (v12 precedent: the freeze is
+    artifact-observable; no engine flag). Missing Status -> DRAFT (fail-closed)."""
+    return any(re.match(r"\s*Status:\s*FROZEN", ln) for ln in raw3.splitlines())
+
+
+def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
+    """FACTS for the task-level decision-seam digest (frozen shape). The seam comes
+    from STATE ONLY: recorded (gate set / observe / done) · front (specify→tests) ·
+    gate (build/verify). judgment = extracted markers, byte-verbatim. PURE."""
+    tasks = state.get("tasks") or {}
+    t = tasks.get(slug, {})
+    phase = t.get("phase", "specify")
+    gate = t.get("gate", "none")
+    if gate != "none" or phase in ("observe", "done"):
+        seam = "recorded"
+    elif phase in _FRONT_PHASES:
+        seam = "front"
+    else:
+        seam = "gate"
+    raw = _raw_phase_bodies(root, slug)
+    frozen = _contract_frozen(raw.get(3, ""))
+    if seam == "gate":   # the items closest to the gate lead: §6 first, then §1
+        judgment = _decision_markers(raw.get(6, ""), 6) + _decision_markers(raw.get(1, ""), 1)
+    elif seam == "front" and not frozen:
+        judgment = _decision_markers(raw.get(1, ""), 1) + _decision_markers(raw.get(3, ""), 3)
+    else:
+        judgment = []
+
+    members = [x for x in tasks.values() if x.get("milestone") == mslug]
+    done, total = sum(1 for x in members if _task_done(x)), len(members)
+    facts = {"phase": phase, "gate": gate,
+             "deps": [{"slug": d, "gate": tasks.get(d, {}).get("gate", "none")}
+                      for d in t.get("depends_on", [])],
+             "tests": _tests_count(root, slug)}
+
+    if seam == "gate":
+        unlocks = f"gate PASS -> task done -> milestone {min(done + 1, total)}/{total}"
+        decide = "add.py gate PASS | RISK-ACCEPTED | HARD-STOP"
+    elif seam == "front" and not frozen:
+        unlocks = "freeze §3 -> the auto run takes build -> verify (autonomy: auto by default)"
+        decide = "approve -> freeze §3 (Status: FROZEN @ v1) -> auto run"
+    elif seam == "front":
+        unlocks = "none"
+        decide = "no decision pending — frozen; the run owns it. next seam: verify gate"
+    else:
+        unlocks = "none"
+        decide = f"no decision pending — recorded gate: {gate}"
+    return {"seam": seam, "milestone": mslug, "task": slug, "phase": phase,
+            "gate": gate, "judgment": judgment, "facts": facts,
+            "unlocks": unlocks, "decide": decide}
+
+
+def render_decide(root: Path, state: dict, mslug: str, slug: str, *,
+                  width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
+    """Text view of the decision-seam digest — decisive facts FIRST: NEEDS YOUR
+    JUDGMENT (markers byte-verbatim, section-tagged) -> [front: §3 verbatim] ->
+    ENGINE FACTS -> UNLOCKS -> DECIDE. PURE — no writes; plain text (color is a
+    tty-only skin in cmd_report, like every report view)."""
+    d = decide_data(root, state, mslug, slug)
+    g = _ASCII if ascii else _UNICODE
+    banner = g["h"] * width
+    seam_label = {"gate": "VERIFY GATE", "front": "CONTRACT APPROVAL",
+                  "recorded": "RECORDED"}[d["seam"]]
+    L = [banner, f" DECIDE · {mslug or '—'} · {slug} · seam: {seam_label}", banner]
+    if d["decide"].startswith("no decision pending"):
+        L.append(f" {d['decide']}")
+        L.append(f" GATE  {d['gate']}")
+        L.append(banner)
+        return "\n".join(L)
+    L.append(f" NEEDS YOUR JUDGMENT ({len(d['judgment'])})")
+    for item in d["judgment"]:
+        L.append(f"   [§{item['section']}]")
+        L.extend(item["text"].split("\n"))     # byte-verbatim — never wrapped/clipped
+    if d["seam"] == "front":
+        L.append("")
+        L.append(" CONTRACT (§3 verbatim)")
+        L.extend(_raw_phase_bodies(root, slug).get(3, "").split("\n"))
+        L.append(" STATUS DRAFT")
+    f = d["facts"]
+    deps_txt = " ".join(f"{x['slug']}:{x['gate']}" for x in f["deps"]) or "none"
+    L.append("")
+    L.append(f" ENGINE FACTS  phase {f['phase']} · gate {f['gate']} · "
+             f"deps {deps_txt} · tests {f['tests']}")
+    L.append(f" UNLOCKS       {d['unlocks']}")
+    L.append(f" DECIDE        {d['decide']}")
+    L.append(banner)
+    return "\n".join(L)
+
+
+def _decide_next(state: dict, d: dict) -> str:
+    """The rollup's DECIDE NEXT line (frozen precedence): HARD-STOP -> fold+archive
+    -> first seam-blocked task (ACTIVE task first, then state order) -> run-in-
+    progress. State-only — never reads prose."""
+    ms = d["milestone"]["slug"]
+    rows = d["tasks"]
+    if not rows:
+        return "none — no tasks yet"
+    stopped = [r for r in rows if r["gate"] == "HARD-STOP"]
+    if stopped:
+        return f"resolve HARD-STOP on {stopped[0]['slug']}"
+    s = d["summary"]
+    if s["tasks_done"] == s["tasks_total"]:
+        return f"fold learnings + archive-milestone {ms}"
+    active = state.get("active_task")
+    order = sorted(rows, key=lambda r: 0 if r["slug"] == active else 1)  # stable
+    for r in order:
+        if r["done"]:
+            continue
+        if r["phase"] in _FRONT_PHASES:
+            return (f"approve the contract of {r['slug']} — "
+                    f"add.py report {ms} {r['slug']} --decide")
+        if r["phase"] == "verify" and r["gate"] == "none":
+            return f"gate {r['slug']} — add.py report {ms} {r['slug']} --decide"
+    r = next(x for x in order if not x["done"])
+    return f"none — run in progress ({r['slug']} at {r['phase']})"
+
+
+def render_decide_next(root: Path, state: dict, mslug: str, *,
+                       width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
+    """`report <ms> --decide`: ONLY the DECIDE NEXT block (no rollup table). PURE."""
+    g = _ASCII if ascii else _UNICODE
+    banner = g["h"] * width
+    d = report_data(root, state, mslug)
+    L = [banner, f" {mslug} · DECIDE NEXT", banner]
+    L.extend(_wrap(_decide_next(state, d), width - 4, "   "))
     L.append(banner)
     return "\n".join(L)
 
@@ -1785,6 +1974,12 @@ def cmd_report(args: argparse.Namespace) -> None:
                 _die(f"unknown_milestone: task '{name}' is not attached to a milestone")
         else:
             _die(f"unknown_milestone: '{name}' is not a milestone")
+    elif getattr(args, "decide", False):          # bare --decide -> the ACTIVE TASK
+        slug = state.get("active_task")
+        if not slug or slug not in tasks:
+            _die("no_active_task — name one: add.py report <milestone> <task> --decide")
+        drill_task = slug
+        mslug = tasks[slug].get("milestone") or ""
     else:                                         # no positional -> active milestone
         mslug = state.get("active_milestone")
         if not mslug:
@@ -1792,6 +1987,32 @@ def cmd_report(args: argparse.Namespace) -> None:
                  "try `add.py report <milestone>`")
         if mslug not in milestones:
             _die(f"unknown_milestone: '{mslug}' is not a milestone")
+
+    if getattr(args, "decide", False):
+        # Decision-seam digest (v13): task -> seam digest; milestone -> DECIDE NEXT
+        # block only. PURE, like every report path.
+        if getattr(args, "json", False):
+            if drill_task:
+                payload = decide_data(root, state, mslug, drill_task)
+            else:   # milestone altitude: same frozen key set, task null
+                d = report_data(root, state, mslug)
+                payload = {"seam": "milestone", "milestone": mslug, "task": None,
+                           "phase": "", "gate": "none", "judgment": [],
+                           "facts": {"phase": "", "gate": "none", "deps": [], "tests": 0},
+                           "unlocks": "", "decide": _decide_next(state, d)}
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
+            return
+        plain = getattr(args, "plain", False)
+        interactive = sys.stdout.isatty() and not plain
+        width = _term_width() if interactive else _DEFAULT_WIDTH
+        use_ascii = plain or _use_ascii()
+        out = (render_decide(root, state, mslug, drill_task, width=width, ascii=use_ascii)
+               if drill_task else
+               render_decide_next(root, state, mslug, width=width, ascii=use_ascii))
+        if not plain and _color_enabled():
+            out = _colorize(out)
+        print(out)
+        return
 
     if getattr(args, "json", False):
         # POLYMORPHIC by path: drill -> task_phases list; rollup -> report_data dict.
@@ -1924,6 +2145,10 @@ def build_parser() -> argparse.ArgumentParser:
                           "drill -> task_phases list of 7 phase dicts)")
     prp.add_argument("--plain", action="store_true",
                      help="ASCII, no color, fixed width (pipe / CI / screen-reader safe)")
+    prp.add_argument("--decide", action="store_true",
+                     help="decision-seam digest: what needs the human's judgment NOW "
+                          "(task -> seam digest; milestone -> DECIDE NEXT only; "
+                          "bare -> the active task)")
     prp.set_defaults(func=cmd_report)
 
     pdt = sub.add_parser("deltas",
