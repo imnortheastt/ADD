@@ -66,6 +66,10 @@ Plan (one test per scenario, asserting behavior not internals):
   - test_<scenario>: arrange <Given> / act <When> / assert <Then> + assert <unchanged>
 
 Tests live in: `./tests/` · MUST run red (missing implementation) before Build.
+<!-- declare paths as backticked tokens on this line: `./…` = this task dir ·
+     a token with "/" = project root · a bare name = sibling of the previous
+     token's dir · a directory counts its *.py files (non-recursive); reports
+     mark declared counts with † -->
 
 <!-- EXIT: one test per scenario; suite red for the RIGHT reason; target recorded. -->
 

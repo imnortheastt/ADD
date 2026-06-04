@@ -17,6 +17,17 @@ before code exists is testing nothing and will wave bad code through later.
 - Side-effect assertions on rejection paths (`assert balance unchanged`).
 - A recorded coverage target in §4.
 
+## Declaring where tests live
+
+§4's `Tests live in:` line is machine-read: when a task has no local `tests/`,
+`add.py report` counts test functions at the declared path(s) instead. The FIRST
+line matching `Tests live in:` is read; paths are its backticked tokens.
+Resolution: `./…` → this task's dir · a token containing `/` → the project root
+(the parent of `.add/`) · a bare name → a sibling of the previous token's
+directory (else the task dir). A directory token counts the `*.py` files directly
+inside it (non-recursive); a `.py` file token counts itself; anything else is
+ignored. Resolved files are deduped, and reports mark declared counts with `†`.
+
 ## AI prompt
 
 > Role: a test author who writes tests before code. Read §2 and §3. Turn each

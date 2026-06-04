@@ -1,6 +1,6 @@
-# TASK: {{title}}
+# TASK: DECIDE NEXT shows n planned tasks not yet scaffolded
 
-slug: {{slug}} · created: {{date}} · stage: {{stage}}
+slug: decide-planned-hint · created: 2026-06-05 · stage: mvp
 phase: specify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
@@ -66,10 +66,6 @@ Plan (one test per scenario, asserting behavior not internals):
   - test_<scenario>: arrange <Given> / act <When> / assert <Then> + assert <unchanged>
 
 Tests live in: `./tests/` · MUST run red (missing implementation) before Build.
-<!-- declare paths as backticked tokens on this line: `./…` = this task dir ·
-     a token with "/" = project root · a bare name = sibling of the previous
-     token's dir · a directory counts its *.py files (non-recursive); reports
-     mark declared counts with † -->
 
 <!-- EXIT: one test per scenario; suite red for the RIGHT reason; target recorded. -->
 
