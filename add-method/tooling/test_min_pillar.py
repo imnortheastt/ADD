@@ -40,6 +40,8 @@ import add
 # proves this list (plus init) equals the parser's whole command set — so a NEW
 # subcommand fails that test until it is classified here.
 LIFECYCLE = [
+    ["lock", "--force"],                       # setup lock-down: reads/writes state.json, never docs/
+                                               # (--force: a plain-init project is grandfathered-locked)
     ["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"],
     ["new-task", "t", "--title", "Feature"],   # auto-linked to mvp
     ["status"],

@@ -12,6 +12,7 @@ existing artifacts unless --force is given.
 from __future__ import annotations
 
 import argparse
+import getpass
 import json
 import os
 import re
@@ -198,6 +199,15 @@ def save_state(root: Path, state: dict) -> None:
     _atomic_write(root / STATE_FILE, json.dumps(state, indent=2) + "\n")
 
 
+def _setup_locked(state: dict) -> bool:
+    """True when the project's setup is locked — i.e. the build-boundary gate is OPEN.
+
+    A state with NO "setup" key is GRANDFATHERED-locked: plain `init` and every legacy
+    project are never gated (the lock is opt-in via `init --await-lock`). The gate is
+    therefore active in exactly one case: "setup" present AND locked is False."""
+    return ("setup" not in state) or (state["setup"].get("locked") is True)
+
+
 def _die(msg: str, code: int = 1) -> None:
     print(f"add: error: {msg}", file=sys.stderr)
     raise SystemExit(code)
@@ -301,6 +311,24 @@ def _inject_guidelines(project_root: Path) -> list[tuple[str, str]]:
 
 # --- commands ----------------------------------------------------------------
 
+_INIT_EXCLUDE = {
+    ".add", "AGENTS.md", "CLAUDE.md", ".git",
+    ".gitignore", ".gitattributes", ".github", ".editorconfig",  # VCS/CI/editor scaffolding — no domain signal
+    "LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING",            # legal boilerplate — no domain signal
+}  # README/docs/source are NOT excluded: they carry domain content adopt.md maps -> brownfield
+
+
+def _is_brownfield(base: Path) -> bool:
+    """True when `base` already holds project content beyond the tool's own scaffolding.
+
+    Judgment-free: a mechanical fact (does the dir hold a non-excluded entry?), so the
+    autonomous-onboarding flow knows to map existing code into the survivors. INTERPRETING
+    that code stays with the AI (skill/add/adopt.md) — the engine only detects + signals."""
+    if not base.is_dir():
+        return False
+    return any(child.name not in _INIT_EXCLUDE for child in base.iterdir())
+
+
 def cmd_init(args: argparse.Namespace) -> None:
     base = Path(args.dir).resolve()
     root = base / ROOT_DIRNAME
@@ -337,14 +365,24 @@ def cmd_init(args: argparse.Namespace) -> None:
         "created": _now(),
         "updated": _now(),
     }
+    if getattr(args, "await_lock", False):
+        # opt-in: seed an UNLOCKED setup so the build-boundary gate is active until
+        # `add.py lock`. Plain init omits this key entirely (grandfathered-locked).
+        state["setup"] = {"locked": False, "locked_at": None, "locked_by": None, "layers": []}
     save_state(root, state)
     # zero-config: give any agent a stable pointer into the ADD runtime.
     for name, action in _inject_guidelines(base):
         if action != "unchanged":
             print(f"{action:>9}  {name}")
     print(f"initialised ADD project '{state['project']}' (stage: {state['stage']}) at {root}")
-    print("next: open Claude Code, run `/add`, and say what you want to build —")
-    print("      the `add` skill sizes it into a milestone and drives the build with you.")
+    if _is_brownfield(base):
+        # Existing code present — the AI maps it SILENTLY into the survivors (skill/add/adopt.md),
+        # then the human locks it down. The engine only flags it; it never reads or fills the code.
+        print("brownfield: existing code detected — the `add` skill maps it into your")
+        print("            foundation (silent), then you lock it down: add.py lock")
+    else:
+        print("next: open Claude Code, run `/add`, and say what you want to build —")
+        print("      the `add` skill sizes it into a milestone and drives the build with you.")
 
 
 def cmd_sync_guidelines(args: argparse.Namespace) -> None:
@@ -356,6 +394,9 @@ def cmd_sync_guidelines(args: argparse.Namespace) -> None:
 def cmd_new_task(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
+    # build-boundary gate: pre-lock, EXACTLY one first task may be drafted; refuse a 2nd.
+    if not _setup_locked(state) and state.get("tasks"):
+        _die("setup_unlocked: lock the foundation first — add.py lock")
     slug = args.slug
     if not slug.replace("-", "").replace("_", "").isalnum():
         _die("slug must be alphanumeric with - or _ only")
@@ -460,6 +501,10 @@ def cmd_advance(args: argparse.Namespace) -> None:
     if idx >= len(PHASES) - 1:
         _die(f"task '{slug}' already at final phase ({cur})")
     nxt = PHASES[idx + 1]
+    # build-boundary gate: pre-lock the front (specify..tests) is allowed, but crossing
+    # into build/verify/observe/done is refused until `add.py lock`.
+    if not _setup_locked(state) and nxt in ("build", "verify", "observe", "done"):
+        _die("setup_unlocked: lock the foundation first — add.py lock")
     state["tasks"][slug]["phase"] = nxt
     state["tasks"][slug]["updated"] = _now()
     _sync_task_marker(root, slug, nxt)
@@ -471,6 +516,9 @@ def cmd_gate(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
     slug = _resolve_task(state, args.slug)
+    # build-boundary gate: no verdict may be recorded before the setup is locked.
+    if not _setup_locked(state):
+        _die("setup_unlocked: lock the foundation first — add.py lock")
     if args.outcome not in GATES:
         _die(f"outcome must be one of: {', '.join(GATES)}")
     # Completing outcomes (PASS, RISK-ACCEPTED) are the VERIFY step's verdict, so they
@@ -504,6 +552,36 @@ def cmd_gate(args: argparse.Namespace) -> None:
     print(f"task '{slug}' gate -> {args.outcome}")
     if args.outcome == "HARD-STOP":
         print("HARD-STOP recorded: return to BUILD; nothing ships on a failing/security gate.")
+
+
+def cmd_lock(args: argparse.Namespace) -> None:
+    """The human lock-down: freeze the autonomously-drafted setup in ONE atomic write.
+
+    Setup-altitude analog of the contract freeze — the only new human action onboarding
+    needs. `add.py lock` is judgment-free (it records the signature; it does NOT inspect
+    the artifacts): the human's signature IS the gate."""
+    root = _require_root()
+    state = load_state(root)
+    # idempotent-guarded: the predicate also treats a grandfathered (no "setup" key)
+    # project as already locked, so a bare re-lock there refuses too.
+    if _setup_locked(state) and not args.force:
+        _die("already_locked: setup is already locked (use --force to re-lock)")
+    # parse layers BEFORE any write so an invalid request never half-locks (design-for-failure).
+    raw = args.layers if args.layers is not None else "foundation,scope,contract"
+    layers = [s.strip() for s in raw.split(",") if s.strip()]
+    if not layers:
+        _die("layers_invalid: --layers must name at least one lock layer")
+    who = args.by or getpass.getuser()
+    when = _now()
+    # ONE atomic write — no partial lock state.
+    state["setup"] = {"locked": True, "locked_at": when, "locked_by": who, "layers": layers}
+    save_state(root, state)
+    if getattr(args, "json", False):
+        print(json.dumps(
+            {"locked": True, "locked_at": when, "locked_by": who, "layers": layers},
+            separators=(",", ":")))
+    else:
+        print(f"locked setup ({','.join(layers)}) by {who} @ {when}")
 
 
 def cmd_stage(args: argparse.Namespace) -> None:
@@ -1727,7 +1805,18 @@ def build_parser() -> argparse.ArgumentParser:
     pi.add_argument("--name", default=None, help="project name (default: dir name)")
     pi.add_argument("--stage", default="prototype", choices=STAGES)
     pi.add_argument("--force", action="store_true", help="reset state.json if present")
+    pi.add_argument("--await-lock", dest="await_lock", action="store_true",
+                    help="seed an unlocked setup; gates new-task/advance/gate until `add.py lock`")
     pi.set_defaults(func=cmd_init)
+
+    pl = sub.add_parser("lock",
+                        help="freeze the autonomous setup (the human lock-down) and open the build")
+    pl.add_argument("--by", default=None, help="who is locking (default: current OS user)")
+    pl.add_argument("--layers", default=None,
+                    help="comma-separated lock layers (default: foundation,scope,contract)")
+    pl.add_argument("--force", action="store_true", help="re-lock an already-locked project")
+    pl.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
+    pl.set_defaults(func=cmd_lock)
 
     pn = sub.add_parser("new-task", help="scaffold a new task (TASK.md + tests/ + src/)")
     pn.add_argument("slug")

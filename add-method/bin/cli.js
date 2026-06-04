@@ -10,15 +10,17 @@
  *   <target>/.claude/skills/add/   (the skill Claude loads)
  *   <target>/.add/tooling/         (add.py scaffolder + state tracker)
  *   <target>/.add/docs/            (the AIDD book — the trust layer)
- * Then runs `add.py init` to create .add/state.json and survivor files.
+ * It DROPS FILES ONLY — it does NOT run `add.py init`. Initialisation is deferred to
+ * the AI (via `/add`, which runs `init --await-lock` to arm the v12 lock-down gate) or
+ * to a CLI user. A pre-run plain init would grandfather-lock the gate before `/add` runs
+ * AND consume the brownfield signal in the terminal, where the AI never sees it.
  *
- * Zero npm dependencies. Designed for failure: verifies sources, never clobbers
- * an existing state.json, and degrades gracefully if python3 is absent.
+ * Zero npm dependencies, no Python needed at install time. Designed for failure:
+ * verifies sources exist before copying, never clobbers an existing skill.
  */
 
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
 
 const PKG_ROOT = path.resolve(__dirname, "..");
 
@@ -56,16 +58,6 @@ function copyDir(src, dest, { skipIfExists, cleanReplace } = {}) {
   fs.cpSync(src, dest, { recursive: true });
 }
 
-function hasPython() {
-  // python3/python cover macOS+Linux; `py` is the Windows Python launcher, where
-  // python3 is often absent and bare `python` may be a no-op Store shim.
-  for (const py of ["python3", "python", "py"]) {
-    const r = spawnSync(py, ["--version"], { stdio: "ignore" });
-    if (r.status === 0) return py;
-  }
-  return null;
-}
-
 function cmdInit(args) {
   const target = path.resolve(args._[0] || ".");
   if (!fs.existsSync(target)) fail("target directory does not exist: " + target);
@@ -97,28 +89,18 @@ function cmdInit(args) {
     { skipIfExists: false });
   log("  ✓ trust docs -> .add/docs/ (the AIDD book)");
 
-  // 4. run add.py init (idempotent — add.py refuses to clobber state.json)
-  const py = hasPython();
-  const addPy = path.join(toolingDest, "add.py");
-  if (!py) {
-    const launcher = process.platform === "win32" ? "py" : "python3";
-    warn("Python not found on PATH — skipping `add.py init`.");
-    log("\nInstall Python 3.10+ and finish setup manually:");
-    log(`  ${launcher} .add/tooling/add.py init` +
-        (args.name ? ` --name "${args.name}"` : "") + ` --stage ${args.stage}`);
-    return;
-  }
-  const initArgs = [addPy, "init", "--dir", target, "--stage", args.stage];
-  if (args.name) initArgs.push("--name", args.name);
-  if (args.force) initArgs.push("--force");
-  const r = spawnSync(py, initArgs, { stdio: "inherit" });
-  if (r.status !== 0 && r.status !== null) {
-    warn("`add.py init` exited non-zero (state may already exist). Run `add.py status` to check.");
-  }
-
-  log("\nDone. In Claude Code, the `add` skill is now installed.");
-  log("Next:  open Claude Code, run `/add`, and say what you want to build —");
-  log("       the agent sizes it into a milestone and drives the build with you.");
+  // NO step 4: the installer DROPS FILES ONLY. Initialisation is deferred to the AI
+  // (via `/add`) or a CLI user — a pre-run plain `add.py init` would grandfather-lock
+  // the v12 lock-down gate before `/add` runs (see file header). So no Python is run here.
+  log("\nDone. The `add` skill + tooling are installed (no project state yet — that's intentional).");
+  log("Next:  open Claude Code, run `/add`, and say what you want to build — the agent");
+  log("       sets up the foundation, sizes it into a milestone, and drives the build with you;");
+  log("       you sign off once, at the lock-down.");
+  log("");
+  log("Prefer the CLI / not using Claude Code? Initialise it yourself (this arms the lock-down):");
+  const launcher = process.platform === "win32" ? "py" : "python3";
+  log(`  ${launcher} .add/tooling/add.py init --await-lock --stage ${args.stage}` +
+      (args.name ? ` --name "${args.name}"` : ""));
 }
 
 function main() {

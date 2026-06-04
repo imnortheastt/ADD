@@ -1,21 +1,19 @@
 """Core installer — Python analog of bin/cli.js.
 
+DROPS FILES ONLY — does NOT run `add.py init`. Initialisation is deferred to the AI
+(via `/add`, which runs `init --await-lock` to arm the v12 lock-down gate) or a CLI user.
+A pre-run plain init would grandfather-lock the gate before `/add` runs AND consume the
+brownfield signal in the terminal, where the AI never sees it.
+
 Designed for failure:
 - Verifies bundled sources exist before touching target.
-- Never clobbers an existing state.json (add.py init enforces this; we surface
-  the warning instead of aborting).
+- Never clobbers an existing skill (skip-if-exists unless --force).
 - Uses shutil.copytree with dirs_exist_ok=True so a re-install refreshes
   tooling/docs without destroying the existing project structure.
-- Loads the installed copy of add.py via importlib.util so that _templates_dir()
-  resolves to the adjacent templates/ in the installed tooling, not to whatever
-  add.py source might be on sys.path.
-- Wraps the add.main() call in try/except SystemExit so `already initialised`
-  becomes a warning, not a crash (mirrors cli.js non-zero-exit handling).
 """
 from __future__ import annotations
 
 import importlib.resources
-import importlib.util
 import shutil
 import sys
 from pathlib import Path
@@ -115,43 +113,18 @@ def install(
     )
     _log("  ✓ trust docs -> .add/docs/ (the AIDD book)")
 
-    # 4. run add.py init (idempotent — add.py refuses to clobber state.json).
-    #    Load the INSTALLED copy so _templates_dir() resolves to the adjacent
-    #    templates/ inside the installed tooling, not from this package's source.
-    add_py = tooling_dest / "add.py"
-    if not add_py.exists():
-        _warn("`add.py` not found in installed tooling — skipping init.")
-        _log("\nFinish setup manually:")
-        _log(f"  python3 .add/tooling/add.py init --dir \"{target_path}\"")
-        return 0
-
-    init_argv = ["init", "--dir", str(target_path), "--stage", stage]
+    # NO step 4: the installer DROPS FILES ONLY (npm ↔ pip parity with bin/cli.js).
+    # Initialisation is deferred to the AI (via `/add`) or a CLI user — a pre-run plain
+    # `add.py init` would grandfather-lock the v12 lock-down gate before `/add` runs (see
+    # the module header). So we do NOT exec add.py here.
+    _log("\nDone. The `add` skill + tooling are installed (no project state yet — that's intentional).")
+    _log("Next:  open Claude Code, run `/add`, and say what you want to build — the agent")
+    _log("       sets up the foundation, sizes it into a milestone, and drives the build with you;")
+    _log("       you sign off once, at the lock-down.")
+    _log("")
+    _log("Prefer the CLI / not using Claude Code? Initialise it yourself (this arms the lock-down):")
+    manual_init = f"  python3 .add/tooling/add.py init --await-lock --stage {stage}"
     if name:
-        init_argv += ["--name", name]
-    if force:
-        init_argv.append("--force")
-
-    try:
-        spec = importlib.util.spec_from_file_location(
-            "add_method._add_main",  # unique name — avoids sys.modules collision
-            str(add_py),
-        )
-        if spec is None or spec.loader is None:
-            raise ImportError(f"Cannot load spec from {add_py}")
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)  # type: ignore[union-attr]
-        mod.main(init_argv)  # type: ignore[attr-defined]
-    except SystemExit as exc:
-        code = exc.code if isinstance(exc.code, int) else 1
-        if code != 0:
-            _warn(
-                "`add.py init` exited non-zero (state may already exist). "
-                "Run `pilotspace-add` status, or `add.py status`, to check."
-            )
-    except Exception as exc:  # noqa: BLE001
-        _warn(f"`add.py init` raised an unexpected error: {exc}")
-
-    _log("\nDone. In Claude Code, the `add` skill is now installed.")
-    _log("Next:  open Claude Code, run `/add`, and say what you want to build —")
-    _log("       the agent sizes it into a milestone and drives the build with you.")
+        manual_init += f' --name "{name}"'
+    _log(manual_init)
     return 0

@@ -74,7 +74,10 @@ one short section each, plus an append-only record of key decisions:
 Keep it to one screen. If a section wants to grow into a manual, that is a signal
 the detail belongs in a milestone or a contract, not the foundation. The foundation
 is the *thin, durable* context the engine reads first — not a place to relocate the
-work.
+work. And you do not hand-write it: at setup the AI **drafts** all four sections —
+silently from an existing codebase, or from a short four-lens interview on a
+greenfield repo — and a single human **lock-down** freezes that draft as committed
+direction (the setup-altitude analog of a contract freeze).
 
 ## How it feeds the engine — and takes feedback back
 
@@ -113,8 +116,9 @@ for the grammar, the ritual, and the tooling (`add.py deltas`, `add.py check`).
 
 ## In the tooling
 
-- `add.py init` scaffolds `PROJECT.md` as a survivor file — and, like every
-  survivor file, **never overwrites a hand-edited one**.
+- `add.py init` scaffolds `PROJECT.md` as a survivor file; the AI then drafts its
+  content and a single human **lock-down** (`add.py lock`) freezes it. Like every
+  survivor file, `init` **never overwrites a hand-edited one**.
 - `add.py status` shows a one-line pointer to the foundation, so a fresh session
   re-orients on context before code.
 - The guideline block written into `CLAUDE.md` / `AGENTS.md` tells any agent the

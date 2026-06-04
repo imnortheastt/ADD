@@ -1,33 +1,42 @@
-# Phase 0 — Setup (once per project)
+# Phase 0 — Setup (autonomous draft → one human lock-down)
 
-Goal: make every later gate enforceable automatically. Do this once.
+Goal: point ADD at a repo and **you** draft the whole foundation — domain, first-milestone scope,
+and the first task's contract — then hand the human exactly one decision: the **lock-down**. Brownfield
+is silent (the code answers the questions); greenfield keeps a short interview. Either way, the human's
+only gate is `add.py lock`. This is the setup-altitude analog of a task's one-approval contract freeze.
 
-## Do
+## 1 · Zero-touch entry — you run init yourself
 
-1. Initialise the runtime (creates `.add/` + survivor-layer files):
-   ```bash
-   python3 .add/tooling/add.py init --name "<project>" --stage prototype
-   ```
-   If the tool isn't there yet, the installer (`npx @pilotspace/add init`) placed it at
-   `.add/tooling/add.py`.
-2. Fill the survivor-layer files (they outlive all code):
-   - `.add/PROJECT.md` — **the foundation**: Domain (DDD) · Spec/Living-Document (SDD,
-     → active milestone) · UI/UX (UDD) · Key Decisions. Cross-milestone context the
-     engine reads first. Keep it to one screen. Book: `docs/14-foundation.md`.
-     **Brainstorm it before you fill it — see below.**
-   - `.add/CONVENTIONS.md` — language, folders, naming, lint, error-code style, architecture.
-   - `.add/GLOSSARY.md` — one name per concept; used in specs, contracts, and code.
-   - `.add/MODEL_REGISTRY.md` — which AI model/version writes this project.
-   - `.add/dependencies.allowlist` — packages the AI may use; CI rejects others.
-3. Confirm CI runs green on the empty skeleton before the first feature.
+When there is no `.add/state.json`, do **not** tell the human to initialise — run it yourself. Infer the
+project name and stage from the repo, and **arm the lock-down gate** with `--await-lock`:
 
-### Brainstorm the foundation before you fill it — co-specify at foundation altitude
+```bash
+python3 .add/tooling/add.py init --name "<inferred from repo/dir>" --stage <prototype|poc|mvp|production> --await-lock
+```
 
-`PROJECT.md` is read first by every later loop — a guess here propagates into every
-milestone. Run the same co-specify move as a task's §1 (`phases/1-specify.md`) across
-the four lenses: ask the load-bearing question per lens (diverge), draft the whole file
-(converge), then show it with the least-sure flag first (validate). Keep it to one
-screen — interview for the facts that bear weight, not a manual.
+- `--await-lock` is **required** here: it seeds an *unlocked* setup, which arms the gate so the engine
+  refuses a second task / crossing into build / a `gate` until you `lock`. A plain `init` is
+  grandfathered-locked — its gate never arms, and the closing `lock` would error `already_locked`.
+- name + stage are **your judgment** (read them from the dir name, README, manifests); the engine stays
+  mechanical. Pick the stage from the ambition you hear: throwaway → `prototype`, one risky slice → `poc`,
+  narrow-but-real → `mvp`, full rigor → `production`.
+
+`init` prints one of two things — **that is your branch**:
+- a line starting `brownfield:` → there is existing code (go to **2a**);
+- the greenfield closing (no `brownfield:`) → an empty repo (go to **2b**).
+
+## 2a · Brownfield — map it silently
+
+The code answers the questions a greenfield interview would ask, so **read it, don't ask**. Open
+`adopt.md` and follow it: fill each survivor file from the code, never clobber an existing one, and tag
+every decision `evidence-grounded` (cite the file) or `guessed`. Ask the human **nothing** at this step.
+
+## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation altitude
+
+An empty repo has no code to read, so run the short interview. This is the **co-specify at foundation
+altitude** move — the same diverge → converge → validate brainstorm a task's §1 uses (`phases/1-specify.md`),
+lifted to the foundation. Ask the one load-bearing question per lens (diverge), draft the foundation
+(converge), then rank what you're least sure of and show the top flag first (validate):
 
 | Lens | The one question that unblocks the section |
 |------|--------------------------------------------|
@@ -36,20 +45,54 @@ screen — interview for the facts that bear weight, not a manual.
 | Users (UDD) | The primary user and the one job they hire this for? (or "no UI — surface is X") |
 | Decisions | What's already decided that you'd regret re-litigating? (first Key Decision row) |
 
-Ask only the live ones; skip what the request already answers. Rank what you're least
-sure of; the top flag the human reads at confirm:
-`⚠ <assumption> — least sure because <why>; if wrong: <cost>`.
+Ask only the live ones; skip what the request already answers. Rank your drafts least-sure-first using the
+one notation every altitude shares — `⚠ <assumption> — least sure because <why>; if wrong: <cost>` — and
+tag thin or inferred answers `guessed`.
+
+## 3 · Draft to the lock (both paths)
+
+1. **Fill the survivors** (they outlive all code): `.add/PROJECT.md` (the foundation — Domain · Spec/active
+   milestone · UI/UX · Key Decisions, one screen), `CONVENTIONS.md`, `GLOSSARY.md`, `MODEL_REGISTRY.md`,
+   `dependencies.allowlist`. Brownfield: from the code. Greenfield: from the interview, gaps flagged `guessed`.
+2. **Size the first milestone** (read `scope.md`) and draft its `MILESTONE.md` — goal · scope · exit criteria
+   · breadth-first tasks.
+3. **Create the first task and draft its candidate front.** `new-task` is allowed pre-lock:
+   ```bash
+   python3 .add/tooling/add.py new-task <slug> --title "<first feature>"
+   ```
+   Draft §1 (specify) · §2 (scenarios) · §3 (contract). **Leave §3 `Status: DRAFT`** — the lock is its
+   approval (see §5). You MAY `advance` through specify → scenarios → contract → tests pre-lock, but the
+   engine **refuses crossing into build** until you `lock` (`setup_unlocked`). Sequence: front → lock → build.
+4. **Write `.add/SETUP-REVIEW.md`** per `setup-review.md`: every decision you drafted (foundation, scope,
+   first contract), **least-sure-first**, each tagged `guessed` | `evidence-grounded`.
+
+## 4 · The one human gate — the lock-down
+
+Present `SETUP-REVIEW.md` least-sure-first (the `guessed` rows are what the human must actually check). They
+sign **once**:
+
+```bash
+python3 .add/tooling/add.py lock --by "<name>"
+```
+
+`lock` records the lock layers (foundation · scope · contract) in one atomic write and opens the build. It is
+judgment-free — it does **not** parse `SETUP-REVIEW.md`; the human *reading* it is the review.
+
+## 5 · After the lock
+
+- The lock **is** the first task's contract approval — the v7 one-approval-front and the lock-down collapse
+  into this single signature. Do **not** ask for a separate contract-freeze sign-off (that double-gates).
+- Stamp the first task's §3 `Status: FROZEN @ v1` (lock-authorized), then read `phases/5-build.md` — build is
+  now open. Everything before this signature, you drafted.
 
 ## Exit gate
 
-- [ ] `.add/state.json` exists (`add.py status` works).
-- [ ] `.add/PROJECT.md` foundation filled (domain · spec · UI/UX).
-- [ ] CONVENTIONS, GLOSSARY, MODEL_REGISTRY, allowlist filled.
-- [ ] Pipeline green on the skeleton.
+- [ ] `.add/state.json` exists; setup was seeded unlocked (`--await-lock`) then locked.
+- [ ] Survivors filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
+- [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written least-sure-first.
+- [ ] Human signed `add.py lock`; first task §3 `FROZEN @ v1`; build open.
 
 ## Next
 
-```bash
-python3 .add/tooling/add.py new-task <slug> --title "<feature>"
-```
-Then read `phases/1-specify.md`. · Book: `docs/10-setup-and-stages.md`.
+After the lock, read `phases/5-build.md` (build is open). · Book: `docs/10-setup-and-stages.md`
+*(note: book chapters 10 / 13 / 14 still describe the older human-led setup until `book-align` lands).*

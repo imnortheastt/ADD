@@ -26,10 +26,15 @@ _ADD_METHOD = _TOOLING.parent
 CLI_JS = _ADD_METHOD / "bin" / "cli.js"
 PACKAGE_JSON = _ADD_METHOD / "package.json"
 ADD_PY = _TOOLING / "add.py"
+INSTALLER_PY = _ADD_METHOD / "src" / "add_method" / "_installer.py"
 
 
 def _cli() -> str:
     return CLI_JS.read_text(encoding="utf-8")
+
+
+def _installer_py() -> str:
+    return INSTALLER_PY.read_text(encoding="utf-8")
 
 
 def _closing_hint(text: str) -> str:
@@ -73,6 +78,35 @@ class V8InstallTest(unittest.TestCase):
         self.assertIn("skill/", joined, "package.json `files` must ship the skill")
         self.assertIn("docs/", joined, "package.json `files` must ship the book")
         self.assertTrue(any("add.py" in f for f in files), "package.json `files` must ship add.py")
+
+    # --- v12 installer-arm: installer drops files only, never auto-runs init -----
+    # A pre-run plain `add.py init` writes no `setup` key -> grandfathered-locked
+    # (add.py:_setup_locked), so the v12 lock-down gate never arms and the `brownfield:`
+    # signal is printed in the terminal before `/add` ever runs. The installer must
+    # therefore DROP FILES ONLY; the AI (via /add) or a CLI user runs `init --await-lock`.
+    def test_cli_does_not_autorun_init(self):
+        cli = _cli()
+        self.assertNotIn("spawnSync", cli,
+                         "cli.js still spawns a subprocess — install must be pure file-copy (no add.py init)")
+        self.assertNotIn("initArgs", cli,
+                         "cli.js still builds an `init` argv — it must not run add.py init")
+
+    def test_installer_py_does_not_autorun_init(self):
+        src = _installer_py()
+        self.assertNotIn("mod.main(", src,
+                         "_installer.py still execs add.py main() — it must not run add.py init")
+        self.assertNotIn("init_argv", src,
+                         "_installer.py still builds an `init` argv — it must not run add.py init")
+
+    def test_cli_hint_offers_manual_init(self):
+        hint = _closing_hint(_cli())
+        self.assertIn("--await-lock", hint,
+                      "cli.js closing hint must offer the manual `add.py init --await-lock` fallback")
+
+    def test_installer_py_hint_offers_manual_init(self):
+        hint = _closing_hint(_installer_py())
+        self.assertIn("--await-lock", hint,
+                      "_installer.py closing hint must offer the manual `add.py init --await-lock` fallback")
 
 
 if __name__ == "__main__":

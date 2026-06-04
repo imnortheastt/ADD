@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "deltas-lint",
+  "active_task": "book-align",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -354,10 +354,74 @@
       "depends_on": [],
       "created": "2026-06-03T07:33:38+00:00",
       "updated": "2026-06-03T08:40:48+00:00"
+    },
+    "setup-lock-state": {
+      "title": "Lock-state schema + atomic add.py lock + downstream gating",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12",
+      "depends_on": [],
+      "created": "2026-06-04T05:43:44+00:00",
+      "updated": "2026-06-04T06:25:29+00:00"
+    },
+    "brownfield-scan": {
+      "title": "Brownfield code-scan: fill survivors from existing code",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12",
+      "depends_on": [
+        "setup-lock-state"
+      ],
+      "created": "2026-06-04T05:43:44+00:00",
+      "updated": "2026-06-04T07:57:37+00:00"
+    },
+    "setup-review-artifact": {
+      "title": "SETUP-REVIEW.md template + least-sure-first rules",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12",
+      "depends_on": [
+        "setup-lock-state"
+      ],
+      "created": "2026-06-04T05:43:44+00:00",
+      "updated": "2026-06-04T08:29:09+00:00"
+    },
+    "autonomous-setup-guide": {
+      "title": "Rewrite phase-0 + SKILL routing; zero-touch entry + chain v7 front to first contract",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12",
+      "depends_on": [
+        "setup-lock-state",
+        "brownfield-scan",
+        "setup-review-artifact"
+      ],
+      "created": "2026-06-04T05:43:45+00:00",
+      "updated": "2026-06-04T11:42:20+00:00"
+    },
+    "book-align": {
+      "title": "Align book chapters 10/13/14 with autonomous-setup flow",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12",
+      "depends_on": [
+        "autonomous-setup-guide"
+      ],
+      "created": "2026-06-04T05:43:45+00:00",
+      "updated": "2026-06-04T12:58:33+00:00"
+    },
+    "installer-arm": {
+      "title": "Installer drops files only \u2014 stop auto-running add.py init so /add reaches the lock-down",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12",
+      "depends_on": [],
+      "created": "2026-06-04T09:03:06+00:00",
+      "updated": "2026-06-04T09:33:33+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-03T16:39:11+00:00",
+  "updated": "2026-06-04T13:01:20+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -454,9 +518,17 @@
       "status": "done",
       "created": "2026-06-03T07:33:38+00:00",
       "updated": "2026-06-03T08:41:27+00:00"
+    },
+    "v12": {
+      "title": "Autonomous Onboarding \u2014 zero-touch setup \u2192 human lock-down",
+      "goal": "Point ADD at any repo and it autonomously drafts the foundation, first-milestone scope, and a candidate first contract \u2014 silent for an existing codebase, interview-then-autonomous for a new one \u2014 all frozen at a single human lock-down.",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-04T05:43:06+00:00",
+      "updated": "2026-06-04T13:01:20+00:00"
     }
   },
-  "active_milestone": "v10",
+  "active_milestone": "v12",
   "archived": [
     {
       "slug": "v5",

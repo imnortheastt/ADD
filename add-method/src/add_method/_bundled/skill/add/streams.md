@@ -11,7 +11,7 @@ orchestrator*, drive several tasks at once by reading the dependency DAG that
 ## The honest frame — this is pipelining, not N× speed
 
 With **one human reviewer** you cannot beat `review_time × N_tasks` (the human-led
-seams are serial — `docs/10-setup-and-stages.md:53`). So the win is **not throughput**:
+seams are serial — `docs/10-setup-and-stages.md:91`). So the win is **not throughput**:
 it is that the reviewer is **never blocked waiting on a build**. While the human reviews
 task A's frozen front, the builds for B·C·D run behind *their* frozen contracts. You hide
 build latency under human latency. Do not promise more than that.
