@@ -1202,8 +1202,6 @@ def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
     text = f.read_text(encoding="utf-8")
     m7 = re.search(r"##\s*7\s*·\s*OBSERVE.*\Z", text, re.S)
     lines = (m7.group(0) if m7 else text).splitlines()
-    _delta_start = re.compile(r"\s*-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$")
-
     # observe: the field value + continuation lines until a blank line / heading / list
     observe = "(unknown)"
     for i, ln in enumerate(lines):
@@ -1224,14 +1222,14 @@ def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
     # deltas: each "- [COMP · status] ..." plus its indented continuation lines
     deltas, i = [], 0
     while i < len(lines):
-        m = _delta_start.match(lines[i])
+        m = _DELTA_RE.match(lines[i])
         if not m:
             i += 1
             continue
         parts, j = [m.group(3).strip()], i + 1
         while j < len(lines):
             t = lines[j].strip()
-            if not t or t.startswith("#") or _delta_start.match(lines[j]):
+            if not t or t.startswith("#") or _DELTA_RE.match(lines[j]):
                 break
             parts.append(t)
             j += 1
@@ -1531,10 +1529,13 @@ def _write_retro(root: Path, state: dict, mslug: str) -> Path:
 _COMPETENCY_ORDER = ("DDD", "SDD", "UDD", "TDD", "ADD")
 _DELTA_STATUSES = ("open", "folded", "rejected")
 
-# Reuse the same grammar as _task_prose's _delta_start; anchored at line-start
-# via re.match. Skips comment lines and malformed lines naturally.
+# Canonical delta grammar — the single compiled source for the enumerated
+# competency · status shape. Leading \s* is PERMISSIVE so _task_prose can feed
+# un-stripped lines directly; callers that pre-strip their input
+# (e.g. _collect_open_deltas, _lint_task_deltas) match the same way (\s*
+# matches zero). Anchored at line-start via re.match.
 _DELTA_RE = re.compile(
-    r"-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$"
+    r"\s*-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$"
 )
 _EVIDENCE_RE = re.compile(r"^(.*?)\s*\(evidence:\s*(.*?)\)\s*$")
 

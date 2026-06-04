@@ -111,6 +111,21 @@ Constraints: do NOT change any test or the contract; touch only the delta-parse 
 
 <!-- EXIT: own test file green; no test/contract touched; the enumerated grammar compiled once. -->
 
+### Build notes (2026-06-04)
+
+Three edits to `add-method/tooling/add.py` only:
+
+1. Deleted `_delta_start = re.compile(...)` local variable (was line 1205 in `_task_prose`).
+2. Replaced both `_delta_start.match(...)` usages (lines 1227, 1234) with `_DELTA_RE.match(...)`.
+3. Made `_DELTA_RE` PERMISSIVE: added leading `\s*` to the pattern string and rewrote
+   its module-level comment (a) removing the reference to the deleted `_delta_start`,
+   (b) explaining the permissive/stripped-caller split, and (c) avoiding the literal
+   enumeration token in comment text (the test counts lines containing that token across
+   the full source file — a comment hit would register as a second copy).
+
+`_DELTA_RE` was NOT moved; it remains at its original position below the `_COMPETENCY_ORDER`
+constants — no forward-reference issue (Python resolves globals at call time, not definition time).
+
 ---
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
@@ -134,7 +149,15 @@ Reviewed by: <name> · date: <date>
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
 Watch: any future re-introduction of a parallel delta grammar (the one-source guard catches it).
-Spec delta for the next loop: <fill at observe>
+Spec delta for the next loop: add a lint rule that rejects a second compiled enumerated-grammar
+regex at the module level (currently only a structural test guards it).
 
 ### Competency deltas
-<!-- fill at observe: e.g. - [ADD · open] one-source guards beat comment-only "reuse" notes (evidence: this dedup) -->
+- [ADD · open] comment text must not repeat regex enumeration literals — a source-scan test counts
+  all matching lines including comments, so a comment containing the pattern registers as a phantom
+  duplicate; strip the literal from comment prose (evidence: delta-grammar-dedup build, comment
+  line required rewrite to keep grep count at 1)
+- [ADD · open] when deduplicating a regex, the canonical must absorb the deleted copy's form
+  (strict vs permissive) — the old _DELTA_RE was strict while _delta_start was permissive;
+  the contract required the permissive form because _task_prose feeds un-stripped lines
+  (evidence: delta-grammar-dedup §3 CONTRACT v1; test_task_prose_recognizes_indented_tag_line)
