@@ -156,11 +156,11 @@ Spec delta for the next loop: <what production taught you>
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] cmd_deltas duplicated the delta grammar as a new module-level _DELTA_RE instead of
+- [ADD · folded] cmd_deltas duplicated the delta grammar as a new module-level _DELTA_RE instead of
   reusing the existing one — two unguarded sources of truth for the regex (evidence: worker A residue;
   _DELTA_RE added alongside the original ~add.py:1079).
-- [TDD · open] the report shows only a delta's first line; a multi-line open delta's text is truncated
+- [TDD · folded] the report shows only a delta's first line; a multi-line open delta's text is truncated
   (evidence: onboarding-align's wrapped open delta; report tests do not cover the multi-line shape).
-- [ADD · open] the streams spawn forked the worker's worktree from a STALE base (e7e2171, pre-v10), not
+- [ADD · folded] the streams spawn forked the worker's worktree from a STALE base (e7e2171, pre-v10), not
   current HEAD — the worker had to recreate the frozen test byte-identically; streams.md should add
   "verify worktree base == HEAD after committing the front" (evidence: worker A worktree HEAD = e7e2171).

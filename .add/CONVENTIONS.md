@@ -64,3 +64,15 @@ Architecture:
 - (TDD) **Assert a message-specific phrase, not an ambient token.** A substring that paths/scaffold/harness
   can also contain false-GREENs (a `/add` match off the tmpdir name); assert a phrase only the real
   behavior emits ("not attached to a milestone"). [orphan-task-guard — folded foundation-version 8]
+- (TDD) **Prove a publish-time hook without publishing.** Run the hook command as a subprocess and assert
+  it executed the guard and exited 0 — it reds on broken/misspelled wiring but cannot prove the registry
+  (npm/PyPI) honours the hook; name that wiring-vs-live limit explicitly. [ship-clean — folded foundation-version 9]
+- (TDD) **Lint a grammar with two regexes, not one.** A broad attempt-detector ("does this line *try* to be
+  a tag/delta?") and a strict valid-shape matcher are distinct abstractions; conflating them either misses
+  malformed attempts or false-skips them. [deltas-lint — folded foundation-version 9]
+- (ADD) **Spawn a worker's worktree from current HEAD, never a stale base.** A worktree forked off an old
+  commit forces the worker to recreate the frozen front byte-identically; after committing the front, verify
+  `worktree base == HEAD` before spawning. [deltas-report — folded foundation-version 9]
+- (ADD) **Close an unscaffolded milestone by a scope audit, not by building its task list.** A planned-but-
+  never-scaffolded milestone (0 TASK.md) may have tasks already superseded/delivered/obsolete by later work;
+  audit each against shipped code and keep only the real residue. [ship-clean — folded foundation-version 9]

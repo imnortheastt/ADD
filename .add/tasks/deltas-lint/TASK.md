@@ -174,9 +174,9 @@ hygiene ever matters, a `--strict` mode could lint all statuses.
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] the conservative autonomy dial got its first real parallel-run exercise: worker B returned
+- [ADD · folded] the conservative autonomy dial got its first real parallel-run exercise: worker B returned
   ESCALATE (not PASS) and a human recorded the verify gate — the dial's "stop for the human" row works
   (evidence: v10 deltas-lint gate is human-recorded; deltas-report ran auto in the same milestone).
-- [TDD · open] linting a grammar needs TWO regexes — a broad attempt-detector and the strict valid-shape
+- [TDD · folded] linting a grammar needs TWO regexes — a broad attempt-detector and the strict valid-shape
   one; conflating them would either miss malformed attempts or false-skip them (evidence: worker B's
   _TAG_BROAD_RE vs _DELTA_RE split, accepted at review as distinct abstractions).

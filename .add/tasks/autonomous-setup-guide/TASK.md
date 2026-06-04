@@ -225,6 +225,6 @@ the no-project error should suggest `init --await-lock`. Disclosed at this gate;
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] `add.py status` doesn't surface the unlocked-setup → lock step (evidence: check 3, post-init
+- [ADD · folded] `add.py status` doesn't surface the unlocked-setup → lock step (evidence: check 3, post-init
   status prints "run /add", not "review SETUP-REVIEW.md then lock"); follow-up: a small `cmd_status` hint when
   `setup.locked is False`. Behind task 1's frozen engine — schedule as a v12 fast-follow or next-milestone task.

@@ -421,7 +421,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-04T13:01:20+00:00",
+  "updated": "2026-06-04T13:28:22+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -526,9 +526,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v12-1": {
+      "title": "Foundation-fold follow-ups",
+      "goal": "Clear the 3 actionable deltas the v10/v12 fold routed out of the foundation: surface the unlocked\u2192lock step in status, stop truncating multi-line deltas, and collapse the duplicated delta-grammar regex to one source.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-04T13:28:22+00:00",
+      "updated": "2026-06-04T13:28:22+00:00"
     }
   },
-  "active_milestone": "v12",
+  "active_milestone": "v12-1",
   "archived": [
     {
       "slug": "v5",

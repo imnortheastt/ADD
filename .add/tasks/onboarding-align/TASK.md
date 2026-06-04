@@ -197,7 +197,7 @@ does not yet guarantee.
 - [UDD · folded] the empty-project `status` was a silent dead-end for a brand-new user; the first-run
   panel fixes the worst-lost moment. [folded → PROJECT.md §Users, foundation-version 4]
   (measurement of whether it reduces confusion remains an OBSERVE item, not a foundation delta.)
-- [TDD · open] the onboarding guards are structural string/ordering matches — they prove the WORDS,
+- [TDD · folded] the onboarding guards are structural string/ordering matches — they prove the WORDS,
   not that a human onboards faster (evidence: test_onboarding_align asserts string presence + section
   order, never a timed onboarding). The recurring v6/v7/v8 words-exist≠method-works gap persists here.
   (left open by human choice at the 2026-06-02 fold — same recurring gap already deferred in v7.)
