@@ -1,7 +1,7 @@
 # TASK: status prints unlocked->lock hint when setup.locked is False
 
 slug: status-lock-hint · created: 2026-06-04 · stage: mvp
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 autonomy: auto
 
 > Closes the autonomous-setup ADD delta: after `init --await-lock`, `status` told the
@@ -132,17 +132,19 @@ leave the `--json` branch untouched; ask if unclear.
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass (own file + full suite at integration)
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing — n/a (read-only status print)
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md (reuses _setup_locked; no new predicate)
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — own file 4/4 · regression net (setup_lock/machine_state/v8_onramp/onboarding_align/min_pillar) green at integration · FULL suite 329/329 OK (the 2 in-worktree bundle-parity fails were the expected stale-bundle state, resolved by the orchestrator's bundle regen + dogfood sync)
+- [x] coverage did not decrease — 4 tests added, none removed or weakened
+- [x] no test or contract was altered during build — worker commit `16d59a2` touches exactly add.py + this task dir (verified by stat)
+- [x] concurrency / timing — n/a (read-only status print)
+- [x] no exposed secrets, injection openings, or unexpected dependencies — none added
+- [x] layering & dependencies follow CONVENTIONS.md — `_setup_locked` reused, no parallel predicate; --json branch byte-identical
+- [x] reviewed — human approved the frozen contract at the one-approval seam (2026-06-04); merged diff manually reviewed by the orchestrator at serial integration; empirical dogfood check (grandfathered repo shows NO hint); verify auto-resolved per `autonomy: auto`
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-Reviewed by: <name> · date: <date>
+Outcome: PASS  (auto-resolved — evidence gate, run.md)
+Owner of record: dynamic run, stream B (worker agent a843de3bd42cd6a05, commit `16d59a2`, integrated by cherry-pick per the worker's stale-base disclosure) + orchestrator serial integration (bundle regen · dogfood sync · full suite 329 OK)
+Residue checks performed: security=none · concurrency=n/a (read-only print) · architecture=none (predicate reused) · process=stale worktree base disclosed and resolved (see §7 delta)
+Date: 2026-06-04
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -156,10 +158,12 @@ consider making the hint more prominent (e.g. a WARNING prefix) or blocking new-
 after the first until locked.
 
 ### Competency deltas
-Status: open (proposed — orchestrator records)
-
-- **status surfaces setup gate**: `cmd_status` in the non-json view now correctly
-  identifies the unlocked window and directs users to the one actionable next step
-  (review SETUP-REVIEW.md + run `add.py lock`) instead of the generic resume hint.
-  Both unlocked sub-states (zero tasks, with tasks) are covered by the hint.
-  When locked or grandfathered the output is byte-identical to before.
+- [ADD · open] a stream worker's worktree must be VERIFIED to fork from the frozen-front HEAD
+  before the run starts — stream B's worktree forked one commit behind the front (7f7ee54 vs
+  c896698), forcing an in-run cherry-pick of the front and a cherry-pick (not merge) integration;
+  streams.md names this check but the orchestrator did not run it pre-spawn
+  (evidence: stream B residue disclosure; deliverable 16d59a2 parented on a duplicated front commit)
+- [UDD · open] at the user's most-lost moment the status surface must show exactly ONE next step —
+  the unlocked window previously offered the generic "/add" or resume hint, competing with the only
+  correct move (review SETUP-REVIEW.md, then lock)
+  (evidence: test_unlocked_no_tasks_shows_lock_hint red before the build; autonomous-setup-guide ADD delta)

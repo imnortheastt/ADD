@@ -616,6 +616,9 @@ def cmd_status(args: argparse.Namespace) -> None:
     state = load_state(root)
     active = state.get("active_task")
     tasks = state.get("tasks", {})
+    # Compute once: True when setup is present AND locked is False (the lock-gate window).
+    # Reuses the canonical helper — do NOT write a parallel predicate.
+    unlocked = not _setup_locked(state)
     print(f"project : {state.get('project', '(unknown)')}")
     print(f"stage   : {state.get('stage', '(unknown)')}")
     # foundation pointer — read the cross-milestone context first (anti-rot)
@@ -645,13 +648,18 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(f"active  : {active or '(none)'}")
     if not tasks:
         # First-run panel: a brand-new project's status is the moment a user is most
-        # lost. Lead with the AI-first move (/add), keep the CLI as the escape hatch —
-        # mirrors `init`'s next-hint so the entry point is actionable, not a bare line.
+        # lost. When the setup is unlocked, the only correct next move is review+lock —
+        # suppress the generic /add hint and name the two steps that matter.
         print("tasks   : (none yet)")
         print()
-        print("next    : you're set up. In Claude Code, run /add and say what you want to")
-        print("          build — the `add` skill sizes it into a milestone and drives the")
-        print('          build with you. Escape hatch: add.py new-task <slug> --title "..."')
+        if unlocked:
+            print("setup   : UNLOCKED — review .add/SETUP-REVIEW.md (least-sure first),"
+                  " then sign: add.py lock")
+            print("          (the build-boundary gate is closed until the foundation is locked)")
+        else:
+            print("next    : you're set up. In Claude Code, run /add and say what you want to")
+            print("          build — the `add` skill sizes it into a milestone and drives the")
+            print('          build with you. Escape hatch: add.py new-task <slug> --title "..."')
         return
     print("tasks   :")
     for slug, t in tasks.items():
@@ -665,7 +673,13 @@ def cmd_status(args: argparse.Namespace) -> None:
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
         print(f"deltas  : {open_deltas} open — fold at milestone close (add.py deltas)")
-    if active and active in tasks:
+    # When the setup is unlocked, the only terminal guidance that matters is
+    # review+lock; suppress the generic resume block so it does not compete.
+    if unlocked:
+        print("\nsetup   : UNLOCKED — review .add/SETUP-REVIEW.md (least-sure first),"
+              " then sign: add.py lock")
+        print("          (the build-boundary gate is closed until the foundation is locked)")
+    elif active and active in tasks:
         ph = tasks[active]["phase"]
         if ph == "done":
             print(f"\nresume  : task '{active}' is done ({tasks[active]['gate']}).")
@@ -1202,8 +1216,6 @@ def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
     text = f.read_text(encoding="utf-8")
     m7 = re.search(r"##\s*7\s*·\s*OBSERVE.*\Z", text, re.S)
     lines = (m7.group(0) if m7 else text).splitlines()
-    _delta_start = re.compile(r"\s*-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$")
-
     # observe: the field value + continuation lines until a blank line / heading / list
     observe = "(unknown)"
     for i, ln in enumerate(lines):
@@ -1224,14 +1236,14 @@ def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
     # deltas: each "- [COMP · status] ..." plus its indented continuation lines
     deltas, i = [], 0
     while i < len(lines):
-        m = _delta_start.match(lines[i])
+        m = _DELTA_RE.match(lines[i])
         if not m:
             i += 1
             continue
         parts, j = [m.group(3).strip()], i + 1
         while j < len(lines):
             t = lines[j].strip()
-            if not t or t.startswith("#") or _delta_start.match(lines[j]):
+            if not t or t.startswith("#") or _DELTA_RE.match(lines[j]):
                 break
             parts.append(t)
             j += 1
@@ -1531,10 +1543,13 @@ def _write_retro(root: Path, state: dict, mslug: str) -> Path:
 _COMPETENCY_ORDER = ("DDD", "SDD", "UDD", "TDD", "ADD")
 _DELTA_STATUSES = ("open", "folded", "rejected")
 
-# Reuse the same grammar as _task_prose's _delta_start; anchored at line-start
-# via re.match. Skips comment lines and malformed lines naturally.
+# Canonical delta grammar — the single compiled source for the enumerated
+# competency · status shape. Leading \s* is PERMISSIVE so _task_prose can feed
+# un-stripped lines directly; callers that pre-strip their input
+# (e.g. _collect_open_deltas, _lint_task_deltas) match the same way (\s*
+# matches zero). Anchored at line-start via re.match.
 _DELTA_RE = re.compile(
-    r"-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$"
+    r"\s*-\s*\[\s*(DDD|SDD|UDD|TDD|ADD)\s*·\s*(open|folded|rejected)\s*\]\s*(.+)$"
 )
 _EVIDENCE_RE = re.compile(r"^(.*?)\s*\(evidence:\s*(.*?)\)\s*$")
 
