@@ -1472,10 +1472,20 @@ def _task_title(root: Path, slug: str) -> str:
 def _detail_body(body: str, width: int) -> list[str]:
     """Indent a phase body under its block, soft-wrapping over-long physical lines on
     spaces while preserving blank lines + each line's leading indent (so scenarios and
-    contract code keep their shape). Drill-down = reading is the point, never clipped."""
+    contract code keep their shape). Fenced ``` blocks are exempt: delimiter lines and
+    everything inside an open fence emit BYTE-VERBATIM (indent + raw — no wrap, no
+    whitespace collapse, even past width) so a copied contract round-trips after
+    stripping the uniform indent; an unclosed fence runs verbatim to the §body end
+    (fail-open). Drill-down = reading is the point, never clipped."""
     indent = "   "
     out: list[str] = []
+    fenced = False
     for raw in body.split("\n"):
+        is_delim = raw.lstrip().startswith("```")
+        if fenced or is_delim:
+            fenced = fenced != is_delim   # delimiter toggles; content keeps state
+            out.append(indent + raw if raw.strip() else "")
+            continue
         if not raw.strip():
             out.append("")
             continue

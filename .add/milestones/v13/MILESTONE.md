@@ -41,7 +41,7 @@ Out: NO auto-gating — the digest renders, it never records a gate; no engine
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [x] decide-digest            depends-on: none — `report --decide` seam digest + rollup DECIDE NEXT footer
 - [x] tests-declared-fallback  depends-on: none — TESTS column falls back to counting tests at the §4 `Tests live in:` path, footnoted `†declared`
-- [ ] fence-safe-wrap          depends-on: none — `_detail_body` leaves fenced ``` blocks unwrapped so contract/gherkin blocks round-trip on copy-paste
+- [x] fence-safe-wrap          depends-on: none — `_detail_body` leaves fenced ``` blocks unwrapped so contract/gherkin blocks round-trip on copy-paste
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] `report <ms> <task> --decide` renders: the seam (from state), NEEDS YOUR
@@ -53,5 +53,5 @@ Out: NO auto-gating — the digest renders, it never records a gate; no engine
 - [x] When `tasks/<slug>/tests/` is empty but §4 declares `Tests live in:`, the
       TESTS column shows the count found at the declared path with a `†`
       footnote — never a bare misleading 0        (← tests-declared-fallback)
-- [ ] A fenced block in any §body renders byte-identical inside the drill-down
+- [x] A fenced block in any §body renders byte-identical inside the drill-down
       (no mid-token wrap); copy-paste of the §3 contract round-trips   (← fence-safe-wrap)

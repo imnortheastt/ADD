@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "tests-declared-fallback",
+  "active_task": "fence-safe-wrap",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -436,10 +436,19 @@
       "depends_on": [],
       "created": "2026-06-04T16:08:40+00:00",
       "updated": "2026-06-04T16:25:09+00:00"
+    },
+    "fence-safe-wrap": {
+      "title": "_detail_body leaves fenced blocks unwrapped so contracts round-trip",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v13",
+      "depends_on": [],
+      "created": "2026-06-04T17:07:45+00:00",
+      "updated": "2026-06-04T17:13:46+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-04T16:25:09+00:00",
+  "updated": "2026-06-04T17:13:46+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
