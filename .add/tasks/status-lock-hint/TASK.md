@@ -115,6 +115,17 @@ Code lives in: `add-method/tooling/add.py` (canonical only — orchestrator sync
 Constraints: do NOT change any test or the contract; touch only `cmd_status`'s human-view tail;
 leave the `--json` branch untouched; ask if unclear.
 
+### Build notes (2026-06-04)
+- Computed `unlocked = not _setup_locked(state)` once after `state = load_state(root)`.
+- Two edit sites in `cmd_status` human-view tail (--json branch at lines 598-614 untouched):
+  1. No-tasks early-return (~line 649): when `unlocked`, print the lock hint instead of the
+     generic first-run panel; preserves `tasks : (none yet)` header; returns early either way.
+  2. With-tasks tail (~line 668): `if unlocked: <hint>  elif active and active in tasks: <resume>`.
+     Suppresses resume block while unlocked; existing resume text unchanged when locked/grandfathered.
+- No parallel predicate written; `_setup_locked` reused verbatim.
+- Bundle-parity tests (test_addpy_parity, test_addpy_dual_tree_md5) red as expected — orchestrator
+  syncs bundle at integration (touch_boundary explicitly out-of-scope for this stream).
+
 <!-- EXIT: own test file green; --json unchanged; no test/contract touched. -->
 
 ---
@@ -140,7 +151,15 @@ Reviewed by: <name> · date: <date>
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
 Watch: do users still skip the lock step? (the hint should reduce stuck-unlocked sessions)
-Spec delta for the next loop: <fill at observe>
+Spec delta for the next loop: if telemetry shows users still skip lock after seeing the hint,
+consider making the hint more prominent (e.g. a WARNING prefix) or blocking new-task creation
+after the first until locked.
 
 ### Competency deltas
-<!-- fill at observe -->
+Status: open (proposed — orchestrator records)
+
+- **status surfaces setup gate**: `cmd_status` in the non-json view now correctly
+  identifies the unlocked window and directs users to the one actionable next step
+  (review SETUP-REVIEW.md + run `add.py lock`) instead of the generic resume hint.
+  Both unlocked sub-states (zero tasks, with tasks) are covered by the hint.
+  When locked or grandfathered the output is byte-identical to before.

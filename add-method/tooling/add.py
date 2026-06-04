@@ -616,6 +616,9 @@ def cmd_status(args: argparse.Namespace) -> None:
     state = load_state(root)
     active = state.get("active_task")
     tasks = state.get("tasks", {})
+    # Compute once: True when setup is present AND locked is False (the lock-gate window).
+    # Reuses the canonical helper — do NOT write a parallel predicate.
+    unlocked = not _setup_locked(state)
     print(f"project : {state.get('project', '(unknown)')}")
     print(f"stage   : {state.get('stage', '(unknown)')}")
     # foundation pointer — read the cross-milestone context first (anti-rot)
@@ -645,13 +648,18 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(f"active  : {active or '(none)'}")
     if not tasks:
         # First-run panel: a brand-new project's status is the moment a user is most
-        # lost. Lead with the AI-first move (/add), keep the CLI as the escape hatch —
-        # mirrors `init`'s next-hint so the entry point is actionable, not a bare line.
+        # lost. When the setup is unlocked, the only correct next move is review+lock —
+        # suppress the generic /add hint and name the two steps that matter.
         print("tasks   : (none yet)")
         print()
-        print("next    : you're set up. In Claude Code, run /add and say what you want to")
-        print("          build — the `add` skill sizes it into a milestone and drives the")
-        print('          build with you. Escape hatch: add.py new-task <slug> --title "..."')
+        if unlocked:
+            print("setup   : UNLOCKED — review .add/SETUP-REVIEW.md (least-sure first),"
+                  " then sign: add.py lock")
+            print("          (the build-boundary gate is closed until the foundation is locked)")
+        else:
+            print("next    : you're set up. In Claude Code, run /add and say what you want to")
+            print("          build — the `add` skill sizes it into a milestone and drives the")
+            print('          build with you. Escape hatch: add.py new-task <slug> --title "..."')
         return
     print("tasks   :")
     for slug, t in tasks.items():
@@ -665,7 +673,13 @@ def cmd_status(args: argparse.Namespace) -> None:
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
         print(f"deltas  : {open_deltas} open — fold at milestone close (add.py deltas)")
-    if active and active in tasks:
+    # When the setup is unlocked, the only terminal guidance that matters is
+    # review+lock; suppress the generic resume block so it does not compete.
+    if unlocked:
+        print("\nsetup   : UNLOCKED — review .add/SETUP-REVIEW.md (least-sure first),"
+              " then sign: add.py lock")
+        print("          (the build-boundary gate is closed until the foundation is locked)")
+    elif active and active in tasks:
         ph = tasks[active]["phase"]
         if ph == "done":
             print(f"\nresume  : task '{active}' is done ({tasks[active]['gate']}).")
