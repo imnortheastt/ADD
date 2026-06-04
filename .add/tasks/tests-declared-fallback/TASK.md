@@ -211,6 +211,10 @@ add.py ×3 + the new test file; decide facts key-set is FROZEN (v13 task 1) — 
 Outcome: PASS (auto-resolved on complete evidence — all green · loops dry · no residue ·
 no deviation: build touched exactly the declared boundary, add.py ×3 + the new test file)
 Reviewed by: auto-gate under `autonomy: auto` · contract approved by Tin · date: 2026-06-04
+Correction (2026-06-05): the §6 security-line note (out-of-tree declared token is READ,
+leaking only an integer def-count) was auto-reclassified "no finding" — that judgment
+belongs to the human gate. Escalated post-hoc; Tin CONFIRMED PASS, 2026-06-05.
+Confinement stays an open SDD delta for a future contract version.
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -235,3 +239,6 @@ What did this loop teach the foundation? One line each, tagged by competency
   - [SDD · open] declared tokens can name paths outside the project root (read-only, leaks only a
     def-count integer — reviewed at §6, no finding); a confinement Reject rule is a candidate for a
     future contract version (evidence: §6 security note, gate PASS)
+  - [ADD · open] an item the AI itself wrote on the §6 security line was auto-reclassified
+    "no finding" and auto-gated — security-category judgment always belongs to the human gate,
+    whatever the apparent severity (evidence: gate record correction, Tin confirmed PASS post-hoc)
