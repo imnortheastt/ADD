@@ -28,10 +28,10 @@ Out: any new engine feature, any setup/lock behavior change, the recurring
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [ ] status-lock-hint       depends-on: none                — `cmd_status`: when `state.setup.locked is False`, print a hint to review `SETUP-REVIEW.md` and run `add.py lock`, not the generic "run /add". [from autonomous-setup-guide ADD delta]
-- [ ] delta-grammar-dedup    depends-on: none                — collapse the duplicated module-level `_DELTA_RE` in `cmd_deltas` to reuse the single canonical delta-grammar regex; a guard test asserts one source. [from deltas-report ADD delta]
-- [ ] deltas-multiline-render depends-on: delta-grammar-dedup — `deltas`/report renders the FULL multi-line delta text, not just the first line; add coverage for the multi-line shape. [from deltas-report TDD delta]
+- [ ] delta-grammar-dedup    depends-on: none                — collapse the duplicated delta-grammar regex (`_task_prose`'s local `_delta_start` vs the module-level `_DELTA_RE`) to one canonical source; a guard test asserts one source. [from deltas-report ADD delta]
+- [x] deltas-multiline-render depends-on: delta-grammar-dedup — CLOSED ALREADY-SATISFIED (2026-06-04): the v10-era truncation was fixed by v11 `1b817c0` and is guarded by `test_multiline_open_delta_not_truncated`; empirical run confirmed full render. No build manufactured; evidence in TASK.md §6. [from deltas-report TDD delta]
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [ ] `add.py status` on an unlocked setup (`setup.locked == False`) prints a hint naming `SETUP-REVIEW.md` + `add.py lock` (not the generic next-step)        (← status-lock-hint)
 - [ ] `add.py` has exactly ONE delta-grammar regex; `cmd_deltas` reuses it (no second `_DELTA_RE`), guarded by a test                                              (← delta-grammar-dedup)
-- [ ] `add.py deltas` renders a multi-line open delta in full (no first-line truncation); a test covers the multi-line shape                                       (← deltas-multiline-render)
+- [x] `add.py deltas` renders a multi-line open delta in full (no first-line truncation); a test covers the multi-line shape                                       (← deltas-multiline-render; pre-satisfied by v11 `1b817c0` + existing guard test — verified empirically 2026-06-04)

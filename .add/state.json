@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "book-align",
+  "active_task": "deltas-multiline-render",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,10 +418,39 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
+    },
+    "delta-grammar-dedup": {
+      "title": "collapse duplicated _DELTA_RE to one canonical regex",
+      "phase": "tests",
+      "gate": "none",
+      "milestone": "v12-1",
+      "depends_on": [],
+      "created": "2026-06-04T13:42:40+00:00",
+      "updated": "2026-06-04T14:01:37+00:00"
+    },
+    "status-lock-hint": {
+      "title": "status prints unlocked->lock hint when setup.locked is False",
+      "phase": "tests",
+      "gate": "none",
+      "milestone": "v12-1",
+      "depends_on": [],
+      "created": "2026-06-04T13:42:40+00:00",
+      "updated": "2026-06-04T14:01:37+00:00"
+    },
+    "deltas-multiline-render": {
+      "title": "deltas/report renders full multi-line delta (no first-line truncation)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v12-1",
+      "depends_on": [
+        "delta-grammar-dedup"
+      ],
+      "created": "2026-06-04T13:42:40+00:00",
+      "updated": "2026-06-04T13:53:51+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-04T13:28:22+00:00",
+  "updated": "2026-06-04T14:01:37+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
