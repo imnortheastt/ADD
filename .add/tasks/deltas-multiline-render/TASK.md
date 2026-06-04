@@ -113,6 +113,6 @@ routed delta was ALREADY closed by interim work before scoping it as open — a 
 foundation-version N can be silently delivered by version N+1 before the fold reads it.
 
 ### Competency deltas
-- [ADD · open] a fold can route an already-closed delta as an open follow-up; the fold ritual
+- [ADD · folded] a fold can route an already-closed delta as an open follow-up; the fold ritual
   should verify a routed delta's gap still exists against current code before scoping it
   (evidence: deltas-multiline-render arrived open but was already delivered by v11 `1b817c0`)

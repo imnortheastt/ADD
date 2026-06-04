@@ -158,12 +158,12 @@ consider making the hint more prominent (e.g. a WARNING prefix) or blocking new-
 after the first until locked.
 
 ### Competency deltas
-- [ADD · open] a stream worker's worktree must be VERIFIED to fork from the frozen-front HEAD
+- [ADD · folded] a stream worker's worktree must be VERIFIED to fork from the frozen-front HEAD
   before the run starts — stream B's worktree forked one commit behind the front (7f7ee54 vs
   c896698), forcing an in-run cherry-pick of the front and a cherry-pick (not merge) integration;
   streams.md names this check but the orchestrator did not run it pre-spawn
   (evidence: stream B residue disclosure; deliverable 16d59a2 parented on a duplicated front commit)
-- [UDD · open] at the user's most-lost moment the status surface must show exactly ONE next step —
+- [UDD · folded] at the user's most-lost moment the status surface must show exactly ONE next step —
   the unlocked window previously offered the generic "/add" or resume hint, competing with the only
   correct move (review SETUP-REVIEW.md, then lock)
   (evidence: test_unlocked_no_tasks_shows_lock_hint red before the build; autonomous-setup-guide ADD delta)

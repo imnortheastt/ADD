@@ -72,7 +72,23 @@ Architecture:
   malformed attempts or false-skips them. [deltas-lint — folded foundation-version 9]
 - (ADD) **Spawn a worker's worktree from current HEAD, never a stale base.** A worktree forked off an old
   commit forces the worker to recreate the frozen front byte-identically; after committing the front, verify
-  `worktree base == HEAD` before spawning. [deltas-report — folded foundation-version 9]
+  `worktree base == HEAD` before spawning. [deltas-report — folded foundation-version 9] Recurred
+  v12-1: stream B forked one commit behind the front (7f7ee54 vs c896698) because the orchestrator never
+  ran the check — it must EXECUTE pre-spawn, not merely exist in streams.md (words-exist ≠ method-works).
+  [status-lock-hint — folded foundation-version 10]
 - (ADD) **Close an unscaffolded milestone by a scope audit, not by building its task list.** A planned-but-
   never-scaffolded milestone (0 TASK.md) may have tasks already superseded/delivered/obsolete by later work;
   audit each against shipped code and keep only the real residue. [ship-clean — folded foundation-version 9]
+- (TDD/ADD) **A source-scan guard counts comments too.** A test that greps source lines for a literal
+  (e.g. a regex enumeration) registers comment/docstring hits as phantom duplicates; keep the literal out
+  of prose — or better, scope the scan to compiled-regex literals (known debt: the v12-1 one-source guard
+  is the line-scan form, so any legitimate future use of the literal in add.py prose trips it).
+  [delta-grammar-dedup — folded foundation-version 10]
+- (ADD) **A dedup's canonical must absorb the deleted copy's form.** When collapsing duplicate
+  regexes/validators, diff their shapes first (strict vs permissive) and freeze the form every call site
+  needs — `_task_prose` feeds un-stripped lines, so the canonical `_DELTA_RE` had to adopt the permissive
+  leading `\s*`. [delta-grammar-dedup — folded foundation-version 10]
+- (ADD) **Re-verify a routed delta's gap before scoping it.** A fold can route an already-closed delta as
+  a follow-up task — v12-1's multiline-render gap had been fixed by v11 `1b817c0` BEFORE the fold scoped
+  it. At fold time, empirically check the gap still exists against current code.
+  [deltas-multiline-render — folded foundation-version 10]

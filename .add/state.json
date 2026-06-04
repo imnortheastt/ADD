@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "deltas-multiline-render",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,39 +418,10 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
-    },
-    "delta-grammar-dedup": {
-      "title": "collapse duplicated _DELTA_RE to one canonical regex",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v12-1",
-      "depends_on": [],
-      "created": "2026-06-04T13:42:40+00:00",
-      "updated": "2026-06-04T14:29:34+00:00"
-    },
-    "status-lock-hint": {
-      "title": "status prints unlocked->lock hint when setup.locked is False",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v12-1",
-      "depends_on": [],
-      "created": "2026-06-04T13:42:40+00:00",
-      "updated": "2026-06-04T14:29:34+00:00"
-    },
-    "deltas-multiline-render": {
-      "title": "deltas/report renders full multi-line delta (no first-line truncation)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v12-1",
-      "depends_on": [
-        "delta-grammar-dedup"
-      ],
-      "created": "2026-06-04T13:42:40+00:00",
-      "updated": "2026-06-04T13:53:51+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-04T14:33:04+00:00",
+  "updated": "2026-06-04T14:53:47+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -555,17 +526,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v12-1": {
-      "title": "Foundation-fold follow-ups",
-      "goal": "Clear the 3 actionable deltas the v10/v12 fold routed out of the foundation: surface the unlocked\u2192lock step in status, stop truncating multi-line deltas, and collapse the duplicated delta-grammar regex to one source.",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-04T13:28:22+00:00",
-      "updated": "2026-06-04T14:33:04+00:00"
     }
   },
-  "active_milestone": "v12-1",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -577,6 +540,17 @@
         "cospecify-lift"
       ],
       "archived": "2026-06-03"
+    },
+    {
+      "slug": "v12-1",
+      "title": "Foundation-fold follow-ups",
+      "tasks": 3,
+      "task_slugs": [
+        "delta-grammar-dedup",
+        "status-lock-hint",
+        "deltas-multiline-render"
+      ],
+      "archived": "2026-06-04"
     }
   ]
 }

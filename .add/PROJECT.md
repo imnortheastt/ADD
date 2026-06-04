@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 9
+slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 10
 
 ---
 
@@ -112,6 +112,9 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 9
   The reform reaches the **operational artifact**, not only the book: `new-task` now scaffolds the
   ranked least-sure §1 (`templates/TASK.md.tmpl` + the `_FALLBACK_TASK` circuit breaker), pinned by
   `test_cospecify_scaffold.py` so it cannot regress to the flat confirm-list that originally exposed it.
+- **One next step at the most-lost moment (v12-1 · UDD):** when the user is most lost (unlocked setup,
+  empty project), status must show exactly ONE next move — competing hints dilute the only correct
+  action. The unlocked window now replaces the generic resume//add hint with the single review→lock step.
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -147,3 +150,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-04 · foundation-version: 9
 | 2026-06-04 | ship v12 Autonomous Onboarding: installer drops files only → `/add` finds an un-inited repo → AI runs `init --await-lock`, drafts the foundation (brownfield silent / greenfield 4-lens) + SETUP-REVIEW.md, build-boundary gate holds pre-lock; one human lock-down freezes foundation+first-scope+first-contract | the human's only setup act becomes one signature; the AI owns init+drafting end-to-end | v12 SHIPPED 6/6, 8/8 criteria; 322 tests; add.py engine unchanged this session (book/installer tail); RETRO.md written |
 | 2026-06-04 | validated: the conservative autonomy dial's escalation path works under real concurrency — worker B returned ESCALATE (not auto-PASS) and a human recorded the verify gate | the dial's "stop for the human" row had never been exercised in a real parallel run until v10's deltas-lint/deltas-report | confirms run.md's conservative row; no code change — folded foundation-version 9 |
 | 2026-06-04 | fold v10+v12 learnings → foundation-version 9 (9 open deltas: 4 new conventions · 1 dial-validated note · 3 → v12-1 follow-up tasks · 1 onboarding-words closed via flip-cite) | human-gated fold clearing the v10/v12 open-delta backlog at v12 close; consolidate not append-9-bullets (lean foundation) | +4 CONVENTIONS bullets (publish-hook-subprocess · two-regex-grammar-lint · worktree-from-HEAD · scope-audit-unscaffolded-close); cmd_status-hint + multiline-delta-render + _DELTA_RE-dedup → v12-1 tasks; onboarding-align [TDD] folded (reinforces existing Words-exist≠method-works); deltas flipped open→folded |
+| 2026-06-04 | fold v12-1 learnings → foundation-version 10 (5 open deltas: 3 new conventions · 1 worktree-from-HEAD reinforcement flip-cite · 1 UDD one-next-step bullet) | human-gated fold at v12-1 close; all 5 confirmed (none rejected) | +3 CONVENTIONS bullets (comment-literal-phantom-dup · dedup-absorbs-deleted-form · reverify-routed-delta-gap); worktree-from-HEAD flip-cited (the check must EXECUTE pre-spawn); §UDD one-next-step; deltas flipped open→folded |

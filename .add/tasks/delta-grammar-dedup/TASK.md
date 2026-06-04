@@ -155,11 +155,11 @@ Spec delta for the next loop: add a lint rule that rejects a second compiled enu
 regex at the module level (currently only a structural test guards it).
 
 ### Competency deltas
-- [ADD · open] comment text must not repeat regex enumeration literals — a source-scan test counts
+- [ADD · folded] comment text must not repeat regex enumeration literals — a source-scan test counts
   all matching lines including comments, so a comment containing the pattern registers as a phantom
   duplicate; strip the literal from comment prose (evidence: delta-grammar-dedup build, comment
   line required rewrite to keep grep count at 1)
-- [ADD · open] when deduplicating a regex, the canonical must absorb the deleted copy's form
+- [ADD · folded] when deduplicating a regex, the canonical must absorb the deleted copy's form
   (strict vs permissive) — the old _DELTA_RE was strict while _delta_start was permissive;
   the contract required the permissive form because _task_prose feeds un-stripped lines
   (evidence: delta-grammar-dedup §3 CONTRACT v1; test_task_prose_recognizes_indented_tag_line)
