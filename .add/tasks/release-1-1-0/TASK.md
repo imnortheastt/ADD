@@ -47,6 +47,13 @@ Must:
     upgrades npm to >=11.5.1 and drops NODE_AUTH_TOKEN — both registries now
     publish token-less via OIDC. ⚠1 (registry credentials) materialized
     exactly as flagged: visible failure, nothing partial shipped.
+  - [CHANGE REQUEST v4, 2026-06-05 — plan B as shown to Tin at the v3 rerun
+    question] drop setup-node's registry-url in the npm job: it writes an
+    .npmrc _authToken=${NODE_AUTH_TOKEN} line, and ANY token config makes
+    npm skip the OIDC exchange — the 404-on-PUT persisted even with the
+    Trusted Publisher form byte-exact (run 27008622520, attempts 1+2).
+    With no token config npm 11 falls through to trusted publishing;
+    registry defaults to registry.npmjs.org.
   - GETTING-STARTED refresh: the orient section mentions the `guide  :`
     playbook line and that the loop works for any agent (one short paragraph).
   - Versions: package.json ≡ pyproject.toml ≡ 1.1.0 (already true — guarded by
@@ -131,7 +138,9 @@ add-method/CHANGELOG.md        NEW — Keep-a-Changelog; [1.1.0] five features +
                                own declared build floor);
                                v3: npm job publishes via OIDC trusted
                                publishing (npm upgraded >=11.5.1, NODE_AUTH_TOKEN
-                               dropped — token-less like the pypi job)
+                               dropped — token-less like the pypi job);
+                               v4: setup-node registry-url dropped (its .npmrc
+                               token line preempts the OIDC exchange)
 add-method/GETTING-STARTED.md  orient section: + `guide  :` line mention + any-agent sentence
 RELEASE ACT                    human gate (Tin) -> git tag v1.1.0 + push ->
                                publish.yml -> BOTH registries at 1.1.0 -> §6
@@ -141,7 +150,7 @@ GUARD: add-method/tooling/test_release_1_1_0.py — changelog presence/shipping 
 no deprecated actions · version agreement · canonical audit line survival.
 ```
 
-Status: FROZEN @ v3 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion. v3: change request after EOTP — npm switches to OIDC trusted publishing, Tin configured npmjs.com and chose "I configured in publish.yaml then give CI does it")   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v3 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion. v3: change request after EOTP — npm switches to OIDC trusted publishing, Tin configured npmjs.com and chose "I configured in publish.yaml then give CI does it". v4: the plan-B fallback Tin was shown at the v3 rerun question — registry-url dropped so no token config preempts OIDC; applied after the 404 persisted with the form byte-exact)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY + the bundle's least-sure flag was surfaced at the freeze (or an honest "none material"). -->
 

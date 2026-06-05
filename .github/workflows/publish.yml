@@ -83,10 +83,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # NO registry-url here: setup-node would write an .npmrc _authToken line,
+      # and ANY token config makes npm skip the OIDC trusted-publishing exchange
+      # (the 404-on-PUT failure mode). npm defaults to registry.npmjs.org.
       - uses: actions/setup-node@v5
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
 
       # OIDC trusted publishing needs npm >= 11.5.1; Node 20 bundles npm 10.
       - name: Upgrade npm for OIDC trusted publishing
