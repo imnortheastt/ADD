@@ -85,6 +85,17 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      # prepublishOnly runs test_packaging.py, whose wheel check drives the PEP 517
+      # backend IN-PROCESS (no build isolation) — so this job must itself provide the
+      # build requirement pyproject.toml declares (setuptools>=77 for PEP 639
+      # `license = "MIT"`). Without this, the runner's apt Python fails the publish.
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Provision the declared build requirement (setuptools>=77)
+        run: python3 -m pip install --upgrade 'setuptools>=77'
+
       - name: Publish if this version is new (idempotent — safe to re-run a tag)
         working-directory: add-method
         env:

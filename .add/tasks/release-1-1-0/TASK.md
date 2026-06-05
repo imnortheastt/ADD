@@ -33,6 +33,12 @@ Must:
   - Workflow hygiene before the tag: actions/checkout v4→v5, setup-python
     v5→v6, setup-node v4→v5 in ci.yml AND publish.yml (the Node-20 forcing,
     June 16 2026); seam-audit's canonical run line byte-unchanged.
+  - [CHANGE REQUEST v2, 2026-06-05 — approved by Tin] the npm job provisions
+    its own Python build environment (setup-python@v6 + setuptools>=77, the
+    floor pyproject.toml itself declares): the first v1.1.0 tag failed closed
+    when prepublishOnly's in-process wheel build hit the runner's apt
+    setuptools (pre-77, can't parse PEP 639 `license = "MIT"`). Evidence:
+    run 27007111170 — guard ✓ pypi ✓ npm ✗.
   - GETTING-STARTED refresh: the orient section mentions the `guide  :`
     playbook line and that the loop works for any agent (one short paragraph).
   - Versions: package.json ≡ pyproject.toml ≡ 1.1.0 (already true — guarded by
@@ -110,7 +116,11 @@ add-method/CHANGELOG.md        NEW — Keep-a-Changelog; [1.1.0] five features +
 .github/workflows/ci.yml       checkout@v5 · setup-python@v6 (seam-audit run
                                line BYTE-UNCHANGED: python3 .add/tooling/add.py audit)
 .github/workflows/publish.yml  checkout@v5 · setup-python@v6 · setup-node@v5
-                               (guard/tag/publish logic byte-unchanged)
+                               (guard/tag/publish logic byte-unchanged);
+                               v2: npm job += setup-python@v6 + setuptools>=77
+                               provisioning (prepublishOnly builds the wheel
+                               in-process — the job must satisfy pyproject's
+                               own declared build floor)
 add-method/GETTING-STARTED.md  orient section: + `guide  :` line mention + any-agent sentence
 RELEASE ACT                    human gate (Tin) -> git tag v1.1.0 + push ->
                                publish.yml -> BOTH registries at 1.1.0 -> §6
@@ -120,7 +130,7 @@ GUARD: add-method/tooling/test_release_1_1_0.py — changelog presence/shipping 
 no deprecated actions · version agreement · canonical audit line survival.
 ```
 
-Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v2 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY + the bundle's least-sure flag was surfaced at the freeze (or an honest "none material"). -->
 
@@ -170,13 +180,24 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — suite 433/433 OK (was 426; +7 in test_release_1_1_0.py);
+      CI on the bumped actions LIVE-GREEN (run 27006320438: tests ×2 +
+      seam-audit, commit 7198bd0) — the ⚠ action-bumps flag verified in practice
+- [x] coverage did not decrease — 4 red→green + 3 green-by-design guards;
+      check 206/0 (4 pre-existing warnings)
+- [x] no test or contract was altered during build — §3 untouched; prose/config
+      written to the §4 anchors as frozen
+- [x] concurrency / timing of the risky operation is safe — publish.yml is
+      idempotent by design (npm skip-if-published · pypi skip-existing); the
+      guard job fails the release closed on any tag/version drift; npm and pypi
+      jobs are independent, no partial-state coupling
+- [x] no exposed secrets, injection openings, or unexpected dependencies — no
+      new secrets; NPM_TOKEN stays in repo secrets, PyPI is OIDC (no stored
+      token); workflows remain static-command-only; engine md5 pinned ×3
+- [x] layering & dependencies follow CONVENTIONS.md — CHANGELOG ships through
+      both channels' existing manifests; bundle drift zero; versions agree
+- [ ] a person reviewed and approved the change — THE SHIP DECISION:
+      conservative dial + risk: high → the tag is pushed only on Tin's word
 
 ### GATE RECORD
 Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
