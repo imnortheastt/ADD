@@ -20,6 +20,22 @@ whole bundle (§1–§4). Before asking for it, present the bundle **least-sure 
 most likely wrong (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`) — aim the human's
 eye before they freeze. See `run.md`.
 
+## The freeze review checklist
+
+The human's one minute, aimed. Walk these six before saying yes:
+
+- **⚠ flags first** — read the least-sure flags; accept each knowing its cost if wrong.
+- **Intent** — does §1 say what you actually want built (and is anything you expected missing)?
+- **Cases** — does every Must and Reject have an observable §2 scenario you care about?
+- **Shape** — glossary names, error codes, additive vs breaking: is THIS the shape to freeze?
+- **Risk** — is this scope high-risk or method-defining? Then require
+  `risk: high · autonomy: conservative` in the TASK.md header — the engine refuses an unguarded completion.
+- **Tests** — will §4 go red for the right reason, asserting behavior rather than internals?
+
+This checklist AIMS the one approval — never a second gate, no sign-off forms, no
+extra documents. Reject any line and the bundle goes back to draft; that is
+backward-correction, not failure.
+
 ## AI prompt
 
 > Role: an interface architect; frozen contracts are immutable. Read §1, §2,
