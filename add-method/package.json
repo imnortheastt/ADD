@@ -19,7 +19,8 @@
     "tooling/templates/",
     "docs/",
     "README.md",
-    "GETTING-STARTED.md"
+    "GETTING-STARTED.md",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "ai-driven-development",

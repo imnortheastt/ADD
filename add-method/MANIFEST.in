@@ -8,6 +8,7 @@ graft src/add_method/_bundled
 # Top-level prose
 include README.md
 include GETTING-STARTED.md
+include CHANGELOG.md
 include LICENSE
 
 # Global excludes — keep the distributions clean

@@ -102,7 +102,9 @@ python3 .add/tooling/add.py guide
 
 `status` tells you *where* you are; `guide` tells you *what to do next* — the active
 task's phase, the one concrete next action, the chapter to read, and the exact command
-to run once that phase is done.
+to run once that phase is done. Its `guide  :` line names the phase-guide file to
+read for the current phase (`.claude/skills/add/phases/…` — plain markdown), which is
+how **any** agent — Claude, Cursor, Copilot, Codex — follows ADD through the CLI alone.
 
 ---
 

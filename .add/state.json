@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "review-checklist",
+  "active_task": "release-1-1-0",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -466,16 +466,16 @@
     },
     "release-1-1-0": {
       "title": "CHANGELOG, version bump, npm + PyPI publish",
-      "phase": "specify",
+      "phase": "verify",
       "gate": "none",
       "milestone": "v14",
       "depends_on": [],
       "created": "2026-06-05T03:37:01+00:00",
-      "updated": "2026-06-05T03:37:01+00:00"
+      "updated": "2026-06-05T09:12:43+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T08:56:03+00:00",
+  "updated": "2026-06-05T09:12:43+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
