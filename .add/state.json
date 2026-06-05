@@ -475,7 +475,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T09:12:43+00:00",
+  "updated": "2026-06-05T10:04:41+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -588,9 +588,17 @@
       "status": "active",
       "created": "2026-06-05T03:37:00+00:00",
       "updated": "2026-06-05T03:37:00+00:00"
+    },
+    "v15": {
+      "title": "Zero-command on-ramp",
+      "goal": "After the single install command, a newcomer reaches their first verified feature purely by talking to the AI \u2014 no typed add.py commands",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-05T10:04:41+00:00",
+      "updated": "2026-06-05T10:04:41+00:00"
     }
   },
-  "active_milestone": "v14",
+  "active_milestone": "v15",
   "archived": [
     {
       "slug": "v5",
