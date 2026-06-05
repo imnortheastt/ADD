@@ -54,6 +54,15 @@ Must:
     Trusted Publisher form byte-exact (run 27008622520, attempts 1+2).
     With no token config npm 11 falls through to trusted publishing;
     registry defaults to registry.npmjs.org.
+  - [CHANGE REQUEST v5, 2026-06-05 — Tin's pivot: "I just update CI with new
+    token which bypass mfa for deploying"] v4 surfaced ENEEDAUTH (the OIDC
+    mint never engaged even with no token config and the form byte-exact),
+    so Tin minted a granular access token with 2FA-bypass and updated the
+    NPM_TOKEN secret. The npm job returns to token auth (registry-url +
+    NODE_AUTH_TOKEN restored; OIDC scaffolding removed — upgrade step +
+    diagnostics dropped for minimal moving parts). The v2 setuptools
+    provisioning stays. Known cost, recorded for observe: granular tokens
+    expire (~90 days) — the npm job will need a fresh secret then.
   - GETTING-STARTED refresh: the orient section mentions the `guide  :`
     playbook line and that the loop works for any agent (one short paragraph).
   - Versions: package.json ≡ pyproject.toml ≡ 1.1.0 (already true — guarded by
@@ -140,7 +149,11 @@ add-method/CHANGELOG.md        NEW — Keep-a-Changelog; [1.1.0] five features +
                                publishing (npm upgraded >=11.5.1, NODE_AUTH_TOKEN
                                dropped — token-less like the pypi job);
                                v4: setup-node registry-url dropped (its .npmrc
-                               token line preempts the OIDC exchange)
+                               token line preempts the OIDC exchange);
+                               v5: back to token auth — granular NPM_TOKEN with
+                               2FA-bypass (Tin minted); registry-url +
+                               NODE_AUTH_TOKEN restored, OIDC scaffolding
+                               removed (the mint never engaged at v4)
 add-method/GETTING-STARTED.md  orient section: + `guide  :` line mention + any-agent sentence
 RELEASE ACT                    human gate (Tin) -> git tag v1.1.0 + push ->
                                publish.yml -> BOTH registries at 1.1.0 -> §6
@@ -150,7 +163,7 @@ GUARD: add-method/tooling/test_release_1_1_0.py — changelog presence/shipping 
 no deprecated actions · version agreement · canonical audit line survival.
 ```
 
-Status: FROZEN @ v3 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion. v3: change request after EOTP — npm switches to OIDC trusted publishing, Tin configured npmjs.com and chose "I configured in publish.yaml then give CI does it". v4: the plan-B fallback Tin was shown at the v3 rerun question — registry-url dropped so no token config preempts OIDC; applied after the 404 persisted with the form byte-exact)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v3 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion. v3: change request after EOTP — npm switches to OIDC trusted publishing, Tin configured npmjs.com and chose "I configured in publish.yaml then give CI does it". v4: the plan-B fallback Tin was shown at the v3 rerun question — registry-url dropped so no token config preempts OIDC; applied after the 404 persisted with the form byte-exact. v5: Tin's pivot to a granular 2FA-bypass token after v4's ENEEDAUTH proved the OIDC mint never engaged — token auth restored, OIDC scaffolding removed)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY + the bundle's least-sure flag was surfaced at the freeze (or an honest "none material"). -->
 
@@ -211,10 +224,13 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
       idempotent by design (npm skip-if-published · pypi skip-existing); the
       guard job fails the release closed on any tag/version drift; npm and pypi
       jobs are independent, no partial-state coupling
-- [x] no exposed secrets, injection openings, or unexpected dependencies — no
-      new secrets; v3 IMPROVES the posture: BOTH registries publish via OIDC
-      (NODE_AUTH_TOKEN dropped from the workflow — no stored npm token left
-      in use); workflows remain static-command-only; engine md5 pinned ×3
+- [x] no exposed secrets, injection openings, or unexpected dependencies —
+      NOTE (security line, human-gated here by the conservative dial): after
+      the v5 pivot npm publishes with a STORED granular token (NPM_TOKEN,
+      2FA-bypass, ~90-day expiry — rotation noted in §7); scope is publish-only
+      on @pilotspace/add, referenced solely via secrets context, never echoed;
+      PyPI remains OIDC (no stored token); workflows remain
+      static-command-only; engine md5 pinned ×3
 - [x] layering & dependencies follow CONVENTIONS.md — CHANGELOG ships through
       both channels' existing manifests; bundle drift zero; versions agree
 - [ ] a person reviewed and approved the change — THE SHIP DECISION:

@@ -8,15 +8,16 @@
 #
 # ── One-time setup (do this once, then every tag self-publishes) ──────────────
 #
-# npm  — uses OIDC Trusted Publishing (no token to store/rotate; token publishes
-#        fail with EOTP under 2FA, and granular tokens expire). On npmjs.com:
-#          package @pilotspace/add ▸ Settings ▸ Trusted Publisher ▸ GitHub Actions:
-#            Organization or user:  pilotspace
-#            Repository:            ADD
-#            Workflow filename:     publish.yml
-#        Needs npm >= 11.5.1 in the job (the workflow upgrades it — Node 20
-#        bundles npm 10) plus `id-token: write`. `--provenance` works because
-#        pilotspace/ADD is a public repo.
+# npm  — Settings ▸ Secrets and variables ▸ Actions ▸ repository secret:
+#          name:  NPM_TOKEN
+#          value: a **granular access token** with publish rights on
+#                 @pilotspace/add AND "bypass two-factor" enabled — a token
+#                 without the 2FA bypass fails in CI with EOTP (no OTP can be
+#                 entered). Granular tokens EXPIRE (~90 days): when the npm job
+#                 starts failing auth, mint a fresh one and update the secret.
+#        `--provenance` works because pilotspace/ADD is a public repo.
+#        (OIDC Trusted Publishing was attempted at v1.1.0 — the mint never
+#        engaged from this workflow; revisit later if npm's GHA flow matures.)
 #
 # PyPI — uses OIDC Trusted Publishing (no token to store/rotate). On PyPI:
 #          Account ▸ Publishing ▸ Add a pending publisher (the project pilotspace-add
@@ -83,16 +84,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # NO registry-url here: setup-node would write an .npmrc _authToken line,
-      # and ANY token config makes npm skip the OIDC trusted-publishing exchange
-      # (the 404-on-PUT failure mode). npm defaults to registry.npmjs.org.
       - uses: actions/setup-node@v5
         with:
           node-version: '20'
-
-      # OIDC trusted publishing needs npm >= 11.5.1; Node 20 bundles npm 10.
-      - name: Upgrade npm for OIDC trusted publishing
-        run: npm install -g npm@latest
+          registry-url: 'https://registry.npmjs.org'
 
       # prepublishOnly runs test_packaging.py, whose wheel check drives the PEP 517
       # backend IN-PROCESS (no build isolation) — so this job must itself provide the
@@ -107,6 +102,8 @@ jobs:
 
       - name: Publish if this version is new (idempotent — safe to re-run a tag)
         working-directory: add-method
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
           VERSION="$(node -p "require('./package.json').version")"
