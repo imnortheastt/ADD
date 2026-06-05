@@ -8,12 +8,15 @@
 #
 # ── One-time setup (do this once, then every tag self-publishes) ──────────────
 #
-# npm  — Settings ▸ Secrets and variables ▸ Actions ▸ New repository secret:
-#          name:  NPM_TOKEN
-#          value: an npm **Automation** token (Account ▸ Access Tokens ▸ Generate ▸
-#                 Automation). It MUST be the *Automation* type — a Classic/Publish
-#                 token fails in CI with EOTP because no 2FA OTP can be entered.
-#        `--provenance` is enabled and works because pilotspace/ADD is a public repo.
+# npm  — uses OIDC Trusted Publishing (no token to store/rotate; token publishes
+#        fail with EOTP under 2FA, and granular tokens expire). On npmjs.com:
+#          package @pilotspace/add ▸ Settings ▸ Trusted Publisher ▸ GitHub Actions:
+#            Organization or user:  pilotspace
+#            Repository:            ADD
+#            Workflow filename:     publish.yml
+#        Needs npm >= 11.5.1 in the job (the workflow upgrades it — Node 20
+#        bundles npm 10) plus `id-token: write`. `--provenance` works because
+#        pilotspace/ADD is a public repo.
 #
 # PyPI — uses OIDC Trusted Publishing (no token to store/rotate). On PyPI:
 #          Account ▸ Publishing ▸ Add a pending publisher (the project pilotspace-add
@@ -85,6 +88,10 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      # OIDC trusted publishing needs npm >= 11.5.1; Node 20 bundles npm 10.
+      - name: Upgrade npm for OIDC trusted publishing
+        run: npm install -g npm@latest
+
       # prepublishOnly runs test_packaging.py, whose wheel check drives the PEP 517
       # backend IN-PROCESS (no build isolation) — so this job must itself provide the
       # build requirement pyproject.toml declares (setuptools>=77 for PEP 639
@@ -98,8 +105,6 @@ jobs:
 
       - name: Publish if this version is new (idempotent — safe to re-run a tag)
         working-directory: add-method
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
           VERSION="$(node -p "require('./package.json').version")"

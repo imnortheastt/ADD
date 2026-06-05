@@ -39,6 +39,14 @@ Must:
     when prepublishOnly's in-process wheel build hit the runner's apt
     setuptools (pre-77, can't parse PEP 639 `license = "MIT"`). Evidence:
     run 27007111170 — guard ✓ pypi ✓ npm ✗.
+  - [CHANGE REQUEST v3, 2026-06-05 — approved by Tin] npm switches from
+    NPM_TOKEN to OIDC trusted publishing: the second tag (run 27008257640)
+    passed prepublishOnly but failed `npm publish` with EOTP — the stored
+    token cannot publish under 2FA, and token rotation re-breaks (~90-day
+    expiry). Tin configured the Trusted Publisher on npmjs.com; the workflow
+    upgrades npm to >=11.5.1 and drops NODE_AUTH_TOKEN — both registries now
+    publish token-less via OIDC. ⚠1 (registry credentials) materialized
+    exactly as flagged: visible failure, nothing partial shipped.
   - GETTING-STARTED refresh: the orient section mentions the `guide  :`
     playbook line and that the loop works for any agent (one short paragraph).
   - Versions: package.json ≡ pyproject.toml ≡ 1.1.0 (already true — guarded by
@@ -120,7 +128,10 @@ add-method/CHANGELOG.md        NEW — Keep-a-Changelog; [1.1.0] five features +
                                v2: npm job += setup-python@v6 + setuptools>=77
                                provisioning (prepublishOnly builds the wheel
                                in-process — the job must satisfy pyproject's
-                               own declared build floor)
+                               own declared build floor);
+                               v3: npm job publishes via OIDC trusted
+                               publishing (npm upgraded >=11.5.1, NODE_AUTH_TOKEN
+                               dropped — token-less like the pypi job)
 add-method/GETTING-STARTED.md  orient section: + `guide  :` line mention + any-agent sentence
 RELEASE ACT                    human gate (Tin) -> git tag v1.1.0 + push ->
                                publish.yml -> BOTH registries at 1.1.0 -> §6
@@ -130,7 +141,7 @@ GUARD: add-method/tooling/test_release_1_1_0.py — changelog presence/shipping 
 no deprecated actions · version agreement · canonical audit line survival.
 ```
 
-Status: FROZEN @ v2 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v3 — approved by Tin, 2026-06-05 (v1: one-approval front via AskUserQuestion — first live walk of the freeze review checklist; ⚠ registry-credentials + action-major-bumps flags surfaced and accepted; tag deferred to the human verify gate. v2: change request after the first tag failed closed — npm job gains setup-python@v6 + setuptools>=77 provisioning; diff shown to Tin, approved via AskUserQuestion. v3: change request after EOTP — npm switches to OIDC trusted publishing, Tin configured npmjs.com and chose "I configured in publish.yaml then give CI does it")   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY + the bundle's least-sure flag was surfaced at the freeze (or an honest "none material"). -->
 
@@ -192,8 +203,9 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
       guard job fails the release closed on any tag/version drift; npm and pypi
       jobs are independent, no partial-state coupling
 - [x] no exposed secrets, injection openings, or unexpected dependencies — no
-      new secrets; NPM_TOKEN stays in repo secrets, PyPI is OIDC (no stored
-      token); workflows remain static-command-only; engine md5 pinned ×3
+      new secrets; v3 IMPROVES the posture: BOTH registries publish via OIDC
+      (NODE_AUTH_TOKEN dropped from the workflow — no stored npm token left
+      in use); workflows remain static-command-only; engine md5 pinned ×3
 - [x] layering & dependencies follow CONVENTIONS.md — CHANGELOG ships through
       both channels' existing manifests; bundle drift zero; versions agree
 - [ ] a person reviewed and approved the change — THE SHIP DECISION:
