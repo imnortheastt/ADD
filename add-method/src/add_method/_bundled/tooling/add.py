@@ -512,6 +512,26 @@ def cmd_advance(args: argparse.Namespace) -> None:
     print(f"task '{slug}' phase {cur} -> {nxt}")
 
 
+# The mechanized high-risk guard (run.md, v14): judging WHAT is high-risk stays
+# human — a scope declares `risk: high` in its TASK.md header at the freeze. The
+# engine then enforces the pure token contradiction: risk: high WITHOUT
+# autonomy: conservative is unguarded, and completion is refused. Tokens are
+# read from the header region (text before the first section heading) with HTML
+# comments stripped — a documentation comment is never a declaration.
+_RISK_HIGH_RE = re.compile(r"\brisk:\s*high\b")
+_AUTONOMY_CONSERVATIVE_RE = re.compile(r"\bautonomy:\s*conservative\b")
+
+
+def _task_header(root: Path, slug: str) -> str:
+    """The TASK.md header region — where declared tokens (risk · autonomy)
+    live — with HTML comments stripped. Missing file -> '' (no tokens)."""
+    try:
+        text = (root / "tasks" / slug / "TASK.md").read_text(encoding="utf-8")
+    except OSError:
+        return ""
+    return re.sub(r"<!--.*?-->", "", text.split("\n## ", 1)[0], flags=re.S)
+
+
 def cmd_gate(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
@@ -533,6 +553,14 @@ def cmd_gate(args: argparse.Namespace) -> None:
                     else "gate_risk_accepted_before_verify")
             _die(f"{code}: task '{slug}' is at '{current}'; reach the verify phase "
                  f"first (or `add.py phase verify {slug}` to override)")
+        # the mechanized high-risk guard: an unguarded high-risk header refuses
+        # COMPLETION (PASS / RISK-ACCEPTED) until the dial is lowered and a human
+        # owns the gate. HARD-STOP is never blocked — stopping is always allowed.
+        hdr = _task_header(root, slug)
+        if _RISK_HIGH_RE.search(hdr) and not _AUTONOMY_CONSERVATIVE_RE.search(hdr):
+            _die(f"unguarded_high_risk_auto: task '{slug}' declares risk: high "
+                 "without autonomy: conservative — lower the dial in the TASK.md "
+                 "header; a human must own a high-risk gate (run.md guard)")
     if args.outcome == "RISK-ACCEPTED":
         # A waiver must be SIGNED: owner, ticket, expiry (glossary). Stored in state
         # so a later `check` can read/expire it. Refuse a partial waiver outright.
@@ -2067,6 +2095,17 @@ def _audit_findings(root: Path, state: dict) -> tuple[int, list[dict]]:
         if marked and rev and "auto-gate" in rev.group(1):
             f(slug, "unescalated_security_note",
               "security-line note (NOTE/⚠) with an auto-gate reviewer")
+        # F7 unguarded_high_risk_auto (task high-risk-signal, v14): a declared
+        # high-risk record must show a guarded dial AND a human at the gate —
+        # catches post-gate header tampering and auto-resolved high-risk gates.
+        hdr = _task_header(root, slug)
+        if _RISK_HIGH_RE.search(hdr):
+            if not _AUTONOMY_CONSERVATIVE_RE.search(hdr):
+                f(slug, "unguarded_high_risk_auto",
+                  "risk: high declared but autonomy is not 'conservative'")
+            elif rev and "auto-gate" in rev.group(1):
+                f(slug, "unguarded_high_risk_auto",
+                  "risk: high task whose GATE RECORD reviewer is the auto-gate")
         if outcomes == ["RISK-ACCEPTED"]:
             if marked:
                 f(slug, "risk_accepted_security",
