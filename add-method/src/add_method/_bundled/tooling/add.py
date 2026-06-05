@@ -1213,17 +1213,29 @@ def _tests_count(root: Path, slug: str) -> int:
     return sum(_count_test_defs(f) for f in d.glob("*.py"))
 
 
+def _confined(p: Path, rootp: Path) -> bool:
+    """True only if p resolves (symlinks followed) inside rootp; errors -> False.
+    The v2 confinement check — no read is attempted on a path that fails it."""
+    try:
+        return p.resolve().is_relative_to(rootp)
+    except OSError:
+        return False
+
+
 def _declared_tests_count(root: Path, slug: str) -> int:
     """Count tests at the §4 'Tests live in:' declared path(s). PURE, fail-closed 0.
     Tokens are the backticked spans on the FIRST declaring line of the raw §4 body.
     Resolution: './…' -> task dir · contains '/' -> project root (parent of .add) ·
     bare name -> sibling of the previous resolved token (else task dir). A directory
-    token counts the *.py files directly inside it; resolved files are deduped."""
+    token counts the *.py files directly inside it; resolved files are deduped.
+    v2 confinement: every file read must resolve inside the project root — '..'
+    traversal, absolute tokens, and symlink escapes all contribute 0, fail-closed."""
     body = _raw_phase_bodies(root, slug).get(4, "")
     m = re.search(r"^\s*Tests live in:.*$", body, re.M)
     if not m:
         return 0
     tdir = root / "tasks" / slug
+    rootp = root.parent.resolve()
     files: list[Path] = []
     prev_dir = None
     for tok in re.findall(r"`([^`]+)`", m.group(0)):
@@ -1235,8 +1247,11 @@ def _declared_tests_count(root: Path, slug: str) -> int:
         else:
             p = (prev_dir or tdir) / tok
         try:
+            if not _confined(p, rootp):
+                continue
             if p.is_dir():
-                cand, prev_dir = sorted(p.glob("*.py")), p
+                cand, prev_dir = sorted(f for f in p.glob("*.py")
+                                        if _confined(f, rootp)), p
             elif p.is_file() and p.suffix == ".py":
                 cand, prev_dir = [p], p.parent
             else:

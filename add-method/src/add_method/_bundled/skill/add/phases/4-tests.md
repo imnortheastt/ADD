@@ -27,6 +27,9 @@ Resolution: `./…` → this task's dir · a token containing `/` → the projec
 directory (else the task dir). A directory token counts the `*.py` files directly
 inside it (non-recursive); a `.py` file token counts itself; anything else is
 ignored. Resolved files are deduped, and reports mark declared counts with `†`.
+Paths are confined: anything resolving (symlinks followed)
+outside the project root counts 0 — `..` traversal, absolute paths, and
+symlink escapes are never read.
 
 ## AI prompt
 
