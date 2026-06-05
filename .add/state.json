@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "gate-audit",
+  "active_task": "audit-ci",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -430,12 +430,12 @@
     },
     "audit-ci": {
       "title": "audit wired into CI \u2014 the enforcer distinct from the agent",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v14",
       "depends_on": [],
       "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T03:37:00+00:00"
+      "updated": "2026-06-05T06:46:32+00:00"
     },
     "high-risk-signal": {
       "title": "unguarded_high_risk_auto moves prose to engine",
@@ -475,7 +475,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T04:42:27+00:00",
+  "updated": "2026-06-05T06:46:32+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
