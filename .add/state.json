@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "declared-path-confinement",
+  "active_task": "decide-planned-hint",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -439,16 +439,16 @@
     },
     "decide-planned-hint": {
       "title": "DECIDE NEXT shows n planned tasks not yet scaffolded",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v13-1",
       "depends_on": [],
       "created": "2026-06-04T17:26:02+00:00",
-      "updated": "2026-06-04T17:26:02+00:00"
+      "updated": "2026-06-05T02:28:24+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T02:17:03+00:00",
+  "updated": "2026-06-05T02:28:24+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

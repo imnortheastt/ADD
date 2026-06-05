@@ -1393,6 +1393,9 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
         "tasks": task_rows,
         "waivers": waivers,
         "deltas": all_deltas,
+        # additive (v13-1): MILESTONE.md-planned slugs with no TASK.md yet —
+        # the plan-vs-state diff DECIDE NEXT was blind to; [] when none
+        "planned_unscaffolded": _planned_unscaffolded(root, mslug),
     }
 
 
@@ -1624,7 +1627,9 @@ def render_report(root: Path, state: dict, mslug: str, *,
     else:
         L.append(" LEARNINGS      none")
     L.append("")   # DECIDE NEXT footer (v13): always present, APPEND-ONLY
-    L.extend(_wrap(_decide_next(state, d), W - 15, " DECIDE NEXT  "))
+    L.extend(_wrap(_decide_next_base(state, d), W - 15, " DECIDE NEXT  "))
+    if _planned_hint(d):   # own segment so the phrase never splits mid-token
+        L.extend(_wrap(_planned_hint(d).removeprefix(" — "), W - 15, " " * 14))
     L.append(banner)
     return "\n".join(L)
 
@@ -1759,10 +1764,45 @@ def render_decide(root: Path, state: dict, mslug: str, slug: str, *,
     return "\n".join(L)
 
 
+def _planned_unscaffolded(root: Path, mslug: str) -> list[str]:
+    """Slugs MILESTONE.md plans (rows `- [ ] <slug> …`) that have no TASK.md yet —
+    the plan-vs-state diff. Only valid-slug first-tokens match (a template
+    placeholder like <slug> never does); file order, deduped; fail-closed []."""
+    md = root / "milestones" / mslug / "MILESTONE.md"
+    try:
+        text = md.read_text(encoding="utf-8")
+    except OSError:
+        return []
+    out: list[str] = []
+    for sec in re.split(r"^## ", text, flags=re.M)[1:]:
+        if not sec.startswith("Tasks"):    # only the Tasks list — never exit criteria
+            continue
+        for m in re.finditer(r"^- \[[ x~]\] ([A-Za-z0-9_-]+)\b", sec, re.M):
+            slug = m.group(1)
+            if slug not in out and not (root / "tasks" / slug / "TASK.md").is_file():
+                out.append(slug)
+    return out
+
+
 def _decide_next(state: dict, d: dict) -> str:
     """The rollup's DECIDE NEXT line (frozen precedence): HARD-STOP -> fold+archive
     -> first seam-blocked task (ACTIVE task first, then state order) -> run-in-
-    progress. State-only — never reads prose."""
+    progress. v2: when d carries planned_unscaffolded, the line gains a
+    plan-vs-state suffix — precedence itself stays state-only."""
+    return _decide_next_base(state, d) + _planned_hint(d)
+
+
+def _planned_hint(d: dict) -> str:
+    """The plan-vs-state suffix ('' when nothing is missing). Text renders emit it
+    as its OWN wrapped segment so the phrase never splits mid-token; the JSON
+    'decide' string carries it inline via _decide_next."""
+    planned = d.get("planned_unscaffolded") or []
+    if not planned:
+        return ""
+    return f" — {len(planned)} planned not yet scaffolded: " + " · ".join(planned)
+
+
+def _decide_next_base(state: dict, d: dict) -> str:
     ms = d["milestone"]["slug"]
     rows = d["tasks"]
     if not rows:
@@ -1794,7 +1834,9 @@ def render_decide_next(root: Path, state: dict, mslug: str, *,
     banner = g["h"] * width
     d = report_data(root, state, mslug)
     L = [banner, f" {mslug} · DECIDE NEXT", banner]
-    L.extend(_wrap(_decide_next(state, d), width - 4, "   "))
+    L.extend(_wrap(_decide_next_base(state, d), width - 4, "   "))
+    if _planned_hint(d):   # own segment so the phrase never splits mid-token
+        L.extend(_wrap(_planned_hint(d).removeprefix(" — "), width - 4, "   "))
     L.append(banner)
     return "\n".join(L)
 

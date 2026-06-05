@@ -32,10 +32,10 @@ Out: any other report/engine change; recursive directory globbing or new declara
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [x] declare-grammar-doc        depends-on: none — state the `Tests live in:` grammar in TASK.md.tmpl §4 + phases/4-tests.md (prose-guide task; content anchors + parity)
 - [x] declared-path-confinement  depends-on: none — contract v2: a token resolving outside the project root counts 0, fail-closed (closes the §6-reviewed read leak)
-- [ ] decide-planned-hint        depends-on: none — DECIDE NEXT shows "n planned tasks not yet scaffolded" diffed from MILESTONE.md's task list (additive line + additive JSON key)
+- [x] decide-planned-hint        depends-on: none — DECIDE NEXT shows "n planned tasks not yet scaffolded" diffed from MILESTONE.md's task list (additive line + additive JSON key)
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] A reader of TASK.md.tmpl §4 or phases/4-tests.md can write every declaration form the engine parses (tokens · ./ · root-relative · sibling shorthand · dir → non-recursive *.py)  (← declare-grammar-doc)
 - [x] A declared token resolving outside the project root contributes 0 tests — no read occurs outside the root  (← declared-path-confinement)
-- [ ] When MILESTONE.md lists tasks with no TASK.md, the decide digest names the count — and stays byte-identical when none are missing  (← decide-planned-hint)
-- [ ] All v13 surfaces unchanged where untouched: suite green, 3-tree parity, frozen key-set intact  (← all)
+- [x] When MILESTONE.md lists tasks with no TASK.md, the decide digest names the count — and stays byte-identical when none are missing  (← decide-planned-hint)
+- [x] All v13 surfaces unchanged where untouched: suite green, 3-tree parity, frozen key-set intact  (← all)
