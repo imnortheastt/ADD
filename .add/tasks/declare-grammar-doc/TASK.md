@@ -199,7 +199,7 @@ remains, owned by declared-path-confinement.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [TDD · open] a scaffold-template change is testable BEHAVIORALLY, not just by file anchors —
+  - [TDD · folded] a scaffold-template change is testable BEHAVIORALLY, not just by file anchors —
     run the scaffolder in a tmp project and assert the generated artifact carries the change
     (evidence: test_scaffold_carries_grammar caught nothing extra this time, but pins the
     template→scaffold copy path that a pure file-anchor test would miss)

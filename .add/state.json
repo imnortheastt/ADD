@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "decide-planned-hint",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,37 +418,10 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
-    },
-    "declare-grammar-doc": {
-      "title": "State the Tests-live-in declaration grammar in template + guide",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-1",
-      "depends_on": [],
-      "created": "2026-06-04T17:26:02+00:00",
-      "updated": "2026-06-04T17:32:10+00:00"
-    },
-    "declared-path-confinement": {
-      "title": "Confine declared test paths to the project root (contract v2)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-1",
-      "depends_on": [],
-      "created": "2026-06-04T17:26:02+00:00",
-      "updated": "2026-06-05T02:17:03+00:00"
-    },
-    "decide-planned-hint": {
-      "title": "DECIDE NEXT shows n planned tasks not yet scaffolded",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-1",
-      "depends_on": [],
-      "created": "2026-06-04T17:26:02+00:00",
-      "updated": "2026-06-05T02:28:24+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T02:28:24+00:00",
+  "updated": "2026-06-05T02:32:41+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -553,17 +526,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v13-1": {
-      "title": "Report hardening",
-      "goal": "close v13's disclosed residue: declaration grammar stated, declared paths confined, DECIDE NEXT plan-aware",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-04T17:26:02+00:00",
-      "updated": "2026-06-04T17:26:02+00:00"
     }
   },
-  "active_milestone": "v13-1",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -595,6 +560,17 @@
         "decide-digest",
         "tests-declared-fallback",
         "fence-safe-wrap"
+      ],
+      "archived": "2026-06-05"
+    },
+    {
+      "slug": "v13-1",
+      "title": "Report hardening",
+      "tasks": 3,
+      "task_slugs": [
+        "declare-grammar-doc",
+        "declared-path-confinement",
+        "decide-planned-hint"
       ],
       "archived": "2026-06-05"
     }

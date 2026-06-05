@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 11
+slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 12
 
 ---
 
@@ -85,6 +85,13 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 11
   it into the §4 template/guide; (b) declared tokens may name paths outside the project root
   (read-only; leaks only an integer def-count — reviewed at §6, human-confirmed) — a
   confinement Reject rule is a candidate for a future contract version.
+- v13-1 (Report hardening): **SHIPPED 2026-06-05** — all three v13 residues closed: the
+  `Tests live in:` grammar STATED (template comment + guide section, prose ≡ engine) ·
+  declared paths CONFINED to the project root (contract v2: resolve-then-check per file
+  read; `..`/absolute/symlink escapes count 0 — the pathlib absolute-join hole
+  `root / "/abs"` IS `/abs` was live in v1; future path-resolving contracts must name
+  absolute tokens explicitly) · DECIDE NEXT plan-aware (`planned_unscaffolded` additive
+  key + footer hint; the foundation-v11 manual cross-check retired by its own sunset).
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -160,3 +167,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 11
 | 2026-06-04 | fold v10+v12 learnings → foundation-version 9 (9 open deltas: 4 new conventions · 1 dial-validated note · 3 → v12-1 follow-up tasks · 1 onboarding-words closed via flip-cite) | human-gated fold clearing the v10/v12 open-delta backlog at v12 close; consolidate not append-9-bullets (lean foundation) | +4 CONVENTIONS bullets (publish-hook-subprocess · two-regex-grammar-lint · worktree-from-HEAD · scope-audit-unscaffolded-close); cmd_status-hint + multiline-delta-render + _DELTA_RE-dedup → v12-1 tasks; onboarding-align [TDD] folded (reinforces existing Words-exist≠method-works); deltas flipped open→folded |
 | 2026-06-04 | fold v12-1 learnings → foundation-version 10 (5 open deltas: 3 new conventions · 1 worktree-from-HEAD reinforcement flip-cite · 1 UDD one-next-step bullet) | human-gated fold at v12-1 close; all 5 confirmed (none rejected) | +3 CONVENTIONS bullets (comment-literal-phantom-dup · dedup-absorbs-deleted-form · reverify-routed-delta-gap); worktree-from-HEAD flip-cited (the check must EXECUTE pre-spawn); §UDD one-next-step; deltas flipped open→folded |
 | 2026-06-05 | fold v13 learnings → foundation-version 11 (6 open deltas: 4 new conventions · 1 §Spec v13-shipped bullet carrying 2 SDD residues) | human-gated fold at v13 close; all 6 confirmed (none rejected); the 3 actionable residues (Tests-live-in grammar doc · confinement Reject rule · DECIDE-NEXT planned-task hint) stay visible as §Spec OPEN pending a next-milestone intake | +4 CONVENTIONS bullets (diff-§4-target-nouns · red-fixture-exceeds-hidden-threshold · decide-next-is-state-only · security-line-always-escalates); §Spec v13 bullet; deltas flipped open→folded |
+| 2026-06-05 | fold v13-1 learnings → foundation-version 12 (5 open deltas: 2 new TDD conventions · 1 security-line flip-cite validation · 1 convention RETIRED by its own sunset clause — a first · 1 SDD absolute-join rule into §Spec) | human-gated fold at v13-1 close; all 5 confirmed (none rejected) | +2 CONVENTIONS bullets (behavioral-scaffold-test · template-fixture-inherits-examples); decide-next cross-check retired (engine hint shipped); security-line rule validated cheap in practice; §Spec v13-1 bullet; deltas flipped open→folded |

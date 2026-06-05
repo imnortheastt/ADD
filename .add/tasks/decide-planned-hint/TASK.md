@@ -205,10 +205,10 @@ next fold.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [TDD · open] a fixture that REUSES the scaffolded template inherits its example rows — the
+  - [TDD · folded] a fixture that REUSES the scaffolded template inherits its example rows — the
     first red run counted the template's "User can…" exit criterion as a planned task; scope a
     prose parser to its section and make a guard of the template's own placeholders
     (evidence: phantom "User" slug in the first red run, fixed by ## Tasks scoping)
-  - [ADD · open] a convention can be written to RETIRE: foundation-v11's decide-next cross-check
+  - [ADD · folded] a convention can be written to RETIRE: foundation-v11's decide-next cross-check
     named its own sunset condition ("until the engine grows a hint"), making the fold-out
     decision mechanical once this task shipped (evidence: this task + the v11 convention text)

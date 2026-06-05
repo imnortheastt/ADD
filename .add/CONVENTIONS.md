@@ -105,8 +105,22 @@ Architecture:
   before acting.** The digest cannot see planned-but-unscaffolded tasks (it said "fold + archive"
   with 2 of 3 planned tasks not yet created); until the engine grows a "n planned, not yet
   scaffolded" hint, the orchestrator does that diff at every decision seam.
-  [decide-digest — folded foundation-version 11]
+  [decide-digest — folded foundation-version 11] **RETIRED by its own sunset clause** (2026-06-05):
+  the engine grew the hint (`_planned_unscaffolded`, v13-1 decide-planned-hint) — the manual diff
+  is no longer required. Kept as precedent: write conventions WITH a sunset condition so the
+  fold-out decision is mechanical. [decide-planned-hint — folded foundation-version 12]
 - (ADD) **Anything written on a §6 security line escalates to the human gate — whatever the
   apparent severity.** Under `autonomy: auto` the agent may not reclassify its own security-line
   note as "no finding" and auto-PASS; writing it on that line IS the escalation trigger
   (security judgment belongs to the human — rule 4). [tests-declared-fallback — folded foundation-version 11]
+  Validated in practice v13-1: the resolve()-metadata note took ONE question to adjudicate —
+  escalation is cheap, self-clearing is the only expensive path.
+  [declared-path-confinement — folded foundation-version 12]
+- (TDD) **Test a scaffold-template change behaviorally, not only by file anchors.** Run the
+  scaffolder in a tmp project and assert the GENERATED artifact carries the change — that pins the
+  template→scaffold copy path a pure file-anchor test misses.
+  [declare-grammar-doc — folded foundation-version 12]
+- (TDD) **A fixture that reuses the scaffolded template inherits its example rows.** A prose parser
+  tested against a real scaffold can match template placeholders/examples (the "User can…" exit
+  criterion read as a task slug); scope parsers to their section and treat the template's own
+  placeholder rows as a guard case. [decide-planned-hint — folded foundation-version 12]

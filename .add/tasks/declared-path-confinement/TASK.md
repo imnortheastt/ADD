@@ -196,10 +196,10 @@ the root" holds for file contents (metadata resolution accepted at the human gat
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [ADD · open] the security-line-always-escalates rule works in practice and is CHEAP — the
+  - [ADD · folded] the security-line-always-escalates rule works in practice and is CHEAP — the
     note (resolve() metadata touch) took one question to adjudicate; writing the nuance on the
     line instead of self-clearing it kept the human gate honest (evidence: this task's GATE
     RECORD, first escalation since the rule was folded at foundation-version 11)
-  - [SDD · open] pathlib absolute-join is a quiet escape hatch — `root / "/abs"` IS `/abs`;
+  - [SDD · folded] pathlib absolute-join is a quiet escape hatch — `root / "/abs"` IS `/abs`;
     any future path-resolving seam should name absolute tokens explicitly in its contract
     (evidence: test_absolute_token_zero was red pre-build, the hole was live in v1)
