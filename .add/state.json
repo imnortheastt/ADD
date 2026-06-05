@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "installer-handoff",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,10 +418,28 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
+    },
+    "getting-started-rewrite": {
+      "title": "GETTING-STARTED: the conversational path becomes the spine",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v15",
+      "depends_on": [],
+      "created": "2026-06-05T14:38:17+00:00",
+      "updated": "2026-06-05T14:38:17+00:00"
+    },
+    "installer-handoff": {
+      "title": "init ends with an AI handoff; flags become optional",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v15",
+      "depends_on": [],
+      "created": "2026-06-05T14:38:17+00:00",
+      "updated": "2026-06-05T14:38:17+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T14:34:52+00:00",
+  "updated": "2026-06-05T14:38:17+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
