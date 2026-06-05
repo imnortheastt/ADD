@@ -234,6 +234,13 @@ What did this loop teach the foundation? One line each, tagged by competency
     debt as true positives — adjudicate at the human gate (here: retro-ratify as an honest
     present-day act), never auto-grandfather and never fabricate past records (evidence: 43
     unstamped_freeze findings on first live run, human-resolved same day)
+  - [ADD · open] bulk adjudication must surface the CONTRADICTING SUBSET, not just the count —
+    a blanket stamp over 43 records silently wrote "approved by Tin" onto 6 tasks whose own
+    record said "NOT human-approved"; the audit (shape-only) reported clean over the
+    contradiction. Fix ritual: grep the target set for text that negates the act being
+    stamped, show that subset to the human, get an informed yes BEFORE writing (evidence:
+    advisor-caught post-commit; human re-adjudicated the 6 as informed ratification, lines
+    reworded to one coherent claim, 2026-06-05)
   - [TDD · open] a fixture arranging through the REAL engine inherits the engine's own input
     contracts — the RISK-ACCEPTED arrange step crashed until it passed the waiver flags the
     engine enforces; arrange-through-CLI is stronger than file-writing but costs fidelity to

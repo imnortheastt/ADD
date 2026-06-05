@@ -46,7 +46,7 @@ FROZEN: `autonomy: conservative | auto` TASK.md header; conservative=default (au
 GUARD: test_v6_run.py::test_autonomy_dial_per_scope
 reject codes: auto_by_default · engine_judgment
 ```
-Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (self-gated — v6 dogfood — NOT human-approved)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit; originally self-gated at v6 dogfood — no human at the original seam)
 <!-- EXIT: frozen + rejections answered + glossary names. -->
 
 ---

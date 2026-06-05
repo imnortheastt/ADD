@@ -55,7 +55,7 @@ FROZEN: auto-PASS = {green · coverage held · nothing weakened · loops dry · 
 GUARD: test_v6_run.py::test_evidence_auto_gate_pass_and_escalation
 reject codes: security_autopass · forged_signature · silent_skip
 ```
-Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (self-gated — v6 dogfood — NOT human-approved)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit; originally self-gated at v6 dogfood — no human at the original seam)
 <!-- EXIT: frozen + rejections answered + glossary names. -->
 
 ---

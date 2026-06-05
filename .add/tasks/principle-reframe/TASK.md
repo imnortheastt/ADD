@@ -100,7 +100,7 @@ GUARD: add-method/tooling/test_principle_reframe.py — EXACTLY 6 tests (frozen)
 reject codes: principle_gutted · tree_divergence · security_autopass
 ```
 
-Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (self-gated — v6 dogfood — NOT human-approved)   <!-- change = back to SPECIFY -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit; originally self-gated at v6 dogfood — no human at the original seam)   <!-- change = back to SPECIFY -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

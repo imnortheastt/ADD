@@ -80,7 +80,7 @@ GUARD: add-method/tooling/test_v6_run.py — the scope-lock tests (parity, SKILL
 reject codes: unlocked_run · boundary_breach · test_weakened
 ```
 
-Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (self-gated — v6 dogfood — NOT human-approved)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit; originally self-gated at v6 dogfood — no human at the original seam)
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 
