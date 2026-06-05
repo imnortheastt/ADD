@@ -29,12 +29,20 @@ function warn(msg) { process.stderr.write("warn: " + msg + "\n"); }
 function fail(msg) { process.stderr.write("error: " + msg + "\n"); process.exit(1); }
 
 function parseArgs(argv) {
-  const args = { _: [], force: false, stage: "prototype", name: null };
+  // stage/name stay null unless EXPLICITLY passed — the engine's own `init`
+  // defaults the stage and infers the name from the folder, so the manual-init
+  // hint only echoes flags the user actually chose (shortest true command).
+  const args = { _: [], force: false, stage: null, name: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--force") args.force = true;
-    else if (a === "--stage") args.stage = argv[++i];
-    else if (a === "--name") args.name = argv[++i];
+    else if (a === "--stage" || a === "--name") {
+      const v = argv[++i];
+      // fail loudly on a trailing/abutting flag — never silently drop a value
+      // the user tried to pass (parity with the pip twin's argparse error)
+      if (v == null || v.startsWith("--")) fail(a + " requires a value");
+      if (a === "--stage") args.stage = v; else args.name = v;
+    }
     else if (a.startsWith("--")) warn("ignoring unknown flag " + a);
     else args._.push(a);
   }
@@ -99,7 +107,8 @@ function cmdInit(args) {
   log("");
   log("Prefer the CLI / not using Claude Code? Initialise it yourself (this arms the lock-down):");
   const launcher = process.platform === "win32" ? "py" : "python3";
-  log(`  ${launcher} .add/tooling/add.py init --await-lock --stage ${args.stage}` +
+  log(`  ${launcher} .add/tooling/add.py init --await-lock` +
+      (args.stage ? ` --stage ${args.stage}` : "") +
       (args.name ? ` --name "${args.name}"` : ""));
 }
 

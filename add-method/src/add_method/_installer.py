@@ -58,7 +58,7 @@ def _bundled_root() -> Path:
 def install(
     target: str = ".",
     force: bool = False,
-    stage: str = "prototype",
+    stage: str | None = None,
     name: str | None = None,
 ) -> int:
     """Install ADD into `target` directory.
@@ -123,7 +123,13 @@ def install(
     _log("       you sign off once, at the lock-down.")
     _log("")
     _log("Prefer the CLI / not using Claude Code? Initialise it yourself (this arms the lock-down):")
-    manual_init = f"  python3 .add/tooling/add.py init --await-lock --stage {stage}"
+    # Echo only flags the user actually chose — the engine's own `init`
+    # defaults the stage and infers the name, so the flagless hint is the
+    # shortest TRUE command (npm <-> pip parity with bin/cli.js).
+    launcher = "py" if sys.platform == "win32" else "python3"  # parity with cli.js
+    manual_init = f"  {launcher} .add/tooling/add.py init --await-lock"
+    if stage:
+        manual_init += f" --stage {stage}"
     if name:
         manual_init += f' --name "{name}"'
     _log(manual_init)

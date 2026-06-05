@@ -1,7 +1,8 @@
 """add_method — Python installer for the ADD (AI-Driven Development) method.
 
 Published as `pilotspace-add` on PyPI. Installs the ADD skill, tooling, and
-AIDD book into a target project, then runs `add.py init`.
+AIDD book into a target project (files only — `add.py init` is the
+agent's or the user's own first move, never the installer's).
 
 Usage (CLI):
     pilotspace-add init [targetDir] [--force] [--stage STAGE] [--name NAME]

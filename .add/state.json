@@ -421,25 +421,25 @@
     },
     "getting-started-rewrite": {
       "title": "GETTING-STARTED: the conversational path becomes the spine",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v15",
       "depends_on": [],
       "created": "2026-06-05T14:38:17+00:00",
-      "updated": "2026-06-05T14:38:17+00:00"
+      "updated": "2026-06-05T15:27:58+00:00"
     },
     "installer-handoff": {
       "title": "init ends with an AI handoff; flags become optional",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v15",
       "depends_on": [],
       "created": "2026-06-05T14:38:17+00:00",
-      "updated": "2026-06-05T14:38:17+00:00"
+      "updated": "2026-06-05T15:27:59+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T14:38:17+00:00",
+  "updated": "2026-06-05T15:27:59+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

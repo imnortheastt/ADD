@@ -40,10 +40,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Target project directory (default: cwd)",
     )
     parser.add_argument("--force", action="store_true",
-                        help="Overwrite existing skill tree and reset state.json")
-    parser.add_argument("--stage", default="prototype",
+                        help="Overwrite an existing skill tree (never touches project state)")
+    parser.add_argument("--stage", default=None,
                         choices=("prototype", "poc", "mvp", "production"),
-                        help="Initial project stage (default: prototype)")
+                        help="Initial project stage for the manual-init hint; "
+                             "omit it and `add.py init` itself defaults "
+                             "to prototype")
     parser.add_argument("--name", default=None,
                         help="Project name (default: target directory name)")
 

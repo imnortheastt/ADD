@@ -34,14 +34,17 @@ Pick your ecosystem — both install the same skill, tooling, and book:
 
 ```bash
 # Node / npm
-npx @pilotspace/add init --name "My App" --stage prototype
+npx @pilotspace/add init
 ```
 
 ```bash
 # Python / pip
 pip install pilotspace-add
-pilotspace-add init --name "My App" --stage prototype
+pilotspace-add init
 ```
+
+No flags needed — the project name is inferred from your folder and the stage
+defaults to `prototype` (pass `--name "My App" --stage mvp` to choose up front).
 
 **New here?** Follow the [10-minute Quickstart](./GETTING-STARTED.md) — it walks
 your first feature end to end.
@@ -53,8 +56,11 @@ This installs:
 | `.claude/skills/add/` | the `add` skill Claude loads (thin router + per-phase guides) |
 | `.add/tooling/add.py` | scaffolder + state tracker (Python, stdlib only) |
 | `.add/docs/` | the AIDD book — the trust layer |
-| `.add/state.json` | where the project is |
-| `.add/CONVENTIONS.md`, `GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist` | survivor-layer files |
+
+Project state (`.add/state.json`) and the survivor-layer files (`CONVENTIONS.md`,
+`GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`) are *not* created
+here — the installer drops files only; initialisation is the agent's first move
+when you run `/add`.
 
 ## Use it
 
