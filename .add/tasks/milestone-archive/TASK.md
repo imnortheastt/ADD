@@ -138,7 +138,7 @@ Schema delta (backward-compatible): state["archived"]: list[{slug,title,tasks,ta
   read via state.get("archived", []) and rec.get("task_slugs", []) (pre-v2 records lack slugs).
 ```
 
-Status: FROZEN @ v2
+Status: FROZEN @ v2 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)
   <!-- v1 -> v2 change request (2026-05-29, from v1-1 adversarial review): a status-only
        gate could silently delete a live task attached after milestone-done, and archiving
        broke cross-milestone deps. Re-specified above; v1 shipped @ f5dadca, v2 fixes follow. -->

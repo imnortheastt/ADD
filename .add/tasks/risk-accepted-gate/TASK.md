@@ -93,7 +93,7 @@ Engine shape (cmd_gate, extends the T2 guard — NOT a rewrite of it):
   - --expires is stored verbatim (string); date-format validation + expiry checking
     are deferred (out of scope — captured for a later `check`).
 
-Status: FROZEN @ v1   <!-- changing an error code / a required flag = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- changing an error code / a required flag = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

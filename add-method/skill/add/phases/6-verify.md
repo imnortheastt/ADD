@@ -26,6 +26,9 @@ If any is false, stop and return to Build — there is nothing to verify yet.
   and miss races.) This is usually the single most important check.
 - **Security** — exposed secrets, injection openings, unexpected/invented
   dependencies. A security finding is always `HARD-STOP`, never a waiver.
+  Writing ANY note on this line means the gate escalates to the human — and
+  start it with `NOTE` or `⚠` so `add.py audit` can see it: a marked security
+  note reviewed by the auto-gate is an audit finding (`unescalated_security_note`).
 - **Architecture** — does it respect layering/dependency rules in CONVENTIONS.md?
 
 ## Record exactly one outcome (no silent pass)

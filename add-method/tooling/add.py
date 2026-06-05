@@ -2023,6 +2023,80 @@ def _collect_open_deltas(root: Path) -> dict[str, list[dict]]:
     return by_comp
 
 
+_AUDIT_STAMP_RE = re.compile(r"Status:\s*FROZEN @ v\d+\s*[—-]+\s*approved by\s+\S+")
+_AUDIT_OUTCOME_RE = re.compile(r"^Outcome:\s*(PASS|RISK-ACCEPTED|HARD-STOP)\b", re.M)
+_AUDIT_SECURITY_RE = re.compile(
+    r"^\s*- \[[ x~]\] no exposed secrets.*(?:\n(?!\s*- \[|#).*)*", re.M)
+_AUDIT_REVIEWED_RE = re.compile(r"^Reviewed by:(.*)$", re.M)
+
+
+def _audit_findings(root: Path, state: dict) -> tuple[int, list[dict]]:
+    """The gate-audit core: verify that human seams left WELL-FORMED records.
+    Judgment-free — checks record SHAPE (a named human at the freeze, exactly one
+    gate outcome, prose ≡ state, a marked security note never auto-reviewed),
+    never re-decides an outcome. Scope: active tasks done/observe or gated; open
+    fronts skipped. PURE — reads only. Honest limit: shape, not engagement — a
+    forged name passes; CI wiring makes forgery explicit and attributable."""
+    tasks = state.get("tasks") or {}
+    checked, findings = 0, []
+
+    def f(slug: str, code: str, detail: str) -> None:
+        findings.append({"task": slug, "code": code, "detail": detail})
+
+    for slug in sorted(tasks):
+        t = tasks[slug]
+        phase, gate = t.get("phase", "specify"), t.get("gate", "none")
+        if phase not in ("done", "observe") and gate == "none":
+            continue   # the front is still open — nothing recorded to audit
+        checked += 1
+        raw = _raw_phase_bodies(root, slug)
+        s3, s6 = raw.get(3, ""), raw.get(6, "")
+        if not _AUDIT_STAMP_RE.search(s3):
+            f(slug, "unstamped_freeze",
+              "§3 lacks 'Status: FROZEN @ vN — approved by <name>'")
+        outcomes = _AUDIT_OUTCOME_RE.findall(s6)
+        if len(outcomes) != 1:
+            f(slug, "malformed_gate_record",
+              f"{len(outcomes)} Outcome lines in §6 (need exactly 1)")
+        elif gate != "none" and outcomes[0] != gate:
+            f(slug, "gate_record_mismatch",
+              f"§6 records {outcomes[0]} but state.json records {gate}")
+        sec = _AUDIT_SECURITY_RE.search(s6)
+        marked = bool(sec and ("NOTE" in sec.group(0) or "⚠" in sec.group(0)))
+        rev = _AUDIT_REVIEWED_RE.search(s6)
+        if marked and rev and "auto-gate" in rev.group(1):
+            f(slug, "unescalated_security_note",
+              "security-line note (NOTE/⚠) with an auto-gate reviewer")
+        if outcomes == ["RISK-ACCEPTED"]:
+            if marked:
+                f(slug, "risk_accepted_security",
+                  "a waiver on a marked security item is never allowed")
+            if not all(re.search(rf"{k}:\s*(?!<)\S", s6)
+                       for k in ("owner", "ticket", "expires")):
+                f(slug, "waiver_incomplete",
+                  "RISK-ACCEPTED needs owner · ticket · expires")
+    return checked, findings
+
+
+def cmd_audit(args: argparse.Namespace) -> None:
+    """Read-only: audit recorded human seams for well-formedness. Exit 0 clean,
+    exit 1 with findings — the enforcement seam CI consumes (audit-ci). Writes
+    NOTHING; every other command is byte-identical."""
+    root = _require_root()
+    checked, findings = _audit_findings(root, load_state(root))
+    if getattr(args, "json", False):
+        print(json.dumps({"checked": checked, "findings": findings},
+                         ensure_ascii=False, indent=2))
+    else:
+        if findings:
+            for x in findings:
+                print(f"audit: {x['code']} {x['task']} — {x['detail']}")
+        else:
+            print(f"audit: clean ({checked} tasks checked)")
+    if findings:
+        sys.exit(1)
+
+
 def cmd_deltas(args: argparse.Namespace) -> None:
     """Read-only: report all open competency deltas grouped by competency.
 
@@ -2280,6 +2354,12 @@ def build_parser() -> argparse.ArgumentParser:
                          help="read-only report: open competency deltas grouped by competency")
     pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pdt.set_defaults(func=cmd_deltas)
+
+    pau = sub.add_parser("audit",
+                         help="read-only: verify human seams left well-formed records "
+                              "(exit 1 on findings — the CI enforcement seam)")
+    pau.add_argument("--json", action="store_true", help="machine-readable JSON output")
+    pau.set_defaults(func=cmd_audit)
 
     ppj = sub.add_parser("project", help="print .add/PROJECT.md (the read-first foundation)")
     ppj.set_defaults(func=cmd_project)

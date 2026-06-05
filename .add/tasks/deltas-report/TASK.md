@@ -91,7 +91,7 @@ Reads: .add/tasks/*/TASK.md  "### Competency deltas" blocks.   Writes: NOTHING.
 Parser: reuse DELTA_RE (add.py:1079); competency/status taxonomy per deltas.md.
 ```
 
-Status: FROZEN @ v1   <!-- approved 2026-06-03 (one-approval front); changing it now = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- approved 2026-06-03 (one-approval front); changing it now = change request back to SPECIFY. -->
 Least-sure flag surfaced at freeze: ⚠ [spec/contract] report skips malformed lines (delegated to deltas-lint); ⚠ [contract] text layout frozen by tests. Human approved with both in view.
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.

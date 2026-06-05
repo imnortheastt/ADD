@@ -133,7 +133,7 @@ cli:  add.py sync-guidelines        (new subcommand; requires a .add/ root)
 pkg:  cli.js prunes ALL test_*.py (not just test_add.py) from installs
 ```
 
-Status: FROZEN @ v1   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

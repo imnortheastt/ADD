@@ -99,7 +99,7 @@ GUARD: tests/test_onboarding_align.py
 reject codes: version_caveat_in_onboarding · manual_walk_leads · silent_empty_state
 ```
 
-Status: FROZEN @ v1   (HUMAN-approved at the seam — AskUserQuestion "Approve & freeze — build", 2026-06-02; AI drafted, human froze)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (HUMAN-approved at the seam — AskUserQuestion "Approve & freeze — build", 2026-06-02; AI drafted, human froze)
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

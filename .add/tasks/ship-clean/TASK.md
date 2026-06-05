@@ -107,7 +107,7 @@ Scenario: project fails closed when the foundation is missing
                .set_defaults(func=cmd_project)
 ```
 
-Status: FROZEN @ v1   <!-- HUMAN-approved at the seam — AskUserQuestion "Approve — freeze & build", 2026-06-03; AI drafted, human froze. Both least-sure flags accepted as stated. Changing it now = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- HUMAN-approved at the seam — AskUserQuestion "Approve — freeze & build", 2026-06-03; AI drafted, human froze. Both least-sure flags accepted as stated. Changing it now = change request back to SPECIFY. -->
 Least-sure flag surfaced at freeze:
   ⚠ [test] (A) is proven by WIRING linkage, not a live `npm publish` — the hook is run as a subprocess and
     asserted to execute the guard + exit 0; it reds on broken/misspelled wiring, but it cannot prove npm

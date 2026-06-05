@@ -182,7 +182,7 @@ gate                                   -> stderr "add: error: setup_unlocked …
 _setup_locked(state) := ("setup" not in state) or (state["setup"].get("locked") is True)
 ```
 
-Status: FROZEN @ v1   <!-- locked 2026-06-04 by Tin (one human lock-down); build may not edit this. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- locked 2026-06-04 by Tin (one human lock-down); build may not edit this. -->
 <!-- Least-sure flag for the freeze: the two ⚠ in §1 — (1) gate at build-boundary (refines the
      milestone exit criterion), (2) opt-in via --await-lock not mandatory. Both are CONTRACT-shaping. -->
 

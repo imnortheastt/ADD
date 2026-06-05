@@ -108,7 +108,7 @@ assertions on words + file-ops, NOT a live end-to-end install):
   - both closing hints carry the manual `init --await-lock` fallback
 ```
 
-Status: FROZEN @ v1   <!-- self-frozen 2026-06-04 per the v12-tail cadence ("pause only at each VERIFY gate"); lead-flag below -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- self-frozen 2026-06-04 per the v12-tail cadence ("pause only at each VERIFY gate"); lead-flag below -->
 <!-- Bundle least-sure flag — [contract]: the assertion "cli.js has no `spawnSync`". `hasPython()` currently
      uses spawnSync for `--version`; this contract REMOVES python detection wholesale (init no longer runs →
      install needs no Python). If a future installer step ever needs Python, `assertNotIn("spawnSync")`

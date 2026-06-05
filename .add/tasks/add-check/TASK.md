@@ -90,7 +90,7 @@ reject (printed to stderr as `add: error: <code>`, exit 1):
 Reads (never writes): .add/state.json, .add/tasks/<slug>/TASK.md
 ```
 
-Status: FROZEN @ v1   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

@@ -101,7 +101,7 @@ PIPELINE (add-method/diagrams/)  — tracked + reusable:
 Frozen labels (must match engine PHASES + ch02): Specify · Scenarios · Contract · Tests ·
 Build · Verify · Observe.  Acronyms guarded: DDD · SDD · UDD · TDD · ADD.
 
-Status: FROZEN @ v1   <!-- changing the tested invariants or the label set = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- changing the tested invariants or the label set = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

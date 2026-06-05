@@ -52,7 +52,7 @@ GUARD: test_v7_auto_default.py (auto-default · per-scope · high-risk guard · 
         + test_v6_run.py::test_autonomy_dial_per_scope (updated to the v7 reality)
 reject codes: unguarded_high_risk_auto · engine_judgment
 ```
-Status: FROZEN @ v1   (HUMAN-approved at the seam — AskUserQuestion, two forks confirmed — NOT self-gated)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (HUMAN-approved at the seam — AskUserQuestion, two forks confirmed — NOT self-gated)
 <!-- EXIT: frozen + rejections answered + glossary names. -->
 
 ---

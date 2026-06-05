@@ -67,7 +67,7 @@ The "shape" of a doc task = the exact vocabulary the shipped book MUST contain
 Names match GLOSSARY: State surface, Story surface (add if absent).
 ```
 
-Status: FROZEN @ v1   <!-- changing these strings = change request back to SPECIFY -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- changing these strings = change request back to SPECIFY -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

@@ -52,6 +52,8 @@ LIFECYCLE = [
     ["phase", "specify", "t"],
     ["advance", "t"], ["advance", "t"], ["advance", "t"],
     ["advance", "t"], ["advance", "t"],        # specify -> ... -> verify
+    ["audit"],                                 # read-only seam audit (no recorded seams yet ->
+                                               # clean exit 0; reads TASK.md/state, never docs/)
     ["gate", "PASS", "t"],
     ["status"],
     ["check"],

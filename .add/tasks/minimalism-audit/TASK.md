@@ -154,7 +154,7 @@ Frozen invariants: the expiry rule is fail-closed (a RISK-ACCEPTED task with an 
 or absent `expires` FAILS check); `check` stays strictly read-only; the minimal-pillar proof
 is behavioral, never a source grep. Error code matches GLOSSARY/Reject: `waiver_expired`.
 
-Status: FROZEN @ v1   <!-- changing the fail-closed rule, the read-only guarantee, or the behavioral-proof requirement = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- changing the fail-closed rule, the read-only guarantee, or the behavioral-proof requirement = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

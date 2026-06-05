@@ -81,7 +81,7 @@ GUARD:    test_v8_onramp.py — names-ai-first-flow · drops-manual-only-framing
 reject codes: manual_only_framing, bloated_pointer
 ```
 
-Status: FROZEN @ v1   (HUMAN-approved at the seam — AskUserQuestion "Approve & freeze", 2026-06-02)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (HUMAN-approved at the seam — AskUserQuestion "Approve & freeze", 2026-06-02)
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

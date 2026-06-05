@@ -46,7 +46,7 @@ FROZEN: AI drafts Spec+Scenarios+Contract+Tests as one bundle; human gives ONE a
 GUARD: test_v7_auto_default.py::test_one_approval_front_at_the_seam
 reject codes: self_frozen_seam
 ```
-Status: FROZEN @ v1   (HUMAN-approved at the seam — AskUserQuestion "One batched approval at contract-freeze")
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (HUMAN-approved at the seam — AskUserQuestion "One batched approval at contract-freeze")
 <!-- EXIT: frozen + rejections answered + glossary names. -->
 
 ---

@@ -46,7 +46,7 @@ FROZEN: critic findings -> open competency deltas (deltas.md grammar) in OBSERVE
 GUARD: test_v6_run.py::test_run_emits_open_deltas
 reject codes: lost_findings · self_fold
 ```
-Status: FROZEN @ v1   (self-gated — v6 dogfood — NOT human-approved)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (self-gated — v6 dogfood — NOT human-approved)
 <!-- EXIT: frozen + rejections answered + glossary names. -->
 
 ---

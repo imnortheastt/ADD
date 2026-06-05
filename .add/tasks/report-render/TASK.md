@@ -187,7 +187,7 @@ Data sources (per field) — unchanged from v2, captured at FULL fidelity:
   exit criteria x/y                             <- MILESTONE.md "Exit criteria" [x]/[ ] count  (no file -> 0/0)
 ```
 
-Status: DATA SEAM FROZEN @ v1 · PRESENTATION iterate-freely (currently v4)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · DATA SEAM   · PRESENTATION iterate-freely (currently v4)
   (2026-06-02 — applying THIS task's own [ADD] delta: the contract that binds is the FACTS /
   interface — `report_data` fields, the two seams, reject codes, purity, fail-closed — FROZEN @ v1
   and unmoved since. The pixel LAYOUT is a presentation layer that iterates without a re-freeze:

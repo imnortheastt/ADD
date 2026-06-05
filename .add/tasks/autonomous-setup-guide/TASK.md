@@ -133,7 +133,7 @@ SKILL.md  — routing updated:
 Synced (BOTH files): .claude/skills/add/ + src/add_method/_bundled/skill/add/  (byte-identical, all 3 trees)
 ```
 
-Status: FROZEN @ v1   <!-- self-frozen 2026-06-04: the human released the front seam for the v12 tail; the least-sure flag (the disclosed status resume gap) is carried to the verify gate. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- self-frozen 2026-06-04: the human released the front seam for the v12 tail; the least-sure flag (the disclosed status resume gap) is carried to the verify gate. -->
 <!-- Least-sure flag for the gate: the status resume gap (post-init/pre-lock, `status` doesn't point at lock) —
      disclosed as an out-of-scope follow-up, NOT fixed here (would re-open task 1's frozen+passed engine). -->
 

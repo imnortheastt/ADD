@@ -44,7 +44,7 @@ ARTIFACT: run.md §"The dynamic run — fan-out and in-run convergence" (both tr
 FROZEN: fan-out + {loop-until-dry · adversarial verify · completeness-critic}; loops-dry AND evidence -> end.
 GUARD: test_v6_run.py::test_dynamic_run_fanout_and_convergence
 ```
-Status: FROZEN @ v1   (self-gated — v6 dogfood — NOT human-approved)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (self-gated — v6 dogfood — NOT human-approved)
 <!-- EXIT: frozen + rejections answered + glossary names. -->
 
 ---

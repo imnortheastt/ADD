@@ -107,7 +107,7 @@ check joins the checks list and lowers `passed`). Reuse DELTA_RE for the valid s
 non-historical attempt that fails it into one of the four codes.
 ```
 
-Status: FROZEN @ v1   <!-- approved 2026-06-03 (one-approval front, revised to multi-line/open-only); changing it now = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- approved 2026-06-03 (one-approval front, revised to multi-line/open-only); changing it now = change request back to SPECIFY. -->
 Least-sure flag surfaced at freeze: ⚠ [contract] open-only — a malformed FOLDED delta is never caught (no-retrofit); ⚠ [contract] entry boundary = next tag/blank/end. Human approved with both in view.
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.

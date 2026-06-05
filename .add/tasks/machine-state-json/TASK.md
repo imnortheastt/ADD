@@ -168,7 +168,7 @@ Names match the glossary: phase ∈ {specify..done}; gate ∈ {none,PASS,RISK-AC
 stage ∈ {prototype,poc,mvp,production}. The `owner`/`stop` vocabulary is NEW (this task
 introduces it) — to be added to the glossary as part of build.
 
-Status: FROZEN @ v1   (approved by Tin Dang via AskUserQuestion, 2026-05-29)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (approved by Tin Dang via AskUserQuestion, 2026-05-29)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 Amendment @ v1.1 (PENDING gate approval — surfaced at Verify, not silent): the no-active-task
 case of `guide --json` types `phase` and `gate` as `str|null` (null when task is null). The v1
 text said `str`; the impl always emitted null for the no-task case, so v1.1 makes the contract

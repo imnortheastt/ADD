@@ -160,7 +160,7 @@ Data sources (per field):
   membership (task ∈ m)      <- state.tasks[slug].milestone == mslug
 ```
 
-Status: FROZEN @ v1   (approved 2026-06-02 · smart single-arg CLI chosen at the one-approval gate)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (approved 2026-06-02 · smart single-arg CLI chosen at the one-approval gate)
 <!-- The DATA SEAM (task_phases fields, reject codes, fail-closed rule, smart-resolution routing)
 is the contract; the per-block LAYOUT is presentation that iterates without a re-freeze (carry the
 v9 [ADD] delta). -->

@@ -110,7 +110,7 @@ DO NOT TOUCH: ch.10 stages/depth-matrix/parallel-streams; ch.13 rollout/profiles
 PARITY INVARIANT: each edited file byte-identical canonical ↔ _bundled/docs/ (test_bundle_parity).
 ```
 
-Status: FROZEN @ v1   <!-- self-frozen 2026-06-04 per the v12-tail cadence ("pause only at each VERIFY gate"); lead-flag below -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- self-frozen 2026-06-04 per the v12-tail cadence ("pause only at each VERIFY gate"); lead-flag below -->
 <!-- Bundle least-sure flag — [spec/scope]: how much of the book to touch. Resolved empirically at §1 — a
      whole-book grep for old-setup language returned ZERO hits outside 10/13/14, so the milestone's named scope
      is exactly right. If a reader later finds stale setup language elsewhere, that's a follow-up (disclose, don't

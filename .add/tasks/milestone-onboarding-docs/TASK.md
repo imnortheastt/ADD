@@ -81,7 +81,7 @@ reject codes: cli_first_onboarding, unlabelled_designed, undefined_term
 NON-GOAL: deleting the seven-phase walkthrough; changing add.py behavior; touching the terse block.
 ```
 
-Status: FROZEN @ v1   (HUMAN-approved at the seam — AskUserQuestion "Approve & freeze", 2026-06-02)
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (HUMAN-approved at the seam — AskUserQuestion "Approve & freeze", 2026-06-02)
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

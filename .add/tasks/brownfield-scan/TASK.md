@@ -123,7 +123,7 @@ skill/add/adopt.md  — the silent brownfield mapping:
   Synced: .claude/skills/add/adopt.md + src/add_method/_bundled/skill/add/adopt.md  (byte-identical)
 ```
 
-Status: FROZEN @ v2   <!-- v1 self-frozen 2026-06-04 (human released the front seam for the v12 tail). v2:
+Status: FROZEN @ v2 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- v1 self-frozen 2026-06-04 (human released the front seam for the v12 tail). v2:
      change-request at the verify gate — human chose to widen `_INIT_EXCLUDE` (flag #1) so boilerplate-only
      repos read greenfield; re-cut the constant + added 2 test rows (TDD red→green), re-synced 3-tree. -->
 <!-- Remaining least-sure flag for the gate: the engine-detect-only boundary (no code-reading /

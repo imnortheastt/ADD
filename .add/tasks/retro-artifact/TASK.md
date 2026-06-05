@@ -125,7 +125,7 @@ fails to write the doc fails the whole command (status stays active), so no NEW 
 state is reachable. (Milestones closed before v9 keep no retro — backfill is out of scope.)
 ```
 
-Status: FROZEN @ v1   (2026-06-02 — approved at the seam; reuses report-render's frozen render
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (2026-06-02 — approved at the seam; reuses report-render's frozen render
 shape, adds only WHERE/WHEN it persists + the read-only-state + fail-closed invariants. Advisor
 pins folded in: explicit utf-8, retro_write_failed reject, scoped no-backfill invariant.)
 <!-- Changing a frozen contract = change request back to SPECIFY. -->

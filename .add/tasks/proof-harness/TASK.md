@@ -106,7 +106,7 @@ Existing test rewritten (NOT weakened): `test_gate_pass_marks_done` must advance
 verify before `gate PASS` — it currently encodes the divergence; the rewrite encodes
 the guardrail. Recorded as a deliberate change, not a silent edit.
 
-Status: FROZEN @ v1   <!-- changing the error code / signature = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- changing the error code / signature = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

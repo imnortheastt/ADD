@@ -188,7 +188,7 @@ STRUCTURAL TEST (the red/green guard; asserts the artifact, not the AI's judgmen
 Names match the glossary additions this task introduces: "request bucket" (the 4) and the 3
 reject codes. To be added to the glossary as part of build (like owner/stop in machine-state-json).
 
-Status: FROZEN @ v1   (approved by Tin Dang via AskUserQuestion, 2026-05-30)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit) · (approved by Tin Dang via AskUserQuestion, 2026-05-30)   <!-- Changing a frozen contract = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 

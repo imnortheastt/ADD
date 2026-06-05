@@ -121,7 +121,7 @@ skill/add/setup-review.md  — the SETUP-REVIEW.md template + least-sure-first r
   Synced: .claude/skills/add/setup-review.md + src/add_method/_bundled/skill/add/setup-review.md (byte-identical)
 ```
 
-Status: FROZEN @ v1   <!-- self-frozen 2026-06-04: the human released the front seam for the v12 tail; the least-sure flag is carried to the verify gate instead. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- self-frozen 2026-06-04: the human released the front seam for the v12 tail; the least-sure flag is carried to the verify gate instead. -->
 <!-- Least-sure flag for the gate: SETUP-REVIEW.md is PROSE (a skill-guide template), not a scaffolded
      survivor or an engine-generated file — chosen to keep `add.py` judgment-free per task 1. -->
 

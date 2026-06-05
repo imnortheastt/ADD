@@ -192,7 +192,7 @@ GLOSSARY delta (DOCS artifact, synced across 3 doc trees): add "Scope drafting (
 NAMES match GLOSSARY: intake · request bucket · scope drafting.
 ```
 
-Status: FROZEN @ v1   <!-- frozen by human 2026-05-30 (AskUserQuestion). Changing it = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin, 2026-06-05 (retro-ratified at v14 gate-audit)   <!-- frozen by human 2026-05-30 (AskUserQuestion). Changing it = change request back to SPECIFY. -->
 
 <!-- EXIT: frozen + every spec rejection has a contracted response + names match GLOSSARY. -->
 
