@@ -67,6 +67,9 @@ Architecture:
 - (TDD) **Prove a publish-time hook without publishing.** Run the hook command as a subprocess and assert
   it executed the guard and exited 0 — it reds on broken/misspelled wiring but cannot prove the registry
   (npm/PyPI) honours the hook; name that wiring-vs-live limit explicitly. [ship-clean — folded foundation-version 9]
+  Validated live at v14: the hook's REAL publish-path run caught an env gap (apt setuptools below
+  pyproject's declared floor) no local run could see — keep tests in the publish path even when they
+  "duplicate" the guard job. [release-1-1-0 — folded foundation-version 13]
 - (TDD) **Lint a grammar with two regexes, not one.** A broad attempt-detector ("does this line *try* to be
   a tag/delta?") and a strict valid-shape matcher are distinct abstractions; conflating them either misses
   malformed attempts or false-skips them. [deltas-lint — folded foundation-version 9]
@@ -124,3 +127,36 @@ Architecture:
   tested against a real scaffold can match template placeholders/examples (the "User can…" exit
   criterion read as a task slug); scope parsers to their section and treat the template's own
   placeholder rows as a guard case. [decide-planned-hint — folded foundation-version 12]
+- (TDD) **Protocol-walk a user-journey exit criterion.** When the criterion IS a journey ("an agent
+  starting from AGENTS.md alone can…"), write the test that executes it literally: parse the entry
+  artifact for its instructions, run them, assert the destination — it pins the criterion itself,
+  not a proxy. [agent-portability — folded foundation-version 13]
+- (TDD) **Refuse-on-drift before executing a repo-extracted string.** A test that runs a command
+  extracted from a repo artifact (a ci.yml run line) must assert the extracted value equals the
+  pinned constant BEFORE executing, so drift turns the suite red without ever running unpinned
+  input. [audit-ci — folded foundation-version 13]
+- (TDD) **Arrange-through-CLI inherits the engine's input contracts.** A fixture arranging through
+  the real engine crashes on the engine's own validation (the RISK-ACCEPTED arrange step needed the
+  waiver flags) — stronger than file-writing, but budget for fidelity to its argument grammar.
+  [gate-audit — folded foundation-version 13]
+- (ADD) **A strictly-strengthening in-build test amendment is legal but never silent.** Disclose it
+  at the gate beside the security note that motivated it, and let the human adjudicate both in one
+  escalation. [audit-ci — folded foundation-version 13]
+- (ADD) **New enforcement over a legacy board: adjudicate epoch debt at the human gate.** A new
+  audit applied to old records surfaces convention-epoch debt as TRUE positives — retro-ratify as
+  an honest present-day act if the human so decides; never auto-grandfather, never fabricate past
+  records. [gate-audit — folded foundation-version 13]
+- (ADD) **Bulk adjudication surfaces the CONTRADICTING SUBSET, never just the count.** Before
+  stamping N records, grep the target set for text that negates the act being stamped and show that
+  subset — a blanket stamp wrote "approved" onto 6 records whose own text said the opposite, and the
+  shape-only audit reported clean over it. [gate-audit — folded foundation-version 13]
+- (ADD) **A method-defining task dogfoods its own rule in its header.** The task that ships a guard
+  declares the tokens the guard reads; the gate that records it becomes the rule's first live proof.
+  [high-risk-signal — folded foundation-version 13]
+- (ADD) **A hard-to-reverse act under the conservative dial absorbs repeated change requests
+  cleanly.** Five contract versions in one release act, each human-worded, no test weakened, zero
+  partial state — the dial's cost is questions, never corruption. [release-1-1-0 — folded foundation-version 13]
+- (ADD) **When a service's silent auth fallback hides the broken layer, pivot the mechanism on the
+  human's word.** Two OIDC-shaped failures (404, ENEEDAUTH) named no cause; the token pivot went
+  green first try — against an opaque external seam, switching mechanisms beats deeper debugging.
+  [release-1-1-0 — folded foundation-version 13]

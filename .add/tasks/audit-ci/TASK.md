@@ -220,11 +220,11 @@ control; high-risk-signal extends the same audit surface, release-1-1-0 ships it
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [TDD · open] a test that executes a string extracted from a repo artifact must
+  - [TDD · folded] a test that executes a string extracted from a repo artifact must
     refuse-on-drift — assert the extracted value equals the pinned constant BEFORE
     executing, so drift turns the suite red without ever running unpinned input
     (evidence: drifted ci.yml run line refused; proven non-vacuously, then reverted)
-  - [ADD · open] an in-build test amendment that strictly STRENGTHENS is legal but
+  - [ADD · folded] an in-build test amendment that strictly STRENGTHENS is legal but
     never silent — disclose it at the gate beside the security note that motivated
     it, and let the human adjudicate both in one escalation (evidence: this gate,
     confirmed by Tin 2026-06-05)

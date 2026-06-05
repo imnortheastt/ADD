@@ -230,11 +230,11 @@ proof; review-checklist (next) rides the same freeze seam the block now names.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [TDD · open] when a feature's exit criterion is a USER JOURNEY, write the
+  - [TDD · folded] when a feature's exit criterion is a USER JOURNEY, write the
     protocol-walk test that executes the journey literally (parse the entry
     artifact for its instructions, run them, assert the destination) — it pins
     the criterion itself, not a proxy (evidence: test_protocol_walk_from_agents_md)
-  - [SDD · open] prose artifacts accrete PROPERTY guards across milestones (v8:
+  - [SDD · folded] prose artifacts accrete PROPERTY guards across milestones (v8:
     ≤22 lines, no manual framing; v14: any-agent routing) — before rewriting one,
     grep its guards and design to the UNION, or the rewrite red-flags late
     (evidence: block rewrite tripped two v8 pins mid-build, satisfied by

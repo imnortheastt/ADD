@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "release-1-1-0",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,64 +418,10 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
-    },
-    "gate-audit": {
-      "title": "add.py audit \u2014 judgment-free checks of recorded human seams",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v14",
-      "depends_on": [],
-      "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T04:42:27+00:00"
-    },
-    "audit-ci": {
-      "title": "audit wired into CI \u2014 the enforcer distinct from the agent",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v14",
-      "depends_on": [],
-      "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T06:46:32+00:00"
-    },
-    "high-risk-signal": {
-      "title": "unguarded_high_risk_auto moves prose to engine",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v14",
-      "depends_on": [],
-      "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T07:16:36+00:00"
-    },
-    "agent-portability": {
-      "title": "AGENTS.md routing for non-Claude agents via the CLI",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v14",
-      "depends_on": [],
-      "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T08:43:50+00:00"
-    },
-    "review-checklist": {
-      "title": "one-approval checklist surfaced at the freeze seam",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v14",
-      "depends_on": [],
-      "created": "2026-06-05T03:37:01+00:00",
-      "updated": "2026-06-05T08:56:03+00:00"
-    },
-    "release-1-1-0": {
-      "title": "CHANGELOG, version bump, npm + PyPI publish",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v14",
-      "depends_on": [],
-      "created": "2026-06-05T03:37:01+00:00",
-      "updated": "2026-06-05T14:25:38+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T14:25:38+00:00",
+  "updated": "2026-06-05T14:34:52+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -581,14 +527,6 @@
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
     },
-    "v14": {
-      "title": "Production-ready ADD",
-      "goal": "gates enforced by CI distinct from the agent; AI agents beyond Claude follow ADD; 1.1.0 published",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T03:37:00+00:00"
-    },
     "v15": {
       "title": "Zero-command on-ramp",
       "goal": "After the single install command, a newcomer reaches their first verified feature purely by talking to the AI \u2014 no typed add.py commands",
@@ -641,6 +579,20 @@
         "declare-grammar-doc",
         "declared-path-confinement",
         "decide-planned-hint"
+      ],
+      "archived": "2026-06-05"
+    },
+    {
+      "slug": "v14",
+      "title": "Production-ready ADD",
+      "tasks": 6,
+      "task_slugs": [
+        "gate-audit",
+        "audit-ci",
+        "high-risk-signal",
+        "agent-portability",
+        "review-checklist",
+        "release-1-1-0"
       ],
       "archived": "2026-06-05"
     }

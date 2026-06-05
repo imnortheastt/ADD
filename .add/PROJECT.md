@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 12
+slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 13
 
 ---
 
@@ -92,6 +92,16 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 12
   `root / "/abs"` IS `/abs` was live in v1; future path-resolving contracts must name
   absolute tokens explicitly) · DECIDE NEXT plan-aware (`planned_unscaffolded` additive
   key + footer hint; the foundation-v11 manual cross-check retired by its own sunset).
+- v14 (Production-ready ADD): **SHIPPED 2026-06-05** — `add.py audit` (judgment-free seam
+  re-verification) · blocking seam-audit CI job + consumer workflow · `risk: high` grammar +
+  `unguarded_high_risk_auto` engine guard · `guide  :` phase-playbook line + agent-agnostic
+  AGENTS.md block (any agent, CLI alone) · the freeze review checklist · **1.1.0 live on npm
+  + PyPI** (tag-driven, guard-gated; npm auth = granular 2FA-bypass token after OIDC would
+  not engage — rotation ~90d watched). SDD learnings carried: (a) prose artifacts accrete
+  PROPERTY guards across milestones — grep the guards and design to the UNION before any
+  rewrite; (b) strip comments before machine-token matching, or every documentation form of
+  the token self-triggers; (c) a CI job that runs another ecosystem's tests must provision
+  THAT ecosystem's declared floor itself (build isolation honors it everywhere else).
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -130,6 +140,9 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 12
 - **One next step at the most-lost moment (v12-1 · UDD):** when the user is most lost (unlocked setup,
   empty project), status must show exactly ONE next move — competing hints dilute the only correct
   action. The unlocked window now replaces the generic resume//add hint with the single review→lock step.
+- **A review prompt lives AT the seam (v14 · UDD):** put the checklist where the decision already
+  happens, sized to the reviewer's real attention (one minute · six lines · ⚠-first) — a separate
+  review artifact is ceremony that competes with the decision instead of aiming it.
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -168,3 +181,5 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 12
 | 2026-06-04 | fold v12-1 learnings → foundation-version 10 (5 open deltas: 3 new conventions · 1 worktree-from-HEAD reinforcement flip-cite · 1 UDD one-next-step bullet) | human-gated fold at v12-1 close; all 5 confirmed (none rejected) | +3 CONVENTIONS bullets (comment-literal-phantom-dup · dedup-absorbs-deleted-form · reverify-routed-delta-gap); worktree-from-HEAD flip-cited (the check must EXECUTE pre-spawn); §UDD one-next-step; deltas flipped open→folded |
 | 2026-06-05 | fold v13 learnings → foundation-version 11 (6 open deltas: 4 new conventions · 1 §Spec v13-shipped bullet carrying 2 SDD residues) | human-gated fold at v13 close; all 6 confirmed (none rejected); the 3 actionable residues (Tests-live-in grammar doc · confinement Reject rule · DECIDE-NEXT planned-task hint) stay visible as §Spec OPEN pending a next-milestone intake | +4 CONVENTIONS bullets (diff-§4-target-nouns · red-fixture-exceeds-hidden-threshold · decide-next-is-state-only · security-line-always-escalates); §Spec v13 bullet; deltas flipped open→folded |
 | 2026-06-05 | fold v13-1 learnings → foundation-version 12 (5 open deltas: 2 new TDD conventions · 1 security-line flip-cite validation · 1 convention RETIRED by its own sunset clause — a first · 1 SDD absolute-join rule into §Spec) | human-gated fold at v13-1 close; all 5 confirmed (none rejected) | +2 CONVENTIONS bullets (behavioral-scaffold-test · template-fixture-inherits-examples); decide-next cross-check retired (engine hint shipped); security-line rule validated cheap in practice; §Spec v13-1 bullet; deltas flipped open→folded |
+| 2026-06-05 | npm publish auth = granular 2FA-bypass token (NPM_TOKEN secret); PyPI stays OIDC; OIDC trusted publishing for npm ATTEMPTED and parked (mint never engaged from the workflow: 404 then ENEEDAUTH with form byte-exact, npm ≥11.5, id-token: write, no token config) | the 1.1.0 release act hit four auth-layer failures, each failing closed; Tin pivoted the mechanism after OIDC proved opaque — a working release now beats a perfect auth story | v1.1.0 live on BOTH registries (run 27009563639); rotation ~90d watched in §7 + publish.yml header; OIDC revisit-later note kept in the workflow header |
+| 2026-06-05 | fold v14 learnings → foundation-version 13 (14 open deltas: 9 new conventions · 1 publish-hook flip-cite validation · 1 §Spec v14 bullet carrying 3 SDD learnings · 1 §UDD seam-sized-review bullet) | human-gated fold at v14 close; all 14 confirmed (none rejected) | +9 CONVENTIONS bullets (protocol-walk · refuse-on-drift · arrange-through-CLI-contracts · strengthen-never-silent · epoch-debt-at-the-gate · contradicting-subset · dogfood-own-rule · dial-absorbs-change-requests · pivot-mechanism-on-human-word); §Spec v14 bullet; §UDD seam bullet; deltas flipped open→folded |

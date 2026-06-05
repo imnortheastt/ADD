@@ -189,7 +189,7 @@ one-approval front is fully furnished; release-1-1-0 ships it.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [UDD · open] a review prompt belongs AT the seam where the decision already
+  - [UDD · folded] a review prompt belongs AT the seam where the decision already
     happens, sized to the reviewer's real attention (one minute, six lines,
     ⚠-first) — a separate review artifact is ceremony that competes with the
     decision instead of aiming it (evidence: checklist landed inside

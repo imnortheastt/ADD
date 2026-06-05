@@ -270,19 +270,19 @@ assumption, above code-level risks.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [ADD · open] a hard-to-reverse release act under the conservative dial absorbs
+- [ADD · folded] a hard-to-reverse release act under the conservative dial absorbs
   REPEATED change requests cleanly — five contract versions, each human-worded,
   no test weakened, zero partial state (evidence: v1–v5 trail in §1/§3, runs
   27007111170/27008622520/27009193988/27009563639)
-- [SDD · open] a CI job that runs another ecosystem's tests must provision THAT
+- [SDD · folded] a CI job that runs another ecosystem's tests must provision THAT
   ecosystem's declared floor itself — pyproject's `setuptools>=77` was honored
   by build isolation everywhere except the in-process npm-job path (evidence:
   attempt-1 traceback in apt setuptools)
-- [TDD · open] the prepublishOnly seam (tests-as-publish-precondition) caught a
+- [TDD · folded] the prepublishOnly seam (tests-as-publish-precondition) caught a
   real env gap no local run could see — keep tests in the publish path even
   when they "duplicate" the guard job (evidence: attempt 1 failed closed
   before npm accepted anything)
-- [ADD · open] when an external service's silent auth fallback hides the broken
+- [ADD · folded] when an external service's silent auth fallback hides the broken
   layer (OIDC mint never engaging -> 404/ENEEDAUTH), pivoting the MECHANISM on
   the human's word beats deeper debugging of an opaque seam (evidence: v5
   token pivot went green on the first try after two OIDC-shaped failures)

@@ -263,12 +263,12 @@ high-risk?" prompt at the freeze seam to shrink the undeclared-scope limit.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [SDD · open] when a guide documents a machine-read token, the reader must
+  - [SDD · folded] when a guide documents a machine-read token, the reader must
     ignore documentation forms of it — strip comments before token matching, or
     every scaffold self-triggers (evidence: the template's `risk: high` comment
     would have declared every new task high-risk; caught in build, pinned by the
     ordinary-task regression test)
-  - [ADD · open] a method-defining task should dogfood the rule it ships in its
+  - [ADD · folded] a method-defining task should dogfood the rule it ships in its
     own header — the gate that records it becomes the rule's first live proof
     (evidence: high-risk-signal's own `gate PASS` ran the new guard and completed
     only because its dial was lowered)
