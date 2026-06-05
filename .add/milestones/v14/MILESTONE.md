@@ -37,7 +37,7 @@ Out: the full production observe loop (monitors/feedback channel) and the dogfoo
 - [x] gate-audit         depends-on: none       — `add.py audit`: read-only checks of recorded human seams (FROZEN-by-name · one gate outcome · security-line ⇒ human reviewer · no RISK-ACCEPTED on security)
 - [x] audit-ci           depends-on: gate-audit — audit wired into ci.yml + shipped in the package; CI fails on a malformed seam record
 - [x] high-risk-signal   depends-on: gate-audit — `unguarded_high_risk_auto` detected by the engine/audit, not prose
-- [ ] agent-portability  depends-on: none       — AGENTS.md block routes any agent to the phase guides through the CLI alone
+- [x] agent-portability  depends-on: none       — AGENTS.md block routes any agent to the phase guides through the CLI alone
 - [ ] review-checklist   depends-on: none       — the one-approval review checklist surfaced at the freeze seam (skill prose)
 - [ ] release-1-1-0      depends-on: audit-ci   — CHANGELOG · version 1.1.0 · npm + PyPI publish via tag · GETTING-STARTED refresh
 
@@ -45,6 +45,6 @@ Out: the full production observe loop (monitors/feedback channel) and the dogfoo
 - [x] `add.py audit` exits non-zero naming the task when a done task lacks a human-stamped freeze or a well-formed GATE RECORD  (← gate-audit)
 - [x] CI fails on a commit introducing a malformed seam record — enforcement is a job distinct from the agent  (← audit-ci)
 - [x] A high-risk/method-defining scope left at autonomy auto is refused by the engine, not by prose  (← high-risk-signal)
-- [ ] A non-Claude agent can locate and follow the correct phase guide starting from AGENTS.md alone  (← agent-portability)
+- [x] A non-Claude agent can locate and follow the correct phase guide starting from AGENTS.md alone  (← agent-portability)
 - [ ] The freeze seam presents a review checklist without re-adding GSD-style ceremony  (← review-checklist)
 - [ ] npm `@pilotspace/add` and PyPI `pilotspace-add` are both live at 1.1.0 with a CHANGELOG  (← release-1-1-0)

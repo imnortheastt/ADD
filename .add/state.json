@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "high-risk-signal",
+  "active_task": "agent-portability",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -448,12 +448,12 @@
     },
     "agent-portability": {
       "title": "AGENTS.md routing for non-Claude agents via the CLI",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v14",
       "depends_on": [],
       "created": "2026-06-05T03:37:00+00:00",
-      "updated": "2026-06-05T03:37:00+00:00"
+      "updated": "2026-06-05T08:43:50+00:00"
     },
     "review-checklist": {
       "title": "one-approval checklist surfaced at the freeze seam",
@@ -475,7 +475,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T07:16:36+00:00",
+  "updated": "2026-06-05T08:43:50+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
