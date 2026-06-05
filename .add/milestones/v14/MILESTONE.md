@@ -39,7 +39,7 @@ Out: the full production observe loop (monitors/feedback channel) and the dogfoo
 - [x] high-risk-signal   depends-on: gate-audit — `unguarded_high_risk_auto` detected by the engine/audit, not prose
 - [x] agent-portability  depends-on: none       — AGENTS.md block routes any agent to the phase guides through the CLI alone
 - [x] review-checklist   depends-on: none       — the one-approval review checklist surfaced at the freeze seam (skill prose)
-- [ ] release-1-1-0      depends-on: audit-ci   — CHANGELOG · version 1.1.0 · npm + PyPI publish via tag · GETTING-STARTED refresh
+- [x] release-1-1-0      depends-on: audit-ci   — CHANGELOG · version 1.1.0 · npm + PyPI publish via tag · GETTING-STARTED refresh
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] `add.py audit` exits non-zero naming the task when a done task lacks a human-stamped freeze or a well-formed GATE RECORD  (← gate-audit)
@@ -47,4 +47,4 @@ Out: the full production observe loop (monitors/feedback channel) and the dogfoo
 - [x] A high-risk/method-defining scope left at autonomy auto is refused by the engine, not by prose  (← high-risk-signal)
 - [x] A non-Claude agent can locate and follow the correct phase guide starting from AGENTS.md alone  (← agent-portability)
 - [x] The freeze seam presents a review checklist without re-adding GSD-style ceremony  (← review-checklist)
-- [ ] npm `@pilotspace/add` and PyPI `pilotspace-add` are both live at 1.1.0 with a CHANGELOG  (← release-1-1-0)
+- [x] npm `@pilotspace/add` and PyPI `pilotspace-add` are both live at 1.1.0 with a CHANGELOG  (← release-1-1-0; run 27009563639, `npm view` -> 1.1.0, PyPI JSON -> 1.1.0, 2026-06-05)

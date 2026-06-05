@@ -1,7 +1,7 @@
 # TASK: CHANGELOG, version bump, npm + PyPI publish
 
 slug: release-1-1-0 · created: 2026-06-05 · stage: mvp · risk: high · autonomy: conservative
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 
 > One file = one task. Fill sections top-to-bottom; the `add` skill drives each phase.
 > When a phase is unclear, read its book chapter in `.add/docs/` (linked per section).
@@ -233,13 +233,23 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
       static-command-only; engine md5 pinned ×3
 - [x] layering & dependencies follow CONVENTIONS.md — CHANGELOG ships through
       both channels' existing manifests; bundle drift zero; versions agree
-- [ ] a person reviewed and approved the change — THE SHIP DECISION:
-      conservative dial + risk: high → the tag is pushed only on Tin's word
+- [x] a person reviewed and approved the change — THE SHIP DECISION:
+      conservative dial + risk: high → Tin confirmed "Ship — push the tag",
+      approved every change request (v2–v5; v5 his own token pivot), and
+      confirmed PASS at this gate with the security note surfaced
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Reviewed by: Tin · date: 2026-06-05
+Live evidence: publish run 27009563639 fully green (guard · npm · pypi) on
+  tag v1.1.0 @ 02e0d1c — `npm view @pilotspace/add version` -> 1.1.0
+  (registry.npmjs.org/@pilotspace/add/-/add-1.1.0.tgz) · PyPI JSON API ->
+  pilotspace-add 1.1.0. Five release attempts, each failing CLOSED one layer
+  deeper (setuptools env -> EOTP -> npmrc-preempts-OIDC -> ENEEDAUTH ->
+  green); zero partial state at every step — the guard design held.
+Security note (escalated per the security-line rule, human-gated): stored
+  granular NPM_TOKEN (2FA-bypass, publish-only, ~90-day expiry) back in use
+  after Tin's v5 pivot; PyPI stays OIDC. Rotation watch recorded in §7.
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -247,10 +257,32 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): npm install @pilotspace/add / pip install
+pilotspace-add succeed for newcomers (scenario "human-gated then live" as the
+monitor); NPM_TOKEN expiry ~2026-09 — the npm job failing auth is the signal
+to mint + update the secret (rotation note lives in publish.yml's header).
+Spec delta for the next loop: the release pipe's failure surface was ALL
+environment/credentials, never code — future release tasks should ⚠-flag the
+publish ENVIRONMENT (job toolchains + auth mode end-to-end) as the least-sure
+assumption, above code-level risks.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [ADD · open] a hard-to-reverse release act under the conservative dial absorbs
+  REPEATED change requests cleanly — five contract versions, each human-worded,
+  no test weakened, zero partial state (evidence: v1–v5 trail in §1/§3, runs
+  27007111170/27008622520/27009193988/27009563639)
+- [SDD · open] a CI job that runs another ecosystem's tests must provision THAT
+  ecosystem's declared floor itself — pyproject's `setuptools>=77` was honored
+  by build isolation everywhere except the in-process npm-job path (evidence:
+  attempt-1 traceback in apt setuptools)
+- [TDD · open] the prepublishOnly seam (tests-as-publish-precondition) caught a
+  real env gap no local run could see — keep tests in the publish path even
+  when they "duplicate" the guard job (evidence: attempt 1 failed closed
+  before npm accepted anything)
+- [ADD · open] when an external service's silent auth fallback hides the broken
+  layer (OIDC mint never engaging -> 404/ENEEDAUTH), pivoting the MECHANISM on
+  the human's word beats deeper debugging of an opaque seam (evidence: v5
+  token pivot went green on the first try after two OIDC-shaped failures)
