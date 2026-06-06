@@ -89,10 +89,12 @@ build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the huma
 
 ## Exit gate
 
+<exit_gate>
 - [ ] `.add/state.json` exists; setup was seeded unlocked (`--await-lock`) then locked.
 - [ ] Survivors filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
 - [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written least-sure-first.
 - [ ] Human confirmed the lock-down and `add.py lock --by` ran with their name; first task §3 `FROZEN @ v1`; build open.
+</exit_gate>
 
 ## Next
 

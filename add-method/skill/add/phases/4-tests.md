@@ -12,10 +12,12 @@ before code exists is testing nothing and will wave bad code through later.
 
 ## Produce
 
+<output_format>
 - One executable test per scenario (§2), asserting **behavior, not internals**.
 - Contract-conformance tests (shapes + error responses from §3).
 - Side-effect assertions on rejection paths (`assert balance unchanged`).
 - A recorded coverage target in §4.
+</output_format>
 
 ## Declaring where tests live
 
@@ -33,17 +35,25 @@ symlink escapes are never read.
 
 ## AI prompt
 
-> Role: a test author who writes tests before code. Read §2 and §3. Turn each
-> scenario into an executable test; add contract-conformance and edge-case tests;
-> run the suite and confirm it fails for the right reason. Record a coverage
-> target. Do NOT implement the feature. Never assert on internals.
+<prompt>
+Role: a test author who writes tests before code.
+Read first: §2 · §3.
+Objective: a red suite that fails for the right reason — behavior, not internals.
+Steps:
+  1. Turn each scenario into an executable test.
+  2. Add contract-conformance and edge-case tests.
+  3. Run the suite and confirm it fails for the right reason; record a coverage target.
+Never: implement the feature, or assert on internals.
+</prompt>
 
 ## Exit gate
 
+<exit_gate>
 - [ ] One test per scenario.
 - [ ] Suite runs and is **red for the right reason**.
 - [ ] Tests assert observable behavior.
 - [ ] Coverage target recorded.
+</exit_gate>
 
 ## Next
 

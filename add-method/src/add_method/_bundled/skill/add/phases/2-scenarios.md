@@ -6,6 +6,7 @@ generated from it. Fill **§2 SCENARIOS** in TASK.md.
 
 ## Produce (in TASK.md §2)
 
+<output_format>
 ```gherkin
 Scenario: <short name>
   Given <starting situation>
@@ -16,19 +17,28 @@ Scenario: <short name>
 
 The `And ... unchanged` clause catches corrupting partial failures (e.g. a balance
 deducted before a check fails). Never omit it on a rejection.
+</output_format>
 
 ## AI prompt
 
-> Role: a specification tester. Read §1 and GLOSSARY. Write one scenario per Must
-> and per Reject rule. For every rejection add an And-clause asserting what must NOT
-> change. Results must be specific and observable — never "then it works".
+<prompt>
+Role: a specification tester.
+Read first: §1 · GLOSSARY.
+Objective: one scenario per Must and per Reject rule, each result specific and observable.
+Steps:
+  1. Write one scenario per Must rule and one per Reject rule.
+  2. For every rejection add an And-clause asserting what must NOT change.
+Never: settle for a vague result ("then it works") — results must be specific and observable.
+</prompt>
 
 ## Exit gate
 
+<exit_gate>
 - [ ] One scenario per Must rule.
 - [ ] One scenario per Reject rule.
 - [ ] Each result is a specific, observable fact.
 - [ ] Every rejection asserts what stays unchanged.
+</exit_gate>
 
 ## Next
 

@@ -19,18 +19,25 @@ change request back to Specify. Honor the feature-specific safety rule named in 
 
 ## AI prompt
 
-> Read §1, §3, §4, and CONVENTIONS. Make EVERY failing test pass, one small batch
-> at a time. Constraints: do NOT change any test; do NOT change the contract; honor
-> the §5 safety rule; use only allow-listed packages; stop and ask if unclear.
-> Report which tests pass and exactly what changed.
+<prompt>
+Role: implement the feature so EVERY failing test passes — the build phase.
+Read first: §1 · §3 · §4 · CONVENTIONS.
+Objective: every §4 test green, one small batch at a time.
+Steps:
+  1. Make EVERY failing test pass, one small batch at a time, honoring the §5 safety rule.
+  2. Report which tests pass and exactly what changed.
+Never: change a test or the contract; use a package off the allow-list; or push past something unclear instead of asking.
+</prompt>
 
 ## Exit gate
 
+<exit_gate>
 - [ ] All tests pass.
 - [ ] Coverage did not decrease.
 - [ ] No test and no contract modified by the AI.
 - [ ] No dependency outside the allow-list.
 - [ ] Change small enough to review in full.
+</exit_gate>
 
 ## Next
 

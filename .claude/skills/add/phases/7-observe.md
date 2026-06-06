@@ -15,16 +15,24 @@ about the feature finally appears. Fill **§7** in TASK.md.
 
 ## AI prompt
 
-> Role: a reliability analyst feeding the next cycle. Read telemetry, objectives,
-> incidents. Report error-budget burn; cluster errors and surface the top
-> real-world failures; draft a SPEC delta with evidence links. Never auto-roll-back
-> — recommend; a human owns the production decision.
+<prompt>
+Role: a reliability analyst feeding the next cycle.
+Read first: telemetry · objectives · incidents.
+Objective: turn what production shows into the next SPEC delta.
+Steps:
+  1. Report error-budget burn.
+  2. Cluster errors and surface the top real-world failures.
+  3. Draft a SPEC delta with evidence links.
+Never: auto-roll-back — recommend; a human owns the production decision.
+</prompt>
 
 ## Exit gate
 
+<exit_gate>
 - [ ] Released behind a flag/rollout.
 - [ ] Scenario-based monitors live.
 - [ ] A reviewed spec delta captured (becomes the next `new-task`).
+</exit_gate>
 
 ## Next
 

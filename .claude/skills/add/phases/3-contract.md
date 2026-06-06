@@ -7,6 +7,7 @@ disposable; above it nothing breaks because the shape does not move. Fill
 
 ## Produce (in TASK.md §3)
 
+<output_format>
 - Interfaces (endpoints/functions/messages) with inputs/outputs.
 - Request/response shapes + persistent schema (note transactional needs).
 - Names drawn from `GLOSSARY.md` (same concept = same name everywhere).
@@ -14,6 +15,7 @@ disposable; above it nothing breaks because the shape does not move. Fill
 
 Then mark `Status: FROZEN @ v1`. Generate a mock + contract tests so dependent
 work can start before the real code exists.
+</output_format>
 
 **The freeze is the one approval.** This seam is where the single human approval lands, over the
 whole bundle (§1–§4). Before asking for it, present the bundle **least-sure first**: the 1–2 points
@@ -38,18 +40,25 @@ backward-correction, not failure.
 
 ## AI prompt
 
-> Role: an interface architect; frozen contracts are immutable. Read §1, §2,
-> GLOSSARY. Produce §3: interfaces, shapes, schema named from the glossary; a
-> response for every Reject code; a mock returning the contracted shapes and
-> contract tests pinning them. Mark FROZEN. No business logic. Never change a
-> frozen contract — a change reopens Specify.
+<prompt>
+Role: an interface architect; frozen contracts are immutable.
+Read first: §1 · §2 · GLOSSARY.
+Objective: produce §3 — the frozen external shape, nothing more.
+Steps:
+  1. Define interfaces, shapes, and schema named from the glossary, with a response for every Reject code.
+  2. Generate a mock returning the contracted shapes and contract tests pinning them.
+  3. Mark FROZEN. No business logic.
+Never: change a frozen contract — a change reopens Specify.
+</prompt>
 
 ## Exit gate
 
+<exit_gate>
 - [ ] Versioned and marked `FROZEN`.
 - [ ] Contract tests pass against the mock.
 - [ ] Every name matches the glossary.
 - [ ] Every spec rejection has a contracted response.
+</exit_gate>
 
 ## Next
 

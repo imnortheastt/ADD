@@ -41,8 +41,10 @@ If any is false, stop and return to Build — there is nothing to verify yet.
 
 ## Exit gate / Next
 
+<exit_gate>
 - [ ] Evidence confirmed, blind-spots checked, outcome recorded — a person approved, or
   (under `autonomy: auto` with no residue) the run auto-resolved as the accountable owner.
+</exit_gate>
 
 ```bash
 python3 .add/tooling/add.py gate PASS          # marks the task done
