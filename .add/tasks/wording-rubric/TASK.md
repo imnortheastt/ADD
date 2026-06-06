@@ -204,7 +204,7 @@ Schema  : no DB — reads markdown. Surface = canonical add-method/skill/add/ (t
           WORDING_RUBRIC.md + wording_lint.py are tooling/ guards (like test_xml_convention.py) — NOT mirrored.
 ```
 
-Status: FROZEN @ v1 · prose-corrected @ v1.1 (human-ratified at the verify gate)
+Status: FROZEN @ v1 — approved by Tin Dang, 2026-06-06 (one-approval front; "Approve — freeze @ v1") · prose-corrected @ v1.1 (human-ratified at the verify gate)
 <!-- approved 2026-06-06 (one-approval front; human chose "Approve — freeze @ v1"). Changing a frozen contract = change request back to SPECIFY.
      v1.1 (2026-06-06, ratified at the verify-gate PASS): two one-line prose corrections that align the frozen bundle with the already-green §4 tests — NO behavior change, NO test weakened:
        CR-1  match rule split: case-insensitive idioms (F1) / case-SENSITIVE emphasis (F2) — forced by test_emphasis_token_fence (see §6 Disclosed Refinement #1).
