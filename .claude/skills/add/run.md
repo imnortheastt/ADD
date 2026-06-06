@@ -56,6 +56,7 @@ drift the interface, because the interface is frozen above it.
 
 ## The touch-boundary — what the run may and may not touch
 
+<constraints>
 A locked run has a hard boundary. It MAY:
 
 - write and rewrite **code** (`src/`) — code is disposable below the seam;
@@ -69,6 +70,7 @@ It MUST NOT:
   scope on its own.
 - weaken, delete, or skip a **test** to make the build pass (that inverts the method).
 - touch the **human-led front artifacts** (§1–§3) except to halt and escalate.
+</constraints>
 
 Crossing the boundary is not a fast run; it is an unverified one. When the run hits something only the
 front can resolve, it stops — and that stop is the loop working, not failing.

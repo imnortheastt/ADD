@@ -44,11 +44,13 @@ lives here so the engine stays judgment-free.
 
 ## Reject codes (the AI is first check, the human the backstop)
 
+<reject_codes>
 - `no_open_deltas` — nothing is `open` anywhere. The ritual is a no-op; do **not** bump the version.
 - `unconfirmed_fold` — a write was attempted without recorded human confirmation. The AI proposes;
   it never self-folds. Stop and get confirmation.
 - `unroutable_delta` — a delta's competency is not one of the five, so it has no fold target. Fix the
   delta (it is malformed per `deltas.md`) before folding.
+</reject_codes>
 
 ## Worked example (from this repo's own history)
 

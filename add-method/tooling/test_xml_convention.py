@@ -2,7 +2,8 @@
 
 The convention is frozen in .add/tasks/xml-convention/TASK.md §3. This guard asserts it on
 the worked-reference pilot (phases/1-specify.md, FULLY converted) and grows file-by-file as
-later v16 tasks land.
+later v16 tasks land: the 7 phase guides (task phase-guides-xml) and the 10 engine docs
+(task engine-docs-xml — the first use of <constraints>/<reject_codes>).
 
 Scope (task xml-convention): the pilot only. The 3-mirror parity is enforced by
 test_bundle_parity + test_tree_parity (not re-authored here — checking the canonical tree suffices,
@@ -54,6 +55,17 @@ def _section(text: str, header: str) -> str:
         if grabbing:
             out.append(line)
     return "\n".join(out)
+
+
+_FENCE = re.compile(r"```.*?```", re.DOTALL)
+
+
+def _strip_code_fences(text: str) -> str:
+    """Drop ```…``` fenced blocks so paired tags INSIDE a fence don't count as convention tags
+    (the convention leaves code fences as markdown — they are self-marking). Tags OUTSIDE a fence
+    survive. This is what makes streams.md's worker-contract ```xml block exempt from the vocab
+    check while a `<constraints>` wrap placed OUTSIDE a fence is still seen."""
+    return _FENCE.sub("", text)
 
 
 # ─── task phase-guides-xml: the 7 remaining phase guides (0,2-7) ──────────────────────────────
@@ -160,6 +172,140 @@ class TestXmlConventionPhaseGuides(unittest.TestCase):
             text = self.texts[name]
             for header in spec["narrative"]:
                 body = _section(text, header)
+                self.assertEqual(_paired_tags(body), set(),
+                                 f"{name}: narrative section {header!r} carries convention tags — must stay prose")
+
+
+# ─── task engine-docs-xml: the 10 engine docs ─────────────────────────────────────────────────
+# Engine docs carry ONLY <constraints> + <reject_codes> — the two tags the frozen TAG→FIRST-USE map
+# reserved for the engine layer (this is their first use). <output_format> is intentionally ABSENT:
+# every engine-doc output-shape is a CODE FENCE (deltas' grammar, report-template's five-block digest,
+# setup-review's template), left as markdown per the convention's fence-exemption — <output_format>
+# already earns its use in task 2's phase-guide "## Produce" prose. streams.md's worker-contract ```xml
+# fence is UNTOUCHED (pre-existing worker scaffolding inside a fence): the vocab check strips code
+# fences first, and a positive guard asserts the worker contract SURVIVES. The narrative list per file
+# is ENUMERATED so the over-tagging guard is real, not hollow.
+ENGINE_SUBSET = {"constraints", "reject_codes"}  # STRICT — excludes output_format on purpose
+WORKER_CONTRACT_TAGS = {
+    "objective", "persona", "touch_boundary", "context_files", "expertise", "tools", "return",
+}
+ENGINE_FILES = {
+    "SKILL.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## The flow and which file to load",
+            "## Depth by stage",
+            "## The trust layer",
+        )},
+    "intake.md": {
+        "tags": {"reject_codes"},
+        "narrative": (
+            "## The four buckets",
+            "## Worked examples (from this project's own history)",
+        )},
+    "scope.md": {
+        "tags": {"reject_codes"},
+        "narrative": (
+            "## What to do per intake outcome",
+            "## Worked example (from this repo's own history)",
+        )},
+    "run.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## The one-approval front (v7)",
+            "## The evidence auto-gate",
+            "## The autonomy dial",
+        )},
+    "streams.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## The two queues",
+            "## Design for failure (required)",
+            "## The worker contract — portable across coding agents",  # holds the ```xml fence
+        )},
+    "deltas.md": {
+        "tags": {"reject_codes"},
+        "narrative": (
+            "## The grammar (frozen)",                                  # holds a ``` fence
+            "## The five competencies (pick exactly one per delta)",
+            "## Worked example",
+        )},
+    "fold.md": {
+        "tags": {"reject_codes"},
+        "narrative": (
+            "## The ritual",
+            "## Fold routing (every competency has a home)",
+            "## Worked example (from this repo's own history)",
+        )},
+    "adopt.md": {
+        "tags": {"constraints"},  # "Two rules that never bend" lives INSIDE "## The silent mapping"
+        "narrative": (
+            "## The signal — and arming the gate",
+            "## Where it ends — the lock-down",
+        )},
+    "report-template.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## The five blocks, in order",                            # holds the digest ``` fence
+        )},
+    "setup-review.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## Where it lives",
+            "## The template",                                         # holds the ```markdown fence
+            "## Where it ends",
+        )},
+}
+
+
+class TestXmlConventionEngineDocs(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.texts = {}
+        for name in ENGINE_FILES:
+            p = _SKILL / name
+            assert p.exists(), f"engine doc missing: {p}"
+            cls.texts[name] = p.read_text(encoding="utf-8")
+
+    def test_engine_tags_present(self) -> None:
+        """Must: each engine doc carries each of the paired convention tag(s) the map assigns it."""
+        for name, spec in ENGINE_FILES.items():
+            text = self.texts[name]
+            for tag in spec["tags"]:
+                self.assertIsNotNone(re.search(rf"<{tag}>.*?</{tag}>", text, re.DOTALL),
+                                     f"{name}: no <{tag}>…</{tag}> block (not converted)")
+
+    def test_engine_vocab_subset(self) -> None:
+        """Reject vocab_offmidiom / fenced_shape_tagged: every paired tag (code fences stripped)
+        in each engine doc ∈ {constraints, reject_codes}. STRICT — output_format here would fail."""
+        for name in ENGINE_FILES:
+            tags = _paired_tags(_strip_code_fences(self.texts[name]))
+            self.assertTrue(tags, f"{name}: no paired convention tags found (not converted)")
+            offenders = tags - ENGINE_SUBSET
+            self.assertFalse(offenders,
+                             f"{name}: out-of-subset tags {sorted(offenders)} "
+                             f"(engine docs use ONLY constraints/reject_codes — no output_format)")
+            self.assertNotIn("output_format", tags,
+                             f"{name}: <output_format> in an engine doc — fenced shapes stay markdown")
+
+    def test_engine_worker_contract_preserved(self) -> None:
+        """Reject worker_contract_touched: streams.md's worker-contract ```xml fence is UNTOUCHED —
+        its tags are present in raw text AND gone after fence-strip (fenced ⇒ exempt, never trips vocab)."""
+        raw = self.texts["streams.md"]
+        raw_tags = _paired_tags(raw)
+        missing = WORKER_CONTRACT_TAGS - raw_tags
+        self.assertFalse(missing, f"streams.md worker-contract tags missing/altered: {sorted(missing)}")
+        stripped_tags = _paired_tags(_strip_code_fences(raw))
+        leaked = WORKER_CONTRACT_TAGS & stripped_tags
+        self.assertEqual(leaked, set(),
+                         f"worker-contract tags {sorted(leaked)} leaked outside the code fence — must stay fenced/exempt")
+
+    def test_engine_narrative_untagged(self) -> None:
+        """Reject narrative_tagged: each doc's enumerated narrative sections (fences stripped) carry NO paired tags."""
+        for name, spec in ENGINE_FILES.items():
+            text = self.texts[name]
+            for header in spec["narrative"]:
+                body = _strip_code_fences(_section(text, header))
                 self.assertEqual(_paired_tags(body), set(),
                                  f"{name}: narrative section {header!r} carries convention tags — must stay prose")
 

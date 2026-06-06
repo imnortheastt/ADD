@@ -34,6 +34,7 @@ Rows are numbered for reference at the gate ("row 1 is the one I'm least sure ab
 
 ## The two rules that make it honest
 
+<constraints>
 1. **Least-sure-first.** Order rows by confidence **ascending**. A `guessed` row always floats above an
    `evidence-grounded` one. The point is not completeness theatre — it is to spend the human's attention
    where it changes outcomes: the top of the table is the part they actually need to challenge.
@@ -47,6 +48,7 @@ Rows are numbered for reference at the gate ("row 1 is the one I'm least sure ab
 
    The tag vocabulary is shared with `adopt.md` — the brownfield map tags each filled survivor decision
    `guessed`/`evidence-grounded`, and those tags flow straight into this table.
+</constraints>
 
 ## Where it ends
 

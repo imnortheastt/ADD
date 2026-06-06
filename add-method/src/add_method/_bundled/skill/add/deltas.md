@@ -60,9 +60,11 @@ delta is left in place (not deleted) so "we saw this and chose not to act" stays
 
 There is no engine validator yet, so before you record a delta, self-check it:
 
+<reject_codes>
 - `unknown_competency` — the tag is missing or not one of `DDD · SDD · UDD · TDD · ADD`. Fix the tag.
 - `no_evidence` — the `(evidence: …)` pointer is missing or empty. Add the proof, or drop the line.
 - `unknown_status` — the status is not `open | folded | rejected`. A fresh delta is `open`.
+</reject_codes>
 
 ## Worked example
 

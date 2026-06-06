@@ -36,6 +36,7 @@ NEXT      the single next action + what it unlocks
 
 ## Hard rules
 
+<constraints>
 - **Summary-first.** Never bury the decision under a task list or a diff.
 - **Show before ask.** Render the artifact (digest · diff · report) before any
   approval question; the human decides on what they can see.
@@ -46,3 +47,4 @@ NEXT      the single next action + what it unlocks
   do not re-render the whole bundle.
 - **Honest scope.** "Done" means the request, not the last task: report
   "task 2/3", never "done" while approved scope remains.
+</constraints>

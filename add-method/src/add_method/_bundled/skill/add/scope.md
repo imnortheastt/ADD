@@ -54,6 +54,7 @@ Rank assumptions least-sure first; the top 1–2 get the flag the human reads at
 
 ## Reject codes (emit `{ reject, rationale }`, create nothing)
 
+<reject_codes>
 - `not_classified` — the request has not been through intake yet. Classify it first; you cannot
   draft scope for an unclassified request.
 - `dangling_criterion` — a drafted MILESTONE.md has an exit criterion that maps to no declared
@@ -61,6 +62,7 @@ Rank assumptions least-sure first; the top 1–2 get the flag the human reads at
   a malformed milestone. With no engine lint, you are the first check and the human is the backstop.
 - `no_milestone` — intake routed the request to `task` or `change-request`; scope drafting
   creates NO milestone. Honor the classification; do not invent milestone-sized scope.
+</reject_codes>
 
 ## Worked example (from this repo's own history)
 

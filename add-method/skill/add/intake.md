@@ -29,12 +29,15 @@ For every request, emit ONE of:
 - **a classification** — `{ bucket, rationale, command }` — where `rationale` names WHY
   (the theme, the slice, the fit, or the frozen scope touched) and `command` is the exact
   `add.py …` from the table. The human confirms or overrides before you run it.
-- **a rejection** — `{ reject, rationale }` — and you create nothing:
-  - `ask_human` — too ambiguous/underspecified to size. Ask the human; never guess a bucket.
-  - `frozen_scope` — it changes frozen scope; route it as a `change-request` back to
-    SPECIFY/CONTRACT of the affected task — never spawn a parallel milestone that forks the truth.
-  - `split_required` — it spans more than one bucket; propose the SMALLEST set of correctly-sized
-    items, each with its own rationale; never force it into one milestone.
+- **a rejection** — `{ reject, rationale }` — and you create nothing, emitting one of the closed set:
+
+<reject_codes>
+- `ask_human` — too ambiguous/underspecified to size. Ask the human; never guess a bucket.
+- `frozen_scope` — it changes frozen scope; route it as a `change-request` back to
+  SPECIFY/CONTRACT of the affected task — never spawn a parallel milestone that forks the truth.
+- `split_required` — it spans more than one bucket; propose the SMALLEST set of correctly-sized
+  items, each with its own rationale; never force it into one milestone.
+</reject_codes>
 
 When confirmed, record the `rationale` in the artifact you create or affect — the new
 MILESTONE.md goal/body, the new TASK.md, or a note in the affected TASK.md — never in state.json.

@@ -107,6 +107,7 @@ N× speed; the autonomy dial sets how much actually overlaps.
 
 ## Non-negotiable rules (from the method)
 
+<constraints>
 1. **Direction before speed.** Never start Build until §1–§4 exist and tests are red.
 2. **Trust evidence, not inspection.** A feature is trusted because its tests pass
    and the blind-spots (concurrency, security, architecture) were checked — not
@@ -117,6 +118,7 @@ N× speed; the autonomy dial sets how much actually overlaps.
    `PASS`, `RISK-ACCEPTED` (signed, non-security only), or `HARD-STOP`. A security
    finding is always `HARD-STOP`.
 5. **Ask, don't guess.** If a requirement is unclear, stop and ask the user.
+</constraints>
 
 ## Advancing
 

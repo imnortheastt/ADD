@@ -41,12 +41,14 @@ Fill each survivor file in `.add/` from what the code actually shows — **ask n
 
 Two rules that never bend:
 
+<constraints>
 1. **Never clobber a survivor.** `init` already skips any survivor that exists; if a human
    already wrote `PROJECT.md`, you READ it, you do not overwrite it. Add, never replace.
 2. **Tag every drafted decision `evidence-grounded` vs `guessed`.** A line you read from the
    code is *evidence-grounded* (cite the file). A line you inferred because the code was silent
    is *guessed*. The human's single lock-down is only honest if they can see which is which —
    the guesses are what they actually need to check. (The tags feed `SETUP-REVIEW.md`.)
+</constraints>
 
 ## Where it ends — the lock-down
 

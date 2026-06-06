@@ -51,6 +51,7 @@ never drops to zero (`run.md:22`). That floor is correct; do not engineer around
 
 ## Who writes what — the hard boundary
 
+<constraints>
 - **You (orchestrator)** own all shared writes: `MILESTONE.md`, and every
   `add.py advance <slug>` / `add.py gate <outcome> <slug>` call. **Always pass the explicit
   `<slug>`** — `advance`/`gate`/`phase` all take an optional task slug and act on it
@@ -62,6 +63,7 @@ never drops to zero (`run.md:22`). That floor is correct; do not engineer around
 - **Isolation**: spawn each worker with `isolation="worktree"` so concurrent builds
   cannot collide. The worktree is discarded on failure; the task resets to its last-good
   phase.
+</constraints>
 
 ## Design for failure (required)
 
