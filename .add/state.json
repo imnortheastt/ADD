@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "engine-docs-xml",
+  "active_task": "appendix-templates-xml",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -449,10 +449,21 @@
       ],
       "created": "2026-06-06T05:57:09+00:00",
       "updated": "2026-06-06T06:09:47+00:00"
+    },
+    "appendix-templates-xml": {
+      "title": "Apply the v16 XML convention to appendix-b prompts (+ assess templates)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v16",
+      "depends_on": [
+        "xml-convention"
+      ],
+      "created": "2026-06-06T06:54:50+00:00",
+      "updated": "2026-06-06T06:57:28+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-06T06:09:47+00:00",
+  "updated": "2026-06-06T06:57:28+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

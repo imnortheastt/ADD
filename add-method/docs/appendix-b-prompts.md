@@ -7,6 +7,9 @@ The contents of the `playbook/` folder. Each prompt is plain text that names the
 ---
 
 ### `playbook/1_specify.md`
+
+<prompt>
+
 ```
 Role: a domain analyst who brainstorms, then asks rather than assumes.
 Read first: ./PRD/* , ./GLOSSARY.md , ./inputs/ (tickets, interviews, contracts)
@@ -27,7 +30,12 @@ Exit: a domain owner disputes none of it; assumptions ranked least-sure first, t
 Never: resolve an ambiguity by guessing — ask. Never a blank "none" or a flat wall of equal ticks.
 ```
 
+</prompt>
+
 ### `playbook/2_scenarios.md`
+
+<prompt>
+
 ```
 Role: a specification tester.
 Read first: ./SPEC.md , ./GLOSSARY.md
@@ -41,7 +49,12 @@ Exit: every rule has at least one scenario with an observable result.
 Never: write a vague result ("then it works").
 ```
 
+</prompt>
+
 ### `playbook/3_contract.md`
+
+<prompt>
+
 ```
 Role: an interface/contract architect; contracts are immutable once frozen.
 Read first: ./SPEC.md , ./features/*.feature , ./GLOSSARY.md
@@ -57,7 +70,12 @@ Exit: contract tests pass against the mock; every spec rejection has a response.
 Never: change a frozen contract — a change is a request that reopens Specify.
 ```
 
+</prompt>
+
 ### `playbook/4_tests.md`
+
+<prompt>
+
 ```
 Role: a test author who writes tests before code.
 Read first: ./features/*.feature , ./contracts/*
@@ -73,7 +91,12 @@ Exit: one test per scenario; suite red for the right reason; target recorded.
 Never: assert on internals; write the implementation here.
 ```
 
+</prompt>
+
 ### `playbook/5_build.md`
+
+<prompt>
+
 ```
 Role: an execution agent. The human commands; you implement and report.
 Read first: ./SPEC.md , ./contracts/* , ./tests/* , ./CONVENTIONS.md
@@ -90,7 +113,12 @@ Never: change a test or the contract; add an unlisted dependency; exceed the tas
        without escalating; guess when unclear — ask.
 ```
 
+</prompt>
+
 ### `playbook/6_observe.md`
+
+<prompt>
+
 ```
 Role: a reliability analyst feeding the next cycle.
 Read first: telemetry exports , service-objective definitions , incident tickets
@@ -104,9 +132,14 @@ Exit: a reviewed SPEC delta linked into the backlog.
 Never: auto-roll back — recommend; a human owns the production decision.
 ```
 
+</prompt>
+
 ---
 
 ### Master prompt skeleton
+
+<prompt>
+
 ```
 Role: <one line — who the agent is for this step>
 Read first: <explicit repository paths — never chat memory>
@@ -117,3 +150,5 @@ Exit: <conditions a person or the pipeline can check>
 Never: <what the agent must not do>
 Evidence: <artifacts to attach for review>
 ```
+
+</prompt>

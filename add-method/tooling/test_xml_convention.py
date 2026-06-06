@@ -310,6 +310,74 @@ class TestXmlConventionEngineDocs(unittest.TestCase):
                                  f"{name}: narrative section {header!r} carries convention tags — must stay prose")
 
 
+# ─── task appendix-templates-xml: the prompt catalog (docs/appendix-b-prompts.md) ─────────────
+# appendix-b reproduces the playbook/ prompts VERBATIM as a published, copy-able book page. Unlike the
+# skill/ files (which the agent CONSUMES as text), appendix-b is RENDERED — so each prompt's code fence
+# MUST stay a fence: strip it and markdown swallows the <name>/<action> placeholders and re-parses the
+# indented `# why:` / step continuations as nested code, silently breaking the page. The convention is
+# therefore applied by WRAPPING each intact fence in a block-level <prompt> pair, with a blank line
+# after <prompt> and before </prompt> so CommonMark still parses the fence as a code block (the wrap
+# tags render as invisible HTML). Fence-strip then leaves the <prompt> pair, so the vocab check sees it.
+# Vocab here is exactly {prompt}: a self-contained playbook prompt keeps its Read first:/Task:/Exit:/
+# Never: labels as PLAIN TEXT inside <prompt> (the frozen convention's stated rule for appendix-b
+# labels) — no output_format / exit_gate / constraints / reject_codes. templates/*.tmpl are pure
+# fill-in FORMS with no executable structure: assessed, nothing to tag (recorded at the milestone gate).
+_DOCS = _TOOLING.parent / "docs"
+APPENDIX_B = _DOCS / "appendix-b-prompts.md"
+APPENDIX_SUBSET = {"prompt"}  # STRICT — appendix-b is a {prompt} catalog, nothing else
+APPENDIX_INTRO_UNTIL = "### `playbook/1_specify.md`"  # everything before the first prompt is narrative
+
+
+class TestXmlConventionAppendixB(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        assert APPENDIX_B.exists(), f"appendix-b missing: {APPENDIX_B}"
+        cls.text = APPENDIX_B.read_text(encoding="utf-8")
+
+    def test_appendix_prompts_wrapped(self) -> None:
+        """Must: every playbook prompt is a block-level <prompt> that STILL CONTAINS its code fence.
+        Removing the fence (rendering the body as live markdown) would swallow the <name>/<action>
+        placeholders and mangle the indented `# why:` lines — vocab-clean but a broken page."""
+        blocks = re.findall(r"<prompt>(.*?)</prompt>", self.text, re.DOTALL)
+        fences = _FENCE.findall(self.text)
+        self.assertTrue(blocks, "no <prompt> blocks (appendix-b not converted)")
+        self.assertEqual(len(blocks), len(fences),
+                         f"{len(blocks)} <prompt> blocks vs {len(fences)} code fences — "
+                         "each prompt must wrap exactly one intact fence")
+        for i, body in enumerate(blocks):
+            self.assertIn("```", body,
+                          f"<prompt> block #{i + 1} lost its code fence — a removed fence renders the "
+                          "prompt as live markdown and mangles its <…> placeholders / indented lines")
+
+    def test_appendix_vocab_subset(self) -> None:
+        """Reject vocab_offmidiom: every paired tag (code fences stripped) ∈ {prompt}. No engine/phase tags."""
+        tags = _paired_tags(_strip_code_fences(self.text))
+        self.assertTrue(tags, "no paired convention tags found (appendix-b not converted)")
+        offenders = tags - APPENDIX_SUBSET
+        self.assertFalse(offenders,
+                         f"out-of-subset tags {sorted(offenders)} — appendix-b is a {{prompt}} catalog only")
+
+    def test_appendix_render_safe(self) -> None:
+        """Reject page_mangled: with code fences stripped, NO bare <lowercase> placeholder and NO
+        ≥4-space-indented prose line may remain OUTSIDE a fence — both render-break the published page.
+        This is the guard a vocab-only check cannot make: it proves the fences were WRAPPED, not removed."""
+        stripped = _strip_code_fences(self.text)
+        leaked = set(_OPEN.findall(stripped)) - APPENDIX_SUBSET
+        self.assertFalse(leaked,
+                         f"angle-bracket tokens {sorted(leaked)} leaked outside a fence — "
+                         "a removed fence exposed prompt-body placeholders to the renderer")
+        indented = [ln for ln in stripped.splitlines() if ln[:4] == "    " and ln.strip()]
+        self.assertEqual(indented, [],
+                         f"{len(indented)} prose line(s) indented ≥4 spaces outside a fence "
+                         f"(markdown renders them as code): {indented[:3]}")
+
+    def test_appendix_intro_untagged(self) -> None:
+        """Reject narrative_tagged: the intro paragraph (before the first prompt) stays prose."""
+        intro = self.text.split(APPENDIX_INTRO_UNTIL)[0]
+        self.assertEqual(_paired_tags(_strip_code_fences(intro)), set(),
+                         "appendix-b intro carries convention tags — narrative must stay prose")
+
+
 class TestXmlConventionPilot(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
