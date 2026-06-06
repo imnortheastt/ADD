@@ -49,6 +49,14 @@ Out: Method SEMANTICS (flow, gates, autonomy, CLI behavior) — UNCHANGED; this 
   this is CI-able and gates each rewrite task. A behavioral eval (does a real agent escalate/ask/
   classify correctly?) tests JUDGMENT, is non-deterministic + model-specific, and is recorded as an
   indicative confidence signal only — never a blocking before/after diff. Honors `words-exist≠method-works`.
+- **"Provably preserved" is operationally NECESSARY-not-SUFFICIENT** (ratified at the `semantic-inventory`
+  contract freeze, 2026-06-06): the deterministic gate proves preservation is NECESSARY-true — nothing
+  dropped/renamed/relocated, every safety invariant's anchors intact in a tight window, no listed exception
+  introduced. It does NOT prove SUFFICIENT preservation: an INVERSION around surviving anchors (an added
+  "unless…"/negation/scope-narrowing that keeps every anchor word) is model-judgment and is CEDED, by name,
+  to human review + the indicative behavioral eval. So the goal's "semantics provably preserved" = the gate
+  (necessary) + review + indicative eval (the rest), never the gate alone. `clarity-greenstate` must record
+  "preserved: PASS" against THIS definition (gate + review + eval), not claim the gate alone proves it.
 - **The keep-list is sacred**: load-bearing vocabulary (`one-approval front` · `touch-boundary` ·
   `fold` · `competency delta` · `least-sure flag` · `the trust layer` · `HARD-STOP`/`RISK-ACCEPTED`/
   `PASS` · `evidence auto-gate` · the v16 XML tag names) is NOT reworded — renaming breaks GLOSSARY,

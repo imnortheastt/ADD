@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "wording-rubric",
+  "active_task": "semantic-inventory",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -427,10 +427,19 @@
       "depends_on": [],
       "created": "2026-06-06T09:03:25+00:00",
       "updated": "2026-06-06T10:50:11+00:00"
+    },
+    "semantic-inventory": {
+      "title": "Capture the semantic-preservation inventory + ship the deterministic diff gate",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v17",
+      "depends_on": [],
+      "created": "2026-06-06T11:30:39+00:00",
+      "updated": "2026-06-06T12:34:35+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-06T10:50:11+00:00",
+  "updated": "2026-06-06T12:34:35+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
