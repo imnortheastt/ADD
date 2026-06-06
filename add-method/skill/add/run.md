@@ -31,8 +31,8 @@ any part and the bundle goes back to draft — that is backward-correction (prin
 Approve, and the run begins. The seam guide (`phases/3-contract.md`) carries the
 **freeze review checklist** — six lines that walk the human through exactly this, ⚠-first.
 
-**The least-sure flag — aiming the one approval.** A single approval over a whole bundle invites a
-rubber stamp. So the AI presents the bundle **least-sure first**: of everything it is asking the human
+**The least-sure flag — aiming the one approval.** A single approval over a whole bundle is easy to
+grant without reading. So the AI presents the bundle **least-sure first**: of everything it is asking the human
 to freeze, it names the **1–2 points most likely to be wrong**, tagged by part
 (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`), each with *why* it is uncertain and
 *what it costs if wrong*. The §1 assumptions feed it, but a flag may equally point at an uncovered
@@ -40,7 +40,7 @@ scenario or the contract shape. If nothing is materially uncertain, the AI still
 biggest risk, however small — never a blank "none". Honest about its limit: the flag records that the
 human approved with the soft spots **in front of them**, eyes open; it makes a real review cheap and a
 lazy one visibly negligent, but it cannot *force* engagement — and the AI never asserts that the human
-engaged when it cannot know (a self-asserted gate would just be the rubber stamp one level up). Closing
+engaged when it cannot know (a self-asserted gate would just move the unread approval one level up). Closing
 that enforcement gap is the job of a CI checker, not of prose.
 
 ## When the run begins — the scope-lock trigger
@@ -94,6 +94,7 @@ compressed into one task.
 
 ## The evidence auto-gate
 
+<constraints>
 The verify gate may be resolved by **evidence** rather than by a person — when the evidence is
 sufficient and the result is recorded (principle 7, reframed: an automated, recorded pass is an
 explicit pass, not a skip).
@@ -109,6 +110,7 @@ explicit pass, not a skip).
 
 The auto-gate NEVER writes a human signature it did not get. An auto-PASS is logged as *auto-resolved*,
 honestly — the line between a pass and a skip is the recorded outcome, not a forged name.
+</constraints>
 
 ## Emitting deltas — feeding the foundation back
 
@@ -125,6 +127,7 @@ five competencies instead of letting its findings evaporate at end-of-run.
 
 ## The autonomy dial
 
+<constraints>
 How much a run may auto-gate is a **per-scope setting**, not a global switch (principle 5: trust is
 earned per scope). A task declares its level in its `TASK.md` header:
 
@@ -160,3 +163,4 @@ always records — stopping is never blocked), and `add.py audit` flags the same
 record whose header was tampered or whose GATE RECORD reviewer is the auto-gate — which CI enforces
 (audit-ci). The honest limit mirrors the audit's: an **undeclared** high-risk scope passes; declaring
 is the human seam, the engine enforces what was declared.
+</constraints>
