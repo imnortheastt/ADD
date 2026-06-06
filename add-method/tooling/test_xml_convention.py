@@ -213,8 +213,6 @@ ENGINE_FILES = {
         "tags": {"constraints"},
         "narrative": (
             "## The one-approval front (v7)",
-            "## The evidence auto-gate",
-            "## The autonomy dial",
         )},
     "streams.md": {
         "tags": {"constraints"},
