@@ -28,7 +28,7 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - wall of -> flat list of [mapped]
 - collapses to -> shortens to [mapped]
 - first feeder -> first input [mapped]
-- blast radius -> scope of impact [mapped]
+- blast radius -> scope of impact [enforced]
 
 ## enforced_banned
 

@@ -26,7 +26,7 @@ Compute both from one `python3 .add/tooling/add.py status` — no new state:
   the next `status`.
 - **REVIEW-QUEUE** — the irreducibly serial part: the **one-approval front** (contract
   freeze) and any **Verify escalation**. One human, one queue. Present these one at a
-  time, never in a batch the human will rubber-stamp.
+  time, never in a batch the human will approve without reading.
 
 ```
   add.py status ─► READY-QUEUE ──spawn workers──► builds run ──► REVIEW-QUEUE ──► done
@@ -171,7 +171,7 @@ The contract is identical whichever model runs it (the model is disposable, like
 | Tier | When | Claude Code | Any other runner |
 |------|------|-------------|------------------|
 | **mid** | ordinary, well-tested scope; clear contract | `sonnet` | the runner's balanced model |
-| **top** | complex / ambiguous / cross-cutting / large blast radius | `opus` | the runner's strongest reasoning model |
+| **top** | complex / ambiguous / cross-cutting / broad scope of impact | `opus` | the runner's strongest reasoning model |
 
 Two rules sit **above** model choice and never bend:
 - **High-risk ⇒ `conservative` autonomy, regardless of model** (`run.md` high-risk guard). A

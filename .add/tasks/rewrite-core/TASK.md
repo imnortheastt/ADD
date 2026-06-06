@@ -1,7 +1,7 @@
 # TASK: Rewrite SKILL.md + 9 engine docs to the frozen rubric + 2 structural wins
 
 slug: rewrite-core · created: 2026-06-06 · stage: mvp · risk: high · autonomy: conservative
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower
      the dial with `autonomy: conservative` — the engine refuses an unguarded completion
      (`unguarded_high_risk_auto`, run.md guard). A comment is never a declaration. -->
