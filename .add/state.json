@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "installer-handoff",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,28 +418,10 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
-    },
-    "getting-started-rewrite": {
-      "title": "GETTING-STARTED: the conversational path becomes the spine",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v15",
-      "depends_on": [],
-      "created": "2026-06-05T14:38:17+00:00",
-      "updated": "2026-06-05T15:27:58+00:00"
-    },
-    "installer-handoff": {
-      "title": "init ends with an AI handoff; flags become optional",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v15",
-      "depends_on": [],
-      "created": "2026-06-05T14:38:17+00:00",
-      "updated": "2026-06-05T15:27:59+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-05T15:27:59+00:00",
+  "updated": "2026-06-06T01:28:35+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -544,17 +526,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v15": {
-      "title": "Zero-command on-ramp",
-      "goal": "After the single install command, a newcomer reaches their first verified feature purely by talking to the AI \u2014 no typed add.py commands",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-05T10:04:41+00:00",
-      "updated": "2026-06-05T10:04:41+00:00"
     }
   },
-  "active_milestone": "v15",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -613,6 +587,17 @@
         "release-1-1-0"
       ],
       "archived": "2026-06-05"
+    },
+    {
+      "slug": "v15",
+      "title": "Zero-command on-ramp",
+      "tasks": 3,
+      "task_slugs": [
+        "getting-started-rewrite",
+        "installer-handoff",
+        "skill-onramp"
+      ],
+      "archived": "2026-06-06"
     }
   ]
 }

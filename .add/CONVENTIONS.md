@@ -95,6 +95,9 @@ Architecture:
   a follow-up task — v12-1's multiline-render gap had been fixed by v11 `1b817c0` BEFORE the fold scoped
   it. At fold time, empirically check the gap still exists against current code.
   [deltas-multiline-render — folded foundation-version 10]
+  Validated v15: re-verifying the routed gap shrank installer-handoff from "implement the handoff"
+  to "pin it + fix the hint" — half the scoped work was already shipped (v12). [installer-handoff —
+  folded foundation-version 14]
 - (TDD) **Diff §4's coverage-target nouns against the test list before declaring red-complete.**
   A red suite can under-cover its own stated target — two §4-mandated branches (3rd marker
   prefix, milestone --json key-set) were only caught at verify. At the tests phase, walk the
@@ -160,3 +163,22 @@ Architecture:
   human's word.** Two OIDC-shaped failures (404, ENEEDAUTH) named no cause; the token pivot went
   green first try — against an opaque external seam, switching mechanisms beats deeper debugging.
   [release-1-1-0 — folded foundation-version 13]
+- (TDD) **Pin behavior at the edges first.** Happy-path behavioral pins found nothing new; the
+  missing-VALUE edge found the real bug — cli.js silently dropped a valueless `--stage`/`--name`
+  while the pip twin errored. Spend the first behavioral assertions on the boundary inputs, not the
+  golden path. [installer-handoff — folded foundation-version 14]
+- (ADD) **Pair every multi-surface build with an adversarial parity hunter.** The suite checks each
+  surface in isolation, so a divergence between twins (cli.js vs argparse) passes green; only a
+  cross-surface lens that diffs the surfaces against each other catches it. [installer-handoff —
+  folded foundation-version 14]
+- (ADD) **A cross-cutting reword enumerates EVERY surface carrying the pattern before freezing** —
+  companion guides AND the book, swept in the same grep as the gap-named file. Scope only the one
+  file the gap named and a green structural suite (even a passing protocol walk) will sit atop the
+  SAME defect in unswept twins; here the human-types-the-lock instruction survived in two unswept
+  guides past a green v1 — the cross-surface lens, not the suite, caught it → CR v2. [skill-onramp —
+  folded foundation-version 14]
+- (ADD) **Moving WHO-EXECUTES a gated action (human→agent) keeps the DECISION human only if the
+  trigger is defined tightly.** "Recorded confirmation" needed "an explicit yes to the gate itself"
+  so an eager agent can't read ambient mid-stream agreement as consent; prose-guard the consent and
+  name the machine-readable enforcement as a deferral, never silent. [skill-onramp — folded
+  foundation-version 14]

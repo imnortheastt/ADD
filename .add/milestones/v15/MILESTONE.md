@@ -39,9 +39,9 @@ Out: new engine commands (add.py is feature-frozen this milestone); non-Claude
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [x] getting-started-rewrite   depends-on: none                — the conversational path becomes the spine; 7-phases-by-hand moves to an escape-hatch appendix; shipped test anchors stay green
 - [x] installer-handoff         depends-on: none                — `init` prints the AI handoff ("open Claude Code → /add — no further commands") and infers --name/--stage defaults so the install is one short command
-- [ ] skill-onramp              depends-on: installer-handoff   — verify /add on a fresh install drives setup→first-milestone end-to-end with zero typed commands; close any gaps found (protocol-walk test)
+- [x] skill-onramp              depends-on: installer-handoff   — verify /add on a fresh install drives setup→first-milestone end-to-end with zero typed commands; close any gaps found (protocol-walk test)
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] A newcomer reading GETTING-STARTED top-to-bottom types exactly ONE command (the install) before their first verified feature        (← getting-started-rewrite; spine ban + 16-guard union green, 2026-06-05)
 - [x] `npx @pilotspace/add init` with no flags succeeds and its final output names the next action as a conversation, not a command        (← installer-handoff; behavioral pins ×2 + flagless hint, 2026-06-05)
-- [ ] A protocol-walk test proves the /add flow from fresh install to a gated first task issues every add.py call ITSELF (the human typed none)        (← skill-onramp)
+- [x] A protocol-walk test proves the /add flow from fresh install to a gated first task issues every add.py call ITSELF (the human typed none)        (← skill-onramp; test_protocol_walk_zero_typed_commands green against the installed tree + §4/companion guides reworded agent-run, CR v2, 2026-06-05)

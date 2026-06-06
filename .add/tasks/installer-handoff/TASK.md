@@ -243,13 +243,13 @@ the pip twin enforces choices — a parity candidate for a future task.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [ADD · open] adversarial verify lenses catch cross-surface DIVERGENCE the
+- [ADD · folded] adversarial verify lenses catch cross-surface DIVERGENCE the
   suite structurally cannot — cli.js silently dropped a valueless flag while
   argparse errored; pair every multi-surface build with a parity hunter
   (evidence: the blocker finding, fixed via disclosed strengthening amendment)
-- [TDD · open] behavioral pins on the happy path found nothing new; the
+- [TDD · folded] behavioral pins on the happy path found nothing new; the
   missing-value EDGE found a real bug — pin behavior at the edges first
   (evidence: test_missing_flag_value_fails red on npx, green on pip)
-- [SDD · open] re-verifying the routed gap shrank this task from "implement
+- [SDD · folded] re-verifying the routed gap shrank this task from "implement
   the handoff" to "pin it + fix the hint" — half the scoped work already
   existed (evidence: §1 GAP RE-VERIFIED block; v12 shipped the handoff)

@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 13
+slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 14
 
 ---
 
@@ -99,9 +99,22 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 13
   + PyPI** (tag-driven, guard-gated; npm auth = granular 2FA-bypass token after OIDC would
   not engage — rotation ~90d watched). SDD learnings carried: (a) prose artifacts accrete
   PROPERTY guards across milestones — grep the guards and design to the UNION before any
-  rewrite; (b) strip comments before machine-token matching, or every documentation form of
-  the token self-triggers; (c) a CI job that runs another ecosystem's tests must provision
-  THAT ecosystem's declared floor itself (build isolation honors it everywhere else).
+  rewrite (VALIDATED v15: the union rule's first PREMEDITATED application — a 16-guard
+  GETTING-STARTED rewrite landed green first pass); (b) strip comments before machine-token
+  matching, or every documentation form of the token self-triggers; (c) a CI job that runs
+  another ecosystem's tests must provision THAT ecosystem's declared floor itself (build
+  isolation honors it everywhere else).
+- v15 (Zero-command on-ramp): **SHIPPED 2026-06-06** — after one install command a newcomer
+  reaches their first verified feature purely by talking to the AI: GETTING-STARTED restructured
+  around the conversational spine (the 7-phases-by-hand became an escape-hatch appendix), both
+  installers end with an AI handoff + inferred `--name/--stage`, and a protocol-walk test drives a
+  fresh install → init → lock → first gated task issuing every `add.py` call ITSELF against the
+  INSTALLED tree (criterion 3). SDD learning carried: a behavioral JOURNEY test (the protocol walk)
+  and a PROSE-coherence test are different guarantees — the walk proved the machinery works at v1
+  while the guide still told the human to TYPE the lock; words-exist≠method-works cuts both ways, so
+  a green journey is not evidence the guide is coherent. Engine feature-frozen all milestone
+  (add.py md5 pinned ×3); the lock moved from human-typed to AGENT-run on the human's explicit
+  confirmation, consent prose-guarded — the machine-readable confirm protocol (gap 5) stays OPEN.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -143,6 +156,10 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 13
 - **A review prompt lives AT the seam (v14 · UDD):** put the checklist where the decision already
   happens, sized to the reviewer's real attention (one minute · six lines · ⚠-first) — a separate
   review artifact is ceremony that competes with the decision instead of aiming it.
+- **Precise promises beat catchy absolutes (v15 · UDD):** "zero-command" survived contact with the
+  rewrite only as "one **shell** command" — `/add` is still typed. A headline that the product can't
+  literally keep erodes trust; name the exact, honest boundary (the install is the one command; the
+  loop after it is conversational) rather than the slogan.
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -183,3 +200,5 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-05 · foundation-version: 13
 | 2026-06-05 | fold v13-1 learnings → foundation-version 12 (5 open deltas: 2 new TDD conventions · 1 security-line flip-cite validation · 1 convention RETIRED by its own sunset clause — a first · 1 SDD absolute-join rule into §Spec) | human-gated fold at v13-1 close; all 5 confirmed (none rejected) | +2 CONVENTIONS bullets (behavioral-scaffold-test · template-fixture-inherits-examples); decide-next cross-check retired (engine hint shipped); security-line rule validated cheap in practice; §Spec v13-1 bullet; deltas flipped open→folded |
 | 2026-06-05 | npm publish auth = granular 2FA-bypass token (NPM_TOKEN secret); PyPI stays OIDC; OIDC trusted publishing for npm ATTEMPTED and parked (mint never engaged from the workflow: 404 then ENEEDAUTH with form byte-exact, npm ≥11.5, id-token: write, no token config) | the 1.1.0 release act hit four auth-layer failures, each failing closed; Tin pivoted the mechanism after OIDC proved opaque — a working release now beats a perfect auth story | v1.1.0 live on BOTH registries (run 27009563639); rotation ~90d watched in §7 + publish.yml header; OIDC revisit-later note kept in the workflow header |
 | 2026-06-05 | fold v14 learnings → foundation-version 13 (14 open deltas: 9 new conventions · 1 publish-hook flip-cite validation · 1 §Spec v14 bullet carrying 3 SDD learnings · 1 §UDD seam-sized-review bullet) | human-gated fold at v14 close; all 14 confirmed (none rejected) | +9 CONVENTIONS bullets (protocol-walk · refuse-on-drift · arrange-through-CLI-contracts · strengthen-never-silent · epoch-debt-at-the-gate · contradicting-subset · dogfood-own-rule · dial-absorbs-change-requests · pivot-mechanism-on-human-word); §Spec v14 bullet; §UDD seam bullet; deltas flipped open→folded |
+| 2026-06-06 | ship v15 Zero-command on-ramp: after one install command a newcomer reaches their first verified feature by talking to the AI — GETTING-STARTED conversational spine (7-phases-by-hand → escape-hatch appendix); both installers print an AI handoff + infer `--name/--stage`; protocol-walk test drives fresh-install→gated-task issuing every add.py call itself; the lock moves human-typed → AGENT-run on the human's explicit confirmation (consent prose-guarded) | the human's only post-install act is conversation; the CLI becomes the agent's hands + the human's override, never a required keystroke | v15 SHIPPED 3/3, 3/3 criteria; 457 tests; engine feature-frozen (md5 pinned ×3); a CR v2 closed a cross-surface gap (same human-types instruction in 2 unswept guides) found by the adversarial lens, not the suite |
+| 2026-06-06 | fold v15 learnings → foundation-version 14 (9 open deltas: 4 new conventions · 1 §Spec v15 bullet · 1 §UDD precise-promises bullet · 2 flip-cite reinforcements) | human-gated fold at v15 close; all 9 confirmed (none rejected) | +4 CONVENTIONS bullets (pin-behavior-at-edges · multi-surface-parity-hunter · cross-cutting-reword-enumerates-every-surface · move-who-executes-needs-tight-trigger); §Spec v15 bullet (behavioral-journey≠prose-coherence); §UDD precise-promises bullet; UNION-rule + reverify-routed-gap flip-cited as validated; deltas flipped open→folded |

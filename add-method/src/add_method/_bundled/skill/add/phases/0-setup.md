@@ -69,14 +69,16 @@ tag thin or inferred answers `guessed`.
 ## 4 · The one human gate — the lock-down
 
 Present `SETUP-REVIEW.md` least-sure-first (the `guessed` rows are what the human must actually check). They
-sign **once**:
+confirm **once** — an explicit yes to the lock-down itself, in conversation; ambient agreement mid-stream is
+not a confirmation. On that recorded confirmation, you run the lock with their name:
 
 ```bash
 python3 .add/tooling/add.py lock --by "<name>"
 ```
 
-`lock` records the lock layers (foundation · scope · contract) in one atomic write and opens the build. It is
-judgment-free — it does **not** parse `SETUP-REVIEW.md`; the human *reading* it is the review.
+Typing the command themselves stays the **escape hatch** — the decision is always the human's; you just
+execute it. `lock` records the lock layers (foundation · scope · contract) in one atomic write and opens the
+build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the human *reading* it is the review.
 
 ## 5 · After the lock
 
@@ -90,7 +92,7 @@ judgment-free — it does **not** parse `SETUP-REVIEW.md`; the human *reading* i
 - [ ] `.add/state.json` exists; setup was seeded unlocked (`--await-lock`) then locked.
 - [ ] Survivors filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
 - [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written least-sure-first.
-- [ ] Human signed `add.py lock`; first task §3 `FROZEN @ v1`; build open.
+- [ ] Human confirmed the lock-down and `add.py lock --by` ran with their name; first task §3 `FROZEN @ v1`; build open.
 
 ## Next
 

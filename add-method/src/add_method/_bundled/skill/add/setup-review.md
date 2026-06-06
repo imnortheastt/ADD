@@ -27,7 +27,7 @@ survivors). It is a per-onboarding, setup-altitude artifact; it sits beside `PRO
 | 1 | <the drafted decision> | PROJECT.md \| scope \| first-contract | `guessed` | <the inference + why you had to guess> |
 | 2 | <…> | <…> | `evidence-grounded` | <cite the source file/line you read it from> |
 
-Sign: reviewed the above → `add.py lock --by "<name>"`
+Sign: confirm in chat → the agent runs `add.py lock --by "<name>"` (typing it yourself works too)
 ```
 
 Rows are numbered for reference at the gate ("row 1 is the one I'm least sure about").
@@ -51,7 +51,8 @@ Rows are numbered for reference at the gate ("row 1 is the one I'm least sure ab
 ## Where it ends
 
 `SETUP-REVIEW.md` is **read-only context** for the lock-down. You do not ask the human to approve it
-field-by-field; you present it, least-sure-first, and they sign once:
+field-by-field; you present it, least-sure-first; they confirm in conversation, and you run the lock
+with their name:
 
 ```bash
 python3 .add/tooling/add.py lock --by "<name>"

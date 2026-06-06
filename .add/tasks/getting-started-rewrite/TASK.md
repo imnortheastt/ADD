@@ -242,9 +242,9 @@ have ONE contracted surface — keep it that way.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [SDD · open] designing to the grepped guard-UNION before writing landed a
+- [SDD · folded] designing to the grepped guard-UNION before writing landed a
   16-guard doc rewrite green first pass — the union rule's first premeditated
   application (evidence: zero pre-existing guard reds at build)
-- [UDD · open] "zero-command" survived contact only as "one SHELL command" —
+- [UDD · folded] "zero-command" survived contact only as "one SHELL command" —
   /add is still typed; precise promises beat catchy absolutes (evidence:
   doc-truth verifier caught the intro contradicting §1)
