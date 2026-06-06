@@ -68,13 +68,12 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | verify | `phases/6-verify.md` | §6 checks + gate record | **AI auto-gates on evidence**; human on residue/security‡ |
 | observe | `phases/7-observe.md` | §7 spec delta | human + AI |
 
-† **One-approval front (v7).** §1–§4 are drafted by the AI as a single bundle and frozen
-together; the human gives **one approval, at the contract freeze** (the autonomy seam) — not
-three separate sign-offs. The AI presents the bundle least-sure-first. See `run.md`.
-‡ **Verify auto-gate (v6–v7).** Under `autonomy: auto` (the default) a run may auto-PASS once
-the evidence is complete (all tests green · loops dry · no residue) — recorded as *auto-resolved*,
-an explicit PASS, not a skip. **Security always escalates** (HARD-STOP), as do concurrency /
-architecture residue and `conservative` autonomy. See `run.md`.
+† **One-approval front (v7).** §1–§4 are one bundle; the human gives **one approval at the
+contract freeze** (the seam), presented least-sure-first. See `run.md`.
+‡ **Verify auto-gate (v6–v7).** Under `autonomy: auto` (the default) a run may auto-PASS on
+complete evidence — recorded as *auto-resolved*, an explicit PASS, not a skip. **Security always
+escalates** (HARD-STOP); so do concurrency / architecture residue and `conservative` autonomy.
+See `run.md`.
 
 Whenever you present a seam to the human in chat (intake · front approval · gate ·
 milestone close), follow `report-template.md` — SUMMARY → DECISION → ⚠ FLAGS →
@@ -86,24 +85,11 @@ You write them as `open`; the human folds them into `PROJECT.md`. Read `deltas.m
 grammar and the status lifecycle. At milestone close (or on demand), run the fold ritual that
 gathers confirmed deltas into a versioned foundation — read `fold.md`.
 
-## The dynamic run (v6–v7)
+## Beyond the front — load on demand
 
-Once **§3 CONTRACT is FROZEN**, the build→verify half runs as a dynamic, auto-gated run —
-fan-out + in-run convergence — instead of a manual build (`autonomy: auto` is the default; lower
-to `conservative` to keep a human at the gate). Read `run.md` for the trigger, the touch-boundary,
-the evidence auto-gate, and the autonomy dial. The human-led front still owns *direction*, but v7
-compresses it to a **single approval at the contract seam**; the run never edits a frozen contract
-and never auto-passes a security finding.
-
-## Parallel streams — pipelining independent tasks (opt-in)
-
-The default is one task at a time. When a milestone has several tasks whose `deps=` are
-already `PASS` and a human is ready to review, you MAY run them concurrently: read
-`streams.md`. It changes no `add.py` code — you compute a READY-QUEUE from `status`,
-spawn one worker per ready task (each in a worktree, building behind its own frozen
-contract), and keep the human seams (front approval · escalated Verify) on one serial
-REVIEW-QUEUE. The honest gain is pipelining (the reviewer never waits on a build), not
-N× speed; the autonomy dial sets how much actually overlaps.
+Once **§3 CONTRACT is FROZEN**, the build→verify half is a dynamic, auto-gated run
+(`autonomy: auto` default, lowered to `conservative` for a human gate) — read `run.md`. To
+pipeline several ready tasks behind their own frozen contracts, read `streams.md`.
 
 ## Non-negotiable rules (from the method)
 
