@@ -421,7 +421,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-06T07:14:49+00:00",
+  "updated": "2026-06-06T09:02:14+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -526,9 +526,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v17": {
+      "title": "prompt-clarity",
+      "goal": "Rewrite the agent-facing prompt surface to be literal, direct, and positively-framed \u2014 with semantics provably preserved \u2014 without breaking the method's defined vocabulary",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-06T09:02:14+00:00",
+      "updated": "2026-06-06T09:02:14+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "v17",
   "archived": [
     {
       "slug": "v5",
