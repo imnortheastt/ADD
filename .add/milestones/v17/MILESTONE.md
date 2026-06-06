@@ -75,6 +75,15 @@ Out: Method SEMANTICS (flow, gates, autonomy, CLI behavior) — UNCHANGED; this 
 - **Mirror parity**: every `skill/add/` edit → `_bundled/` → `.claude/skills/add` byte-identical
   (`test_bundle_parity` + `test_tree_parity` backstop); appendix-b → its 3 tracked copies.
 
+### ⚠ PENDING — NOT yet ratified (held at the rewrite-core freeze, 2026-06-06)
+- **Surface-wide idiom promotion as a binding RULE.** rewrite-core proposed: flip `[mapped]`→`[enforced]`
+  when an idiom leaves the WHOLE surface (the `wording_lint` surface scan), not just one task's files. The
+  human FROZE rewrite-core's contract — which flips `blast radius` and leaves `rubber-stamp` `[mapped]` as a
+  per-task action — but **HELD** the milestone-level rule that would bind `rewrite-guides` + `clarity-greenstate`.
+  **RE-RAISE before rewrite-guides** (clarity-greenstate's exit asserts `enforced_banned == full idiom_map`, so
+  the rule must be settled by then). Detail: F1's matcher is hyphen-bound (`rubber-stamp` ≠ space-form
+  "rubber stamp") — whatever is ratified, promotion must clear BOTH forms surface-wide.
+
 ## Shared / risky contracts (freeze these first)
 - The wording RUBRIC (idiom map · keep-list · negative-keep-list · emphasis/scope policy · reject codes) -> owning task `wording-rubric`
 - The semantic-preservation INVENTORY (the frozen set of semantic units every rewrite must keep) + its diff test -> owning task `semantic-inventory`
