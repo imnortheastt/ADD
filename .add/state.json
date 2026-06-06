@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "mirror-greenstate",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,65 +418,10 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
-    },
-    "xml-convention": {
-      "title": "Freeze XML prompt convention + 1-specify pilot",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v16",
-      "depends_on": [],
-      "created": "2026-06-06T01:51:41+00:00",
-      "updated": "2026-06-06T05:38:05+00:00"
-    },
-    "phase-guides-xml": {
-      "title": "Convert phase guides 0,2-7 to the XML convention",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v16",
-      "depends_on": [
-        "xml-convention"
-      ],
-      "created": "2026-06-06T05:41:27+00:00",
-      "updated": "2026-06-06T05:47:30+00:00"
-    },
-    "engine-docs-xml": {
-      "title": "Convert the 10 engine docs to the XML convention",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v16",
-      "depends_on": [
-        "xml-convention"
-      ],
-      "created": "2026-06-06T05:57:09+00:00",
-      "updated": "2026-06-06T06:09:47+00:00"
-    },
-    "appendix-templates-xml": {
-      "title": "Apply the v16 XML convention to appendix-b prompts (+ assess templates)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v16",
-      "depends_on": [
-        "xml-convention"
-      ],
-      "created": "2026-06-06T06:54:50+00:00",
-      "updated": "2026-06-06T06:57:28+00:00"
-    },
-    "mirror-greenstate": {
-      "title": "v16 green-state sweep: full suite + 3-mirror parity + audit",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v16",
-      "depends_on": [
-        "phase-guides-xml",
-        "engine-docs-xml",
-        "appendix-templates-xml"
-      ],
-      "created": "2026-06-06T06:59:00+00:00",
-      "updated": "2026-06-06T07:00:07+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-06T07:00:07+00:00",
+  "updated": "2026-06-06T07:14:49+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -581,17 +526,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v16": {
-      "title": "xml-prompt-structure",
-      "goal": "XML-structure the agent-executable add-method prompt surface (Rule 5 idiom) without bloating lean prompts",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-06T01:51:36+00:00",
-      "updated": "2026-06-06T01:51:36+00:00"
     }
   },
-  "active_milestone": "v16",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -659,6 +596,19 @@
         "getting-started-rewrite",
         "installer-handoff",
         "skill-onramp"
+      ],
+      "archived": "2026-06-06"
+    },
+    {
+      "slug": "v16",
+      "title": "xml-prompt-structure",
+      "tasks": 5,
+      "task_slugs": [
+        "xml-convention",
+        "phase-guides-xml",
+        "engine-docs-xml",
+        "appendix-templates-xml",
+        "mirror-greenstate"
       ],
       "archived": "2026-06-06"
     }

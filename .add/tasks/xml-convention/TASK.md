@@ -237,17 +237,17 @@ frozen list (`vocab_offmidiom`), never a silent new tag.
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [SDD · open] a CLOSED notation needs a disambiguation rule when it collides with notation already in
+- [SDD · folded] a CLOSED notation needs a disambiguation rule when it collides with notation already in
   the prose — the convention tags `<x>…</x>` collided with existing `<name>`/`<why>`/`<cost>` prose
   placeholders; resolved by the PAIRED-tag rule (a convention tag is the intersection of open∩close).
   (evidence: test_vocab_in_set first flagged 3 placeholders before the rule was added.)
-- [ADD · open] tests-green ≠ faithful conversion: a content-shape guard cannot see over-tagging the
+- [ADD · folded] tests-green ≠ faithful conversion: a content-shape guard cannot see over-tagging the
   spec never enumerated, so for non-uniform engine docs the sole-reviewer risk is real — the per-file
   narrative list must GROW with each task or the over-tagging guard is hollow. (evidence: advisor
   flagged this as the live risk for autonomous tasks 3–4.)
-- [UDD · open] a prompt file is dual-audience (agent + human); over-tagging hurts the human reader, so
+- [UDD · folded] a prompt file is dual-audience (agent + human); over-tagging hurts the human reader, so
   leanness is a UX constraint, not only a style one — the vocabulary was driven from a field-level
   scheme down to 5 block-level tags to keep the prose readable. (evidence: the chosen block-level core.)
-- [TDD · open] RED-before-build holds even for a doc refactor with no runtime: the guard was authored
+- [TDD · folded] RED-before-build holds even for a doc refactor with no runtime: the guard was authored
   failing (pilot unconverted) then made green by the doc edit alone, no test weakened. (evidence:
   test_xml_convention RED→GREEN, suite 461/0, no existing test touched.)

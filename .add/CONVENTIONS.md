@@ -41,6 +41,10 @@ Architecture:
   re-aim or retire any guard the ship invalidated, as an explicit change-request (human-approved), never
   a silent weakening to make the suite green. [v7 ship broke test_v8_docs (it required the now-removed
   v6/v7 caveat); re-aimed → test_docs_post_ship_honesty — folded foundation-version 4]
+  Reinforced v16: a milestone of several conversion tasks also wants a dedicated green-state SWEEP task that
+  runs the UNION of all guards at once (full suite + both parity guards + audit + a vocab census) — per-task
+  greens can each pass while a cross-file interaction is red; the sweep is the only run that proves the whole.
+  [mirror-greenstate — folded foundation-version 15]
 - (ADD/SDD) **Docs must not outrun their gate.** A surface may not describe a flow whose verify gate is
   not yet recorded PASS. The v6/v7 onboarding drift existed precisely because three surfaces claimed v7
   before its tasks passed. Claim only what the gate has earned. [folded foundation-version 4]
@@ -53,6 +57,9 @@ Architecture:
   content anchors (required section present + ordering) + cross-tree byte-identity (canonical ==
   bundled == dogfood mirror), not behavior. Write the assertion red before the edit; a parity test
   backstops drift. [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7]
+  Held again v16 across a 7-file batch AND a fenced verbatim doc: every guard authored RED (no blocks yet) →
+  green by the doc edit alone, no test weakened — RED-before-build holds even when there is no runtime to
+  cover. [phase-guides-xml + xml-convention — folded foundation-version 15]
 - (ADD) **Verify a gap against the shipped path.** A finding seen through the wrong entry point isn't
   real — bare `add.py init` bypasses `bin/cli.js` (which does the bundling), so "init doesn't bundle the
   skill+book" was a test artifact. Reproduce a gap on the SHIPPED path before scoping a fix.
@@ -182,3 +189,28 @@ Architecture:
   so an eager agent can't read ambient mid-stream agreement as consent; prose-guard the consent and
   name the machine-readable enforcement as a deferral, never silent. [skill-onramp — folded
   foundation-version 14]
+- (ADD) **Tag by AUDIENCE — a rendered doc wraps the intact fence; a consumed one tags bare.** A published
+  page (appendix-b) must keep each code fence INTACT and wrap it (`<prompt>` + a blank line each side,
+  load-bearing so CommonMark still parses the fence) — REMOVING the fence renders the body as live markdown
+  and silently swallows `<…>` placeholders + mangles indented lines; a skill file the agent reads as TEXT can
+  tag bare. The fence-exemption clause is load-bearing, not decorative: a fence is self-marking, so never wrap
+  one — which is exactly why the engine docs stayed at the two tags the first-use map reserved.
+  [appendix-templates-xml + engine-docs-xml — folded foundation-version 15]
+- (TDD) **A vocab/structure test is BLIND to rendering — guard the render structurally.** "Tags are valid" ≠
+  "the page renders". After stripping fences, assert no `<lowercase>` placeholder and no ≥4-space-indent prose
+  line survives OUTSIDE a fence — the structural proxy for "fences were wrapped, not removed" that a vocab
+  check cannot make. A green vocab suite over a broken page is the trap. [appendix-templates-xml — folded foundation-version 15]
+- (TDD) **Author a content guard with BOTH halves, then triage its RED.** A content guard needs its positive
+  AND negative half (a tag PRESENT in raw text AND ABSENT after the transform) — present-only misses a
+  deletion, absent-only misses a leak. And a freshly-authored assertion can fail for the WRONG reason (an
+  `assertRegex`/`re.search` with no DOTALL cannot match a multi-line block); triage RED as "not converted" vs
+  "the assertion can't express its intent" before trusting it. [engine-docs-xml — folded foundation-version 15]
+- (TDD) **A multi-file convention needs a CENSUS guard, not only per-file subset checks.** Count that all N
+  expected tags appear (WHOLE) AND no unexpected tag appears (CLOSED) across the entire surface — it catches a
+  tag that drifted off-vocabulary in a file the per-file table forgot to enumerate. The per-file
+  narrative-enumeration list is what makes each over-tag guard real in the first place, and it must GROW with
+  every task or the guard goes hollow. [mirror-greenstate + phase-guides-xml + xml-convention — folded foundation-version 15]
+- (ADD) **A verbatim-reproduction transform is a verifying SCRIPT, not a hand-edit.** When a transform must
+  preserve bytes (a "verbatim reproduction" doc), do it with a script that asserts the invariant — bodies
+  byte-identical · tag/fence counts equal · no placeholder leak — BEFORE it writes, so "verbatim" is provable,
+  not trusted. [appendix-templates-xml — folded foundation-version 15]

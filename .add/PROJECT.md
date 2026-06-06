@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 14
+slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 15
 
 ---
 
@@ -115,6 +115,16 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 14
   a green journey is not evidence the guide is coherent. Engine feature-frozen all milestone
   (add.py md5 pinned ×3); the lock moved from human-typed to AGENT-run on the human's explicit
   confirmation, consent prose-guarded — the machine-readable confirm protocol (gap 5) stays OPEN.
+- v16 (XML prompt structure): **APPLIED 2026-06-06, release version bump DEFERRED** — the agent-executable
+  prompt surface now carries a frozen 5-tag XML convention (`<prompt>` · `<exit_gate>` · `<output_format>` ·
+  `<constraints>` · `<reject_codes>`): the 1-specify pilot + 7 phase guides (prompt/output_format/exit_gate),
+  the 10 engine docs (constraints/reject_codes — first use), and appendix-b's prompt library (each prompt a
+  `<prompt>`-wrapped INTACT fence). 3 mirrors byte-identical; 474 tests; vocabulary whole + closed (5-tag
+  census). SDD learning carried: a CLOSED tag notation needs a DISAMBIGUATION rule when it collides with
+  notation already in the prose — the convention's `<x>…</x>` collided with existing `<name>`/`<why>`/`<cost>`
+  prose placeholders, resolved by the PAIRED-tag rule (a convention tag = the intersection open∩close; a lone
+  `<x>` is prose, ignored). Templates (`*.tmpl`) assessed: pure fill-in forms, nothing executable to tag. The
+  release/version bump for the convention is OUT of v16 — a future milestone when the team ships it.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -160,6 +170,12 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 14
   rewrite only as "one **shell** command" — `/add` is still typed. A headline that the product can't
   literally keep erodes trust; name the exact, honest boundary (the install is the one command; the
   loop after it is conversational) rather than the slogan.
+- **Leanness is a UX constraint on a dual-audience prose file (v16 · UDD):** a prompt file is read by BOTH
+  the agent and a human, so over-tagging hurts the human reader — a markup convention's vocabulary is sized
+  for readability, not only correctness. v16 drove the scheme from a field-level tagging down to 5 BLOCK-level
+  tags (tags mark block boundaries only; skeleton labels like `Role:`/`Never:` stay plain text) precisely to
+  keep the prose scannable; and on a RENDERED page (appendix-b) the tag wraps an intact code fence so the page
+  still renders verbatim — the reader's experience, not just the agent's parse, set the layout.
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -202,3 +218,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 14
 | 2026-06-05 | fold v14 learnings → foundation-version 13 (14 open deltas: 9 new conventions · 1 publish-hook flip-cite validation · 1 §Spec v14 bullet carrying 3 SDD learnings · 1 §UDD seam-sized-review bullet) | human-gated fold at v14 close; all 14 confirmed (none rejected) | +9 CONVENTIONS bullets (protocol-walk · refuse-on-drift · arrange-through-CLI-contracts · strengthen-never-silent · epoch-debt-at-the-gate · contradicting-subset · dogfood-own-rule · dial-absorbs-change-requests · pivot-mechanism-on-human-word); §Spec v14 bullet; §UDD seam bullet; deltas flipped open→folded |
 | 2026-06-06 | ship v15 Zero-command on-ramp: after one install command a newcomer reaches their first verified feature by talking to the AI — GETTING-STARTED conversational spine (7-phases-by-hand → escape-hatch appendix); both installers print an AI handoff + infer `--name/--stage`; protocol-walk test drives fresh-install→gated-task issuing every add.py call itself; the lock moves human-typed → AGENT-run on the human's explicit confirmation (consent prose-guarded) | the human's only post-install act is conversation; the CLI becomes the agent's hands + the human's override, never a required keystroke | v15 SHIPPED 3/3, 3/3 criteria; 457 tests; engine feature-frozen (md5 pinned ×3); a CR v2 closed a cross-surface gap (same human-types instruction in 2 unswept guides) found by the adversarial lens, not the suite |
 | 2026-06-06 | fold v15 learnings → foundation-version 14 (9 open deltas: 4 new conventions · 1 §Spec v15 bullet · 1 §UDD precise-promises bullet · 2 flip-cite reinforcements) | human-gated fold at v15 close; all 9 confirmed (none rejected) | +4 CONVENTIONS bullets (pin-behavior-at-edges · multi-surface-parity-hunter · cross-cutting-reword-enumerates-every-surface · move-who-executes-needs-tight-trigger); §Spec v15 bullet (behavioral-journey≠prose-coherence); §UDD precise-promises bullet; UNION-rule + reverify-routed-gap flip-cited as validated; deltas flipped open→folded |
+| 2026-06-06 | fold v16 learnings → foundation-version 15 (15 open deltas: 5 new conventions · 2 flip-cite reinforcements · 1 §Spec v16 bullet carrying the paired-tag SDD rule · 1 §UDD leanness bullet) | human-gated fold at v16 close (the standing autonomous run STOPPED here — fold.md mandates confirmation; presented + confirmed via AskUserQuestion); all 15 confirmed (none rejected); per the human's call #8+#9 merged (RED-before-build-no-runtime) and #1+#15 merged (per-file-narrative + census) into single CONVENTIONS homes | +5 CONVENTIONS bullets (tag-by-audience · vocab-test-blind-to-render · content-guard-both-halves+triage-RED · census-guard-whole-and-closed · verbatim-transform-is-a-script); green-state-sweep + RED-before-build-no-runtime flip-cited onto existing bullets; dial-gradient (applying a frozen contract < authoring it) validated; §Spec v16 + §UDD v16 bullets; deltas flipped open→folded |

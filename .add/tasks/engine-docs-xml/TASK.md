@@ -230,15 +230,15 @@ and correctly stayed markdown, which is exactly why `<output_format>` has no hom
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] the convention's fence-exemption clause is load-bearing, not decorative: every engine-doc
+- [ADD · folded] the convention's fence-exemption clause is load-bearing, not decorative: every engine-doc
   output-shape is a code fence, so a "wrap output shapes in `<output_format>`" reading would have tagged
   fences and broken the leanness rule. Reading it as "fences are self-marking — never wrap them" kept the
   engine docs to exactly the 2 tags the first-use map reserved. (evidence: advisor-verified Position A this
   session; test_engine_vocab_subset strips fences then asserts ⊆ {constraints, reject_codes}.)
-- [TDD · open] a content guard needs BOTH its positive and negative half asserted: the worker-contract guard
+- [TDD · folded] a content guard needs BOTH its positive and negative half asserted: the worker-contract guard
   asserts the 7 tags are PRESENT in raw streams.md AND ABSENT after fence-strip — present-only would miss a
   fence deletion, absent-only would miss tags leaking outside the fence. (evidence: test_engine_worker_contract_preserved.)
-- [TDD · open] a freshly-authored assertion can fail for the WRONG reason and look like correct RED: the
+- [TDD · folded] a freshly-authored assertion can fail for the WRONG reason and look like correct RED: the
   tags-present test used `assertRegex` (`re.search`, no DOTALL) against multi-line blocks, so it failed even
   on correctly-converted docs. RED must be triaged — "doc not converted" vs "assertion can't express its
   intent". (evidence: the first post-build run still failed tags-present until the DOTALL fix; the other 3 passed.)

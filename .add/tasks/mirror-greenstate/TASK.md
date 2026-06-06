@@ -177,9 +177,9 @@ natural next milestone when the team decides to ship the convention.
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [TDD · open] a multi-file convention needs a CENSUS guard, not just per-file subset checks: counting that
+- [TDD · folded] a multi-file convention needs a CENSUS guard, not just per-file subset checks: counting that
   all N expected tags appear (whole) AND no unexpected tag appears (closed) across the surface catches a tag
   that drifted off-vocabulary in a file the per-file table forgot to enumerate. (evidence: the 5-tag census this sweep; per-file tests only assert each listed file.)
-- [ADD · open] a milestone with several conversion tasks benefits from a dedicated green-state SWEEP task
+- [ADD · folded] a milestone with several conversion tasks benefits from a dedicated green-state SWEEP task
   whose only job is to run the union of guards at once — per-task greens can each pass while a cross-file
   interaction is red. (evidence: this task; the composition was green, but it is the only run that proves it.)

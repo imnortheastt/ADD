@@ -30,15 +30,15 @@ Out: Method SEMANTICS (flow, gates, CLI behavior) — unchanged. Version/release
 - XML prompt convention (tag vocabulary + boundary rule + reject codes) -> owning task `xml-convention`
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] xml-convention         depends-on: none            — freeze the convention + convert 1-specify pilot
-- [ ] phase-guides-xml       depends-on: xml-convention  — convert phases/0–7 (8 files)
-- [ ] engine-docs-xml        depends-on: xml-convention  — convert SKILL/intake/scope/run/streams/deltas/fold/adopt/report-template/setup-review (10 files)
-- [ ] appendix-templates-xml depends-on: xml-convention  — convert appendix-b-prompts.md + templates/*.tmpl
-- [ ] mirror-greenstate      depends-on: phase-guides-xml,engine-docs-xml,appendix-templates-xml — full-suite + parity + audit sweep
+- [x] xml-convention         depends-on: none            — freeze the convention + convert 1-specify pilot
+- [x] phase-guides-xml       depends-on: xml-convention  — convert phases/0–7 (8 files)
+- [x] engine-docs-xml        depends-on: xml-convention  — convert SKILL/intake/scope/run/streams/deltas/fold/adopt/report-template/setup-review (10 files)
+- [x] appendix-templates-xml depends-on: xml-convention  — convert appendix-b-prompts.md + templates/*.tmpl
+- [x] mirror-greenstate      depends-on: phase-guides-xml,engine-docs-xml,appendix-templates-xml — full-suite + parity + audit sweep
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] The XML convention is frozen + the 1-specify pilot renders the `<prompt>` block   (← xml-convention)
-- [ ] Every phase guide's `## AI prompt` block is XML under the frozen convention        (← phase-guides-xml)
-- [ ] Every engine doc's agent-executable structures are XML; narrative stays prose       (← engine-docs-xml)
-- [ ] appendix-b prompts + templates carry the convention                                 (← appendix-templates-xml)
-- [ ] `python3 -m unittest` (whole suite) + `add.py audit` pass across all 3 mirrors      (← mirror-greenstate)
+- [x] The XML convention is frozen + the 1-specify pilot renders the `<prompt>` block   (← xml-convention)
+- [x] Every phase guide's `## AI prompt` block is XML under the frozen convention        (← phase-guides-xml)
+- [x] Every engine doc's agent-executable structures are XML; narrative stays prose       (← engine-docs-xml)
+- [x] appendix-b prompts carry the convention (each a `<prompt>`-wrapped intact fence); templates ASSESSED — pure fill-in forms, nothing executable to tag  (← appendix-templates-xml)
+- [x] `python3 -m unittest` (whole suite) + `add.py audit` pass across all 3 mirrors      (← mirror-greenstate)

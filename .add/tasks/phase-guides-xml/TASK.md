@@ -196,13 +196,13 @@ frozen 5-tag core (3 used here) holds; task 3's engine docs are where `<constrai
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [SDD · open] a per-file narrative-enumeration table is the only thing that makes an over-tagging guard real:
+- [SDD · folded] a per-file narrative-enumeration table is the only thing that makes an over-tagging guard real:
   without it a content test sees "tags present" but is blind to tags on prose. (evidence: test_phase_narrative_untagged
   enumerates each guide's narrative sections; the RED run had 0 tags so it trivially passed — the guard only bit once
   conversion added tags, exactly where the table pointed.)
-- [TDD · open] RED-before-build held across 7 files at once: 5 new tests authored failing (no blocks yet) → made green
+- [TDD · folded] RED-before-build held across 7 files at once: 5 new tests authored failing (no blocks yet) → made green
   by the doc edits alone, no test weakened, suite 461→466. (evidence: the staged RED run showed 4 failures for the
   right reason.)
-- [ADD · open] applying a frozen contract is genuinely lower-risk than authoring it: task 1 was risk:high+conservative
+- [ADD · folded] applying a frozen contract is genuinely lower-risk than authoring it: task 1 was risk:high+conservative
   (defining the convention); task 2 is autonomy:auto (applying it), and the evidence-auto-gate resolved cleanly with
   no residue. The dial tracked the actual risk gradient. (evidence: this gate auto-resolved; task 1's did not.)

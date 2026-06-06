@@ -231,13 +231,13 @@ convention (forms, not prompts) — the WIDEST scope's two tail targets resolved
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] applying a markup convention to a RENDERED doc differs from a CONSUMED one: appendix-b is a
+- [ADD · folded] applying a markup convention to a RENDERED doc differs from a CONSUMED one: appendix-b is a
   published page, so the `<prompt>` tag must wrap the INTACT code fence (blank lines load-bearing) — removing
   the fence renders the body as live markdown and silently swallows `<…>` placeholders. Audience determines
   layout, not just whether-to-tag. (evidence: advisor caught the page-mangle before build; manual render check + test_appendix_render_safe.)
-- [TDD · open] a vocab/structure test is BLIND to rendering: "tags are valid" ≠ "the page renders". Guard the
+- [TDD · folded] a vocab/structure test is BLIND to rendering: "tags are valid" ≠ "the page renders". Guard the
   render failure structurally — assert no `<lowercase>` placeholder and no ≥4-space-indent line survives a
   fence-strip OUTSIDE a fence (the proxy for "fences were wrapped, not removed"). (evidence: test_appendix_render_safe; the vocab test alone would have passed a broken page.)
-- [ADD · open] a verbatim-reproduction doc transform should be done by a verifying SCRIPT, not hand-editing:
+- [ADD · folded] a verbatim-reproduction doc transform should be done by a verifying SCRIPT, not hand-editing:
   the wrap transform asserted fence bodies byte-identical + tag/fence counts + no leak BEFORE writing, making
   "verbatim" provable rather than trusted. (evidence: tmp/wrap_appendix_b.py post-conditions; bodies md5-identical.)
