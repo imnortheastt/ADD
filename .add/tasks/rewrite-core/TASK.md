@@ -1,7 +1,7 @@
 # TASK: Rewrite SKILL.md + 9 engine docs to the frozen rubric + 2 structural wins
 
 slug: rewrite-core · created: 2026-06-06 · stage: mvp · risk: high · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower
      the dial with `autonomy: conservative` — the engine refuses an unguarded completion
      (`unguarded_high_risk_auto`, run.md guard). A comment is never a declaration. -->
@@ -352,18 +352,24 @@ Constraints: do NOT weaken a test or edit the frozen contract; the ONLY frozen-g
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+Build = 5 commits (1 was a documented no-op): c8e3754 streams idioms + `blast radius` promotion ·
+[no-op: 7 core files already literal/positive — no manufactured rewrites] · c463a33 SKILL.md trim ·
+64ebe30 CR-1 (isolated) · 5fbb21d run.md Win 2 + idiom reword.
+
+Part one — evidence:
+- [x] all tests pass — whole tooling suite 512 OK · test_rewrite_core 4/4 · wording_lint 0 · semantic_inventory 0 · test_xml_convention OK · bundle+tree parity OK · add.py check 194 passed/0 failed (4 pre-existing legacy warnings, not this task) · add.py audit clean (45 tasks)
+- [x] coverage did not decrease — ADDED test_rewrite_core.py (4 tests); weakened/deleted nothing
+- [~] no test or contract was altered during build — the FROZEN §3 contract is untouched; the ONLY guard edit is the ratified CR-1 (test_xml_convention.py, isolated commit 64ebe30); the ONLY rubric edit is the contract-authorized `blast radius` promotion (WORDING_RUBRIC.md). No unauthorized/silent test weakening. ⚠ the human confirms CR-1 was legitimate (it was pre-declared in §3 + ratified at the freeze).
+
+Part two — blind-spots:
+- concurrency / timing — N/A: a prose/docs rewrite, no runtime path. The architectural invariant here is 3-mirror parity (skill/add ↔ _bundled ↔ .claude byte-identical) — GREEN.
+- ⚠ SECURITY (escalates to human, by design): this rewrite touches the method's SAFETY-rule prose — run.md's evidence-auto-gate / security-always-escalates / never-auto-pass-security, and SKILL.md's never-weaken-test. The DETERMINISTIC gate proves every protected negative + invariant survived (semantic_inventory 0 findings: S1 tokens present, S2 anchors co-occur, S3 no exception introduced). But the CEDED class — an INVERSION around surviving anchors (an added "unless"/negation/scope-narrowing that keeps every anchor word) — is gate-blind and needs the HUMAN's read of the actual diff. No weakened guard or removed invariant was DETECTED; this is an escalation-for-review, not a HARD-STOP finding. The SKILL.md trim is the highest-consequence slice (the necessary-not-sufficient class) — review its diff first.
+- architecture / layering — N/A (no code layers changed); CONVENTIONS.md mirror-parity rule honored (parity green).
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS   <!-- human-led conservative gate; recorded only after the human answered -->
+Reviewed by: Tin Dang · date: 2026-06-06
+Human read the SKILL.md trim diff (the necessary-not-sufficient / ceded class) and the run.md Win-2 diff; judged the one dropped safety sentence ("never edits a frozen contract / never auto-passes a security finding") and the ‡ footnote clause to be duplicated in Non-negotiable rules 3+4 + run.md (no unique loss). PASS also ratifies the two resolved execution calls (promotion=tag-flip-only · CR-1-before-Win-2) and the 180-vs-290 word variance. No security HARD-STOP: the escalated CEDED-class review found no inversion.
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -371,10 +377,33 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): the two FROZEN freeze gates are the live monitors — `wording_lint`
+  (F1–F4) and `semantic_inventory` (S1–S3) must stay 0-findings as rewrite-guides + clarity-greenstate
+  touch the rest of the surface; a regression in either is the alert (the §2 scenarios re-run on every commit).
+Spec delta for the next loop: RE-RAISE the HELD surface-wide idiom-promotion rule (logged PENDING in
+  v17/MILESTONE.md) at/ before rewrite-guides — it binds rewrite-guides + clarity-greenstate. Also clear BOTH
+  forms of `rubber-stamp` (the F1 matcher is hyphen-bound, so the space-form in run.md L35/L43 and the
+  hyphen-form in phases/1-specify.md + appendix-b are distinct) so the idiom can be promoted to `[enforced]`.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+
+- [ADD · open] build ORDER must be derived from a frozen contract's BINDING PROPERTIES, not its prose
+  staging order: §3 staged "run.md restructure → CR-1", but the binding invariants (CR-1 isolated AND gates
+  green after every commit) uniquely forced CR-1 to land BEFORE Win 2 — tagging the sections while still
+  listed as narrative would have tripped test_engine_narrative_untagged (evidence: commit 64ebe30 + the
+  green-after-every-commit verification trail)
+- [TDD · open] a deterministic preservation gate is NECESSARY-not-SUFFICIENT and must be paired with a
+  human-led conservative verify: semantic_inventory proves tokens/anchors survived but is blind to an
+  inversion AROUND surviving anchors (an added "unless"/scope-narrowing that keeps every anchor word), so the
+  conservative verify gate's human diff-read is the real protection for that class (evidence: §6 GATE RECORD —
+  semantic_inventory 0 findings while the SKILL.md trim still required the human's read)
+- [SDD · open] a word-count figure in a contract ("trim ~290 words") is an ESTIMATE, not a spec obligation:
+  the safe trim was 180 words and stopping short of the number to avoid cutting load-bearing prose was correct —
+  express such targets as "remove duplicative content" not a hard count (evidence: trim variance disclosed at
+  the verify gate, 180 removed vs ~290 estimated; remainder rolls to rewrite-guides)
+- [ADD · open] a staged-by-risk plan can have a LEGITIMATE no-op stage and it must be recorded as a finding,
+  not silently skipped: 7 of the 10 core files were already rubric-clean, so the planned "positivize the other
+  core files" commit was a true no-op (evidence: commit-2 no-op — 0 wording_lint findings on those 7 files
+  before any edit)
