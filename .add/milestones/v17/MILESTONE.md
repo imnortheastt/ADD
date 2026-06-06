@@ -76,11 +76,11 @@ Out: Method SEMANTICS (flow, gates, autonomy, CLI behavior) — UNCHANGED; this 
 - [ ] semantic-inventory depends-on: none                              — extract the per-file semantic-unit inventory (reject codes · Must/Reject · gate outcomes · thresholds · scope qualifiers); ship the deterministic preservation-diff test (the blocking gate)
 - [ ] rewrite-core       depends-on: wording-rubric,semantic-inventory — rewrite SKILL.md + 9 engine docs to the rubric + the 2 structural wins; semantic-inventory green; carry the run.md ENGINE_FILES change-request
 - [ ] rewrite-guides     depends-on: wording-rubric,semantic-inventory — rewrite the 8 phase guides + appendix-b to the rubric; semantic-inventory green
-- [ ] clarity-greenstate depends-on: rewrite-core,rewrite-guides       — full suite + wording-lint + semantic-inventory + 3-mirror parity + audit; PLUS a NON-GATING behavioral spot-check (a few hard-stop scenarios via a real agent, recorded as indicative); close
+- [ ] clarity-greenstate depends-on: rewrite-core,rewrite-guides       — full suite + wording-lint + semantic-inventory + 3-mirror parity + audit; assert `enforced_banned == every idiom in idiom_map` (the promotion protocol actually ran — no idiom left `[mapped]` and un-retired, which would keep the lint trivially green); PLUS a NON-GATING behavioral spot-check (a few hard-stop scenarios via a real agent, recorded as indicative); close
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [ ] The wording rubric is frozen + `wording-lint` is green over the surface          (← wording-rubric)
 - [ ] The semantic-preservation inventory is captured + its diff test is green          (← semantic-inventory)
 - [ ] SKILL.md + engine docs carry the rubric; ~290 W always-loaded summary trimmed; run.md auto-gate/high-risk in `<constraints>` (ENGINE_FILES change-request ratified); inventory unchanged  (← rewrite-core)
 - [ ] The 8 phase guides + appendix-b carry the rubric; inventory unchanged             (← rewrite-guides)
-- [ ] Whole suite + wording-lint + semantic-inventory + 3-mirror parity + `add.py audit` green; the non-gating behavioral spot-check is run + recorded as indicative  (← clarity-greenstate)
+- [ ] Whole suite + wording-lint + semantic-inventory + 3-mirror parity + `add.py audit` green; `enforced_banned == full idiom_map` (every mapped idiom was promoted, not left un-retired); the non-gating behavioral spot-check is run + recorded as indicative  (← clarity-greenstate)
