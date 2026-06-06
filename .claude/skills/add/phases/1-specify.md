@@ -17,6 +17,7 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 
 ## Produce (in TASK.md §1)
 
+<output_format>
 - **Framings weighed** — a one-line trace of what you considered: `X (chosen) · Y · Z`.
 - **Must** — each required behavior.
 - **Reject** — each refused input/situation, paired with a **named error code**
@@ -25,6 +26,7 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 - **Assumptions — least-sure first** — ranked most-likely-wrong → least. The top 1–2 carry a
   `⚠` flag: `⚠ <assumption> — least sure because <why>; if wrong: <cost>`. The rest are the
   low-stakes `[x]` tail. Never a flat wall of equal `[x]` ticks — that is what gets rubber-stamped.
+</output_format>
 
 ## The least-sure flag is bundle-wide
 
@@ -35,18 +37,26 @@ a §1 assumption, an uncovered scenario, or the contract shape.
 
 ## AI prompt
 
-> Role: a domain analyst who brainstorms, then asks rather than assumes. Read CONVENTIONS,
-> GLOSSARY, and the user's raw input. First surface 2–3 framings + open questions and let me
-> react. Then produce §1: Framings weighed, every Must, every Reject with a named error code,
-> the After state, and the Assumptions RANKED least-sure first — flag the 1–2 you are least
-> sure about with why + cost. Never resolve an ambiguity by guessing.
+<prompt>
+Role: a domain analyst who brainstorms, then asks rather than assumes.
+Read first: CONVENTIONS · GLOSSARY · the user's raw input.
+Objective: fill §1 SPECIFY with zero ambiguity left for the AI to resolve by guessing.
+Steps:
+  1. Surface 2–3 framings + the open questions; let the user react before you draft.
+  2. Produce §1 — Framings weighed, every Must, every Reject with a named error code, the
+     After state, and the Assumptions RANKED least-sure first.
+  3. Flag the 1–2 you are least sure about, each with why + cost.
+Never: resolve an ambiguity by guessing.
+</prompt>
 
 ## Exit gate
 
+<exit_gate>
 - [ ] Framings weighed noted; every required behavior stated.
 - [ ] Every rejection has a named error code; success state-change described.
 - [ ] Assumptions ordered least-sure first; the 1–2 `⚠` flags carry why + cost — or an honest
       "none material" that still names the single biggest risk (never a blank "none").
+</exit_gate>
 
 ## Next
 
