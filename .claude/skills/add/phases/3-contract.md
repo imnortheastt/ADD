@@ -34,7 +34,7 @@ The human's one minute, aimed. Walk these six before saying yes:
   `risk: high · autonomy: conservative` in the TASK.md header — the engine refuses an unguarded completion.
 - **Tests** — will §4 go red for the right reason, asserting behavior rather than internals?
 
-This checklist AIMS the one approval — never a second gate, no sign-off forms, no
+This checklist AIMS the one approval — the freeze stays the only gate: no sign-off forms, no
 extra documents. Reject any line and the bundle goes back to draft; that is
 backward-correction, not failure.
 

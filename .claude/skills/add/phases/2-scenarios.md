@@ -16,7 +16,7 @@ Scenario: <short name>
 ```
 
 The `And ... unchanged` clause catches corrupting partial failures (e.g. a balance
-deducted before a check fails). Never omit it on a rejection.
+deducted before a check fails). Include it on every rejection.
 </output_format>
 
 ## AI prompt
