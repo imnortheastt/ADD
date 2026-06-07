@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "rewrite-guides",
+  "active_task": "clarity-greenstate",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -457,10 +457,19 @@
       ],
       "created": "2026-06-07T04:33:29+00:00",
       "updated": "2026-06-07T05:53:19+00:00"
+    },
+    "clarity-greenstate": {
+      "title": "Greenstate verification + three-leg preserved record + milestone close",
+      "phase": "build",
+      "gate": "none",
+      "milestone": "v17",
+      "depends_on": [],
+      "created": "2026-06-07T05:58:52+00:00",
+      "updated": "2026-06-07T06:04:31+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T05:53:19+00:00",
+  "updated": "2026-06-07T06:04:31+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
