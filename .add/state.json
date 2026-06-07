@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ubiquitous-language",
+  "active_task": "xml-prompt-structure",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -445,10 +445,28 @@
       "depends_on": [],
       "created": "2026-06-07T09:02:27+00:00",
       "updated": "2026-06-07T10:51:54+00:00"
+    },
+    "xml-prompt-structure": {
+      "title": "XML prompt structure for ADD guides + templates",
+      "phase": "verify",
+      "gate": "none",
+      "milestone": "v18",
+      "depends_on": [],
+      "created": "2026-06-07T11:07:56+00:00",
+      "updated": "2026-06-07T12:02:51+00:00"
+    },
+    "archive-compaction": {
+      "title": "Heavy archive: compact done milestone/task files",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v18",
+      "depends_on": [],
+      "created": "2026-06-07T11:17:08+00:00",
+      "updated": "2026-06-07T11:17:08+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T10:51:54+00:00",
+  "updated": "2026-06-07T12:02:51+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -553,9 +571,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v18": {
+      "title": "Prompt structure & file hygiene",
+      "goal": "ADD artifacts and guides are XML-structured for AI effectiveness, and done work compacts out of the active tree",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-07T11:17:08+00:00",
+      "updated": "2026-06-07T11:17:08+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "v18",
   "archived": [
     {
       "slug": "v5",
