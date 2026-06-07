@@ -1,7 +1,7 @@
 # TASK: Interview before you size — proactive intent clarification at intake
 
 slug: intake-interview · created: 2026-06-07 · stage: mvp · risk: low · autonomy: conservative
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- conservative: the edit is tiny but the surface is the method's own intake discipline
      (intake.md) — human-led gate, consistent with question-summary-layer.
      Intake (confirmed 2026-06-07 via AskUserQuestion): bucket=task, standalone — frozen-scope
@@ -156,7 +156,7 @@ Frozen anchor text (hunk B, verbatim — appended to the SKILL.md intake paragra
 > A question or unsharp intent? **Interview before you size** — explore and
 > suggest first (`intake.md`).
 
-Status: DRAFT   <!-- becomes: FROZEN @ v1 once approved. Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one approval over §1–§4; both ⚠ flags surfaced at the seam (conditional trigger · 2–3-options shape) and accepted as frozen. Changing a frozen contract = change request back to SPECIFY. -->
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->

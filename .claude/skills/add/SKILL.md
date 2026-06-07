@@ -46,7 +46,8 @@ When the user brings a raw request, classify it BEFORE making a milestone or tas
 read `intake.md` and place it in exactly one bucket — `new-major` · `sub-milestone`
 · `task` · `change-request` — then propose `{ bucket, rationale, command }` and let
 the human confirm. This is the intake altitude (request → versioned scope); see
-`intake.md` for the rubric, the tie-break order, and worked examples.
+`intake.md` for the rubric, the tie-break order, and worked examples. A question or
+unsharp intent? **Interview before you size** — explore and suggest first (`intake.md`).
 
 Once a request is classified `new-major`/`sub-milestone`, drafting the actual
 `MILESTONE.md` (goal · scope · exit criteria · breadth-first tasks) is the second

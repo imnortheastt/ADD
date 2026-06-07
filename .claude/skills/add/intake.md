@@ -5,6 +5,15 @@ This is the **intake altitude**: the per-task flow is phases 0–7; intake is th
 *before* a task — request → milestone or task. You (the AI) **propose**; the human
 **confirms**. Never create scope without a confirmed proposal.
 
+## Interview before you size
+
+When the request arrives as a question, or its intent is not yet sharp enough to
+place in one bucket: explore it WITH the user before classifying. Reflect the
+intent you heard, name what seems in and out of scope, and offer 2–3 sized options
+with your own recommendation. Only then emit `{ bucket, rationale, command }`.
+`ask_human` stays the floor: when interviewing cannot sharpen the request,
+reject — never guess a bucket.
+
 ## The four buckets
 
 Classify every request into exactly ONE bucket:
