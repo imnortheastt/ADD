@@ -245,7 +245,10 @@ Reviewed by: Tin Dang · date: 2026-06-07
 Watch (reuse scenarios as monitors): future intakes follow interview→propose for
 questions/unsharp intent while crisp requests still classify directly (the ⚠
 conditional-trigger flag); the ask_human rejection rate at intake (the interview
-should lower it, never replace it).
+should lower it, never replace it). The decisive signal is the FIRST raw question
+in a COLD session — this task's own intake is a non-blind sample of one (the
+author-agent knew the rule); a fresh session interviewing before sizing is the
+behavioral proof that counts.
 Spec delta for the next loop: both frozen ⚠ flags held in the rule's first live
 run — this task's own intake (surface · depth · sizing interviewed, then sized);
 if crisp requests start drawing needless interviews, the trigger clause is the
@@ -260,3 +263,13 @@ What did this loop teach the foundation? One line each, tagged by competency
   whitespace-normalize the assert) at WRITE time (evidence: the build's only red
   after a word-exact landing was the "2–3 sized / options" wrap break — second
   occurrence of this class after question-summary-layer's ratified rewrap)
+- [ADD · open] fold routing carries a real-but-unwritten exception: contract-AUTHORING
+  SDD lessons fold into CONVENTIONS beside their siblings, not §Spec — name the split
+  in fold.md ("what we build" → §Spec · "how we author" → CONVENTIONS) or it bends
+  silently (evidence: this session's fold + the v16/v17 SDD bullets living at
+  CONVENTIONS:236 against fold.md's SDD→§Spec row)
+- [TDD · open] the presence-based narrative census leaves a NEW prose section
+  unguarded against future stray tags — add new sections to test_xml_convention's
+  per-file enumeration when they land (evidence: "## Interview before you size"
+  absent from intake.md's narrative tuple; suite green only because the census
+  asserts listed sections, never the full set)
