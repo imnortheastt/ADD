@@ -1076,6 +1076,70 @@ def cmd_archive_milestone(args: argparse.Namespace) -> None:
     print("files on disk are untouched; see `add.py status` for the archived rollup.")
 
 
+def cmd_compact(args: argparse.Namespace) -> None:
+    """Heavy archive (step two, after `archive-milestone`): move a light-archived
+    milestone's files — MILESTONE.md + siblings + every rollup-member task dir — into
+    one recovery bundle `.add/archive/<slug>/`. Validate-all-then-move: any reject
+    leaves the tree AND state.json byte-for-byte unchanged. Compact never deletes,
+    only renames; recovery = reverse move, no state edit (state already dropped these
+    at light archive). Preserves the _archived_task_slugs invariant: `task_slugs` is
+    never touched — archived ⇒ was PASS-done keeps resolving cross-milestone deps."""
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    # validate before any mutation — a reject must leave tree + state byte-for-byte unchanged
+    if slug in state.get("milestones", {}):
+        _die(f"milestone_not_archived: '{slug}' is still active — "
+             f"run `add.py archive-milestone {slug}` first (light archive is step one)")
+    entry = next((e for e in state.get("archived", []) if e.get("slug") == slug), None)
+    if entry is None:
+        _die("unknown_milestone")
+    if entry.get("compacted"):
+        _die(f"already_compacted: '{slug}' was compacted {entry['compacted']} — "
+             f"see .add/archive/{slug}/")
+    dest = root / "archive" / slug
+    if dest.exists():
+        _die(f"archive_destination_exists: .add/archive/{slug}/ exists without a "
+             "compacted stamp — resolve the collision by hand before compacting")
+    ms_dir = root / "milestones" / slug
+    members = list(entry.get("task_slugs") or [])
+    missing = [str(p.relative_to(root)) for p in
+               [ms_dir, *(root / "tasks" / t for t in members)] if not p.is_dir()]
+    if missing:
+        _die("source_files_missing: " + " · ".join(missing))
+    # deltas folded first: an `open` lesson inside the bundle would silently vanish
+    # from `add.py deltas` (_collect_open_deltas globs tasks/*/TASK.md) once moved.
+    member_set = set(members)
+    offenders = sorted({e["task"] for v in _collect_open_deltas(root).values()
+                        for e in v if e["task"] in member_set})
+    if offenders:
+        _die("open_deltas_unfolded: consolidate the open lessons first (`add.py deltas`) — "
+             "open in: " + " · ".join(offenders))
+    # every precondition passed — move (same-filesystem renames, never a delete)
+    def _files(d: Path) -> int:
+        return sum(1 for f in d.rglob("*") if f.is_file())
+    moved: list[tuple[str, int]] = []
+    (root / "archive").mkdir(exist_ok=True)
+    n = _files(ms_dir)
+    ms_dir.rename(dest)                       # the milestone dir becomes the bundle root
+    moved.append((f"milestones/{slug}/", n))
+    (dest / "tasks").mkdir(exist_ok=True)
+    for t in members:
+        src = root / "tasks" / t
+        n = _files(src)
+        src.rename(dest / "tasks" / t)
+        moved.append((f"tasks/{t}/", n))
+    # state write is the LAST step: additive stamp only — task_slugs untouched
+    entry["compacted"] = date.today().isoformat()
+    save_state(root, state)
+    total = sum(n for _, n in moved)
+    print(f"compacted milestone '{slug}' -> .add/archive/{slug}/ "
+          f"({len(members)} task dirs, {total} files moved)")
+    for path, n in moved:
+        print(f"  moved {path} ({n} files)")
+    print("recovery: reverse the moves (mv the bundle's parts back) — state needs no edit.")
+
+
 def cmd_set_milestone(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
@@ -2370,6 +2434,12 @@ def build_parser() -> argparse.ArgumentParser:
                          help="collapse a done milestone out of active state (files stay on disk)")
     pam.add_argument("slug")
     pam.set_defaults(func=cmd_archive_milestone)
+
+    pco = sub.add_parser("compact",
+                         help="heavy archive: move an archived milestone's files into "
+                              ".add/archive/<slug>/ (recoverable reverse move)")
+    pco.add_argument("slug")
+    pco.set_defaults(func=cmd_compact)
 
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
     pp.add_argument("phase", choices=PHASES)

@@ -18,7 +18,7 @@ PKG_ROOT = Path(__file__).resolve().parent.parent          # add-method/
 REPO_ROOT = PKG_ROOT.parent
 GUIDE = PKG_ROOT / "GETTING-STARTED.md"
 
-ENGINE_MD5 = "56452b5807d04fc320c934de6df660bc"
+ENGINE_MD5 = "1f838fad76393aaad5a5779f5d1dd788"
 ENGINE_PATHS = (
     PKG_ROOT / "tooling" / "add.py",
     REPO_ROOT / ".add" / "tooling" / "add.py",

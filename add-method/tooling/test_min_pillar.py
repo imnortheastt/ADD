@@ -65,6 +65,8 @@ LIFECYCLE = [
     ["sync-guidelines"],
     ["milestone-done", "mvp"],
     ["archive-milestone", "mvp"],              # mvp is done by now -> archivable
+    ["compact", "mvp"],                        # heavy archive: moves the archived files
+                                               # (reads TASK.md/state for the delta scan, never docs/)
 ]
 
 # init runs in setUp (it refuses to re-run on an existing project), so it is exercised

@@ -27,7 +27,7 @@ SRC_DIR = PKG_ROOT / "src"
 
 NODE = shutil.which("node")
 
-ENGINE_MD5 = "56452b5807d04fc320c934de6df660bc"
+ENGINE_MD5 = "1f838fad76393aaad5a5779f5d1dd788"
 ENGINE_PATHS = (
     PKG_ROOT / "tooling" / "add.py",
     REPO_ROOT / ".add" / "tooling" / "add.py",
