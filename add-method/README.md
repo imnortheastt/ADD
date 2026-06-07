@@ -55,7 +55,7 @@ This installs:
 |------|------|
 | `.claude/skills/add/` | the `add` skill Claude loads (thin router + per-phase guides) |
 | `.add/tooling/add.py` | scaffolder + state tracker (Python, stdlib only) |
-| `.add/docs/` | the AIDD book — the trust layer |
+| `.add/docs/` | the AIDD book — the method rationale |
 
 Project state (`.add/state.json`) and the survivor-layer files (`CONVENTIONS.md`,
 `GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`) are *not* created

@@ -195,7 +195,7 @@ ENGINE_FILES = {
         "narrative": (
             "## The flow and which file to load",
             "## Depth by stage",
-            "## The trust layer",
+            "## The method rationale",
         )},
     "intake.md": {
         "tags": {"reject_codes"},

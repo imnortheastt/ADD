@@ -41,6 +41,7 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - the spine -> the primary flow [enforced]
 - state surface -> working state [enforced]
 - story surface -> audit trail [enforced]
+- trust layer -> method rationale [enforced]
 
 ## enforced_banned
 
@@ -55,6 +56,7 @@ Load-bearing method vocabulary — reworded AROUND, never renamed (a rename brea
 cross-refs, and tests). F3 asserts each still appears on the surface.
 
 - dogfood
+- method rationale
 - onboarding
 - READY-QUEUE
 - REVIEW-QUEUE

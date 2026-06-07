@@ -94,7 +94,7 @@ class TestIdiomRetirement(unittest.TestCase):
     V17_IDIOMS = {"blast radius", "collapses to", "first feeder", "rubber-stamp", "wall of"}
     # ubiquitous-language wave (CR-3, ratified by Tin Dang 2026-06-07 at the build decision point):
     # grows ONLY with that task's frozen §3 map — one enumerated addition per landed term commit.
-    UBIQUITOUS_IDIOMS = {"on-ramp", "forward spine", "the spine", "state surface", "story surface"}
+    UBIQUITOUS_IDIOMS = {"on-ramp", "forward spine", "the spine", "state surface", "story surface", "trust layer"}
 
     def test_idiom_map_fully_enforced(self) -> None:
         rubric = load_rubric()

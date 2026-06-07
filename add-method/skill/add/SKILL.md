@@ -128,7 +128,7 @@ The steps never change; their depth does. Read the stage from `add.py status`:
 - **mvp** — full flow, narrow scope, light observation.
 - **production** — every step at full rigor + the observe loop.
 
-## The trust layer
+## The method rationale
 
 The full method (the *why* behind every rule) is the AIDD book in `.add/docs/`.
 When a phase decision is genuinely unclear, read the linked chapter — each phase
