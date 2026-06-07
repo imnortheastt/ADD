@@ -1,7 +1,7 @@
 # TASK: Rewrite the 8 phase guides + appendix-b to the frozen rubric
 
 slug: rewrite-guides · created: 2026-06-07 · stage: mvp · risk: high · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- risk: high declared — the boundary holds 6-verify.md's security prose + 5-build.md's
      never-weaken line (the method/trust-layer itself); the verify gate stays human-led. -->
 
@@ -247,18 +247,52 @@ Constraints: do NOT change any test or the contract; gates green after every com
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+Build commits: fa8c51d C1 blast-radius escape · 5257a0d C2 1-specify + flip collapses-to/first-feeder ·
+fb09be0 C3 appendix-b + flip rubber-stamp/wall-of (FULL map enforced) · c5dc04c C4 positivize ·
+e139e3c CR-2 ratified needle update (isolated) · 3b63421 CR-3 revert 0-setup L31 (human-directed AT
+the gate, isolated). Gates green after every commit.
+
+Part one — confirm the evidence:
+- [x] all tests pass — whole tooling suite 517 OK · test_rewrite_guides 5/5 (both RED targets green:
+      zero both-forms occurrences surface-wide + idiom_map fully [enforced]) · wording_lint 0 (F1 armed
+      for all 5 idioms) · semantic_inventory 0 · add.py check 200 passed/0 failed (4 pre-existing legacy
+      warnings, not this task) · add.py audit clean (46 tasks)
+- [x] coverage did not decrease — ADDED test_rewrite_guides.py (2 targets + 3 standing guards, incl.
+      the previously-missing appendix-b copy-parity fence); nothing weakened or deleted
+- [~] no test or contract was altered during build — the FROZEN §3 is untouched; the ONLY guard edit is
+      CR-2 (test_review_checklist.py needle "never a second gate" -> "the freeze stays the only gate",
+      isolated commit e139e3c, RATIFIED BY THE HUMAN BEFORE THE EDIT — the guard's stated intent, "the
+      anti-ceremony clause must be stated", is unchanged and still enforced). DISCLOSED: §1's "no guard
+      change-request needed" assumption proved WRONG for this one line — the task-close whole-suite run
+      caught it; surfaced immediately (close-gap-before-gate), never edited inline. The WORDING_RUBRIC
+      flips are the contract-mandated promotions, not guard edits.
+
+Part two — blind-spots:
+- concurrency / timing — N/A: a prose/docs rewrite, no runtime path. The architectural invariant is
+  mirror parity: phases/ 3-tree (canonical ↔ _bundled ↔ .claude) + appendix-b 4-copy — ALL GREEN,
+  including the NEW §4 parity guard that previously did not exist for appendix-b.
+- ⚠ SECURITY (escalates to human, by design): this boundary is the LEAST gate-covered slice of v17
+  (5-build.md: ZERO inventory entries; 6-verify.md: token-only; appendix-b: zero inventory). The build's
+  countermeasure: the protected class shipped with an EMPTY DIFF — verified `git diff e10150b..HEAD` on
+  5-build.md · 6-verify.md · 4-tests.md is EMPTY, and all 7 appendix-b `Never:` fields are intact (the §4
+  green-guards pin both facts going forward). What REMAINS for the human read (the ceded class): the 4
+  positivizations + the two idiom-line rewords — whether each preserves the obligation and its scope. No
+  weakened guard or removed invariant DETECTED; this is an escalation-for-review, not a HARD-STOP finding.
+  RESOLVED at the gate (2026-06-07): the human read the full canonical diff (e10150b..HEAD rendered in
+  chat). Ratified as obligation-preserving: 3 of the 4 positivizations + both idiom-line rewords. The 4th
+  (0-setup L31 — the single edit where the obligation itself moved: fill-each→fill-each-missing,
+  never-clobber→keep-unchanged) was REVERTED by ruling — CR-3, isolated 3b63421 — and joins the
+  kept-deliberately class; the engine's own comment (add.py:353 "never clobber an existing one")
+  confirmed the original prose mirrors engine semantics. Gates re-run green after CR-3.
+- architecture / layering — N/A (no code layers); v16 5-tag XML vocabulary untouched (word-level edits
+  only, inside existing structures); CONVENTIONS.md mirror rule honored.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS — contingent on CR-3 (the L31 revert), which was executed, mirrored, and re-verified
+green (517 OK · lint 0 · inventory 0 · 5/5) BEFORE this stamp. The PASS also ratifies CR-2's
+execution, the 3 kept-deliberately light-touch candidates, and the scope-qualifier no-op finding.
+Push HELD until v17 milestone close (human ruling at this gate).
+Reviewed by: Tin Dang · date: 2026-06-07
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -266,10 +300,24 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): no production runtime — the scenarios ARE the standing monitors:
+wording_lint F1 (all 5 idioms enforced, inflection-tolerant) + test_rewrite_guides both-forms regexes
+(the form_escape fence) + protected-line pins + appendix-b 4-copy parity, all in every suite run.
+Spec delta for the next loop (clarity-greenstate): its exit `enforced_banned == full idiom_map` is now
+ASSERTABLE (all 5 [enforced], both-forms scan zero). Carry the kept-deliberately register so future
+rewrites don't retry them: 1-specify L24 (contrast example) · L58 (run.md consistency) · appendix-b
+L145 (load-bearing field warning) · 0-setup L31 (CR-3: the negative IS the obligation).
 
 ### Competency deltas
-What did this loop teach the foundation? One line each, tagged by competency
-(`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [TDD · open] on a guard-dense surface the per-commit battery must grep the tooling tests for pinned
+  needles of EVERY edited line (or run the whole suite per commit) — boundary-scoped guard lists miss
+  out-of-boundary pins (evidence: test_no_ceremony collision surfaced only at task-close → CR-2).
+- [ADD · open] empty-diff-as-evidence: a gate-blind protected class is verified by byte-identity, not
+  by gates — show the empty diff at the gate as the proof (evidence: `git diff e10150b..HEAD` empty on
+  5-build/6-verify/4-tests carried the ⚠ SECURITY escalation to resolution).
+- [ADD · open] the conservative gate's human read catches what no gate can: of 4 positivizations all
+  gates-green, the human reverted exactly the one whose obligation moved (evidence: CR-3 on 0-setup
+  L31, directed at the gate with lint/inventory/suite green throughout).
+- [SDD · open] positivization has a boundary: when the negative IS the obligation ("never clobber"),
+  rewording shifts semantics — guide prose should mirror engine semantics verbatim (evidence:
+  add.py:353 "never clobber an existing one" matched the original L31; the reword silently diverged).
