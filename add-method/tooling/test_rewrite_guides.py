@@ -96,6 +96,13 @@ class TestIdiomRetirement(unittest.TestCase):
                          f"idiom_map entries still [mapped]: {[i for i, _ in rubric.mapped_idioms]}")
         self.assertEqual(len(rubric.enforced_banned), 5,
                          f"expected all 5 idioms [enforced], got {rubric.enforced_banned}")
+        # named-set equality (additive tightening, clarity-greenstate frozen contract 2026-06-07):
+        # count alone passes a delete-one-add-another swap in the map; identity does not.
+        self.assertEqual(set(rubric.enforced_banned),
+                         {"blast radius", "collapses to", "first feeder",
+                          "rubber-stamp", "wall of"},
+                         f"enforced_banned must be EXACTLY the 5 idiom_map idioms, "
+                         f"got {sorted(rubric.enforced_banned)}")
 
 
 class TestGateBlindGuards(unittest.TestCase):
