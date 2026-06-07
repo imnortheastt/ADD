@@ -54,8 +54,11 @@ class ChecklistTest(unittest.TestCase):
         self.assertLessEqual(len(nonblank), 16,
                              f"checklist bloated to {len(nonblank)} lines — "
                              "it must stay the human's one minute")
-        self.assertIn("never a second gate", sec,
+        self.assertIn("the freeze stays the only gate", sec,
                       "the anti-ceremony clause must be stated")
+        # needle updated by ratified CR-2 (rewrite-guides, 2026-06-07): the clause was
+        # positivized "never a second gate" -> "the freeze stays the only gate" (v17 rubric);
+        # the guard's intent — the anti-ceremony clause must be stated — is unchanged.
 
     def test_run_md_accord(self):
         self.assertIn("freeze review checklist",
