@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "wave-status-hint",
+  "active_task": "fence-aware-section",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -463,10 +463,28 @@
       "depends_on": [],
       "created": "2026-06-07T16:33:27+00:00",
       "updated": "2026-06-07T16:44:36+00:00"
+    },
+    "shared-engine-pin": {
+      "title": "one ENGINE_MD5 source, five importers",
+      "phase": "tests",
+      "gate": "none",
+      "milestone": "v19",
+      "depends_on": [],
+      "created": "2026-06-07T16:59:30+00:00",
+      "updated": "2026-06-07T17:15:26+00:00"
+    },
+    "fence-aware-section": {
+      "title": "fence-aware section slicer for words-exist guards",
+      "phase": "tests",
+      "gate": "none",
+      "milestone": "v19",
+      "depends_on": [],
+      "created": "2026-06-07T16:59:30+00:00",
+      "updated": "2026-06-07T17:15:27+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T16:44:36+00:00",
+  "updated": "2026-06-07T17:15:27+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -571,9 +589,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v19": {
+      "title": "V19",
+      "goal": "tooling guards become single-source and truncation-proof \u2014 shipped as ADD's first real parallel wave (WAVE.md proof-in-anger)",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-07T16:59:30+00:00",
+      "updated": "2026-06-07T16:59:30+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "v19",
   "archived": [
     {
       "slug": "v5",
