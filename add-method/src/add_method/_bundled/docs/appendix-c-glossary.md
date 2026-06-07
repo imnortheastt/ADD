@@ -52,6 +52,8 @@
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 
+**Automated quality gate** (formerly "evidence auto-gate") — the Verify resolver under `autonomy: auto`: a run may auto-PASS on complete evidence, recorded as *auto-resolved*; a security finding always escalates (`HARD-STOP`).
+
 **Change scope** (formerly "touch-boundary") — the hard boundary of a locked run: what it may edit (code, tests-to-green, evidence) and must not (the frozen contract, locked scope, any test weakening). The `<touch_boundary>` XML prompt tag keeps its name.
 
 **Non-functional review** (formerly "blind-spot checks") — the deliberate verify-time check of the risks tests rarely catch: concurrency, security, architecture. Security findings always escalate.

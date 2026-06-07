@@ -92,7 +92,7 @@ The run ends only when the loops go dry AND the auto-gate's evidence is satisfie
 **self-improving within the turn** — the same convergence the foundation loop runs across milestones,
 compressed into one task.
 
-## The evidence auto-gate
+## The automated quality gate
 
 <constraints>
 The verify gate may be resolved by **evidence** rather than by a person — when the evidence is

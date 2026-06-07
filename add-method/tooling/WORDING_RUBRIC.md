@@ -47,6 +47,7 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - blind spot -> non-functional risk [enforced]
 - touch-boundary -> change scope [enforced]
 - touch boundary -> change scope [enforced]
+- evidence auto-gate -> automated quality gate [enforced]
 
 ## enforced_banned
 
@@ -61,6 +62,7 @@ Load-bearing method vocabulary — reworded AROUND, never renamed (a rename brea
 cross-refs, and tests). F3 asserts each still appears on the surface.
 
 - dogfood
+- automated quality gate
 - change scope
 - failing-first suite
 - non-functional review

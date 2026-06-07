@@ -14,7 +14,7 @@ The build produced passing tests. That is necessary but not sufficient. Verifica
 
 This needs care, because it is easy to misread. "Not by inspection" does not mean "do not look at the code." It means the *basis* of trust is the passing evidence plus a deliberate check of the specific things tests cannot easily catch — not a general impression that the code reads plausibly. Plausibility is exactly the trap: AI code is frequently plausible and wrong. So verification has two parts: confirm the evidence, then check the known non-functional risks.
 
-## Who resolves Verify — the evidence auto-gate
+## Who resolves Verify — the automated quality gate
 
 Verify can be resolved two ways, set per task by the `autonomy:` header (see [governance](./11-governance.md) and the autonomy dial):
 
