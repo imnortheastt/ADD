@@ -460,16 +460,16 @@
     },
     "clarity-greenstate": {
       "title": "Greenstate verification + three-leg preserved record + milestone close",
-      "phase": "build",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v17",
       "depends_on": [],
       "created": "2026-06-07T05:58:52+00:00",
-      "updated": "2026-06-07T06:04:31+00:00"
+      "updated": "2026-06-07T06:55:07+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T06:04:31+00:00",
+  "updated": "2026-06-07T06:55:07+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

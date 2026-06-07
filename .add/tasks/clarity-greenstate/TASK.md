@@ -1,7 +1,7 @@
 # TASK: Greenstate verification + three-leg preserved record + milestone close
 
 slug: clarity-greenstate · created: 2026-06-07 · stage: mvp · risk: low · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- risk is LOW (verification-only + one additive guard edit; no surface prose moves) but autonomy is
      CONSERVATIVE deliberately: this task's verify gate IS the v17 milestone-close seam — the human
      folds the deltas and rules on the held push there; an auto-PASS would pre-stamp that seam. -->
@@ -207,18 +207,44 @@ Constraints: do NOT change any other test or the contract; gates green after the
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+Build commits: 83c9b1b fence tightening (the ONE pre-declared additive guard edit, isolated) ·
+9a2c808 spot-check record (9 passes + verbatim prompts). Surface diff fea5a27..HEAD (the whole
+task): EMPTY — verification-only proven.
+
+Part one — confirm the evidence:
+- [x] all tests pass — whole tooling suite 517 OK · wording_lint 0 (F1–F4) · semantic_inventory 0
+      (S1–S3) · add.py check 204 passed/0 failed (4 pre-existing legacy warnings, not this task) ·
+      add.py audit clean (47 tasks) · 3-tree + 4-copy parity green inside the suite
+- [x] coverage did not decrease — one ADDITIVE assertion gained (named-set identity over the 5
+      idioms; hypothetical red demonstrated pre-commit: a delete-one-add-another swap passes count
+      and fails the named set); nothing weakened or removed
+- [x] no test or contract was altered during build — the ONLY test edit is the §3-pre-declared
+      additive tightening (83c9b1b, isolated); the frozen contract untouched; surface byte-unchanged
+- [x] concurrency / timing — N/A (no runtime path); the architectural invariant (mirror parity)
+      green via standing tests
+- [x] no exposed secrets / injection openings / unexpected dependencies — no code added; the
+      spot-check used file-read-only subagents on tracked repo files
+- [x] layering & CONVENTIONS.md — no canonical file moved; no mirror touched
+
+### THE PRESERVED RECORD (the milestone's three-leg definition — never the gate alone)
+preserved: PASS =
+  { necessary: the deterministic gates, engine-sourced this task — lint 0 · inventory 0 · suite
+      517 OK · check 204/0 · audit clean 47 · `enforced_banned == full idiom_map` now pinned BY NAME
+  · review: the two human-led gate records, cited — rewrite-core PASS (Tin Dang, 2026-06-06; ceded
+      trim ratified) · rewrite-guides PASS (Tin Dang, 2026-06-07; ceded class read line-by-line,
+      CR-3 reverting the one obligation-moving positivization, CR-2 ratified needle)
+  · eval: the indicative spot-check — 3 scenarios × 3 passes, 9/9 met (security→HARD-STOP 3/3 ·
+      frozen-contract→refuse+change-request 3/3 · conservative→no-auto-PASS 3/3), blind cold
+      sonnet subagents quoting the REWRITTEN anchors verbatim; INDICATIVE by frozen milestone
+      decision; the semantics_changed routing stayed unused (no pass evidenced a concrete loss) }
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS — this gate doubles as the v17 close gate: the exit-criteria roll-up was presented
+(5/5 green) and criterion 3 is recorded MET-WITH-DEVIATION (~290 W trim target → 180 W actual,
+a deliberate stop to keep load-bearing prose; surfaced at the seam, not buried in the fold list).
+The spot-check was presented as steering-evidence, never preservation-proof. In the same seam the
+human ruled: fold all 13 deltas per proposal (4→2 merge + 9 1:1) · push after close.
+Reviewed by: Tin Dang · date: 2026-06-07
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -226,10 +252,17 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): no production runtime — the standing fences are the monitors:
+wording_lint F1–F4 · semantic_inventory S1–S3 · the named-set idiom fence · both-forms regexes ·
+protected-line pins · 3-tree + 4-copy parity — all in every suite run, permanently.
+Spec delta for the next loop: v17 deferred items remain the candidates for a future milestone —
+the rigorous behavioral eval harness (model-in-loop, N-sampled, graded) · few-shot `<example>`
+blocks · harness-ENFORCED hard-stops (deterministic security/contract gate in code).
 
 ### Competency deltas
-What did this loop teach the foundation? One line each, tagged by competency
-(`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [ADD · open] a milestone close needs an exit-criteria ROLL-UP with deviations surfaced — a
+  criterion met-with-deviation must be ruled on at the close seam, not buried in a delta
+  (evidence: the ~290 W→180 W trim deviation lived only in an SDD delta until this close).
+- [ADD · open] a behavioral spot-check is steering-evidence, never preservation-proof —
+  preservation lives in the review leg of the three-leg record (evidence: 9/9 met on
+  over-determined hard-stops, with no pre-rewrite baseline to compare against).
