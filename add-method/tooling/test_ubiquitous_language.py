@@ -97,14 +97,22 @@ MACHINE_HEADINGS = ("### Competency deltas",)  # engine-parsed TASK.md format ke
 
 
 def scan(regex, files):
-    """All (file, lineno, line) hits for regex, skipping glossary bridge lines and machine-format headings."""
+    """All (file, lineno, line) PROSE hits for regex. Machine-layer text is exempt per the frozen
+    contract's Group C rule: glossary bridge lines, machine-format headings, fenced code blocks
+    (state diagrams, yml workflows, delta grammar) and inline code spans (`folded`, `fold.md`,
+    `seam`, …) keep their names — the ban polices prose only. The human verify read is the
+    backstop against slang smuggled into a code span/fence (disclosed in §3)."""
     pat = re.compile(regex, re.IGNORECASE)
     hits = []
     for f in files:
+        in_fence = False
         for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
-            if BRIDGE_MARKER in line or line.strip() in MACHINE_HEADINGS:
+            if line.strip().startswith("```"):
+                in_fence = not in_fence
                 continue
-            if pat.search(line):
+            if in_fence or BRIDGE_MARKER in line or line.strip() in MACHINE_HEADINGS:
+                continue
+            if pat.search(re.sub(r"`[^`]+`", "", line)):
                 hits.append(f"{f.relative_to(PKG.parent)}:{n}: {line.strip()[:100]}")
     return hits
 

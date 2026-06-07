@@ -51,7 +51,7 @@ outcomes; all 7 verified green at freeze (window line-counts noted).
 - security-always-hardstop @ run.md | anchors: security, HARD-STOP, always | neg: unless, except, waive, RISK-ACCEPTED
 - never-auto-pass-security @ run.md | anchors: auto-pass, security, never | neg: unless, except
 - never-weaken-test @ SKILL.md | anchors: weaken, never, test | neg: unless, except
-- never-self-fold @ fold.md | anchors: self-fold, never | neg:
+- never-self-fold @ fold.md | anchors: self-approve, never | neg:
 - never-prompt-field @ phases/1-specify.md | anchors: Never: | neg:
 - auto-pass-conjunction @ run.md | anchors: Auto-PASS, test, coverage, weaken, contract | neg:
 - unguarded-high-risk @ run.md | anchors: risk: high, conservative, refus | neg:
@@ -67,7 +67,7 @@ negative can never ship un-anchored.
 - weaken a test -> never-weaken-test
 - security finding is always -> security-always-hardstop
 - never auto-pass -> never-auto-pass-security
-- self-fold -> never-self-fold
+- self-approve -> never-self-fold
 
 ## cede_list
 

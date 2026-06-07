@@ -71,6 +71,9 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - freeze seam -> freeze decision point [enforced]
 - human seam -> human decision point [enforced]
 - seam template -> decision-point template [enforced]
+- the fold -> the retrospective consolidation [enforced]
+- fold ritual -> retrospective consolidation [enforced]
+- self-fold -> self-approve a consolidation [enforced]
 
 ## enforced_banned
 
@@ -98,6 +101,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - onboarding
 - lowest-confidence
 - decision point
+- retrospective consolidation
 - READY-QUEUE
 - REVIEW-QUEUE
 - change request
@@ -132,7 +136,7 @@ one is a guardrail weakened -> `protected_negative_removed` (review-caught — N
 - never weaken a test or edit a frozen contract # why: the method's core integrity boundary; no clean positive carries the same force
 - a security finding is always HARD-STOP # why: safety boundary
 - never auto-pass a security finding # why: safety boundary
-- never self-fold # why: the human-confirm boundary on foundation writes
+- never self-approve a consolidation # why: the human-confirm boundary on foundation writes
 
 ## emphasis_tokens
 

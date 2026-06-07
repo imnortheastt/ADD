@@ -83,8 +83,8 @@ and the question is a summary, never the artifact.
 
 In **observe**, also emit **lessons learned** — learnings tagged by which of the five
 (`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.
-You write them as `open`; the human folds them into `PROJECT.md`. Read `deltas.md` for the
-grammar and the status lifecycle. At milestone close (or on demand), run the fold ritual that
+You write them as `open`; the human consolidates them into `PROJECT.md`. Read `deltas.md` for the
+grammar and the status lifecycle. At milestone close (or on demand), run the retrospective consolidation that
 gathers confirmed deltas into a versioned foundation — read `fold.md`.
 
 ## Beyond the front — load on demand

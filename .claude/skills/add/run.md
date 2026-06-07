@@ -9,7 +9,7 @@ self-improving run** instead of a manual, sequential build. The human-led FRONT 
 
 > **Self-improving = within-run convergence + emit v5 deltas** — same definition as v5: tracked,
 > evidence-backed, never autonomous training. The run converges in-turn AND feeds the human-gated
-> fold loop (`deltas.md` · `fold.md`). The engine stays judgment-free: this is a rubric, not `add.py`.
+> consolidation loop (`deltas.md` · `fold.md`). The engine stays judgment-free: this is a rubric, not `add.py`.
 
 ## The one-approval front (v7)
 
@@ -121,8 +121,8 @@ tagged by competency:
 - a finding the run FIXED but that taught the foundation something (a missing scenario -> `TDD`);
 - a finding the run could NOT fix — a residue escalation -> a delta AND the escalation to a human.
 
-These `open` deltas feed v5's human-gated fold (`fold.md`) at milestone close: the run emits `open`;
-the human folds. That is the loop closing — **v6 run -> v5 foundation** — so a dynamic run sharpens the
+These `open` deltas feed v5's human-gated consolidation (`fold.md`) at milestone close: the run emits `open`;
+the human consolidates. That is the loop closing — **v6 run -> v5 foundation** — so a dynamic run sharpens the
 five competencies instead of letting its findings evaporate at end-of-run.
 
 ## The autonomy level

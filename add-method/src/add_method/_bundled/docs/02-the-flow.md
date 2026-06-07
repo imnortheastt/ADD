@@ -76,7 +76,7 @@ The flow runs in two directions under two rules that never conflict. **Backward 
 | 4 Tests | confirm the targets (part of the one approval) | draft the failing tests |
 | 5 Build | direct in small batches | implement until tests pass |
 | 6 Verify | own the residue (security · concurrency · architecture); approve when `conservative` | gather evidence; **auto-PASS on complete evidence** under `autonomy: auto` |
-| 7 Observe | read the signal; fold confirmed deltas into PROJECT.md | run behind a flag; emit lessons learned |
+| 7 Observe | read the signal; consolidate confirmed deltas into PROJECT.md | run behind a flag; emit lessons learned |
 
 ## What survives, and what is disposable
 

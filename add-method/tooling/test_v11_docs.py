@@ -85,7 +85,7 @@ class ShippedFeatureChaptersTest(unittest.TestCase):
         low = _read(DOCS / "09-the-loop.md").lower()
         self.assertIn("lessons learned", low)
         self.assertIn("udd", low, "the five-competency tagging must appear (UDD is distinctive)")
-        self.assertIn("fold", low, "09 must describe the foundation fold")
+        self.assertIn("consolidat", low, "09 must describe the retrospective consolidation")
         self.assertIn("add.py deltas", low, "09 must name the deltas tooling")
 
     def test_setup_chapter_covers_parallel_streams(self):

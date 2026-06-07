@@ -333,6 +333,13 @@ Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one 
 > prose form of seam stays banned; only the literal machine compound is exempt. The add.py machine
 > names (`--json` owner enum `seam` · decide-digest key `seam`) keep their names per the contract;
 > their AddPyProseTest handling lands with CR-2. Glossary bridges name all three machine survivors.
+> (6) **(term 16)** the §4 suite's scan() gains machine-layer awareness: fenced code blocks (the
+> deltas.md status-lifecycle diagram, yml workflows, the delta grammar) and inline code spans
+> (`folded` · `fold.md` · `seam` · `add.py fold`) are exempt from the prose bans — they ARE the
+> Group C machine layer the contract says keeps its names. Verified non-hiding: the
+> one-approval-front expected-hit count is unchanged (24) before/after. The human verify read
+> stays the backstop against slang smuggled into a span/fence (same honor-bound class as the
+> `formerly "…"` bridge exemption disclosed at the freeze).
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->

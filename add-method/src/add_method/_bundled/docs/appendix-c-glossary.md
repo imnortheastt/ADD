@@ -20,7 +20,7 @@
 
 **Evidence bundle** — the proof attached to a change (passing tests, clean security scan, no coverage loss) that justifies trusting it and may unlock more AI autonomy.
 
-**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed lessons learned are folded into the foundation. It makes the living documentation's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the fold ritual (see the `add` skill's `fold.md`).
+**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed lessons learned are consolidated into the foundation. It makes the living documentation's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the retrospective consolidation (see the `add` skill's `fold.md`).
 
 **Gate** — a checkpoint with an explicit pass/fail exit. Its outcome is `PASS`, `RISK-ACCEPTED`, or `HARD-STOP`.
 
@@ -35,6 +35,8 @@
 **Onboarding** (formerly "on-ramp") — the path a new user walks from install to their first milestone: install → `/add` → describe the goal → the agent runs intake (sizing the request into a milestone the human confirms) → the one-approval front → the self-driving run. The AI-first entry to the method; the human talks to the agent rather than hand-typing `add.py`.
 
 **Decision point** (formerly "seam") — a place where the flow stops for human judgment: the contract-freeze approval (the one approval), an escalated verify gate, intake confirmation, milestone close. The machine layer keeps the legacy name: the `--json` owner enum `seam`, the decide-digest key `seam`, and the `seam-audit` CI job.
+
+**Retrospective consolidation** (formerly "the fold / fold ritual") — the milestone-close (or on-demand) step where a person gathers `open` lessons learned, confirms each, and the AI writes them append-only into the versioned foundation, bumping `foundation-version:`. The AI never self-approves a consolidation. The machine names keep their names: `fold.md`, the `folded` delta status, and `add.py deltas`.
 
 **Owner (of a phase)** — who drives a phase, exposed by `add.py … --json` as `human`, `seam`, or `ai` (machine enum values that keep their names; in prose the `seam` value's concept is now the decision point, formerly "seam"). It tells an autonomous harness where it may run (`ai`) and where it must checkpoint to a person (`human`/`seam`), following the who-does-what table (Verify is always `human`).
 
@@ -100,4 +102,4 @@ This book uses plain step names. Teams connecting it to a larger formal standard
 | Verify | the review gate within the build |
 | Observe (loop) | Operate and Learn |
 
-The formal standard also names the *foundation* and *design* work as full phases in their own right; this book folds them into project setup and the Specify step (and the Prototype stage) to keep the flow to six memorable steps.
+The formal standard also names the *foundation* and *design* work as full phases in their own right; this book merges them into project setup and the Specify step (and the Prototype stage) to keep the flow to six memorable steps.

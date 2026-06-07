@@ -2,11 +2,11 @@
 
 A **lesson learned** is a single learning a task produces, tagged by which of ADD's five
 competencies it improves. You write deltas in a task's **OBSERVE** phase; later, the
-`foundation-update-loop` gathers the confirmed ones and folds them into a versioned `PROJECT.md`.
+`foundation-update-loop` gathers the confirmed ones and consolidates them into a versioned `PROJECT.md`.
 This is how `DDD · SDD · UDD · TDD · ADD` stop being write-once and start converging.
 
 You (the AI) **emit** deltas as `open`. Only the **human** moves a delta to `folded` or `rejected`
-(folding into the foundation is judgment — see the verify/observe decision point). You never self-fold.
+(consolidating into the foundation is judgment — see the verify/observe decision point). You never self-approve a consolidation.
 
 ## The grammar (frozen)
 
@@ -50,7 +50,7 @@ That is its home. Split genuinely separate learnings into separate deltas; never
 ```
 emit (OBSERVE)        human review (foundation-update-loop)
    open  ───────────▶  folded     (the learning is merged into PROJECT.md; version bumps)
-         └──────────▶  rejected   (considered and deliberately NOT folded — the trail is kept)
+         └──────────▶  rejected   (considered and deliberately NOT consolidated — the trail is kept)
 ```
 
 An `open` delta is a pending signal. `folded` and `rejected` are both human decisions; a `rejected`
@@ -77,5 +77,5 @@ A task that built a tenancy feature finished its OBSERVE phase with:
 ```
 
 Three learnings, three competencies, each with a pointer. At the next foundation update the human
-folded the DDD and TDD deltas into `PROJECT.md` (→ `folded`) and rejected the ADD one as a one-off
+consolidated the DDD and TDD deltas into `PROJECT.md` (→ `folded`) and rejected the ADD one as a one-off
 (→ `rejected`). The foundation got sharper; nothing was silently lost.
