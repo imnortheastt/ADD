@@ -1,7 +1,7 @@
 # TASK: WAVE.md — durable wave ledger for parallel streams
 
 slug: wave-ledger · created: 2026-06-07 · stage: mvp · risk: high · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- risk: high — this task amends the method's own orchestration rubric (streams.md);
      autonomy lowered to conservative: the verify gate stops for the human. -->
 
@@ -172,18 +172,25 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 
 ## 6 · VERIFY — evidence + non-functional review ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — full tooling suite 569 OK; 7/7 wave-ledger guards green (red-first 6F/1P, every failure an AssertionError on the missing section)
+- [x] coverage did not decrease — suite grew 562→569 (+7 guards); no test removed or weakened
+- [x] no test or contract was altered during build — post-freeze: zero edits to test_wave_ledger.py and §3; the one wording change ("folds"→"copies", forced by the ubiquitous-language guard) altered prose, not the contracted rule ("PROMPT-folded" realized as copy-into-PROMPT.md — disclosed, not silent)
+- [x] concurrency / timing of the risky operation is safe — WAVE.md is single-writer by construction (orchestrator-only; workers never read NOR write it) → race-free; the contract's own merge-back exclusion keeps it out of worktree merges
+- [x] no exposed secrets, injection openings, or unexpected dependencies — markdown + stdlib unittest only; no new packages
+- [x] layering & dependencies follow CONVENTIONS.md — convention layer only, engine untouched (streams.md's no-engine promise holds); three trees byte-identical (tree+bundle parity guards green); one in-scope-ADDITIVE edit beyond §3's enumerated list: the Lease+timeout bullet now points at the ledger (disclosed)
+- [x] a person reviewed and approved the change — Tin, at this gate (conservative; flags + disclosed deltas presented first)
+
+Evidence altitude (honest limit): 569 green proves the convention is DOCUMENTED and
+regression-guarded — not that it works in use; proof-of-function is the next dogfood
+wave (§7 Watch). And `add.py status` does NOT surface a live WAVE.md (no engine change,
+by design) — the resume-point promise still leans on the orchestrator looking in the
+milestone dir. Standing ⚠ residues carried from the freeze: words-exist-only enforcement ·
+Wave-log grammar prose-loose.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Reviewed by: Tin · date: 2026-06-07
+Residue routed: status-blind-spot → new intake (wave-status-hint); words-exist-only enforcement + Wave-log grammar → open deltas, next fold.
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -191,10 +198,10 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): the next parallel wave — was WAVE.md actually opened, evidence-filled, digested, deleted?
-Spec delta for the next loop: <what the next wave teaches>
+Watch (reuse scenarios as monitors): the next parallel wave — was WAVE.md actually opened, evidence-filled, digested into a Wave log block, deleted?
+Spec delta for the next loop: the next streams wave must dogfood the ledger end-to-end (open → evidence cells → mid-wave decisions → digest → delete); what it teaches feeds back here.
 
 ### Competency deltas
-What did this loop teach the foundation? One line each, tagged by competency
-(`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [SDD · open] reserved-term discipline reaches prose VERBS, not just nouns — "fold" used for PROMPT injection collided with the method's fold ritual; same-concept-same-name applies to actions too (evidence: test_slang_absent_extended_surface red on streams.md:92; reworded to "copy")
+- [TDD · open] a fenced example inside a guarded section can silently truncate a words-exist guard — `_section` cuts at "\n## ", so any template embedded in a guarded section must use ### headings or the guard scans a prefix while claiming the whole (evidence: WAVE.md template authored with ### for exactly this; the hazard rhymes with v16's inline-XML-placeholder lesson)
+- [ADD · open] `add.py status` does not surface a live WAVE.md — the wave resume-point still leans on the orchestrator looking in the milestone dir; a status hint is NEW engine scope for intake, precedent v12-1's cmd_status-hint (evidence: F1 framing deliberately excluded engine changes; residue disclosed at the verify gate)
