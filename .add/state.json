@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "question-summary-layer",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,10 +418,19 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
+    },
+    "question-summary-layer": {
+      "title": "The question is a summary, never the artifact",
+      "phase": "tests",
+      "gate": "none",
+      "milestone": null,
+      "depends_on": [],
+      "created": "2026-06-07T07:22:57+00:00",
+      "updated": "2026-06-07T07:25:56+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T07:00:14+00:00",
+  "updated": "2026-06-07T07:25:56+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
