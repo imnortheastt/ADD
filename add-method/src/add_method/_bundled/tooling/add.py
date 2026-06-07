@@ -662,6 +662,14 @@ def cmd_status(args: argparse.Namespace) -> None:
     # foundation pointer — read the cross-milestone context first (anti-rot)
     if (root / "PROJECT.md").exists():
         print("context : .add/PROJECT.md  (foundation: domain · spec · UI/UX — read first)")
+    # wave resume hint — a live ledger outranks memory (streams.md "Wave ledger").
+    # Existence-only: no open/read/parse, so the hint adds no IO failure path; a
+    # non-file at the path is not a ledger. One line PER live ledger — more than
+    # one live wave is an anomaly the orchestrator must see, never a line we hide.
+    for _wave in sorted((root / "milestones").glob("*/WAVE.md")):
+        if _wave.is_file():
+            print(f"wave    : LIVE — .add/milestones/{_wave.parent.name}/WAVE.md"
+                  "  (wave resume point — re-orient from the ledger first)")
 
     # milestone rollup (only when milestones are in use)
     milestones = state.get("milestones") or {}

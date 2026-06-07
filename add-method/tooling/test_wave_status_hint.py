@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""wave-status-hint — `add.py status` surfaces a live WAVE.md as the wave resume hint.
+
+The wave-ledger convention (streams.md "Wave ledger") made WAVE.md the wave's resume
+point, but `status` — the mandated first-orientation command — did not surface it, so
+resuming still leaned on the orchestrator remembering to look in the milestone dir
+(the disclosed [ADD] residue at the wave-ledger gate). This suite drives the hint:
+existence-only detection (no open/read/parse — no new IO failure path), human surface
+only, the frozen machine-state-json (`status --json`) byte-shape untouched.
+
+Run: python3 -m unittest test_wave_status_hint -v
+"""
+import contextlib
+import io
+import json
+import os
+import tempfile
+import unittest
+from pathlib import Path
+
+import add
+
+
+def _run(argv):
+    out, err = io.StringIO(), io.StringIO()
+    code = 0
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        try:
+            add.main(argv)
+        except SystemExit as e:
+            code = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+    return code, out.getvalue(), err.getvalue()
+
+
+class WaveStatusHintTest(unittest.TestCase):
+    """status prints one 'wave    :' hint line per live ledger; silent otherwise."""
+
+    def setUp(self):
+        self._cwd = Path.cwd()
+        self.tmp = tempfile.mkdtemp(prefix="add-wave-hint-")
+        os.chdir(self.tmp)
+        add.main(["init", "--name", "demo"])
+        add.main(["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"])
+        self.ms_dir = Path(self.tmp) / ".add" / "milestones" / "mvp"
+
+    def tearDown(self):
+        os.chdir(self._cwd)
+
+    def _wave_lines(self, out):
+        return [l for l in out.splitlines() if l.startswith("wave    :")]
+
+    def test_status_hints_live_wave(self):
+        (self.ms_dir / "WAVE.md").write_text("wave: 1 · status: live\n", encoding="utf-8")
+        code, out, _ = _run(["status"])
+        self.assertEqual(code, 0)
+        lines = self._wave_lines(out)
+        self.assertEqual(len(lines), 1, "exactly one hint for one live ledger")
+        self.assertIn(".add/milestones/mvp/WAVE.md", lines[0])
+        self.assertIn("LIVE", lines[0])
+        self.assertIn("re-orient", lines[0],
+                      "the hint must carry the resume instruction, not just the path")
+        ctx = next(i for i, l in enumerate(out.splitlines()) if l.startswith("context :"))
+        pos = next(i for i, l in enumerate(out.splitlines()) if l.startswith("wave    :"))
+        self.assertGreater(pos, ctx, "the wave hint renders after the foundation pointer")
+
+    def test_status_silent_without_wave(self):
+        code, out, _ = _run(["status"])
+        self.assertEqual(code, 0)
+        self.assertEqual(self._wave_lines(out), [],
+                         "phantom_wave_hint: no ledger -> no hint line")
+
+    def test_dir_at_wave_path_no_hint_no_crash(self):
+        (self.ms_dir / "WAVE.md").mkdir()
+        code, out, err = _run(["status"])
+        self.assertEqual(code, 0, "not_a_file_no_hint: a directory must not crash status")
+        self.assertEqual(self._wave_lines(out), [],
+                         "not_a_file_no_hint: a directory at the path is not a live ledger")
+        self.assertNotIn("Traceback", err)
+
+    def test_one_line_per_live_ledger(self):
+        (self.ms_dir / "WAVE.md").write_text("wave: 1\n", encoding="utf-8")
+        add.main(["new-milestone", "mvp-2", "--goal", "g2", "--stage", "mvp"])
+        ms2 = Path(self.tmp) / ".add" / "milestones" / "mvp-2"
+        (ms2 / "WAVE.md").write_text("wave: 1\n", encoding="utf-8")
+        code, out, _ = _run(["status"])
+        self.assertEqual(code, 0)
+        self.assertEqual(len(self._wave_lines(out)), 2,
+                         "fail-loud: the one-live-wave anomaly is shown, never hidden")
+
+    def test_json_surface_frozen(self):
+        (self.ms_dir / "WAVE.md").write_text("wave: 1\n", encoding="utf-8")
+        code, out, _ = _run(["status", "--json"])
+        self.assertEqual(code, 0)
+        obj = json.loads(out)
+        self.assertEqual(
+            set(obj.keys()),
+            {"project", "stage", "active_task", "milestones", "tasks"},
+            "frozen_json_surface_touched: machine-state-json keys must not move")
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

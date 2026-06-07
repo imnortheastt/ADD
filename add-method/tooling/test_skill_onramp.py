@@ -30,7 +30,7 @@ SETUP_TRIPLET = (
     PKG_ROOT / "src" / "add_method" / "_bundled" / "skill" / "add" / "phases" / "0-setup.md",
 )
 
-ENGINE_MD5 = "1f838fad76393aaad5a5779f5d1dd788"
+ENGINE_MD5 = "1082fd0fbc353e855fd1d7f983718dfb"
 ENGINE_PATHS = (
     PKG_ROOT / "tooling" / "add.py",
     REPO_ROOT / ".add" / "tooling" / "add.py",
