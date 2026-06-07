@@ -11,7 +11,7 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 
 1. **Diverge** — before drafting, surface the decision space: the 2–3 genuine framings of the
    feature + the open questions you would otherwise guess. Invite the user to add, kill,
-   redirect. (Conversational — no new file. At prototype/poc this collapses to one sentence.)
+   redirect. (Conversational — no new file. At prototype/poc this shortens to one sentence.)
 2. **Converge** — draft §1, then RANK what you are least sure about (below).
 3. **Validate** — present the ranked uncertainty first; the user confirms, corrects, or sends back.
 
@@ -25,13 +25,13 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 - **After** — the state that is true once it succeeds.
 - **Assumptions — least-sure first** — ranked most-likely-wrong → least. The top 1–2 carry a
   `⚠` flag: `⚠ <assumption> — least sure because <why>; if wrong: <cost>`. The rest are the
-  low-stakes `[x]` tail. Never a flat wall of equal `[x]` ticks — that is what gets rubber-stamped.
+  low-stakes `[x]` tail. Keep the ranking visible — a flat list of equal `[x]` ticks gets approved without reading.
 </output_format>
 
 ## The least-sure flag is bundle-wide
 
 The single human approval happens once, at the contract freeze, over the whole bundle. So your
-§1 ranking is the FIRST FEEDER into a bundle-level flag the user reads at the seam (`run.md`):
+§1 ranking is the first input into a bundle-level flag the user reads at the seam (`run.md`):
 *"of everything I'm asking you to freeze, these 1–2 are most likely wrong."* A flag may point at
 a §1 assumption, an uncovered scenario, or the contract shape.
 

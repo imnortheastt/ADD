@@ -26,8 +26,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 
 - rubber-stamp -> approve without reading [mapped]
 - wall of -> flat list of [mapped]
-- collapses to -> shortens to [mapped]
-- first feeder -> first input [mapped]
+- collapses to -> shortens to [enforced]
+- first feeder -> first input [enforced]
 - blast radius -> scope of impact [enforced]
 
 ## enforced_banned
