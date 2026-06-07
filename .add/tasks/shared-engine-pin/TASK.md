@@ -1,7 +1,7 @@
 # TASK: one ENGINE_MD5 source, five importers
 
 slug: shared-engine-pin · created: 2026-06-07 · stage: mvp · autonomy: auto
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- autonomy: auto — test-infrastructure refactor, engine untouched, no judgment surface;
      the bundle freeze stays human, as always. Wave context: v19 worker A. -->
 
@@ -145,18 +145,16 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 
 ## 6 · VERIFY — evidence + non-functional review ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — own suite 6/6 (red 5F/1P → green, worker-run); integration on main after merge: 586 ran, only reds = the sibling task's declared pending suite (test_md_section ×5)
+- [x] coverage did not decrease — suite grew 580→586; no test removed
+- [x] no test or contract was altered during build — worker diff = engine_pin.py (new, 13 lines) + five 1-line pin→import swaps; §3/§4 untouched post-freeze
+- [x] concurrency / timing safe — built in an isolated worktree; D1 sync gate FIRED (stale v17-era pool base d2d0825 → merged to base f45342e, evidence verified == base before merge-back); declared-overlap file diff = exactly 1 line (in-lane)
+- [x] no exposed secrets, injection openings, or unexpected dependencies — stdlib only; engine_pin is a literal constant, no IO
+- [x] layering & dependencies follow CONVENTIONS.md — engine untouched (the moved pin still matches all three copies); cherry-pick merge-back excluded all shared state
+- [x] reviewed — auto-resolved under `autonomy: auto` (worker verdict PASS + orchestrator-verified commit scope, fork-base evidence, and integration suite); no security, concurrency, or architecture residue to escalate
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS — auto-resolved (autonomy: auto), owner: v19 wave-1 worker A run + orchestrator integration Verify, 2026-06-08. Not a human signature: recorded on complete evidence per run.md; the human approval for this task was the bundle freeze (hardened at the human's pre-freeze change-request).
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -165,8 +163,8 @@ Reviewed by: <name> · date: <date>
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
 Watch (reuse scenarios as monitors): the next legitimate engine change — was the re-aim really one line?
-Spec delta for the next loop: <what production taught you>
+Spec delta for the next loop: none — the contract shipped as frozen; wave-level findings live in the v19 Wave log digest.
 
 ### Competency deltas
-What did this loop teach the foundation? One line each, tagged by competency
-(`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
+- [TDD · open] a human pre-freeze change-request made the bundle strictly stronger at near-zero cost — sweep widened to all *.py + cwd-independence subprocess-proven; the "Fix a flag first" option earns its place in every freeze presentation (evidence: this task's freeze round-trip)
+- [ADD · open] worker SUMMARY.md must be IN the worker's commit, not just written — uncommitted worktree files survive only by harness courtesy; the worker contract's <return> should say "commit SUMMARY.md with your code" (evidence: wt-A's SUMMARY.md/deltas.md were left uncommitted and had to be hand-copied before worktree removal)

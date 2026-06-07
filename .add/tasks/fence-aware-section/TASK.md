@@ -1,7 +1,7 @@
 # TASK: fence-aware section slicer for words-exist guards
 
 slug: fence-aware-section · created: 2026-06-07 · stage: mvp · autonomy: auto
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- autonomy: auto — test-infrastructure refactor, engine untouched, no judgment surface;
      the bundle freeze stays human, as always. Wave context: v19 worker B. -->
 
@@ -149,18 +149,16 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 
 ## 6 · VERIFY — evidence + non-functional review ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — own suite 6/6 (red 5F/1P → green, worker-run); integration on main after BOTH merges: full tooling suite 586 OK (the wave-close green)
+- [x] coverage did not decrease — no test removed; four guard suites keep every assertion
+- [x] no test or contract was altered during build — worker diff = md_section.py (new, 56 lines) + four in-lane importer edits; §3/§4 untouched post-freeze; heading-inclusion confirmed harmless (no strips needed, §1 ⚠2 resolved by evidence)
+- [x] concurrency / timing safe — isolated worktree; D1 sync gate FIRED (same stale pool base d2d0825 → merged to f45342e, evidence verified == base before merge-back); declared-overlap file auto-merged cleanly across A's pin edit (3-way), both lanes verified intact
+- [x] no exposed secrets, injection openings, or unexpected dependencies — pure stdlib line scan, no IO, no regex
+- [x] layering & dependencies follow CONVENTIONS.md — engine untouched (586-green includes the five pin guards); cherry-pick merge-back excluded all shared state
+- [x] reviewed — auto-resolved under `autonomy: auto` (worker verdict PASS + orchestrator-verified commit scope, fork-base evidence, overlap diff, and the all-green integration suite); no security, concurrency, or architecture residue to escalate
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS — auto-resolved (autonomy: auto), owner: v19 wave-1 worker B run + orchestrator integration Verify, 2026-06-08. Not a human signature: recorded on complete evidence per run.md; the human approval for this task was the bundle freeze.
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -169,8 +167,9 @@ Reviewed by: <name> · date: <date>
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
 Watch (reuse scenarios as monitors): the next guarded section that embeds a fenced template — does the author still reach for the ### workaround out of habit?
-Spec delta for the next loop: <what production taught you>
+Spec delta for the next loop: none — the contract shipped as frozen (terminator-only scope cut stands until a fenced start-anchor actually bites); wave-level findings live in the v19 Wave log digest.
 
 ### Competency deltas
-What did this loop teach the foundation? One line each, tagged by competency
-(`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
+- [ADD · open] CHANGE-REQUEST against streams.md "Wave ledger": the pre-spawn fork-base evidence cell is UNSATISFIABLE on a runner that creates the worktree AT spawn (Claude Code; proven 2/2 workers this wave — both forked a stale v17-era pool base), so `unverified_fork_base` must be allowed to execute at MERGE-time (worker step-0 sync echo, orchestrator-verified before merge-back) as a contracted alternative, not an undocumented deviation — the wave-ledger's own founding lesson (a check that exists only in prose never runs) recursing onto itself (evidence: v19 Wave log, D1 fired twice)
+- [SDD · open] `import md_section` (module reference) over `from md_section import section` — avoids shadowing local `section` variables in test_audit_ci/test_intake_interview; name-collision awareness extends to import style (evidence: worker B's build choice, zero collisions)
+- [TDD · open] the heading-inclusion ⚠ resolved by evidence, not argument — all four importers green with zero compensating strips; contracting the expected-harmless and letting the suite arbitrate beat pre-emptive compatibility shims (evidence: this task's §1 ⚠2 → §6)

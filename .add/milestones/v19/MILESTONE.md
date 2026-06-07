@@ -43,9 +43,34 @@ Out: any add.py change (engine untouched — both tasks are test-infrastructure
 - [ ] fence-aware-section  depends-on: none — fence-aware slicer, four importers
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] an engine change re-aims exactly ONE pin line; no test file holds its own
+- [x] an engine change re-aims exactly ONE pin line; no test file holds its own
       hash literal                                          (← shared-engine-pin)
-- [ ] a fenced "## " inside a guarded section no longer truncates the slice —
+- [x] a fenced "## " inside a guarded section no longer truncates the slice —
       proven by a red-first test                            (← fence-aware-section)
-- [ ] WAVE.md lifecycle completed end-to-end and digested into ## Wave log here;
+- [x] WAVE.md lifecycle completed end-to-end and digested into ## Wave log here;
       integration Verify recorded on the declared overlap   (← wave close)
+
+## Wave log
+wave 1 · opened 2026-06-08 · closed 2026-06-08 · base f45342eae5aa882a9c0d6c617142c9d9fd0dd63d (the v19 bundle commit)
+- roster → fork-base evidence: BOTH workers forked STALE (pool base d2d0825, v17-era,
+  233 files behind) — D1 sync gate fired 2/2, each merged to base and re-echoed
+  `f45342ea…` == base, verified by the orchestrator before merge-back. The pre-spawn
+  evidence cell is IMPOSSIBLE on this runner (worktree created AT spawn): the
+  `unverified_fork_base` refusal executed at merge-time instead — check shifted, never
+  skipped.
+- merge order (serial, as declared): 1. shared-engine-pin (cherry-pick c721ac6 →
+  303ca04; integration Verify: 586 ran, only reds = sibling's declared pending suite)
+  → 2. fence-aware-section (cherry-pick 98a5627 → 07253de; integration Verify:
+  586 OK, fully green).
+- declared overlap test_review_checklist.py: both lanes held — A's diff 1 line (pin →
+  import), B's diff import + _section body; 3-way auto-merge, both lanes verified
+  intact post-merge.
+- honesty (evidence altitude): the auto-merge means the conflict-RESOLUTION path went
+  untested — this wave proves lifecycle + lane discipline + evidence flow, not manual
+  conflict handling. Workers never read WAVE.md (D1/D2 PROMPT-copied); resume rule
+  exercised only by the live `status` hint (`wave : LIVE` rendered all wave long).
+- runner findings for the next wave: (1) worktree pool hands out stale bases — the
+  worker-side sync gate is mandatory, not defensive; (2) on completion the harness
+  moves the parent shell cwd INTO the worker worktree (D3) — re-anchor absolute before
+  any orchestrator op; (3) worker SUMMARY.md/deltas.md must be committed in the
+  worktree or they survive only by courtesy copy.
