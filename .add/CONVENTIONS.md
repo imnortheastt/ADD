@@ -162,7 +162,9 @@ Architecture:
   shape-only audit reported clean over it. [gate-audit — folded foundation-version 13]
 - (ADD) **A method-defining task dogfoods its own rule in its header.** The task that ships a guard
   declares the tokens the guard reads; the gate that records it becomes the rule's first live proof.
-  [high-risk-signal — folded foundation-version 13]
+  [high-risk-signal — folded foundation-version 13] Same for a seam-discipline rule at its own
+  approval seams: the freeze and gate asks already run in the rule's shape before it lands — cheap
+  live validation. [question-summary-layer — folded foundation-version 17]
 - (ADD) **A hard-to-reverse act under the conservative dial absorbs repeated change requests
   cleanly.** Five contract versions in one release act, each human-worded, no test weakened, zero
   partial state — the dial's cost is questions, never corruption. [release-1-1-0 — folded foundation-version 13]
@@ -237,6 +239,9 @@ Architecture:
   Express the target as the behavior ("remove duplicative content"), not a hard count — the safe trim
   was 180 W; stopping short to keep load-bearing prose was correct, and the close records the criterion
   met-WITH-deviation rather than silently satisfied. [rewrite-core + clarity-greenstate — folded foundation-version 16]
+  On a contract SHAPE line the figure reads as a BOUND even when the verbatim-quoted text is the
+  authority — mark shape-line figures ≈ or omit them where the quote governs (the 4-vs-3 wrap was
+  the gate's only deviation). [question-summary-layer — folded foundation-version 17]
 - (SDD) **Positivization has a boundary: when the negative IS the obligation, keep it.** "Never clobber"
   prohibits destruction; "keep unchanged" prohibits modification — the reword moved the rule, not the
   framing. Guide prose should mirror engine semantics verbatim (add.py's own comment carried the

@@ -240,11 +240,11 @@ against this contract, never an in-place rewording.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [SDD · open] a numeric figure on a contract SHAPE line ("3 lines max") reads as a
+- [SDD · folded] a numeric figure on a contract SHAPE line ("3 lines max") reads as a
   bound even when verbatim-quoted text is the authority — mark shape-line figures ≈
   or omit them where the verbatim quote governs (evidence: hunk B's 4-vs-3 wrap was
   the gate's only deviation, ruled via a ratified rewrap)
-- [ADD · open] dogfooding a seam-discipline rule at its own approval seams is cheap
+- [ADD · folded] dogfooding a seam-discipline rule at its own approval seams is cheap
   live validation — the rule's freeze and gate asks already ran in the two-layer
   shape before the rule landed (evidence: this task's freeze + gate AskUserQuestion
   seams, 2026-06-07)
