@@ -59,6 +59,20 @@ def _paired_tags(text: str) -> set[str]:
     return set(_OPEN.findall(text)) & set(_CLOSE.findall(text))
 
 
+def _dogfood_task(slug: str) -> Path | None:
+    """Resolve a dogfood TASK.md: the active tree first, else a compacted recovery
+    bundle (`compact` moves an archived milestone's files to .add/archive/<m>/tasks/,
+    it never deletes). None only on a fresh package without dogfood history —
+    re-aimed at the v18 close when compaction moved both pinned artifacts
+    (human-approved change-request; stale-guard-sweep convention)."""
+    active = _REPO / ".add" / "tasks" / slug / "TASK.md"
+    if active.exists():
+        return active
+    for cand in sorted(_REPO.glob(f".add/archive/*/tasks/{slug}/TASK.md")):
+        return cand
+    return None
+
+
 # ── the guards (the amendment's reject codes as callable checks) ─────────────────────
 def form_tag_offenses(template_text: str) -> list[str]:
     """All v18 reject codes detectable from one template text, by name."""
@@ -225,8 +239,9 @@ class ScopeEdges(unittest.TestCase):
                          "all 7 .tmpl files byte-identical across both tooling trees")
 
     def test_amendment_is_a_frozen_artifact(self):
-        task = _REPO / ".add" / "tasks" / "xml-prompt-structure" / "TASK.md"
-        if not task.exists():
+        task = _dogfood_task("xml-prompt-structure")
+        v16 = _dogfood_task("xml-convention")  # resolved up front: BOTH pins or skip,
+        if task is None or v16 is None:        # so the v16 read can never crash bare
             self.skipTest("amendment task absent (fresh package without dogfood history)")
         text = task.read_text(encoding="utf-8")
         sec3 = text.split("## 3 · CONTRACT")[1].split("## 4 ·")[0]
@@ -235,7 +250,6 @@ class ScopeEdges(unittest.TestCase):
         self.assertTrue(any(re.match(r"\s*Status:\s*FROZEN @ v18", ln)
                             for ln in sec3.splitlines()),
                         "the amendment is FROZEN @ v18 (one human approval) — RED until then")
-        v16 = _REPO / ".add" / "tasks" / "xml-convention" / "TASK.md"
         v16_sec3 = v16.read_text(encoding="utf-8").split("## 3 · CONTRACT")[1]
         for tag in sorted(INSTRUCTION_TAGS):
             self.assertIn(f"<{tag}>", v16_sec3, "the v16 five remain unchanged")

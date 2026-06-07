@@ -48,6 +48,10 @@ Architecture:
   runs the UNION of all guards at once (full suite + both parity guards + audit + a vocab census) — per-task
   greens can each pass while a cross-file interaction is red; the sweep is the only run that proves the whole.
   [mirror-greenstate — folded foundation-version 15]
+  Recurred at the first `compact` run: heavy archive disables any dogfood guard that reads a moved task
+  file — a skip-guarded test goes silently dark (skip ≠ red, so the sweep must check the SKIP count too);
+  re-aim such guards archive-aware (active tree, else `.add/archive/*/tasks/`), keeping the fresh-install
+  skip. [v18 close — folded foundation-version 18]
 - (ADD/SDD) **Docs must not outrun their gate.** A surface may not describe a flow whose verify gate is
   not yet recorded PASS. The v6/v7 onboarding drift existed precisely because three surfaces claimed v7
   before its tasks passed. Claim only what the gate has earned. [folded foundation-version 4]
