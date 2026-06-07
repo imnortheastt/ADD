@@ -455,13 +455,13 @@ Spec delta for the next loop: diagrams/add-flow.png still renders the legacy lab
   diagram sources. CHANGELOG/history keep legacy terms by design (audit trail, bridged via glossary).
 
 ### Competency deltas
-- [ADD · open] machine/prose boundary was discovered five separate times mid-build (### heading ·
+- [ADD · folded] machine/prose boundary was discovered five separate times mid-build (### heading ·
   ⚠ glyph · seam-audit job · folded status · owner enum) costing execution calls 4–7; a contract
   that enumerates the machine-token REGISTRY up front (or `add.py` emitting one) would pre-draw the
   line once (evidence: TASK.md §3 addenda, execution calls 4–7 this build)
-- [TDD · open] five duplicated ENGINE_MD5 tripwires make every intentional engine edit a 5-file
+- [TDD · folded] five duplicated ENGINE_MD5 tripwires make every intentional engine edit a 5-file
   re-stamp; one shared pin constant keeps the tripwire with 1/5 the ceded surface (evidence: two
   re-stamp rounds this build, term 14 + CR-2)
-- [SDD · open] the both-forms (hyphen+space) ban clause missed the ALL-hyphen compound
+- [SDD · folded] the both-forms (hyphen+space) ban clause missed the ALL-hyphen compound
   ("one-approval-front" at 0-setup:85, invisible to `one[- ]approval front`); the raw-grep recipe
   caught it — fence specs should name the fully-hyphenated form too (evidence: term-17 commit 63534e1)

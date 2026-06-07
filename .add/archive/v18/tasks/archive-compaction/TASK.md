@@ -270,17 +270,17 @@ revisit after it runs.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-  - [SDD · open] "sole sanctioned test edit" clauses under-enumerate the same way mirror clauses
+  - [SDD · folded] "sole sanctioned test edit" clauses under-enumerate the same way mirror clauses
     did: SELF-MAINTAINING instruments (min_pillar's LIFECYCLE census, the ubiquitous-language
     prose ban) react to ANY new CLI verb — a contract adding a subcommand should pre-declare the
     instrument-reaction class (evidence: 2 disclosed residues at this gate)
-  - [TDD · open] run the FULL suite once during the tests phase, not only the new file — both
+  - [TDD · folded] run the FULL suite once during the tests phase, not only the new file — both
     instrument reactions were discoverable pre-freeze and would have entered the contract instead
     of the residue list (evidence: test_min_pillar + test_ubiquitous_language failed only at the
     first full-suite build run)
-  - [ADD · open] archive is now a two-step lifecycle (archive-milestone -> compact) — the
+  - [ADD · folded] archive is now a two-step lifecycle (archive-milestone -> compact) — the
     milestone-close fold-pressure nudge and fold.md could name compact as the step after
     consolidation (evidence: cmd_compact landed; status nudge still ends at the fold)
-  - [DDD · open] "compact" / "heavy archive" / "recovery bundle" entered the language — GLOSSARY
+  - [DDD · folded] "compact" / "heavy archive" / "recovery bundle" entered the language — GLOSSARY
     should carry them at the next retrospective consolidation (evidence: new CLI verb + the
     .add/archive/ namespace)

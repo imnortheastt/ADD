@@ -34,9 +34,9 @@ Out: re-tagging the skill guides (done + frozen in v16); new add.py parsing of
 - v18 form-tag amendment (closed set + boundary rules) -> owning task xml-prompt-structure
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] xml-prompt-structure   depends-on: none     — form-tag amendment + template lean pass + parse-seam suite
-- [ ] archive-compaction     depends-on: none     — heavy archive: compact done milestone/task files out of the active tree
+- [x] xml-prompt-structure   depends-on: none     — form-tag amendment + template lean pass + parse-seam suite
+- [x] archive-compaction     depends-on: none     — heavy archive: compact done milestone/task files out of the active tree
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] A task scaffolded from the new TASK.md.tmpl carries paired form tags, and the full engine suite (phase sync · §spans · freeze · gate audit · declared-tests · deltas lint) is green on it        (← xml-prompt-structure)
-- [ ] User can run one command that moves an archived milestone's task+milestone files out of the active tree, recoverably, with deltas folded first        (← archive-compaction)
+- [x] A task scaffolded from the new TASK.md.tmpl carries paired form tags, and the full engine suite (phase sync · §spans · freeze · gate audit · declared-tests · deltas lint) is green on it        (← xml-prompt-structure; archive-compaction was the first scaffold from the new template — full suite green on it)
+- [x] User can run one command that moves an archived milestone's task+milestone files out of the active tree, recoverably, with deltas folded first        (← archive-compaction; `add.py compact <slug>` — proven by the 11-test harness incl. reverse-move restore; honest bound: recovery restores files, the `compacted:` stamp persists)

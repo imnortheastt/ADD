@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "archive-compaction",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -445,28 +445,10 @@
       "depends_on": [],
       "created": "2026-06-07T09:02:27+00:00",
       "updated": "2026-06-07T10:51:54+00:00"
-    },
-    "xml-prompt-structure": {
-      "title": "XML prompt structure for ADD guides + templates",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v18",
-      "depends_on": [],
-      "created": "2026-06-07T11:07:56+00:00",
-      "updated": "2026-06-07T13:49:09+00:00"
-    },
-    "archive-compaction": {
-      "title": "Heavy archive: compact done milestone/task files",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v18",
-      "depends_on": [],
-      "created": "2026-06-07T11:17:08+00:00",
-      "updated": "2026-06-07T14:38:13+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T14:38:13+00:00",
+  "updated": "2026-06-07T14:56:51+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -571,17 +553,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v18": {
-      "title": "Prompt structure & file hygiene",
-      "goal": "ADD artifacts and guides are XML-structured for AI effectiveness, and done work compacts out of the active tree",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-07T11:17:08+00:00",
-      "updated": "2026-06-07T11:17:08+00:00"
     }
   },
-  "active_milestone": "v18",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -592,7 +566,8 @@
         "foundation-update-loop",
         "cospecify-lift"
       ],
-      "archived": "2026-06-03"
+      "archived": "2026-06-03",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v12-1",
@@ -603,7 +578,8 @@
         "status-lock-hint",
         "deltas-multiline-render"
       ],
-      "archived": "2026-06-04"
+      "archived": "2026-06-04",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v13",
@@ -614,7 +590,8 @@
         "tests-declared-fallback",
         "fence-safe-wrap"
       ],
-      "archived": "2026-06-05"
+      "archived": "2026-06-05",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v13-1",
@@ -625,7 +602,8 @@
         "declared-path-confinement",
         "decide-planned-hint"
       ],
-      "archived": "2026-06-05"
+      "archived": "2026-06-05",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v14",
@@ -639,7 +617,8 @@
         "review-checklist",
         "release-1-1-0"
       ],
-      "archived": "2026-06-05"
+      "archived": "2026-06-05",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v15",
@@ -650,7 +629,8 @@
         "installer-handoff",
         "skill-onramp"
       ],
-      "archived": "2026-06-06"
+      "archived": "2026-06-06",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v16",
@@ -663,7 +643,8 @@
         "appendix-templates-xml",
         "mirror-greenstate"
       ],
-      "archived": "2026-06-06"
+      "archived": "2026-06-06",
+      "compacted": "2026-06-07"
     },
     {
       "slug": "v17",
@@ -676,7 +657,19 @@
         "rewrite-guides",
         "clarity-greenstate"
       ],
-      "archived": "2026-06-07"
+      "archived": "2026-06-07",
+      "compacted": "2026-06-07"
+    },
+    {
+      "slug": "v18",
+      "title": "Prompt structure & file hygiene",
+      "tasks": 2,
+      "task_slugs": [
+        "xml-prompt-structure",
+        "archive-compaction"
+      ],
+      "archived": "2026-06-07",
+      "compacted": "2026-06-07"
     }
   ]
 }

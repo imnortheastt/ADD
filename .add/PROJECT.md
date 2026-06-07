@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 17
+slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 18
 
 ---
 
@@ -137,6 +137,16 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 17
   kept load-bearing prose); run.md auto-gate/high-risk rules moved into `<constraints>` (ratified
   ENGINE_FILES CR-1); emphasis reserved for the true hard-stops. 517 tests. Deferred OUT: the rigorous
   N-sampled behavioral harness · few-shot `<example>` blocks · harness-ENFORCED hard-stops · release bump.
+- v18 (Prompt structure & file hygiene): **SHIPPED 2026-06-07** — templates gain the FORM-TAG class
+  (`<must>` · `<reject>` · `<after>` · `<assumptions>` · `<scenarios>` · `<test_plan>`: a closed fill-region
+  vocabulary, paired · own-line · multi-line, a SEPARATE class from v16 instruction tags — neither side
+  borrows), engine parse seams proven byte-compatible on new scaffolds; and the archive lifecycle gains
+  step two — `add.py compact <slug>` moves a light-archived milestone's files into `.add/archive/<slug>/`
+  (validate-all-then-move · six named reject codes · deltas-consolidated-first hard reject · reverse-move
+  recovery, state needs no edit; the `compacted:` rollup stamp survives a reverse move — recovery restores
+  files, not the stamp). 562 tests. OPEN: engine parsing of form-tag content (`<must>`/`<reject>`
+  rule-level reporting) — form tags made fill regions machine-delimited so that lands without touching
+  templates again.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -233,3 +243,5 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 17
 | 2026-06-06 | fold v16 learnings → foundation-version 15 (15 open deltas: 5 new conventions · 2 flip-cite reinforcements · 1 §Spec v16 bullet carrying the paired-tag SDD rule · 1 §UDD leanness bullet) | human-gated fold at v16 close (the standing autonomous run STOPPED here — fold.md mandates confirmation; presented + confirmed via AskUserQuestion); all 15 confirmed (none rejected); per the human's call #8+#9 merged (RED-before-build-no-runtime) and #1+#15 merged (per-file-narrative + census) into single CONVENTIONS homes | +5 CONVENTIONS bullets (tag-by-audience · vocab-test-blind-to-render · content-guard-both-halves+triage-RED · census-guard-whole-and-closed · verbatim-transform-is-a-script); green-state-sweep + RED-before-build-no-runtime flip-cited onto existing bullets; dial-gradient (applying a frozen contract < authoring it) validated; §Spec v16 + §UDD v16 bullets; deltas flipped open→folded |
 | 2026-06-07 | fold v17 learnings → foundation-version 16 (13 open deltas: 11 new CONVENTIONS bullets — the 4-delta gate-blindness cluster merged into 2 per the human's call — + 1 §Spec v17 bullet) | human-gated fold at v17 close; the ONE-SEAM close (gate + fold + push ruled together via AskUserQuestion, deltas rendered in full first); all 13 confirmed (none rejected) | +11 CONVENTIONS bullets (necessary-not-sufficient-pair-with-human-verify · empty-diff-as-evidence · needle-grep-guard-dense · F3-total-not-partial · numeric-figure-is-estimate · positivization-boundary · binding-properties-order · legitimate-no-op-recorded · contract-code-table-self-lint · close-needs-criteria-rollup · spot-check-is-steering-evidence); §Spec v17 bullet; criterion 3 ruled met-WITH-deviation (~290→180 W); deltas flipped open→folded |
 | 2026-06-07 | fold question-summary-layer learnings → foundation-version 17 (2 open deltas: 1 SDD shape-line-figure refinement + 1 ADD dogfood-at-own-seams reinforcement, both appended onto existing CONVENTIONS bullets) | on-demand fold before opening new scope (intake-interview); human-gated per fold.md, both confirmed via AskUserQuestion (none rejected) | numeric-figure-is-estimate bullet gains the shape-line-≈ rule; dogfood-own-rule bullet gains the approval-seams clause; deltas flipped open→folded |
+| 2026-06-07 | ship v18 Prompt structure & file hygiene: form-tag template amendment (closed 6-tag fill-region class + parse-seam suite) + `compact` heavy archive (recovery bundle · 6 reject codes · deltas-consolidated-first) | XML-structure the fill surfaces for AI effectiveness; done work compacts out of the active tree | v18 SHIPPED 2/2 tasks, 2/2 criteria; 562 tests; engine md5 ×3 trees; two instrument residues disclosed + human-accepted at the gate |
+| 2026-06-07 | fold v18 learnings → foundation-version 18 (14 open deltas: 8 new CONVENTIONS bullets · 3 appends onto existing (mirror-clause-all-copies · census-grow-on-new-section · numeric-pin-count-first) · 4 GLOSSARY terms (heavy archive/compact · recovery bundle · instruction tags · form tags) · 1 §Spec v18 bullet) | human-gated fold at v18 close; all 14 confirmed (none rejected); DDD routed to GLOSSARY — the deltas' own named home; fold.md/nudge edits deferred as method-surface tasks | GLOSSARY +4 terms; CONVENTIONS +8 new +3 appends; §Spec v18 bullet; deltas flipped open→folded |

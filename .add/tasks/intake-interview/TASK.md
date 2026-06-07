@@ -258,17 +258,17 @@ one-line change request.
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [TDD · open] a §4 needle frozen from a wrapped §3 blockquote collides with the
+- [TDD · folded] a §4 needle frozen from a wrapped §3 blockquote collides with the
   landed re-flow — pin needles as single-line fragments of the frozen text (or
   whitespace-normalize the assert) at WRITE time (evidence: the build's only red
   after a word-exact landing was the "2–3 sized / options" wrap break — second
   occurrence of this class after question-summary-layer's ratified rewrap)
-- [ADD · open] fold routing carries a real-but-unwritten exception: contract-AUTHORING
+- [ADD · folded] fold routing carries a real-but-unwritten exception: contract-AUTHORING
   SDD lessons fold into CONVENTIONS beside their siblings, not §Spec — name the split
   in fold.md ("what we build" → §Spec · "how we author" → CONVENTIONS) or it bends
   silently (evidence: this session's fold + the v16/v17 SDD bullets living at
   CONVENTIONS:236 against fold.md's SDD→§Spec row)
-- [TDD · open] the presence-based narrative census leaves a NEW prose section
+- [TDD · folded] the presence-based narrative census leaves a NEW prose section
   unguarded against future stray tags — add new sections to test_xml_convention's
   per-file enumeration when they land (evidence: "## Interview before you size"
   absent from intake.md's narrative tuple; suite green only because the census

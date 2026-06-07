@@ -335,7 +335,7 @@ v9-1 phase-detail shape is the named path.
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [SDD · open] contracts that name mirror trees must enumerate ALL copies — the v18 MIRRORS clause missed the _bundled third tree (evidence: §6 residue 2, discovered in build)
-- [TDD · open] never pin a speculative number before counting the baseline — pin the contracted semantics ("shrank") or count first (evidence: §6 residue 1, the ≤8 lean threshold)
-- [ADD · open] form tags (v18) make fill regions machine-delimited — a future engine feature can parse <must>/<reject> for rule-level reporting without touching templates again (evidence: frozen §3 amendment)
-- [DDD · open] "instruction tags" vs "form tags" entered the ubiquitous language — GLOSSARY should carry both terms at the next fold (evidence: §3 CLASS RULE)
+- [SDD · folded] contracts that name mirror trees must enumerate ALL copies — the v18 MIRRORS clause missed the _bundled third tree (evidence: §6 residue 2, discovered in build)
+- [TDD · folded] never pin a speculative number before counting the baseline — pin the contracted semantics ("shrank") or count first (evidence: §6 residue 1, the ≤8 lean threshold)
+- [ADD · folded] form tags (v18) make fill regions machine-delimited — a future engine feature can parse <must>/<reject> for rule-level reporting without touching templates again (evidence: frozen §3 amendment)
+- [DDD · folded] "instruction tags" vs "form tags" entered the ubiquitous language — GLOSSARY should carry both terms at the next fold (evidence: §3 CLASS RULE)

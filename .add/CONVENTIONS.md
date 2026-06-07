@@ -33,6 +33,9 @@ Architecture:
   from the agent exists. [v6 dogfood: 6 self-gated PASSes, none human-verified — folded foundation-version 2]
 - (ADD) **Dogfood parity.** The `.add/` runtime mirror and the canonical `add-method/` tree must stay
   md5-identical for every synced artifact (SKILL.md, run.md, fold.md, …); a structural test asserts it.
+  A contract's MIRRORS clause must enumerate ALL copies — the v18 clause named two trees and missed the
+  `_bundled` third; the build propagated anyway, but the clause under-promised the surface.
+  [xml-prompt-structure — folded foundation-version 18]
 - (TDD) **Words-exist ≠ method-works.** Structural/string tests prove an artifact reads as worded, not
   that the behavior works or is enforced (recurring gap). Where behavior matters — md5 parity, an
   enforced default, real convergence — add a behavioral test, not a presence assertion.
@@ -212,6 +215,8 @@ Architecture:
   tag that drifted off-vocabulary in a file the per-file table forgot to enumerate. The per-file
   narrative-enumeration list is what makes each over-tag guard real in the first place, and it must GROW with
   every task or the guard goes hollow. [mirror-greenstate + phase-guides-xml + xml-convention — folded foundation-version 15]
+  A NEW prose section is unguarded until enumerated — add it to the per-file table the moment it lands,
+  in the same task that creates the section. [intake-interview — folded foundation-version 18]
 - (ADD) **A verbatim-reproduction transform is a verifying SCRIPT, not a hand-edit.** When a transform must
   preserve bytes (a "verbatim reproduction" doc), do it with a script that asserts the invariant — bodies
   byte-identical · tag/fence counts equal · no placeholder leak — BEFORE it writes, so "verbatim" is provable,
@@ -242,6 +247,8 @@ Architecture:
   On a contract SHAPE line the figure reads as a BOUND even when the verbatim-quoted text is the
   authority — mark shape-line figures ≈ or omit them where the quote governs (the 4-vs-3 wrap was
   the gate's only deviation). [question-summary-layer — folded foundation-version 17]
+  Test-side twin: never PIN a speculative number before counting the baseline — pin the contracted
+  semantics ("shrank") or count first. [xml-prompt-structure — folded foundation-version 18]
 - (SDD) **Positivization has a boundary: when the negative IS the obligation, keep it.** "Never clobber"
   prohibits destruction; "keep unchanged" prohibits modification — the reword moved the rule, not the
   framing. Guide prose should mirror engine semantics verbatim (add.py's own comment carried the
@@ -265,3 +272,34 @@ Architecture:
   meeting the hard-stops proves the CURRENT prose steers; preservation vs the OLD prose needs a
   baseline — that proof lives in the review leg (the human diff-reads). Keep the labels straight at the
   close. [clarity-greenstate — folded foundation-version 16]
+- (SDD) **A contract adding a CLI verb must pre-declare the INSTRUMENT-REACTION class.** Self-maintaining
+  instruments (the min-pillar LIFECYCLE census, the ubiquitous-language prose ban) react to ANY new
+  subcommand — a "sole sanctioned test edit" clause under-enumerates exactly the way mirror clauses once
+  did; name the class ("plus the self-maintaining instruments' own protocol edits"), not a closed file
+  list. [archive-compaction — folded foundation-version 18]
+- (SDD) **A both-forms term ban must name the FULLY-HYPHENATED compound too.** `one[- ]approval front`
+  is blind to "one-approval-front" — a fence clause banning hyphen+space forms misses the all-hyphen
+  form; the raw-grep recipe (substring, no boundaries) is the closing sweep.
+  [ubiquitous-language — folded foundation-version 18]
+- (TDD) **Run the FULL suite once during the TESTS phase, not only the new file.** Instrument reactions
+  (census, prose bans) are discoverable pre-freeze — found there they enter the contract; found
+  post-build they become gate residue. [archive-compaction — folded foundation-version 18]
+- (TDD) **Pin §4 needles as single-line fragments of the frozen text (or whitespace-normalize the
+  assert) at WRITE time.** A needle frozen from a wrapped §3 blockquote collides with the landed
+  re-flow. [intake-interview — folded foundation-version 18]
+- (TDD) **Duplicate tripwire pins consolidate to ONE shared constant.** Five ENGINE_MD5 copies make
+  every intentional engine edit a 5-file re-stamp; a single shared pin keeps the tripwire at 1/5 the
+  ceded surface (the actual test refactor is its own future task, not part of the fold).
+  [ubiquitous-language — folded foundation-version 18]
+- (ADD) **Archive is a TWO-STEP lifecycle: `archive-milestone` (state) → `compact` (files).** Close a
+  milestone consolidation-first, then light-archive, then compact; recovery is a reverse move, state
+  needs no edit. Naming compact in the close nudge / fold.md is deferred — a method-surface edit is its
+  own task. [archive-compaction — folded foundation-version 18]
+- (ADD) **Fold routing splits SDD by content: "what we build" → §Spec · "how we author contracts" →
+  CONVENTIONS (beside TDD/ADD).** Real-but-unwritten since foundation-v17 — applied again this fold;
+  naming the split in fold.md is deferred (method-surface edit).
+  [intake-interview — folded foundation-version 18]
+- (ADD) **A prose-rewrite contract enumerates the MACHINE-TOKEN REGISTRY up front.** The machine/prose
+  boundary was discovered five separate times mid-build (### heading · ⚠ glyph · seam-audit job ·
+  folded status · owner enum), each costing an execution call — pre-draw the line once (or have add.py
+  emit the registry). [ubiquitous-language — folded foundation-version 18]

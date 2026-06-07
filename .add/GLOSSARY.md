@@ -9,3 +9,7 @@ Gate: a checkpoint with an explicit outcome: PASS, RISK-ACCEPTED, or HARD-STOP. 
 Contract: the frozen external shape (interfaces, data, names, errors); changing it is a change request.
 Survivor layer: documents kept for the whole project (CONVENTIONS, GLOSSARY, MODEL_REGISTRY, allowlist).
 State: `.add/state.json` — the single source of truth for where the project is (the resume point).
+Heavy archive / compact: step two of the archive lifecycle — `add.py compact <slug>` moves a light-archived milestone's files into the recovery bundle (step one, `archive-milestone`, only removes it from state).
+Recovery bundle: `.add/archive/<slug>/` — the moved MILESTONE.md + siblings + task dirs; recovery = reverse the move, state needs no edit.
+Instruction tags: the frozen v16 5-tag XML vocabulary (`<prompt>` · `<exit_gate>` · `<output_format>` · `<constraints>` · `<reject_codes>`) marking executable blocks in guides — guides-only.
+Form tags: the v18 closed fill-region tag class (`<must>` · `<reject>` · `<after>` · `<assumptions>` · `<scenarios>` · `<test_plan>`) in templates/artifacts — template-only; neither tag class borrows from the other.
