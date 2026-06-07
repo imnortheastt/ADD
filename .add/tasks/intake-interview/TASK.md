@@ -1,7 +1,7 @@
 # TASK: Interview before you size — proactive intent clarification at intake
 
 slug: intake-interview · created: 2026-06-07 · stage: mvp · risk: low · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- conservative: the edit is tiny but the surface is the method's own intake discipline
      (intake.md) — human-led gate, consistent with question-summary-layer.
      Intake (confirmed 2026-06-07 via AskUserQuestion): bucket=task, standalone — frozen-scope
@@ -214,18 +214,27 @@ Constraints: do NOT change any test or the contract; only the 2 contracted hunks
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — whole suite **527 OK** (522 + the 5 new); new suite went
+      4 RED → 5 green at the build, red was for the right reason (needles absent)
+- [x] coverage did not decrease — suite grew by 5; standing fences untouched
+      (wording-lint 0 findings · semantic-inventory green · 3-tree md5 parity verified)
+- [x] no test or contract was altered during build — test_intake_interview.py and §3
+      byte-unchanged since the front commit. ONE disclosed deviation: hunk A landed
+      word-identical but re-wrapped vs the §3 blockquote ("2–3 sized options" made
+      contiguous for the needle) — freeze-data-not-presentation; same class as the
+      question-summary-layer ratified rewrap. Ruled at the gate below.
+- [x] concurrency / timing — n/a: prose-only, no engine or runtime behavior
+- [x] no exposed secrets, injection openings, or unexpected dependencies — doc edit
+      only; `add.py audit` clean (44 tasks) · `check` 188 passed
+- [x] layering & dependencies follow CONVENTIONS.md — one home + one anchor
+      (rule_sprinkled guard green); additive-only (guard_weakened guard green)
+- [x] a person reviewed and approved the change — gate ruled via AskUserQuestion,
+      2026-06-07: PASS, the word-identical rewrap RATIFIED as a presentation
+      deviation (freeze-data-not-presentation; question-summary-layer precedent)
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Reviewed by: Tin Dang · date: 2026-06-07
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -233,10 +242,21 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): future intakes follow interview→propose for
+questions/unsharp intent while crisp requests still classify directly (the ⚠
+conditional-trigger flag); the ask_human rejection rate at intake (the interview
+should lower it, never replace it).
+Spec delta for the next loop: both frozen ⚠ flags held in the rule's first live
+run — this task's own intake (surface · depth · sizing interviewed, then sized);
+if crisp requests start drawing needless interviews, the trigger clause is the
+one-line change request.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [TDD · open] a §4 needle frozen from a wrapped §3 blockquote collides with the
+  landed re-flow — pin needles as single-line fragments of the frozen text (or
+  whitespace-normalize the assert) at WRITE time (evidence: the build's only red
+  after a word-exact landing was the "2–3 sized / options" wrap break — second
+  occurrence of this class after question-summary-layer's ratified rewrap)
