@@ -24,8 +24,8 @@ The full retirement PLAN (the rewriters' judgment guide). `[mapped]` = planned, 
 surface, NOT yet enforced. A rewrite task that retires an idiom flips it `[mapped]`→`[enforced]`
 in the SAME commit it removes it — the lint stays green at every task close; the set only grows.
 
-- rubber-stamp -> approve without reading [mapped]
-- wall of -> flat list of [mapped]
+- rubber-stamp -> approve without reading [enforced]
+- wall of -> flat list of [enforced]
 - collapses to -> shortens to [enforced]
 - first feeder -> first input [enforced]
 - blast radius -> scope of impact [enforced]
