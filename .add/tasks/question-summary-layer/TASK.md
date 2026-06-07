@@ -1,7 +1,7 @@
 # TASK: The question is a summary, never the artifact
 
 slug: question-summary-layer · created: 2026-06-07 · stage: mvp · risk: low · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- conservative: the edit is tiny but the surface is the method's own seam discipline
      (report-template.md) — human-led gate, consistent with the v17 prompt-surface tasks.
      Intake (confirmed 2026-06-07): bucket=task — frozen-scope test ran first and came back
@@ -194,18 +194,33 @@ Constraints: do NOT change any test or the contract; only the 3 contracted hunks
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — whole suite **522 OK** (517 + the 5 new); new suite went
+      4 RED → 5 green at the build, red was for the right reason (needles absent)
+- [x] coverage did not decrease — suite grew by 5; standing fences untouched
+- [x] no test or contract was altered during build — test_question_summary_layer.py
+      byte-unchanged since the front commit; §3 hunks landed character-exact
+- [x] concurrency / timing of the risky operation is safe — N/A: prose-only edit,
+      no runtime path; legitimate no-op recorded (foundation-v16 convention)
+- [x] no exposed secrets, injection openings, or unexpected dependencies — prose
+      only; wording-lint 0 · audit clean (43) · zero new imports/packages
+- [x] layering & dependencies follow CONVENTIONS.md — one-home rule (the template
+      owns seam discipline; SKILL.md anchors it); 3-way mirror parity byte-identical
+- [x] a person reviewed and approved the change — this gate, ruled by Tin Dang
+      2026-06-07: "PASS, but rewrap hunk B"
+
+⚠ ONE DEVIATION ruled at the gate: hunk B's frozen VERBATIM text wrapped to
+4 physical lines; the contract's shape line estimated "tie-in, 3 lines max".
+RESOLVED at the gate (2026-06-07): the human ratified an isolated pre-gate
+rewrap to 3 lines — character stream identical modulo newlines, zero word
+changes; gates re-run green after it (suite 522 OK · wording-lint 0 · mirrors
+re-synced). The §3 frozen quote stays the at-freeze record; this ratification
+is the governing note.
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS — contingent on the gate-ratified rewrap (landed as its own
+isolated commit before this stamp). Push HELD per the same ruling ("Hold — no
+push"); the human says when.
+Reviewed by: Tin Dang · date: 2026-06-07
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -213,10 +228,23 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): the one-home fence (test_one_home_only) is the
+standing monitor for rule_sprinkled; the green guard watches guard_weakened; future
+seam asks in live sessions are the behavioral signal (does the two-layer shape hold
+at multi-question seams? — §1's top ⚠ assumption stays the thing to watch).
+Spec delta for the next loop: none structural — the rule is one bullet in one home;
+if the two-line bound chafes at multi-question seams, that returns as a change-request
+against this contract, never an in-place rewording.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [SDD · open] a numeric figure on a contract SHAPE line ("3 lines max") reads as a
+  bound even when verbatim-quoted text is the authority — mark shape-line figures ≈
+  or omit them where the verbatim quote governs (evidence: hunk B's 4-vs-3 wrap was
+  the gate's only deviation, ruled via a ratified rewrap)
+- [ADD · open] dogfooding a seam-discipline rule at its own approval seams is cheap
+  live validation — the rule's freeze and gate asks already ran in the two-layer
+  shape before the rule landed (evidence: this task's freeze + gate AskUserQuestion
+  seams, 2026-06-07)
