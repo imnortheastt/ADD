@@ -448,12 +448,12 @@
     },
     "xml-prompt-structure": {
       "title": "XML prompt structure for ADD guides + templates",
-      "phase": "verify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v18",
       "depends_on": [],
       "created": "2026-06-07T11:07:56+00:00",
-      "updated": "2026-06-07T12:02:51+00:00"
+      "updated": "2026-06-07T13:49:09+00:00"
     },
     "archive-compaction": {
       "title": "Heavy archive: compact done milestone/task files",
@@ -466,7 +466,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T12:02:51+00:00",
+  "updated": "2026-06-07T13:49:09+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

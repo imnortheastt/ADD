@@ -2,7 +2,7 @@
 
 slug: xml-prompt-structure · created: 2026-06-07 · stage: mvp
 autonomy: auto
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower
      the autonomy level with `autonomy: conservative` — the engine refuses an unguarded completion
      (`unguarded_high_risk_auto`, run.md guard). A comment is never a declaration. -->
@@ -308,12 +308,14 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
 - [x] concurrency / timing of the risky operation is safe — N/A: templates + tests only, no runtime paths
 - [x] no exposed secrets, injection openings, or unexpected dependencies — text templates only; zero new packages; add.py untouched
 - [x] layering & dependencies follow CONVENTIONS.md — tags additive; every engine seam byte-compatible (proven by the seam suite)
-- [ ] a person reviewed and approved the change — pending at this gate
+- [x] a person reviewed and approved the change — Tin Dang at this gate, both residues quoted verbatim in chat
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Residues accepted as disclosed: (1) lean-threshold correction in the NEW suite implements the
+frozen plan's "shrank" against immovable pins; (2) third template tree (_bundled) propagated —
+contracted-superset, already triplet-enforced. No security finding.
+Reviewed by: Tin Dang · date: 2026-06-07
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -321,10 +323,19 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): every future task scaffold is production for this feature —
+watch: do agents fill INSIDE the tags (scenario "filled region reads non-empty") · inline-fill
+occurrences caught by the guard · report-render noise complaints (the accepted ⚠ flag) ·
+template_drift failures across the three trees.
+Spec delta for the next loop: form tags delimit fill regions but the engine does not yet parse
+them — goal #4 (machine-parseable rules) is the natural v-next: a `report` view that reads
+<must>/<reject> blocks. If render noise annoys, a tag-stripping change-request against the
+v9-1 phase-detail shape is the named path.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [SDD · open] contracts that name mirror trees must enumerate ALL copies — the v18 MIRRORS clause missed the _bundled third tree (evidence: §6 residue 2, discovered in build)
+- [TDD · open] never pin a speculative number before counting the baseline — pin the contracted semantics ("shrank") or count first (evidence: §6 residue 1, the ≤8 lean threshold)
+- [ADD · open] form tags (v18) make fill regions machine-delimited — a future engine feature can parse <must>/<reject> for rule-level reporting without touching templates again (evidence: frozen §3 amendment)
+- [DDD · open] "instruction tags" vs "form tags" entered the ubiquitous language — GLOSSARY should carry both terms at the next fold (evidence: §3 CLASS RULE)
