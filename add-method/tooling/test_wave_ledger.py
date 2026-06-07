@@ -14,6 +14,8 @@ Run: python3 -m unittest test_wave_ledger -v
 import unittest
 from pathlib import Path
 
+import md_section
+
 _TOOLING = Path(__file__).resolve().parent
 _ADD_METHOD = _TOOLING.parent
 SKILL = _ADD_METHOD / "skill" / "add"
@@ -21,11 +23,7 @@ SKILL = _ADD_METHOD / "skill" / "add"
 
 def _section(low: str, heading: str) -> str:
     """Return the lowercased text of one '## ' section (heading → next '## ')."""
-    start = low.find(heading)
-    if start == -1:
-        return ""
-    end = low.find("\n## ", start + len(heading))
-    return low[start:end] if end != -1 else low[start:]
+    return md_section.section(low, heading)
 
 
 class WaveLedgerClauseTest(unittest.TestCase):

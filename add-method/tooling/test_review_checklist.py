@@ -8,6 +8,7 @@ byte-identical. Run:
     python3 -m unittest test_review_checklist -v
 """
 import hashlib
+import md_section
 import re
 import unittest
 from pathlib import Path
@@ -27,9 +28,7 @@ from engine_pin import ENGINE_MD5
 def _section() -> str | None:
     """The checklist section body (heading to next heading), or None."""
     text = CONTRACT_MD.read_text(encoding="utf-8")
-    if HEADING not in text:
-        return None
-    return text.split(HEADING, 1)[1].split("\n## ", 1)[0]
+    return md_section.section(text, HEADING) or None
 
 
 class ChecklistTest(unittest.TestCase):

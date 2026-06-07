@@ -28,6 +28,8 @@ from pathlib import Path
 _TOOLING = Path(__file__).resolve().parent
 sys.path.insert(0, str(_TOOLING))
 
+import md_section
+
 _SKILL = _TOOLING.parent / "skill" / "add"
 _INTAKE = _SKILL / "intake.md"
 _SKILL_MD = _SKILL / "SKILL.md"
@@ -52,7 +54,7 @@ class IntakeInterview(unittest.TestCase):
                        _NEEDLE_OPTIONS, _NEEDLE_EMIT):
             self.assertIn(needle, text,
                           f"intake.md is missing the frozen needle: {needle!r}")
-        section = text.split(_SECTION_HEADER, 1)[-1].split("\n## ", 1)[0]
+        section = md_section.section(text, _SECTION_HEADER)
         self.assertIn(_NEEDLE_FLOOR, section,
                       "the section's floor line must keep 'never guess a bucket'")
 
