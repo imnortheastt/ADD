@@ -53,8 +53,8 @@ class V8OnRampTest(unittest.TestCase):
         low = _block().lower()
         self.assertIn("intake", low, "block must name intake (request -> milestone sizing)")
         self.assertIn("milestone", low, "block must name the milestone layer")
-        self.assertTrue(re.search(r"one approval|one-approval|single approval", low),
-                        "block must name the one-approval front")
+        self.assertTrue(re.search(r"one approval|one-approval|single approval|one human approval", low),
+                        "block must name the specification-bundle approval")
         self.assertTrue(re.search(r"`?add`? skill|the add skill|skill drives", low),
                         "block must point at the `add` skill as the driver")
 

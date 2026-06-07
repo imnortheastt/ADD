@@ -184,11 +184,25 @@ class GlossaryBridgeTest(unittest.TestCase):
 class AddPyProseTest(unittest.TestCase):
     """CR-2 landed: the prose add.py emits (guideline block · help · hints) speaks domain terms."""
 
+    # Group C machine literals (frozen §3 machine-layer rule — state keys / enum values /
+    # grammar patterns keep their names, bridged in the glossary):
+    MACHINE_CONSTANTS = {"seam", "folded"}      # --json owner enum + decide key · delta status
+    MACHINE_SPANS = (                           # machine-token fragments inside longer strings
+        "###\\s*Competency deltas",             # the _DELTA block locator pattern (x2)
+        "### Competency deltas",                # docstrings quoting the machine heading
+        "(human|seam|ai)",                      # the owner-enum listing in cmd docs
+        "(open|folded|rejected)",               # the delta-status grammar in _DELTA_RE
+        "folded/rejected",                      # docstring reference to the status pair
+    )
+
     def test_sync_guidelines_domain_clean(self):
         tree = ast.parse(ADD_PY.read_text(encoding="utf-8"))
         strings = [n.value for n in ast.walk(tree)
-                   if isinstance(n, ast.Constant) and isinstance(n.value, str)]
+                   if isinstance(n, ast.Constant) and isinstance(n.value, str)
+                   and n.value not in self.MACHINE_CONSTANTS]
         prose = "\n".join(strings)
+        for span in self.MACHINE_SPANS:
+            prose = prose.replace(span, " ")
         bans = {t["slug"]: t["ban"] for t in TERMS} | ESCAPEES
         offending = {slug: re.findall(ban, prose, re.IGNORECASE)[:3]
                      for slug, ban in bans.items() if re.search(ban, prose, re.IGNORECASE)}

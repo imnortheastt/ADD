@@ -14,7 +14,7 @@ Claude, Cursor, Copilot, Codex — through the CLI alone. Before you change code
    guide ends with its exit gate and the command to move on.
 
 The flow: INTAKE sizes a request into a milestone; each task runs the
-**one-approval front** — Spec+Scenarios+Contract+Tests as one bundle,
+**specification bundle** — Spec+Scenarios+Contract+Tests as one bundle,
 ONE human approval at the frozen contract — then a self-driving build→verify
 run. Non-negotiable for every agent:
 Never weaken a test or edit a frozen contract to make a build pass; a security

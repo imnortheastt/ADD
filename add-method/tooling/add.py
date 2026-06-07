@@ -38,7 +38,7 @@ def _phase_index(name: str) -> int:
 # `add.py guide` copy: per-phase (concrete next action, book chapter to read).
 # Keep the action wording aligned with each phase's EXIT line in the TASK template.
 PHASE_GUIDE = {
-    "specify":   ("state every rule — Must / Reject (+ named code) / After; rank assumptions least-sure first and flag the biggest risk",
+    "specify":   ("state every rule — Must / Reject (+ named code) / After; rank assumptions lowest-confidence first and flag the biggest risk",
                   "03-step-1-specify.md"),
     "scenarios": ("write one Given/When/Then per Must AND per Reject; every result observable",
                   "04-step-2-scenarios.md"),
@@ -48,7 +48,7 @@ PHASE_GUIDE = {
                   "06-step-4-tests.md"),
     "build":     ("write the minimum code to pass the tests; change no test and no contract",
                   "07-step-5-build.md"),
-    "verify":    ("run the suite + blind-spot checks, then record the gate",
+    "verify":    ("run the suite + non-functional checks, then record the gate",
                   "08-step-6-verify.md"),
     "observe":   ("note what to watch + the spec delta for the next loop",
                   "09-the-loop.md"),
@@ -244,7 +244,7 @@ def _guideline_block() -> str:
         "   guide ends with its exit gate and the command to move on.\n"
         "\n"
         "The flow: INTAKE sizes a request into a milestone; each task runs the\n"
-        "**one-approval front** — Spec+Scenarios+Contract+Tests as one bundle,\n"
+        "**specification bundle** — Spec+Scenarios+Contract+Tests as one bundle,\n"
         "ONE human approval at the frozen contract — then a self-driving build→verify\n"
         "run. Non-negotiable for every agent:\n"
         "Never weaken a test or edit a frozen contract to make a build pass; a security\n"
@@ -332,7 +332,7 @@ def _is_brownfield(base: Path) -> bool:
     """True when `base` already holds project content beyond the tool's own scaffolding.
 
     Judgment-free: a mechanical fact (does the dir hold a non-excluded entry?), so the
-    autonomous-onboarding flow knows to map existing code into the survivors. INTERPRETING
+    autonomous-onboarding flow knows to map existing code into the living documentation. INTERPRETING
     that code stays with the AI (skill/add/adopt.md) — the engine only detects + signals."""
     if not base.is_dir():
         return False
@@ -569,7 +569,7 @@ def cmd_gate(args: argparse.Namespace) -> None:
         hdr = _task_header(root, slug)
         if _RISK_HIGH_RE.search(hdr) and not _AUTONOMY_CONSERVATIVE_RE.search(hdr):
             _die(f"unguarded_high_risk_auto: task '{slug}' declares risk: high "
-                 "without autonomy: conservative — lower the dial in the TASK.md "
+                 "without autonomy: conservative — lower the autonomy level in the TASK.md "
                  "header; a human must own a high-risk gate (run.md guard)")
     if args.outcome == "RISK-ACCEPTED":
         # A waiver must be SIGNED: owner, ticket, expiry (glossary). Stored in state
@@ -593,9 +593,9 @@ def cmd_gate(args: argparse.Namespace) -> None:
 
 
 def cmd_lock(args: argparse.Namespace) -> None:
-    """The human lock-down: freeze the autonomously-drafted setup in ONE atomic write.
+    """The human baseline approval: freeze the autonomously-drafted setup in ONE atomic write.
 
-    Setup-altitude analog of the contract freeze — the only new human action onboarding
+    Setup-level analog of the contract freeze — the only new human action onboarding
     needs. `add.py lock` is judgment-free (it records the signature; it does NOT inspect
     the artifacts): the human's signature IS the gate."""
     root = _require_root()
@@ -691,7 +691,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         print("tasks   : (none yet)")
         print()
         if unlocked:
-            print("setup   : UNLOCKED — review .add/SETUP-REVIEW.md (least-sure first),"
+            print("setup   : UNLOCKED — review .add/SETUP-REVIEW.md (lowest-confidence first),"
                   " then sign: add.py lock")
             print("          (the build-boundary gate is closed until the foundation is locked)")
         else:
@@ -710,11 +710,11 @@ def cmd_status(args: argparse.Namespace) -> None:
     # silently outrun the human fold (read-only; v11). Silent when none are open.
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
-        print(f"deltas  : {open_deltas} open — fold at milestone close (add.py deltas)")
+        print(f"deltas  : {open_deltas} open — consolidate at milestone close (add.py deltas)")
     # When the setup is unlocked, the only terminal guidance that matters is
     # review+lock; suppress the generic resume block so it does not compete.
     if unlocked:
-        print("\nsetup   : UNLOCKED — review .add/SETUP-REVIEW.md (least-sure first),"
+        print("\nsetup   : UNLOCKED — review .add/SETUP-REVIEW.md (lowest-confidence first),"
               " then sign: add.py lock")
         print("          (the build-boundary gate is closed until the foundation is locked)")
     elif active and active in tasks:
@@ -1020,7 +1020,7 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
         noun = "delta" if open_deltas == 1 else "deltas"
-        print(f"note: {open_deltas} open competency {noun} to fold into the foundation "
+        print(f"note: {open_deltas} open {noun} to consolidate into the foundation "
               f"— review with: add.py deltas")
 
 
@@ -1749,7 +1749,7 @@ def _contract_frozen(raw3: str) -> bool:
 
 
 def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
-    """FACTS for the task-level decision-seam digest (frozen shape). The seam comes
+    """FACTS for the task-level decision-point digest (frozen shape). The decision comes
     from STATE ONLY: recorded (gate set / observe / done) · front (specify→tests) ·
     gate (build/verify). judgment = extracted markers, byte-verbatim. PURE."""
     tasks = state.get("tasks") or {}
@@ -1786,7 +1786,7 @@ def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
         decide = "approve -> freeze §3 (Status: FROZEN @ v1) -> auto run"
     elif seam == "front":
         unlocks = "none"
-        decide = "no decision pending — frozen; the run owns it. next seam: verify gate"
+        decide = "no decision pending — frozen; the run owns it. next decision point: verify gate"
     else:
         unlocks = "none"
         decide = f"no decision pending — recorded gate: {gate}"
@@ -1797,7 +1797,7 @@ def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
 
 def render_decide(root: Path, state: dict, mslug: str, slug: str, *,
                   width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
-    """Text view of the decision-seam digest — decisive facts FIRST: NEEDS YOUR
+    """Text view of the decision-point digest — decisive facts FIRST: NEEDS YOUR
     JUDGMENT (markers byte-verbatim, section-tagged) -> [front: §3 verbatim] ->
     ENGINE FACTS -> UNLOCKS -> DECIDE. PURE — no writes; plain text (color is a
     tty-only skin in cmd_report, like every report view)."""
@@ -1806,7 +1806,7 @@ def render_decide(root: Path, state: dict, mslug: str, slug: str, *,
     banner = g["h"] * width
     seam_label = {"gate": "VERIFY GATE", "front": "CONTRACT APPROVAL",
                   "recorded": "RECORDED"}[d["seam"]]
-    L = [banner, f" DECIDE · {mslug or '—'} · {slug} · seam: {seam_label}", banner]
+    L = [banner, f" DECIDE · {mslug or '—'} · {slug} · decision point: {seam_label}", banner]
     if d["decide"].startswith("no decision pending"):
         L.append(f" {d['decide']}")
         L.append(f" GATE  {d['gate']}")
@@ -1853,8 +1853,8 @@ def _planned_unscaffolded(root: Path, mslug: str) -> list[str]:
 
 
 def _decide_next(state: dict, d: dict) -> str:
-    """The rollup's DECIDE NEXT line (frozen precedence): HARD-STOP -> fold+archive
-    -> first seam-blocked task (ACTIVE task first, then state order) -> run-in-
+    """The rollup's DECIDE NEXT line (frozen precedence): HARD-STOP -> consolidate+archive
+    -> first decision-blocked task (ACTIVE task first, then state order) -> run-in-
     progress. v2: when d carries planned_unscaffolded, the line gains a
     plan-vs-state suffix — precedence itself stays state-only."""
     return _decide_next_base(state, d) + _planned_hint(d)
@@ -1880,7 +1880,7 @@ def _decide_next_base(state: dict, d: dict) -> str:
         return f"resolve HARD-STOP on {stopped[0]['slug']}"
     s = d["summary"]
     if s["tasks_done"] == s["tasks_total"]:
-        return f"fold learnings + archive-milestone {ms}"
+        return f"consolidate learnings + archive-milestone {ms}"
     active = state.get("active_task")
     order = sorted(rows, key=lambda r: 0 if r["slug"] == active else 1)  # stable
     for r in order:
@@ -2037,7 +2037,7 @@ def _lint_task_deltas(root: Path, slug: str) -> tuple[bool, str] | None:
 
 
 def _collect_open_deltas(root: Path) -> dict[str, list[dict]]:
-    """Scan every .add/tasks/*/TASK.md for open competency deltas.
+    """Scan every .add/tasks/*/TASK.md for open lessons learned.
 
     Returns a dict keyed by competency in canonical order; each value is a list
     of {task, text, evidence} dicts. READ-ONLY — never mutates any file."""
@@ -2099,7 +2099,7 @@ _AUDIT_REVIEWED_RE = re.compile(r"^Reviewed by:(.*)$", re.M)
 
 
 def _audit_findings(root: Path, state: dict) -> tuple[int, list[dict]]:
-    """The gate-audit core: verify that human seams left WELL-FORMED records.
+    """The gate-audit core: verify that human decision points left WELL-FORMED records.
     Judgment-free — checks record SHAPE (a named human at the freeze, exactly one
     gate outcome, prose ≡ state, a marked security note never auto-reviewed),
     never re-decides an outcome. Scope: active tasks done/observe or gated; open
@@ -2158,8 +2158,8 @@ def _audit_findings(root: Path, state: dict) -> tuple[int, list[dict]]:
 
 
 def cmd_audit(args: argparse.Namespace) -> None:
-    """Read-only: audit recorded human seams for well-formedness. Exit 0 clean,
-    exit 1 with findings — the enforcement seam CI consumes (audit-ci). Writes
+    """Read-only: audit recorded human decision points for well-formedness. Exit 0 clean,
+    exit 1 with findings — the enforcement gate CI consumes (audit-ci). Writes
     NOTHING; every other command is byte-identical."""
     root = _require_root()
     checked, findings = _audit_findings(root, load_state(root))
@@ -2177,7 +2177,7 @@ def cmd_audit(args: argparse.Namespace) -> None:
 
 
 def cmd_deltas(args: argparse.Namespace) -> None:
-    """Read-only: report all open competency deltas grouped by competency.
+    """Read-only: report all open lessons learned grouped by competency.
 
     Scans every .add/tasks/*/TASK.md '### Competency deltas' block for lines
     matching the delta grammar; shows only `open` entries in canonical competency
@@ -2199,7 +2199,7 @@ def cmd_deltas(args: argparse.Namespace) -> None:
         print("no open deltas.")
         return
 
-    print(f"open competency deltas ({total} total):")
+    print(f"open lessons learned ({total} total):")
     for comp in _COMPETENCY_ORDER:
         entries = by_comp[comp]
         if not entries:
@@ -2324,7 +2324,7 @@ def build_parser() -> argparse.ArgumentParser:
     pi.set_defaults(func=cmd_init)
 
     pl = sub.add_parser("lock",
-                        help="freeze the autonomous setup (the human lock-down) and open the build")
+                        help="freeze the autonomous setup (the human baseline approval) and open the build")
     pl.add_argument("--by", default=None, help="who is locking (default: current OS user)")
     pl.add_argument("--layers", default=None,
                     help="comma-separated lock layers (default: foundation,scope,contract)")
@@ -2424,19 +2424,19 @@ def build_parser() -> argparse.ArgumentParser:
     prp.add_argument("--plain", action="store_true",
                      help="ASCII, no color, fixed width (pipe / CI / screen-reader safe)")
     prp.add_argument("--decide", action="store_true",
-                     help="decision-seam digest: what needs the human's judgment NOW "
-                          "(task -> seam digest; milestone -> DECIDE NEXT only; "
+                     help="decision-point digest: what needs the human's judgment NOW "
+                          "(task -> decision digest; milestone -> DECIDE NEXT only; "
                           "bare -> the active task)")
     prp.set_defaults(func=cmd_report)
 
     pdt = sub.add_parser("deltas",
-                         help="read-only report: open competency deltas grouped by competency")
+                         help="read-only report: open lessons learned grouped by competency")
     pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pdt.set_defaults(func=cmd_deltas)
 
     pau = sub.add_parser("audit",
-                         help="read-only: verify human seams left well-formed records "
-                              "(exit 1 on findings — the CI enforcement seam)")
+                         help="read-only: verify recorded human decision points left well-formed records "
+                              "(exit 1 on findings — the CI enforcement gate)")
     pau.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pau.set_defaults(func=cmd_audit)
 

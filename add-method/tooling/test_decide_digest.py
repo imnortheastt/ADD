@@ -209,7 +209,7 @@ class DecideDigestTest(unittest.TestCase):
         out, _, code = self._run("v13")
         self.assertEqual(code, 0)
         self.assertIn("DECIDE NEXT", out)
-        self.assertIn("fold", out)
+        self.assertIn("consolidate", out)
         self.assertIn("archive-milestone", out)
 
     def test_footer_names_seam_blocked_task(self):

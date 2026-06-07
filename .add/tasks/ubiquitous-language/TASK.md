@@ -340,6 +340,15 @@ Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one 
 > one-approval-front expected-hit count is unchanged (24) before/after. The human verify read
 > stays the backstop against slang smuggled into a span/fence (same honor-bound class as the
 > `formerly "…"` bridge exemption disclosed at the freeze).
+> (7) **(CR-2)** AddPyProseTest gains the same machine-layer rule for add.py string literals:
+> exact Group C constants (`"seam"` — the --json owner enum + decide key; `"folded"` — the delta
+> status) and machine-token fragments inside longer strings (the `### Competency deltas` block
+> locator + docstring quotes of it · the `(human|seam|ai)` enum listing · the
+> `(open|folded|rejected)` grammar in _DELTA_RE · "folded/rejected" status references) are exempt
+> from the prose bans — every other add.py literal (help · hints · docstrings · the
+> sync-guidelines block · the decide digest's emitted text) was renamed. The five ENGINE_MD5
+> tripwires re-stamped once more (per call 4's plan); CLAUDE.md/AGENTS.md regenerated via
+> `add.py sync-guidelines`.
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->
