@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "intake-interview",
+  "active_task": "ubiquitous-language",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -436,10 +436,19 @@
       "depends_on": [],
       "created": "2026-06-07T08:04:19+00:00",
       "updated": "2026-06-07T08:18:47+00:00"
+    },
+    "ubiquitous-language": {
+      "title": "Replace method slang with domain-standard terminology",
+      "phase": "build",
+      "gate": "none",
+      "milestone": null,
+      "depends_on": [],
+      "created": "2026-06-07T09:02:27+00:00",
+      "updated": "2026-06-07T09:24:00+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T08:18:47+00:00",
+  "updated": "2026-06-07T09:24:00+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
