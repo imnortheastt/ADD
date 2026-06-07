@@ -1,7 +1,7 @@
 # TASK: Heavy archive: compact done milestone/task files
 
 slug: archive-compaction · created: 2026-06-07 · stage: mvp · autonomy: auto
-phase: verify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower
      the autonomy level with `autonomy: conservative` — the engine refuses an unguarded completion
      (`unguarded_high_risk_auto`, run.md guard). A comment is never a declaration. -->
@@ -245,12 +245,14 @@ Constraints: do NOT change any test or the contract; allow-list packages only; a
       slug dies at unknown_milestone; poisoning state.json is the tool's existing trust boundary)
 - [x] layering & dependencies follow CONVENTIONS.md — single-file engine idiom, mirrors
       cmd_archive_milestone's validate-before-mutation pattern; reuses _collect_open_deltas
-- [ ] a person reviewed and approved the change
+- [x] a person reviewed and approved the change — gate presented with both residues disclosed;
+      human selected PASS
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS — two instrument residues accepted as disclosed (LIFECYCLE classification of the
+new subcommand; "fold" -> "consolidate" prose rewording). No security finding: the security
+line item was escalated to the human, never auto-passed.
+Reviewed by: Tin Dang · date: 2026-06-07
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -258,10 +260,27 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): per-reject-code hit rate on real usage (expect mostly
+open_deltas_unfolded — it is the educational one) · the 8-milestone backlog compaction as first
+production run · reverse-move recoveries needed (target: 0)
+Spec delta for the next loop: none yet — the backlog compaction is the first production use;
+revisit after it runs.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+  - [SDD · open] "sole sanctioned test edit" clauses under-enumerate the same way mirror clauses
+    did: SELF-MAINTAINING instruments (min_pillar's LIFECYCLE census, the ubiquitous-language
+    prose ban) react to ANY new CLI verb — a contract adding a subcommand should pre-declare the
+    instrument-reaction class (evidence: 2 disclosed residues at this gate)
+  - [TDD · open] run the FULL suite once during the tests phase, not only the new file — both
+    instrument reactions were discoverable pre-freeze and would have entered the contract instead
+    of the residue list (evidence: test_min_pillar + test_ubiquitous_language failed only at the
+    first full-suite build run)
+  - [ADD · open] archive is now a two-step lifecycle (archive-milestone -> compact) — the
+    milestone-close fold-pressure nudge and fold.md could name compact as the step after
+    consolidation (evidence: cmd_compact landed; status nudge still ends at the fold)
+  - [DDD · open] "compact" / "heavy archive" / "recovery bundle" entered the language — GLOSSARY
+    should carry them at the next retrospective consolidation (evidence: new CLI verb + the
+    .add/archive/ namespace)
