@@ -75,14 +75,15 @@ Out: Method SEMANTICS (flow, gates, autonomy, CLI behavior) — UNCHANGED; this 
 - **Mirror parity**: every `skill/add/` edit → `_bundled/` → `.claude/skills/add` byte-identical
   (`test_bundle_parity` + `test_tree_parity` backstop); appendix-b → its 3 tracked copies.
 
-### ⚠ PENDING — NOT yet ratified (held at the rewrite-core freeze, 2026-06-06)
-- **Surface-wide idiom promotion as a binding RULE.** rewrite-core proposed: flip `[mapped]`→`[enforced]`
-  when an idiom leaves the WHOLE surface (the `wording_lint` surface scan), not just one task's files. The
-  human FROZE rewrite-core's contract — which flips `blast radius` and leaves `rubber-stamp` `[mapped]` as a
-  per-task action — but **HELD** the milestone-level rule that would bind `rewrite-guides` + `clarity-greenstate`.
-  **RE-RAISE before rewrite-guides** (clarity-greenstate's exit asserts `enforced_banned == full idiom_map`, so
-  the rule must be settled by then). Detail: F1's matcher is hyphen-bound (`rubber-stamp` ≠ space-form
-  "rubber stamp") — whatever is ratified, promotion must clear BOTH forms surface-wide.
+- **Surface-wide idiom promotion, BOTH FORMS** (held at the rewrite-core freeze 2026-06-06; RATIFIED at
+  the rewrite-guides freeze, 2026-06-07, Tin Dang): an idiom flips `[mapped]`→`[enforced]` in the SAME
+  commit that removes its LAST occurrence from the WHOLE lint surface, clearing BOTH written forms
+  (hyphen + space — F1's matcher is form-strict, so the space/hyphen twin must be cleared by hand); a
+  both-forms escape on an ALREADY-enforced idiom is cleared by whichever rewrite task owns the file.
+  Live proof that motivated the both-forms clause: `blast-radius` survived in `phases/7-observe.md`
+  with the lint green after `blast radius` was enforced. Binds `rewrite-guides` + `clarity-greenstate`
+  (whose exit asserts `enforced_banned == full idiom_map`) + any future wording task. The §4
+  both-forms regex test (`test_rewrite_guides.py`) is the standing fence for the form-escape class.
 
 ## Shared / risky contracts (freeze these first)
 - The wording RUBRIC (idiom map · keep-list · negative-keep-list · emphasis/scope policy · reject codes) -> owning task `wording-rubric`
