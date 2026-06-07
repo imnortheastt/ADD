@@ -100,5 +100,6 @@ Out: Method SEMANTICS (flow, gates, autonomy, CLI behavior) — UNCHANGED; this 
 - [x] The wording rubric is frozen + `wording-lint` is green over the surface          (← wording-rubric)
 - [x] The semantic-preservation inventory is captured + its diff test is green          (← semantic-inventory)
 - [x] SKILL.md + engine docs carry the rubric; ~290 W always-loaded summary trimmed; run.md auto-gate/high-risk in `<constraints>` (ENGINE_FILES change-request ratified); inventory unchanged  (← rewrite-core)
+      ↳ met-WITH-deviation, ruled at the close 2026-06-07 (Tin Dang): the actual safe trim was 180 W — the deliberate stop that kept load-bearing prose; ~290 W was an estimate, not an obligation.
 - [x] The 8 phase guides + appendix-b carry the rubric; inventory unchanged             (← rewrite-guides)
 - [x] Whole suite + wording-lint + semantic-inventory + 3-mirror parity + `add.py audit` green; `enforced_banned == full idiom_map` (every mapped idiom was promoted, not left un-retired); the non-gating behavioral spot-check is run + recorded as indicative  (← clarity-greenstate)
