@@ -46,8 +46,8 @@ _HOME_NEEDLE = "question is a summary"
 _EXISTING_BULLETS = (
     "**Summary-first.** Never bury the decision under a task list or a diff.",
     "**Show before ask.** Render the artifact (digest · diff · report) before any",
-    "**Never pre-stamp a human seam.** Freeze / gate / lock fields stay DRAFT or",
-    "**One report per seam.** After an approval, point at the frozen artifact —",
+    "**Never pre-stamp a human decision point.** Freeze / gate / lock fields stay DRAFT or",
+    "**One report per decision point.** After an approval, point at the frozen artifact —",
     "**Honest scope.** \"Done\" means the request, not the last task: report",
 )
 

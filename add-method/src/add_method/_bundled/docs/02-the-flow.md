@@ -6,7 +6,7 @@
 
 ## The flow
 
-AIDD is one repeatable flow of **seven steps**: six build the feature — Specify → Scenarios → Contract → Tests → Build → Verify — and the seventh, **Observe**, feeds what production teaches back into the next Specify. In the default flow the AI drafts the front (steps 1–4) and a person approves it **once**, at the contract freeze; the AI performs the Build; and Verify is resolved on evidence under `autonomy: auto`, with a person owning any residue. (See [11 Governance](./11-governance.md) for the autonomy level and the one-approval seam.)
+AIDD is one repeatable flow of **seven steps**: six build the feature — Specify → Scenarios → Contract → Tests → Build → Verify — and the seventh, **Observe**, feeds what production teaches back into the next Specify. In the default flow the AI drafts the front (steps 1–4) and a person approves it **once**, at the contract freeze; the AI performs the Build; and Verify is resolved on evidence under `autonomy: auto`, with a person owning any residue. (See [11 Governance](./11-governance.md) for the autonomy level and the one-approval decision point.)
 
 ![The ADD flow — a solid primary flow Specify→Scenarios→Contract→Tests→Build→Verify→Observe, with dashed backward-correction arrows (any phase may return to an earlier one), a Tests⇄Build red/green engine, and Observe looping back to the next Specify](./add-flow.png)
 
@@ -23,10 +23,10 @@ flowchart LR
   S5 -. "a missing rule → back to Specify" .-> S1
   OBS -. "what you learn becomes the next spec" .-> S1
   classDef human fill:#FAEEDA,stroke:#BA7517,color:#633806;
-  classDef seam fill:#E1F5EE,stroke:#0F6E56,color:#04342C;
+  classDef decision fill:#E1F5EE,stroke:#0F6E56,color:#04342C;
   classDef machine fill:#E6F1FB,stroke:#185FA5,color:#042C53;
   class S1,S2 human;
-  class S3,S4 seam;
+  class S3,S4 decision;
   class S5,S6 machine;
 ```
 
@@ -45,7 +45,7 @@ flowchart LR
        └─────────────────────────┘  becomes the next Specify
 ```
 
-The shape is deliberate: the human-led steps establish direction, a frozen contract forms the seam in the middle, and the AI-led build runs fast and safely on the far side because everything it needs is already fixed.
+The shape is deliberate: the human-led steps establish direction, a frozen contract forms the decision point in the middle, and the AI-led build runs fast and safely on the far side because everything it needs is already fixed.
 
 > **What changed in v7 (the diagrams above show the structural flow, which is unchanged).** The *steps* and their order are exactly as drawn — only **who resolves them** moved. The AI now drafts the whole front (steps 1–4) and a person approves it **once**, at the contract freeze (not a sign-off at each step); and **Verify is auto-gated on evidence** under `autonomy: auto` (the default), escalating security — always a `HARD-STOP` — and other residue to a person. Lower the autonomy level to `conservative` to keep a human at the Verify gate. See [11 Governance](./11-governance.md).
 
@@ -72,7 +72,7 @@ The flow runs in two directions under two rules that never conflict. **Backward 
 |------|--------------|----------|
 | 1 Specify | confirm the rules (part of the one approval) | draft; list assumptions to confirm |
 | 2 Scenarios | confirm what "correct" looks like (part of the one approval) | draft scenarios |
-| 3 Contract | **approve & freeze the whole bundle (§1–§4) once — the seam** | draft the contract and mocks |
+| 3 Contract | **approve & freeze the whole bundle (§1–§4) once — the decision point** | draft the contract and mocks |
 | 4 Tests | confirm the targets (part of the one approval) | draft the failing tests |
 | 5 Build | direct in small batches | implement until tests pass |
 | 6 Verify | own the residue (security · concurrency · architecture); approve when `conservative` | gather evidence; **auto-PASS on complete evidence** under `autonomy: auto` |

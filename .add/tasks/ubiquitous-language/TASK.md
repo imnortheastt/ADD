@@ -326,6 +326,13 @@ Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one 
 > as designed and are re-stamped to the new digest in the SAME commit — a disclosed re-pin, not a
 > weakening (the change is contract-ratified CR-2 class; an accidental engine edit still fails). The
 > CR-2 commit will re-stamp them once more.
+> (5) **(term 15)** the §4 seam ban gains a surgical negative lookahead — `\bseams?\b(?!-audit)` —
+> because `seam-audit` is a Group C machine token (the CI job/workflow name; test_audit_ci pins the
+> job key + canonical command, test_release_1_1_0 anchors it in the release record). Alignment to
+> the contract's machine-layer rule (MACHINE_HEADINGS precedent, term 13), not a weakening: every
+> prose form of seam stays banned; only the literal machine compound is exempt. The add.py machine
+> names (`--json` owner enum `seam` · decide-digest key `seam`) keep their names per the contract;
+> their AddPyProseTest handling lands with CR-2. Glossary bridges name all three machine survivors.
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->

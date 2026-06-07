@@ -6,7 +6,7 @@ competencies it improves. You write deltas in a task's **OBSERVE** phase; later,
 This is how `DDD · SDD · UDD · TDD · ADD` stop being write-once and start converging.
 
 You (the AI) **emit** deltas as `open`. Only the **human** moves a delta to `folded` or `rejected`
-(folding into the foundation is judgment — see the verify/observe seam). You never self-fold.
+(folding into the foundation is judgment — see the verify/observe decision point). You never self-fold.
 
 ## The grammar (frozen)
 

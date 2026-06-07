@@ -63,22 +63,22 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | setup | `phases/0-setup.md` | `.add/` + living docs + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the baseline approval) |
 | specify | `phases/1-specify.md` | §1 rules + ranked lowest-confidence flag | AI drafts (co-specify)† |
 | scenarios | `phases/2-scenarios.md` | §2 Given/When/Then | AI drafts† |
-| contract | `phases/3-contract.md` | §3 frozen shape | AI drafts → **human approves once** (the seam)† |
+| contract | `phases/3-contract.md` | §3 frozen shape | AI drafts → **human approves once** (the decision point)† |
 | tests | `phases/4-tests.md` | §4 + red suite in `tests/` | AI drafts† |
 | build | `phases/5-build.md` | code in `src/`, tests green | **AI** |
 | verify | `phases/6-verify.md` | §6 checks + gate record | **AI auto-gates on evidence**; human on residue/security‡ |
 | observe | `phases/7-observe.md` | §7 spec delta | human + AI |
 
 † **One-approval front (v7).** §1–§4 are one bundle; the human gives **one approval at the
-contract freeze** (the seam), presented lowest-confidence-first. See `run.md`.
+contract freeze** (the decision point), presented lowest-confidence-first. See `run.md`.
 ‡ **Verify auto-gate (v6–v7).** Under `autonomy: auto` (the default) a run may auto-PASS on
 complete evidence — recorded as *auto-resolved*, an explicit PASS, not a skip. **Security always
 escalates** (HARD-STOP); so do concurrency / architecture residue and `conservative` autonomy.
 See `run.md`.
 
-Whenever you present a seam to the human in chat (intake · front approval · gate ·
+Whenever you present a decision point to the human in chat (intake · front approval · gate ·
 milestone close), follow `report-template.md` — SUMMARY → DECISION → ⚠ FLAGS →
-EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a seam —
+EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a decision point —
 and the question is a summary, never the artifact.
 
 In **observe**, also emit **lessons learned** — learnings tagged by which of the five

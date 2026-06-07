@@ -1,10 +1,10 @@
 # The dynamic run — executing a locked scope
 
 Once a task's CONTRACT is frozen (phase 3), the scope is *locked*: the external shape will not move.
-That lock is ADD's autonomy seam — below it code is disposable; above it nothing breaks. This rubric
-covers what runs on the far side of the seam: the **build->verify half, executed as a dynamic,
+That lock is ADD's autonomy decision point — below it code is disposable; above it nothing breaks. This rubric
+covers what runs on the far side of the decision point: the **build->verify half, executed as a dynamic,
 self-improving run** instead of a manual, sequential build. The human-led FRONT (Specify · Scenarios
-· Contract) still owns *direction*, but v7 compresses it to a **single human approval at the seam**
+· Contract) still owns *direction*, but v7 compresses it to a **single human approval at the decision point**
 (see "The one-approval front" below) — the AI drafts the whole front, a human approves it once.
 
 > **Self-improving = within-run convergence + emit v5 deltas** — same definition as v5: tracked,
@@ -16,10 +16,10 @@ self-improving run** instead of a manual, sequential build. The human-led FRONT 
 The human-led front used to be three separate approvals — Specify, then Scenarios, then the Contract
 freeze. v7 compresses it to **one**. From the user's input the AI **drafts the whole front as a single
 bundle** — the Spec, the Scenarios, the Contract, and the failing Tests — and presents it together. The
-human gives **one approval, at the frozen contract** (the seam). That single approval is the green light
+human gives **one approval, at the frozen contract** (the decision point). That single approval is the green light
 for the self-driving run.
 
-Why one approval and not zero: the contract freeze is the autonomy seam, and the seam **stays human**.
+Why one approval and not zero: the contract freeze is the autonomy decision point, and the decision point **stays human**.
 The AI *drafts* the contract but never *freezes its own* — a person approves the frozen shape before any
 auto-run touches code. This is exactly what keeps "never self-gate a human-led gate" true under an auto
 default: the one gate that remains is human. Drop it to zero and the AI would freeze the interface it
@@ -28,7 +28,7 @@ then builds against and self-gate the result — the circular trust v6's dogfood
 What the human is actually approving in that one gate: that the drafted Spec captures the real intent,
 that the Scenarios cover the cases that matter, and that the Contract shape is the one to freeze. Reject
 any part and the bundle goes back to draft — that is backward-correction (principle 4), not failure.
-Approve, and the run begins. The seam guide (`phases/3-contract.md`) carries the
+Approve, and the run begins. The decision-point guide (`phases/3-contract.md`) carries the
 **freeze review checklist** — six lines that walk the human through exactly this, ⚠-first.
 
 **The lowest-confidence flag — aiming the one approval.** A single approval over a whole bundle is easy to
@@ -59,7 +59,7 @@ drift the interface, because the interface is frozen above it.
 <constraints>
 A locked run has a hard boundary. It MAY:
 
-- write and rewrite **code** (`src/`) — code is disposable below the seam;
+- write and rewrite **code** (`src/`) — code is disposable below the decision point;
 - drive the **tests** to green WITHOUT weakening them (a weakened test is a method violation);
 - gather **evidence** for the verify gate (test output, non-functional review).
 
@@ -162,5 +162,5 @@ carries `risk: high` without `autonomy: conservative` (error `unguarded_high_ris
 always records — stopping is never blocked), and `add.py audit` flags the same code on a finished
 record whose header was tampered or whose GATE RECORD reviewer is the auto-gate — which CI enforces
 (audit-ci). The honest limit mirrors the audit's: an **undeclared** high-risk scope passes; declaring
-is the human seam, the engine enforces what was declared.
+is the human decision point, the engine enforces what was declared.
 </constraints>

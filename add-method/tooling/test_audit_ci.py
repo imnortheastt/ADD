@@ -145,8 +145,8 @@ class ConsumerShipTest(unittest.TestCase):
 
     def test_getting_started_ships_consumer_workflow(self):
         text = GETTING_STARTED.read_text(encoding="utf-8")
-        self.assertIn("## Enforce the seams in CI", text)
-        section = text.split("## Enforce the seams in CI", 1)[1].split("\n## ", 1)[0]
+        self.assertIn("## Enforce the decision points in CI", text)
+        section = text.split("## Enforce the decision points in CI", 1)[1].split("\n## ", 1)[0]
         self.assertIn(CANONICAL, section,
                       "the snippet must use the same canonical command as this repo")
         self.assertIn("seam-audit", section)

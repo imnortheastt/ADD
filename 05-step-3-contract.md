@@ -10,9 +10,9 @@
 
 ---
 
-## The seam of the whole method
+## The decision point of the whole method
 
-This step is the seam between the human-led and machine-led halves of the flow, and it is what makes everything after it safe.
+This step is the decision point between the human-led and machine-led halves of the flow, and it is what makes everything after it safe.
 
 The reasoning is simple. The AI is allowed to write and rewrite code quickly. That is only safe if there is a stable surface that the rest of the system depends on and that the AI is not allowed to disturb. The frozen contract is that surface. Below it, the code is disposable and can be regenerated freely; above it, nothing breaks, because the shape it depends on does not move.
 

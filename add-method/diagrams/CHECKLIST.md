@@ -12,7 +12,7 @@ Exact order + essence (spelling must match):
 6. Verify — evidence + checks
 → Observe — in production
 Loop: Observe → "what you learn becomes the next Specify" → back to 1 Specify
-Bands: 1–2 human-led · 3–4 frozen seam · 5–6 AI-led · Verify=human · Observe=loop
+Bands: 1–2 human-led · 3–4 frozen decision point · 5–6 AI-led · Verify=human · Observe=loop
 Primary flow = SOLID arrows, never skipping a card. Backward correction = DASHED.
 Backward-correction arcs (must be present, dashed, quieter than the primary flow):
   - Verify → Build   labelled "evidence fails - back to Build"

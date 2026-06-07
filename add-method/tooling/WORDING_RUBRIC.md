@@ -65,6 +65,12 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - competency delta -> lesson learned [enforced]
 - least-sure -> lowest-confidence [enforced]
 - least sure -> lowest confidence [enforced]
+- the seam -> the decision point [enforced]
+- a seam -> a decision point [enforced]
+- decision seam -> decision point [enforced]
+- freeze seam -> freeze decision point [enforced]
+- human seam -> human decision point [enforced]
+- seam template -> decision-point template [enforced]
 
 ## enforced_banned
 
@@ -91,6 +97,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - method rationale
 - onboarding
 - lowest-confidence
+- decision point
 - READY-QUEUE
 - REVIEW-QUEUE
 - change request

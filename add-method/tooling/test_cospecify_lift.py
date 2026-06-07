@@ -26,7 +26,7 @@ SETUP = "phases/0-setup.md"
 
 MILESTONE_ANCHOR = "co-specify at milestone level"
 DRAFTING_HEADING = "## Drafting a good MILESTONE.md"
-SEED_LABELS = ["Outcome", "Edge of scope", "Riskiest seam", "Done-looks-like", "First slice"]
+SEED_LABELS = ["Outcome", "Edge of scope", "Riskiest decision point", "Done-looks-like", "First slice"]
 
 FOUNDATION_ANCHOR = "co-specify at foundation level"
 LENS_LABELS = ["Domain (DDD)", "Spec (SDD)", "Users (UDD)", "Decisions"]

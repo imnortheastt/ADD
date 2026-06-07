@@ -31,7 +31,7 @@ Draft the WHOLE milestone before showing; nothing hits disk until the human conf
 Diverge seeds (pick the live ones):
 - **Outcome** — done means a user can do *what* they can't today? (goal sentence)
 - **Edge of scope** — nearest thing assumed IN that you want OUT? (Out list)
-- **Riskiest seam** — which contract, if wrong, costs the most rework? (freeze-first)
+- **Riskiest decision point** — which contract, if wrong, costs the most rework? (freeze-first)
 - **Done-looks-like** — how do we SEE each outcome without reading code? (exit criteria)
 - **First slice** — which task unblocks the rest? (breadth-first order)
 
@@ -46,7 +46,7 @@ Rank assumptions lowest-confidence first; the top 1–2 get the flag the human r
   as what is IN; an empty Out list usually means the scope is not yet thought through.
 - **Shared decisions & glossary deltas** — cross-cutting rules every task must honor, named from
   the glossary. New terms get a glossary entry (the living documentation stays honest).
-- **Shared / risky contracts to freeze first** — the seams between tasks; name the owning task.
+- **Shared / risky contracts to freeze first** — the decision points between tasks; name the owning task.
 - **Tasks (breadth-first)** — `slug · depends-on · one line` each. Decompose by deliverable, not
   by phase; keep each task one-file-sized. Order by dependency, not by guesswork.
 - **Exit criteria** — observable, and **every exit criterion maps to a declared task slug**

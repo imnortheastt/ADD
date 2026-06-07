@@ -11,7 +11,7 @@ orchestrator*, drive several tasks at once by reading the dependency DAG that
 ## The honest frame — this is pipelining, not N× speed
 
 With **one human reviewer** you cannot beat `review_time × N_tasks` (the human-led
-seams are serial — `docs/10-setup-and-stages.md:91`). So the win is **not throughput**:
+decision points are serial — `docs/10-setup-and-stages.md:91`). So the win is **not throughput**:
 it is that the reviewer is **never blocked waiting on a build**. While the human reviews
 task A's frozen front, the builds for B·C·D run behind *their* frozen contracts. You hide
 build latency under human latency. Do not promise more than that.
@@ -30,7 +30,7 @@ Compute both from one `python3 .add/tooling/add.py status` — no new state:
 
 ```
   add.py status ─► READY-QUEUE ──spawn workers──► builds run ──► REVIEW-QUEUE ──► done
-  (deps=PASS?)     (machine span)                 (concurrent)   (human seams,
+  (deps=PASS?)     (machine span)                 (concurrent)   (decision points,
        ▲                                                          strictly serial)
        └──────────────── a task gating PASS unblocks its dependents ──────────────┘
 ```
@@ -43,10 +43,10 @@ How much concurrency you actually get is set by each task's `autonomy:` header
 | `autonomy` (TASK.md) | What serializes on the human | Concurrency |
 |----------------------|------------------------------|-------------|
 | `conservative` | one-approval front **+** every Verify | pure pipelining — builds overlap, both gates queue |
-| `auto` (default) | one-approval front **only**; Verify auto-PASSes on evidence | real concurrency — only the seam + residue escalations queue |
+| `auto` (default) | one-approval front **only**; Verify auto-PASSes on evidence | real concurrency — only the decision point + residue escalations queue |
 | `auto` but **high-risk** | refused → forced `conservative` (`unguarded_high_risk_auto`) | back to pipelining, by design |
 
-The irreducible floor is **one human approval per task at the contract seam** — the seam
+The irreducible floor is **one human approval per task at the contract decision point** — the decision point
 never drops to zero (`run.md:22`). That floor is correct; do not engineer around it.
 
 ## Who writes what — the hard boundary
@@ -109,7 +109,7 @@ changes. Fill every `{{...}}` per stream. The ADD-specific value is `<touch_boun
 Execute the LOCKED dynamic run for task '{{TASK_SLUG}}' in milestone {{MILESTONE}}:
 drive §4 TESTS red→green against the FROZEN contract {{CONTRACT_VERSION}}, converge, and
 resolve verify per autonomy={{AUTONOMY}}. You own ONLY the machine-led span — the two human
-seams (front approval · escalated Verify) are NOT yours.
+decision points (front approval · escalated Verify) are NOT yours.
 </objective>
 
 <persona>

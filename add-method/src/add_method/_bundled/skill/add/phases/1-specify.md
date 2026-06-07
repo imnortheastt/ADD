@@ -31,7 +31,7 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 ## The lowest-confidence flag is bundle-wide
 
 The single human approval happens once, at the contract freeze, over the whole bundle. So your
-§1 ranking is the first input into a bundle-level flag the user reads at the seam (`run.md`):
+§1 ranking is the first input into a bundle-level flag the user reads at the decision point (`run.md`):
 *"of everything I'm asking you to freeze, these 1–2 are most likely wrong."* A flag may point at
 a §1 assumption, an uncovered scenario, or the contract shape.
 

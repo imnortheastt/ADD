@@ -5,7 +5,7 @@ OBSERVE phase); folding gathers the confirmed ones and writes them into a **vers
 so `DDD · SDD · UDD · TDD · ADD` sharpen across milestones instead of drifting.
 
 You (the AI) **gather and propose**; the **human confirms**; you then write the **append-only** fold.
-You never self-fold — folding is judgment (see the verify/observe seam).
+You never self-fold — folding is judgment (see the verify/observe decision point).
 
 ## When to fold
 

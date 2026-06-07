@@ -1,11 +1,11 @@
-# Chat reports — the seam template (for the AI, not for add.py)
+# Chat reports — the decision-point template (for the AI, not for add.py)
 
 The engine renders artifacts (`report`, `report --decide`, `status`); this file
 governs the CHAT MESSAGE you wrap around them. The digest is the artifact BEHIND
 your presentation, never a replacement for it — and your prose is never a
 replacement for the digest.
 
-Use it every time you report at or near a decision seam: an intake proposal, a
+Use it every time you report at or near a decision point: an intake proposal, a
 bundle/front approval, a verify gate, a task completion, a milestone close.
 
 ## The five blocks, in order
@@ -44,10 +44,10 @@ report above, the question carries intent + what "yes" means + the flag count.
 - **Summary-first.** Never bury the decision under a task list or a diff.
 - **Show before ask.** Render the artifact (digest · diff · report) before any
   approval question; the human decides on what they can see.
-- **Never pre-stamp a human seam.** Freeze / gate / lock fields stay DRAFT or
+- **Never pre-stamp a human decision point.** Freeze / gate / lock fields stay DRAFT or
   blank until the answer returns: show → ask → stamp → advance. An artifact
   must never claim an approval that has not happened.
-- **One report per seam.** After an approval, point at the frozen artifact —
+- **One report per decision point.** After an approval, point at the frozen artifact —
   do not re-render the whole bundle.
 - **Honest scope.** "Done" means the request, not the last task: report
   "task 2/3", never "done" while approved scope remains.

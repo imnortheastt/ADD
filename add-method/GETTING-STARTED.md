@@ -149,7 +149,7 @@ code 0 means healthy — handy as a CI gate.
 
 ---
 
-## Enforce the seams in CI
+## Enforce the decision points in CI
 
 `add.py audit` re-verifies every recorded human gate on your board — a named
 human at each contract freeze, exactly one gate outcome per done task, a human
@@ -173,7 +173,7 @@ permissions:
 
 jobs:
   seam-audit:
-    name: Seam audit (recorded human gates)
+    name: Decision-point audit (recorded human gates)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -182,13 +182,13 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Audit recorded human seams
+      - name: Audit recorded decision points
         run: python3 .add/tooling/add.py audit
 ```
 
 The command is the same one you can run locally — the installer already placed
 `add.py` at `.add/tooling/add.py`, and the audit is read-only (it never edits
-your board). A red `seam-audit` job means a seam record is malformed or a
+your board). A red `seam-audit` job means a decision record is malformed or a
 security note was left to the auto-gate; fix the record (or escalate the gate
 to a human), never the auditor.
 
@@ -279,7 +279,7 @@ POST /transfers  body: { fromAccountId, toAccountId, amount }
   403 -> { error: "forbidden" }
 ```
 
-A frozen contract is the seam that makes the AI build safe. Then advance.
+A frozen contract is the decision point that makes the AI build safe. Then advance.
 
 ### Phase 4 — Tests, red first (`.add/docs/06-step-4-tests.md`)
 
