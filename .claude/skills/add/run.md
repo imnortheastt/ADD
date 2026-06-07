@@ -54,7 +54,7 @@ No frozen contract -> no run: you are still on the human-led front, and starting
 forward-skip the flow forbids. The lock is what makes autonomous execution *safe* — the AI cannot
 drift the interface, because the interface is frozen above it.
 
-## The touch-boundary — what the run may and may not touch
+## The change scope — what the run may and may not touch
 
 <constraints>
 A locked run has a hard boundary. It MAY:
