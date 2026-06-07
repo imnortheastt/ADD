@@ -28,7 +28,7 @@ python3 .add/tooling/add.py init --name "<inferred from repo/dir>" --stage <prot
 ## 2a · Brownfield — map it silently
 
 The code answers the questions a greenfield interview would ask, so **read it instead of asking**. Open
-`adopt.md` and follow it: fill each missing survivor file from the code, keep an existing one unchanged, and tag
+`adopt.md` and follow it: fill each survivor file from the code, never clobber an existing one, and tag
 every decision `evidence-grounded` (cite the file) or `guessed`. Ask the human **nothing** at this step.
 
 ## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation altitude
