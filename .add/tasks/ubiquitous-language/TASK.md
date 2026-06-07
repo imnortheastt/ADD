@@ -1,7 +1,7 @@
 # TASK: Replace method slang with domain-standard terminology
 
 slug: ubiquitous-language · created: 2026-06-07 · stage: mvp · risk: high · autonomy: conservative
-phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: done   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower
      the dial with `autonomy: conservative` — the engine refuses an unguarded completion
      (`unguarded_high_risk_auto`, run.md guard). A comment is never a declaration. -->
@@ -424,18 +424,21 @@ Constraints: do NOT weaken a test or edit the frozen contract; the ONLY guard ed
 
 ## 6 · VERIFY — evidence + blind-spot checks ▸ docs/08-step-6-verify.md
 
-- [ ] all tests pass
-- [ ] coverage did not decrease
-- [ ] no test or contract was altered during build
-- [ ] concurrency / timing of the risky operation is safe
-- [ ] no exposed secrets, injection openings, or unexpected dependencies
-- [ ] layering & dependencies follow CONVENTIONS.md
-- [ ] a person reviewed and approved the change
+- [x] all tests pass — suite 533 OK · wording_lint 0 · semantic_inventory 0 · check 191/0 · audit clean
+- [x] coverage did not decrease — the feature suite is now a permanent 17-term + escapee regression guard
+- [x] no test or contract was altered during build — except the pre-declared CR class (CR-R · CR-I ·
+      CR-2 string literals) and execution calls 4–7, each isolated, enumerated, and ratified at this gate
+- [x] concurrency / timing N/A (prose rename; no runtime paths changed beyond emitted strings)
+- [x] no exposed secrets, injection openings, or unexpected dependencies — machine/CI tokens
+      byte-identical (seam-audit job · canonical audit command · owner enum · delta statuses)
+- [x] layering & dependencies follow CONVENTIONS.md — mirrors propagated in-commit (bundle ⇄ tree ⇄
+      .add dogfood ⇄ root book), suite-asserted
+- [x] a person reviewed and approved the change — Tin Dang, 2026-06-07: ratified execution calls 4–7 +
+      the riding-literal class; PNG residue (diagrams/add-flow.png old labels) disclosed → follow-up CR
 
 ### GATE RECORD
-Outcome: <PASS | RISK-ACCEPTED | HARD-STOP>
-If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
-Reviewed by: <name> · date: <date>
+Outcome: PASS
+Reviewed by: Tin Dang · date: 2026-06-07   (conservative gate — human-led; security line reviewed, no finding)
 
 <!-- A security finding is ALWAYS HARD-STOP. Record exactly one outcome — no silent pass. -->
 
@@ -443,10 +446,22 @@ Reviewed by: <name> · date: <date>
 
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
-Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+Watch (reuse scenarios as monitors): the standing fences ARE the monitors — wording_lint F1 (a
+  retired idiom reappears), test_ubiquitous_language (slang/escapee/bridge regression on the
+  extended surface), test_rewrite_guides enforced-set identity. Plus: do new readers/agents use the
+  domain terms unprompted (the rename's real success signal)?
+Spec delta for the next loop: diagrams/add-flow.png still renders the legacy labels (*.png was OUT
+  of the frozen CHANGE SCOPE) — a small follow-up change-request re-renders it from the renamed
+  diagram sources. CHANGELOG/history keep legacy terms by design (audit trail, bridged via glossary).
 
 ### Competency deltas
-What did this loop teach the foundation? One line each, tagged by competency
-(`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-<!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
+- [ADD · open] machine/prose boundary was discovered five separate times mid-build (### heading ·
+  ⚠ glyph · seam-audit job · folded status · owner enum) costing execution calls 4–7; a contract
+  that enumerates the machine-token REGISTRY up front (or `add.py` emitting one) would pre-draw the
+  line once (evidence: TASK.md §3 addenda, execution calls 4–7 this build)
+- [TDD · open] five duplicated ENGINE_MD5 tripwires make every intentional engine edit a 5-file
+  re-stamp; one shared pin constant keeps the tripwire with 1/5 the ceded surface (evidence: two
+  re-stamp rounds this build, term 14 + CR-2)
+- [SDD · open] the both-forms (hyphen+space) ban clause missed the ALL-hyphen compound
+  ("one-approval-front" at 0-setup:85, invisible to `one[- ]approval front`); the raw-grep recipe
+  caught it — fence specs should name the fully-hyphenated form too (evidence: term-17 commit 63534e1)

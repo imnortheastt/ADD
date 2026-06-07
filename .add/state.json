@@ -439,16 +439,16 @@
     },
     "ubiquitous-language": {
       "title": "Replace method slang with domain-standard terminology",
-      "phase": "build",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": null,
       "depends_on": [],
       "created": "2026-06-07T09:02:27+00:00",
-      "updated": "2026-06-07T09:24:00+00:00"
+      "updated": "2026-06-07T10:51:54+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T09:24:00+00:00",
+  "updated": "2026-06-07T10:51:54+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
