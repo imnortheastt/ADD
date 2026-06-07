@@ -1,7 +1,7 @@
 # TASK: The question is a summary, never the artifact
 
 slug: question-summary-layer · created: 2026-06-07 · stage: mvp · risk: low · autonomy: conservative
-phase: tests   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
+phase: build   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- conservative: the edit is tiny but the surface is the method's own seam discipline
      (report-template.md) — human-led gate, consistent with the v17 prompt-surface tasks.
      Intake (confirmed 2026-06-07): bucket=task — frozen-scope test ran first and came back
@@ -140,7 +140,7 @@ Frozen tie-in text (hunk B, verbatim):
 > stays in the report above, the question carries intent + what "yes" means +
 > the flag count.
 
-Status: DRAFT   <!-- becomes: FROZEN @ v1 once approved. Changing a frozen contract = change request back to SPECIFY. -->
+Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one approval over §1–§4; both ⚠ flags surfaced at the seam (two-line bound · 3-block depth) and accepted as frozen. Changing a frozen contract = change request back to SPECIFY. -->
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->
@@ -181,9 +181,12 @@ Tests live in: `add-method/tooling/` test_question_summary_layer.py · MUST run 
 
 ## 5 · BUILD — AI writes code ▸ docs/07-step-5-build.md
 
-Safety rule (feature-specific): <e.g. debit+credit in one atomic transaction>
-Code lives in: `./src/`
-Constraints: do NOT change any test or the contract; allow-list packages only; ask if unclear.
+Safety rule (feature-specific): additive-only — the frozen hunks land character-exact
+  from §3; the 5 existing constraint bullets stay verbatim (the green guard pins them).
+Code lives in: add-method/skill/add/report-template.md + SKILL.md (canonical) ·
+  mirrors via scripts/prepare_bundle.py + cp to .claude/skills/add/
+Constraints: do NOT change any test or the contract; only the 3 contracted hunks +
+  mirror sync move; ask if unclear.
 
 <!-- EXIT: all green; coverage held; no test/contract touched; no unlisted dependency. -->
 

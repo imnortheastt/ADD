@@ -77,7 +77,8 @@ See `run.md`.
 
 Whenever you present a seam to the human in chat (intake · front approval · gate ·
 milestone close), follow `report-template.md` — SUMMARY → DECISION → ⚠ FLAGS →
-EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a seam.
+EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a seam —
+and the question is a summary, never the artifact.
 
 In **observe**, also emit **competency deltas** — learnings tagged by which of the five
 (`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.

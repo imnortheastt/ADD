@@ -34,6 +34,11 @@ NEXT      the single next action + what it unlocks
    line when it is right; overrule it only with a stated reason (e.g. planned
    tasks the state file cannot see yet).
 
+**The ask itself** — when block 2's decision becomes a literal question
+component (option picker, numbered menu), compose it as a summary: the detail
+stays in the report above, the question carries intent + what "yes" means +
+the flag count.
+
 ## Hard rules
 
 <constraints>
@@ -47,4 +52,11 @@ NEXT      the single next action + what it unlocks
   do not re-render the whole bundle.
 - **Honest scope.** "Done" means the request, not the last task: report
   "task 2/3", never "done" while approved scope remains.
+- **The question is a summary, never the artifact.** Every approval ask carries
+  two layers: a compact SUMMARY · DECISION · ⚠ FLAGS block sits in chat
+  immediately before the ask (positional), and the question text itself is a
+  summary of two lines at most — intent + what "yes" means + the flag count —
+  pointing at the report above (compositional). The full bundle, diff, or
+  artifact lives only in the chat report; a question that re-carries it buries
+  the decision.
 </constraints>

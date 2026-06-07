@@ -421,16 +421,16 @@
     },
     "question-summary-layer": {
       "title": "The question is a summary, never the artifact",
-      "phase": "tests",
+      "phase": "build",
       "gate": "none",
       "milestone": null,
       "depends_on": [],
       "created": "2026-06-07T07:22:57+00:00",
-      "updated": "2026-06-07T07:25:56+00:00"
+      "updated": "2026-06-07T07:30:32+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T07:25:56+00:00",
+  "updated": "2026-06-07T07:30:32+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
