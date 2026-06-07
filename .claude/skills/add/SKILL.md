@@ -61,7 +61,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | Phase | Guide | Produces (TASK.md section) | Who leads |
 |-------|-------|----------------------------|-----------|
 | setup | `phases/0-setup.md` | `.add/` + living docs + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the baseline approval) |
-| specify | `phases/1-specify.md` | §1 rules + ranked least-sure flag | AI drafts (co-specify)† |
+| specify | `phases/1-specify.md` | §1 rules + ranked lowest-confidence flag | AI drafts (co-specify)† |
 | scenarios | `phases/2-scenarios.md` | §2 Given/When/Then | AI drafts† |
 | contract | `phases/3-contract.md` | §3 frozen shape | AI drafts → **human approves once** (the seam)† |
 | tests | `phases/4-tests.md` | §4 + red suite in `tests/` | AI drafts† |
@@ -70,7 +70,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | observe | `phases/7-observe.md` | §7 spec delta | human + AI |
 
 † **One-approval front (v7).** §1–§4 are one bundle; the human gives **one approval at the
-contract freeze** (the seam), presented least-sure-first. See `run.md`.
+contract freeze** (the seam), presented lowest-confidence-first. See `run.md`.
 ‡ **Verify auto-gate (v6–v7).** Under `autonomy: auto` (the default) a run may auto-PASS on
 complete evidence — recorded as *auto-resolved*, an explicit PASS, not a skip. **Security always
 escalates** (HARD-STOP); so do concurrency / architecture residue and `conservative` autonomy.

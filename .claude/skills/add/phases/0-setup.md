@@ -36,7 +36,7 @@ every decision `evidence-grounded` (cite the file) or `guessed`. Ask the human *
 An empty repo has no code to read, so run the short interview. This is the **co-specify at foundation
 level** move — the same diverge → converge → validate brainstorm a task's §1 uses (`phases/1-specify.md`),
 lifted to the foundation. Ask the one load-bearing question per lens (diverge), draft the foundation
-(converge), then rank what you're least sure of and show the top flag first (validate):
+(converge), then rank where your confidence is lowest and show the top flag first (validate):
 
 | Lens | The one question that unblocks the section |
 |------|--------------------------------------------|
@@ -45,8 +45,8 @@ lifted to the foundation. Ask the one load-bearing question per lens (diverge), 
 | Users (UDD) | The primary user and the one job they hire this for? (or "no UI — surface is X") |
 | Decisions | What's already decided that you'd regret re-litigating? (first Key Decision row) |
 
-Ask only the live ones; skip what the request already answers. Rank your drafts least-sure-first using the
-one notation every scope level shares — `⚠ <assumption> — least sure because <why>; if wrong: <cost>` — and
+Ask only the live ones; skip what the request already answers. Rank your drafts lowest-confidence-first using the
+one notation every scope level shares — `⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>` — and
 tag thin or inferred answers `guessed`.
 
 ## 3 · Draft to the lock (both paths)
@@ -64,11 +64,11 @@ tag thin or inferred answers `guessed`.
    approval (see §5). You MAY `advance` through specify → scenarios → contract → tests pre-lock, but the
    engine **refuses crossing into build** until you `lock` (`setup_unlocked`). Sequence: front → lock → build.
 4. **Write `.add/SETUP-REVIEW.md`** per `setup-review.md`: every decision you drafted (foundation, scope,
-   first contract), **least-sure-first**, each tagged `guessed` | `evidence-grounded`.
+   first contract), **lowest-confidence-first**, each tagged `guessed` | `evidence-grounded`.
 
 ## 4 · The one human gate — the baseline approval
 
-Present `SETUP-REVIEW.md` least-sure-first (the `guessed` rows are what the human must actually check). They
+Present `SETUP-REVIEW.md` lowest-confidence-first (the `guessed` rows are what the human must actually check). They
 confirm **once** — an explicit yes to the baseline approval itself, in conversation; ambient agreement mid-stream is
 not a confirmation. On that recorded confirmation, you run the lock with their name:
 
@@ -92,7 +92,7 @@ build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the huma
 <exit_gate>
 - [ ] `.add/state.json` exists; setup was seeded unlocked (`--await-lock`) then locked.
 - [ ] Living docs filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
-- [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written least-sure-first.
+- [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written lowest-confidence-first.
 - [ ] Human confirmed the baseline approval and `add.py lock --by` ran with their name; first task §3 `FROZEN @ v1`; build open.
 </exit_gate>
 

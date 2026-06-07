@@ -83,7 +83,7 @@ From there the agent runs the **onboarding** for you:
 2. **Intake** — it sizes your request into versioned scope and proposes a **milestone**
    (goal · scope · breadth-first tasks · exit criteria). *You confirm the shape.*
 3. **One-approval front** — for each task it drafts Spec + Scenarios + Contract + Tests
-   as one bundle, led by its least-sure points. *You give one approval at the
+   as one bundle, led by its lowest-confidence points. *You give one approval at the
    frozen contract.*
 4. **Self-driving run** — build→verify runs to green; a security finding always stops
    back to you.

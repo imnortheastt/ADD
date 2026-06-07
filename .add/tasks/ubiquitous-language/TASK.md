@@ -318,6 +318,14 @@ Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one 
 > string-literal updates ride the SAME commit as the prose they quote (an isolated-but-red commit pair
 > would break the invariant); enumerated per commit message; (3) the `enforced_banned` SECTION stays
 > `(none yet)` — the `[enforced]` row IS the promotion (the parser unions both; duplicating double-counts).
+> (4) **(term 14)** the engine's embedded `_FALLBACK_TASK` §1 scaffold is template-coupled —
+> `test_cospecify_scaffold` pins tmpl + fallback + a real `new-task` run as ONE shape — so its two
+> scaffold lines ride the term-14 commit instead of CR-2's isolated commit (suite-green-per-commit
+> binds over CR-2's staging prose; calls 1–2 precedent). Consequence: the five `ENGINE_MD5` tripwires
+> (getting-started-spine · installer-handoff · release-1-1-0 · review-checklist · skill-onramp) fired
+> as designed and are re-stamped to the new digest in the SAME commit — a disclosed re-pin, not a
+> weakening (the change is contract-ratified CR-2 class; an accidental engine edit still fails). The
+> CR-2 commit will re-stamp them once more.
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->

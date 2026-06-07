@@ -22,10 +22,10 @@ Steps:
      giving each refusal a named error code.
      # why: named errors become scenarios and contract responses; "handle bad input" does not.
   2. State the success state-change (After).
-  3. List the assumptions you had to make, RANKED least-sure first; flag the 1–2 you are least
-     sure about as `⚠ <assumption> — least sure because <why>; if wrong: <cost>`.
+  3. List the assumptions you had to make, RANKED lowest-confidence first; flag the 1–2 where
+     your confidence is lowest as `⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>`.
      # why: a flat all-equal list gets approved without reading; a ranked one aims my attention at the risk.
-Exit: a domain owner disputes none of it; assumptions ranked least-sure first, the 1–2 ⚠ flags
+Exit: a domain owner disputes none of it; assumptions ranked lowest-confidence first, the 1–2 ⚠ flags
       carrying why + cost — or an honest "none material" that still names the single biggest risk.
 Never: resolve an ambiguity by guessing — ask. Never a blank "none" or a flat list of equal ticks.
 ```

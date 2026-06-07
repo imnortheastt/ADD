@@ -12,7 +12,7 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 1. **Diverge** — before drafting, surface the decision space: the 2–3 genuine framings of the
    feature + the open questions you would otherwise guess. Invite the user to add, kill,
    redirect. (Conversational — no new file. At prototype/poc this shortens to one sentence.)
-2. **Converge** — draft §1, then RANK what you are least sure about (below).
+2. **Converge** — draft §1, then RANK where your confidence is lowest (below).
 3. **Validate** — present the ranked uncertainty first; the user confirms, corrects, or sends back.
 
 ## Produce (in TASK.md §1)
@@ -23,12 +23,12 @@ understand the feature — that is information, not an obstacle. Stop and ask.
 - **Reject** — each refused input/situation, paired with a **named error code**
   (`amount <= 0 -> "amount_invalid"`, never "handle bad input").
 - **After** — the state that is true once it succeeds.
-- **Assumptions — least-sure first** — ranked most-likely-wrong → least. The top 1–2 carry a
-  `⚠` flag: `⚠ <assumption> — least sure because <why>; if wrong: <cost>`. The rest are the
+- **Assumptions — lowest-confidence first** — ranked most-likely-wrong → least. The top 1–2 carry a
+  `⚠` flag: `⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>`. The rest are the
   low-stakes `[x]` tail. Keep the ranking visible — a flat list of equal `[x]` ticks gets approved without reading.
 </output_format>
 
-## The least-sure flag is bundle-wide
+## The lowest-confidence flag is bundle-wide
 
 The single human approval happens once, at the contract freeze, over the whole bundle. So your
 §1 ranking is the first input into a bundle-level flag the user reads at the seam (`run.md`):
@@ -44,8 +44,8 @@ Objective: fill §1 SPECIFY with zero ambiguity left for the AI to resolve by gu
 Steps:
   1. Surface 2–3 framings + the open questions; let the user react before you draft.
   2. Produce §1 — Framings weighed, every Must, every Reject with a named error code, the
-     After state, and the Assumptions RANKED least-sure first.
-  3. Flag the 1–2 you are least sure about, each with why + cost.
+     After state, and the Assumptions RANKED lowest-confidence first.
+  3. Flag the 1–2 where your confidence is lowest, each with why + cost.
 Never: resolve an ambiguity by guessing.
 </prompt>
 
@@ -54,7 +54,7 @@ Never: resolve an ambiguity by guessing.
 <exit_gate>
 - [ ] Framings weighed noted; every required behavior stated.
 - [ ] Every rejection has a named error code; success state-change described.
-- [ ] Assumptions ordered least-sure first; the 1–2 `⚠` flags carry why + cost — or an honest
+- [ ] Assumptions ordered lowest-confidence first; the 1–2 `⚠` flags carry why + cost — or an honest
       "none material" that still names the single biggest risk (never a blank "none").
 </exit_gate>
 

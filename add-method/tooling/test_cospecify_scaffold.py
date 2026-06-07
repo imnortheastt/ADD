@@ -21,7 +21,7 @@ import add
 OLD_FLAT_SHAPE = "Assumptions (confirm before building):"
 OLD_EXIT = "zero open assumptions"
 NEW_FRAMINGS = "Framings weighed:"
-NEW_RANKED = "Assumptions — least-sure first:"
+NEW_RANKED = "Assumptions — lowest-confidence first:"
 FLAG_GLYPH = "⚠"
 
 
@@ -43,10 +43,10 @@ class CospecifyScaffoldTest(unittest.TestCase):
         )
         # new shape present
         self.assertIn(NEW_FRAMINGS, text, "scaffold must offer a Framings weighed: line")
-        self.assertIn(NEW_RANKED, text, "scaffold must rank assumptions least-sure first")
-        self.assertIn(FLAG_GLYPH, text, "scaffold must carry the ⚠ least-sure flag")
+        self.assertIn(NEW_RANKED, text, "scaffold must rank assumptions lowest-confidence first")
+        self.assertIn(FLAG_GLYPH, text, "scaffold must carry the ⚠ lowest-confidence flag")
         # §3 freeze leads with the bundle-level flag (the one approval)
-        self.assertIn("least-sure flag", text, "freeze must lead with the bundle flag")
+        self.assertIn("lowest-confidence flag", text, "freeze must lead with the bundle flag")
         # old shape gone — this is the assertion that was RED before the reform
         self.assertNotIn(OLD_FLAT_SHAPE, text, "flat confirm-list must not return")
         self.assertNotIn(OLD_EXIT, text, "the 'zero open assumptions' exit must not return")

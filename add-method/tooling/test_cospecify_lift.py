@@ -3,7 +3,7 @@
 Task: cospecify-lift (v5). The brainstorm move (Diverge -> Converge -> Validate)
 defined at task §1 (skill/add/phases/1-specify.md) must also be taught at the
 milestone altitude (scope.md) and the foundation altitude (phases/0-setup.md),
-using the SAME least-sure flag grammar, and all three shipped trees must stay
+using the SAME lowest-confidence flag grammar, and all three shipped trees must stay
 byte-identical.
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ BUNDLED = ADD_METHOD / "src" / "add_method" / "_bundled" / "skill" / "add"
 LOCAL = REPO / ".claude" / "skills" / "add"
 
 # The one notation, owned by phases/1-specify.md — every altitude reuses it verbatim.
-FLAG_GRAMMAR = "⚠ <assumption> — least sure because <why>; if wrong: <cost>"
+FLAG_GRAMMAR = "⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>"
 
 SCOPE = "scope.md"
 SETUP = "phases/0-setup.md"
@@ -81,7 +81,7 @@ class FlagGrammarConsistent(unittest.TestCase):
             self.assertIn(
                 FLAG_GRAMMAR,
                 _read(CANONICAL, rel),
-                f"{rel} must use the verbatim least-sure flag grammar",
+                f"{rel} must use the verbatim lowest-confidence flag grammar",
             )
 
 

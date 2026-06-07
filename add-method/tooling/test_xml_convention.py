@@ -30,7 +30,7 @@ VOCAB = {
 }
 
 # Sections of the pilot that are genuine narrative — they MUST stay prose (reject `narrative_tagged`).
-NARRATIVE_HEADERS = ("## Co-specify in three moves", "## The least-sure flag is bundle-wide")
+NARRATIVE_HEADERS = ("## Co-specify in three moves", "## The lowest-confidence flag is bundle-wide")
 
 _OPEN = re.compile(r"<([a-z][a-z0-9_-]*)>")
 _CLOSE = re.compile(r"</([a-z][a-z0-9_-]*)>")

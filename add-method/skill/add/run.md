@@ -31,8 +31,8 @@ any part and the bundle goes back to draft — that is backward-correction (prin
 Approve, and the run begins. The seam guide (`phases/3-contract.md`) carries the
 **freeze review checklist** — six lines that walk the human through exactly this, ⚠-first.
 
-**The least-sure flag — aiming the one approval.** A single approval over a whole bundle is easy to
-grant without reading. So the AI presents the bundle **least-sure first**: of everything it is asking the human
+**The lowest-confidence flag — aiming the one approval.** A single approval over a whole bundle is easy to
+grant without reading. So the AI presents the bundle **lowest-confidence first**: of everything it is asking the human
 to freeze, it names the **1–2 points most likely to be wrong**, tagged by part
 (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`), each with *why* it is uncertain and
 *what it costs if wrong*. The §1 assumptions feed it, but a flag may equally point at an uncovered

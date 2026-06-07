@@ -23,8 +23,8 @@ Reject:
   - source == destination -> "same_account"
   - balance < amount      -> "insufficient_funds"
   - account not mine      -> "forbidden"
-Assumptions — least-sure first:
-  ⚠ same currency only (no FX) in v1 — least sure because the ticket never said; if wrong: the amount/rounding model changes and this contract is wrong
+Assumptions — lowest-confidence first:
+  ⚠ same currency only (no FX) in v1 — lowest confidence because the ticket never said; if wrong: the amount/rounding model changes and this contract is wrong
   - [x] no daily limit in v1 — confirmed: out of scope for v1
 ```
 

@@ -21,7 +21,7 @@ RUN_MD = HERE.parent / "skill" / "add" / "run.md"
 
 HEADING = "## The freeze review checklist"
 # the engine must not change in this prose-only task (scope-creep guard)
-ENGINE_MD5 = "ccb0aa1589c09d3238d7e7fbca1e0240"
+ENGINE_MD5 = "1845b3035f371fa8d60773a3c4ce60e3"
 
 
 def _section() -> str | None:

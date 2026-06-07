@@ -4,7 +4,7 @@
 
 > **Purpose:** state, in plain language, what the feature must do and what it must reject, with no ambiguity left for the AI to resolve by guessing.
 > **Produces:** `SPEC.md` for the feature.
-> **How it works — co-specification:** AI and human **brainstorm the shape together**; the AI drafts; the **human validates, with the AI's advice.** The decisive advice is a *least-sure flag* — the AI names the one or two things most likely to be wrong, so the human's attention lands where it matters. The human owns the decision; the AI owns surfacing what it does not yet know.
+> **How it works — co-specification:** AI and human **brainstorm the shape together**; the AI drafts; the **human validates, with the AI's advice.** The decisive advice is a *lowest-confidence flag* — the AI names the one or two things most likely to be wrong, so the human's attention lands where it matters. The human owns the decision; the AI owns surfacing what it does not yet know.
 
 ---
 
@@ -19,10 +19,10 @@ There is also a diagnostic value: **if you cannot write the spec, you do not yet
 A specification is not dictated by one side. It is made in three moves:
 
 1. **Diverge — brainstorm by both.** Before drafting, the AI surfaces the *decision space*: the two or three genuine ways to frame the feature, and the open questions it would otherwise resolve by guessing. You react — add, kill, redirect. This is the brainstorm, and it lives in the conversation, not in a new document.
-2. **Converge — the AI drafts, and ranks its own uncertainty.** The AI writes the spec below, then ranks what it is least sure about. It does not hand you a flat wall of equal-looking assumptions to nod through; it tells you *where it is most likely wrong, and what that would cost.*
+2. **Converge — the AI drafts, and ranks its own uncertainty.** The AI writes the spec below, then ranks where its confidence is lowest. It does not hand you a flat wall of equal-looking assumptions to nod through; it tells you *where it is most likely wrong, and what that would cost.*
 3. **Validate — you decide, with the AI's advice.** You read the ranked uncertainty first, then confirm, correct, or send it back. Your approval is real because your attention was aimed.
 
-The brainstorm leaves a *light trace, not a document.* What you chose becomes a rule; what you weighed and dropped becomes a one-line **`Framings weighed:`** note; what stayed genuinely uncertain becomes a **least-sure flag**. Nothing new to maintain — the residue lands in the spec you were writing anyway.
+The brainstorm leaves a *light trace, not a document.* What you chose becomes a rule; what you weighed and dropped becomes a one-line **`Framings weighed:`** note; what stayed genuinely uncertain becomes a **lowest-confidence flag**. Nothing new to maintain — the residue lands in the spec you were writing anyway.
 
 ## What a good specification contains
 
@@ -31,7 +31,7 @@ Four parts, kept short:
 1. **Must** — the behaviors the feature is required to perform.
 2. **Reject** — the inputs or situations it must refuse, each paired with a named error.
 3. **After** — the state that is true once it succeeds (what changed).
-4. **Assumptions — least-sure first** — the things you are taking for granted, **ranked so the most-likely-wrong come first.** The top one or two carry a `⚠` flag with *why it is uncertain* and *what it costs if wrong*; the rest are the low-stakes tail. A spec with genuinely nothing uncertain still names its single biggest risk, however small — the AI never claims a blank mind.
+4. **Assumptions — lowest-confidence first** — the things you are taking for granted, **ranked so the most-likely-wrong come first.** The top one or two carry a `⚠` flag with *why it is uncertain* and *what it costs if wrong*; the rest are the low-stakes tail. A spec with genuinely nothing uncertain still names its single biggest risk, however small — the AI never claims a blank mind.
 
 Naming the errors matters. "Reject bad amounts" is an instruction to guess; `amount <= 0 -> "amount_invalid"` is a rule that produces a testable scenario and a defined contract response.
 
@@ -47,8 +47,8 @@ Reject:
   - <bad input / situation> -> "<error_code>"
 After:
   - <what is true once it succeeds>
-Assumptions — least-sure first:
-  ⚠ <most-likely-wrong assumption> — least sure because <why>; if wrong: <cost>
+Assumptions — lowest-confidence first:
+  ⚠ <most-likely-wrong assumption> — lowest confidence because <why>; if wrong: <cost>
   - [x] <confirmed / low-stakes assumption> — <one line>
 ```
 
@@ -69,8 +69,8 @@ Reject:
   - source == destination -> "same_account"
   - balance < amount      -> "insufficient_funds"
   - account not mine      -> "forbidden"
-Assumptions — least-sure first:
-  ⚠ same currency only (no FX) in v1 — least sure because the ticket never said; if wrong: the whole amount/rounding model changes and this contract is wrong
+Assumptions — lowest-confidence first:
+  ⚠ same currency only (no FX) in v1 — lowest confidence because the ticket never said; if wrong: the whole amount/rounding model changes and this contract is wrong
   - [x] no daily limit in v1 — confirmed: out of scope for v1
 ```
 
@@ -78,9 +78,9 @@ The `Framings weighed:` line shows what was considered and dropped, so the chose
 
 ## The AI's role here
 
-Use the AI to **open the space and then narrow it honestly.** First it brainstorms the genuine framings with you (diverge). Then it drafts the spec from whatever raw material you have — a ticket, an interview, a contract document — listing every assumption it had to make, **ranked least-sure first**, and flagging the one or two it is least confident in with *why* and *what it costs if wrong*. Its instinct is to fill gaps silently and present a confident wall; the method forces those gaps into the open, and forces the confident wall to declare its own soft spots. See `playbook/1_specify.md` in [Appendix B](./appendix-b-prompts.md).
+Use the AI to **open the space and then narrow it honestly.** First it brainstorms the genuine framings with you (diverge). Then it drafts the spec from whatever raw material you have — a ticket, an interview, a contract document — listing every assumption it had to make, **ranked lowest-confidence first**, and flagging the one or two it is least confident in with *why* and *what it costs if wrong*. Its instinct is to fill gaps silently and present a confident wall; the method forces those gaps into the open, and forces the confident wall to declare its own soft spots. See `playbook/1_specify.md` in [Appendix B](./appendix-b-prompts.md).
 
-The defining instruction: *if a requirement is unclear, ask — do not resolve it by guessing — and of the things you must assume, say plainly which you are least sure about.*
+The defining instruction: *if a requirement is unclear, ask — do not resolve it by guessing — and of the things you must assume, say plainly where your confidence is lowest.*
 
 ## Common mistakes
 
@@ -96,7 +96,7 @@ A spec is done when:
 - [ ] Every required behavior is stated explicitly.
 - [ ] Every rejection has a named error code.
 - [ ] The success state-change is described.
-- [ ] The assumptions are ordered least-sure first, and the one or two `⚠` flags carry *why* + *cost* — or, for genuinely trivial scope, an honest "none material" that still names the single biggest risk.
+- [ ] The assumptions are ordered lowest-confidence first, and the one or two `⚠` flags carry *why* + *cost* — or, for genuinely trivial scope, an honest "none material" that still names the single biggest risk.
 
 The shift from older practice: you no longer pre-confirm every assumption to advance. You confirm that the AI has *ranked* its uncertainty and that you have *engaged the top of the rank.* Stated honestly: the flag makes a genuine review cheap and a lazy one visibly negligent — it cannot force the read. That is the most a lightweight check can buy.
 
@@ -108,7 +108,7 @@ If you cannot state a rule clearly, the feature is not ready to build. Stop, tak
 
 ## The one approval, and where the flag really lands
 
-In the one-approval front, you do not approve the spec alone — you approve the whole frozen bundle (spec, scenarios, contract, tests) once, at the contract freeze. So the least-sure flag is **bundle-wide**: at that single seam the AI leads with *"of everything I'm asking you to freeze, these one or two points are most likely wrong"* — and a flag may point at an uncovered scenario or the contract shape, not only a spec assumption. The ranking you do here in Specify is the first feeder into that one gate. See [05 Contract](./05-step-3-contract.md) and the `add` skill's `run.md`.
+In the one-approval front, you do not approve the spec alone — you approve the whole frozen bundle (spec, scenarios, contract, tests) once, at the contract freeze. So the lowest-confidence flag is **bundle-wide**: at that single seam the AI leads with *"of everything I'm asking you to freeze, these one or two points are most likely wrong"* — and a flag may point at an uncovered scenario or the contract shape, not only a spec assumption. The ranking you do here in Specify is the first feeder into that one gate. See [05 Contract](./05-step-3-contract.md) and the `add` skill's `run.md`.
 
 ---
 

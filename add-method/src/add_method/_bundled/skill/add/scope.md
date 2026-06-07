@@ -35,8 +35,8 @@ Diverge seeds (pick the live ones):
 - **Done-looks-like** — how do we SEE each outcome without reading code? (exit criteria)
 - **First slice** — which task unblocks the rest? (breadth-first order)
 
-Rank assumptions least-sure first; the top 1–2 get the flag the human reads at confirm:
-`⚠ <assumption> — least sure because <why>; if wrong: <cost>`.
+Rank assumptions lowest-confidence first; the top 1–2 get the flag the human reads at confirm:
+`⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>`.
 
 ## Drafting a good MILESTONE.md (section by section)
 

@@ -13,7 +13,7 @@ bundle/front approval, a verify gate, a task completion, a milestone close.
 ```
 SUMMARY   one line: intent + target + where we are
 DECISION  what you need from the human (or "none — FYI")
-⚠ FLAGS   least-sure first, why + cost-if-wrong
+⚠ FLAGS   lowest-confidence first, why + cost-if-wrong
 EVIDENCE  small table: tests · gates · parity · check — engine-sourced
 NEXT      the single next action + what it unlocks
 ```
@@ -24,7 +24,7 @@ NEXT      the single next action + what it unlocks
 2. **DECISION** — the question the human must answer, stated plainly; exactly
    one decision per report, or an explicit "none — FYI". If a decision exists,
    ask it AFTER everything below has been shown (show-before-ask).
-3. **⚠ FLAGS** — least-sure first, each with *why* it is least sure and the
+3. **⚠ FLAGS** — lowest-confidence first, each with *why* confidence is lowest and the
    *cost if wrong*. Where TASK.md markers exist (`⚠` / `- [~]` / `- [ ]`),
    quote them verbatim and keep their document order — extraction ≠ judgment.
 4. **EVIDENCE** — engine-sourced facts pasted from `add.py` output, never

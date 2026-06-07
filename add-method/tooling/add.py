@@ -85,8 +85,8 @@ Framings weighed:
 Must:
 Reject:
 After:
-Assumptions — least-sure first:
-  ⚠ <most likely wrong> — least sure because <why>; if wrong: <cost>
+Assumptions — lowest-confidence first:
+  ⚠ <most likely wrong> — lowest confidence because <why>; if wrong: <cost>
 
 ## 2 · SCENARIOS
 ## 3 · CONTRACT

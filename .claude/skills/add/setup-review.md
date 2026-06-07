@@ -3,9 +3,9 @@
 Autonomous setup ends at a single human gate: the **baseline approval** (`add.py lock`). Before that
 signature is honest, the human needs to see *what you drafted and how sure you were* — not re-derive
 it. `SETUP-REVIEW.md` is that page: every decision you made while drafting the foundation, first-scope,
-and the first contract, **ordered least-sure-first** so the riskiest guesses meet their eye first.
+and the first contract, **ordered lowest-confidence-first** so the riskiest guesses meet their eye first.
 
-This is the setup-level analog of presenting a task's front least-sure-first at the contract freeze.
+This is the setup-level analog of presenting a task's front lowest-confidence-first at the contract freeze.
 The engine never reads this file — `add.py lock` is judgment-free, the signature *is* the gate (see
 `setup-lock-state`). The human **reading** this page is the review; your job is to make the reading honest.
 
@@ -30,12 +30,12 @@ living docs). It is a per-onboarding, setup-level artifact; it sits beside `PROJ
 Sign: confirm in chat → the agent runs `add.py lock --by "<name>"` (typing it yourself works too)
 ```
 
-Rows are numbered for reference at the gate ("row 1 is the one I'm least sure about").
+Rows are numbered for reference at the gate ("row 1 is where my confidence is lowest").
 
 ## The two rules that make it honest
 
 <constraints>
-1. **Least-sure-first.** Order rows by confidence **ascending**. A `guessed` row always floats above an
+1. **Lowest-confidence-first.** Order rows by confidence **ascending**. A `guessed` row always floats above an
    `evidence-grounded` one. The point is not completeness theatre — it is to spend the human's attention
    where it changes outcomes: the top of the table is the part they actually need to challenge.
 
@@ -53,7 +53,7 @@ Rows are numbered for reference at the gate ("row 1 is the one I'm least sure ab
 ## Where it ends
 
 `SETUP-REVIEW.md` is **read-only context** for the baseline approval. You do not ask the human to approve it
-field-by-field; you present it, least-sure-first; they confirm in conversation, and you run the lock
+field-by-field; you present it, lowest-confidence-first; they confirm in conversation, and you run the lock
 with their name:
 
 ```bash

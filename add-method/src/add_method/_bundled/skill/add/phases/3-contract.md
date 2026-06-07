@@ -18,7 +18,7 @@ work can start before the real code exists.
 </output_format>
 
 **The freeze is the one approval.** This seam is where the single human approval lands, over the
-whole bundle (§1–§4). Before asking for it, present the bundle **least-sure first**: the 1–2 points
+whole bundle (§1–§4). Before asking for it, present the bundle **lowest-confidence first**: the 1–2 points
 most likely wrong (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`) — aim the human's
 eye before they freeze. See `run.md`.
 
@@ -26,7 +26,7 @@ eye before they freeze. See `run.md`.
 
 The human's one minute, aimed. Walk these six before saying yes:
 
-- **⚠ flags first** — read the least-sure flags; accept each knowing its cost if wrong.
+- **⚠ flags first** — read the lowest-confidence flags; accept each knowing its cost if wrong.
 - **Intent** — does §1 say what you actually want built (and is anything you expected missing)?
 - **Cases** — does every Must and Reject have an observable §2 scenario you care about?
 - **Shape** — glossary names, error codes, additive vs breaking: is THIS the shape to freeze?

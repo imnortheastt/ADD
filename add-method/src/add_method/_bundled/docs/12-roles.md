@@ -11,8 +11,8 @@ Everyone on an AIDD team becomes, in part, a *verifier*; most also become *autho
 - **Mission:** ensure the right thing gets built. You guard the problem.
 - **Leads:** Specify. **Contributes to:** Scenarios; the loop (deciding what the next cycle addresses).
 - **Owns:** the problem definition, the glossary of domain terms, the prioritized backlog.
-- **Done means:** the spec states real user value with no disputed terms and its assumptions ranked least-sure first — the one or two most likely wrong flagged with *why* and *what they cost*; after release, you have decided what the next loop must address.
-- **Apply it:** run the Specify prompt against a real ticket or interview, then read the AI's least-sure flag *first* and decide the one or two load-bearing assumptions before skimming the low-stakes tail. If you cannot confirm a load-bearing rule, it is not ready to build.
+- **Done means:** the spec states real user value with no disputed terms and its assumptions ranked lowest-confidence first — the one or two most likely wrong flagged with *why* and *what they cost*; after release, you have decided what the next loop must address.
+- **Apply it:** run the Specify prompt against a real ticket or interview, then read the AI's lowest-confidence flag *first* and decide the one or two load-bearing assumptions before skimming the low-stakes tail. If you cannot confirm a load-bearing rule, it is not ready to build.
 
 ## Architect / Engineering Lead
 

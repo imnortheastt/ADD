@@ -63,6 +63,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - lock-down -> baseline approval [enforced]
 - lock down -> approve the baseline [enforced]
 - competency delta -> lesson learned [enforced]
+- least-sure -> lowest-confidence [enforced]
+- least sure -> lowest confidence [enforced]
 
 ## enforced_banned
 
@@ -88,6 +90,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - non-functional review
 - method rationale
 - onboarding
+- lowest-confidence
 - READY-QUEUE
 - REVIEW-QUEUE
 - change request

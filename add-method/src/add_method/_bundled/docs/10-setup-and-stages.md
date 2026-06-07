@@ -21,14 +21,14 @@ Before the first feature, the project needs a foundation — but standing it up 
 | Prompt playbook | `playbook/` | the six prompts from [Appendix B](./appendix-b-prompts.md) |
 | Repository + pipeline | — | runs the gates on every change |
 
-Every drafted decision is tagged **evidence-grounded** (read from the code) or **guessed** (thin or inferred) and listed least-sure-first in a `SETUP-REVIEW.md`, so the one signature you give is informed rather than a rubber stamp.
+Every drafted decision is tagged **evidence-grounded** (read from the code) or **guessed** (thin or inferred) and listed lowest-confidence-first in a `SETUP-REVIEW.md`, so the one signature you give is informed rather than a rubber stamp.
 
 **The baseline approval.** The AI presents `SETUP-REVIEW.md`; you check the `guessed` rows; you **lock** — once. That single act freezes the foundation, the first scope, and the first contract together. It is the setup-level analog of the [contract freeze](./05-step-3-contract.md), and it doubles as the first task's contract approval — so there is no separate sign-off. Before the lock the engine lets the AI draft but refuses to cross into build; after it, the build opens.
 
 **Setup exit check**
 
 - [ ] Foundation + living docs drafted (brownfield: from the code, evidence-tagged; greenfield: from the interview, gaps flagged `guessed`).
-- [ ] `SETUP-REVIEW.md` lists every drafted decision least-sure-first.
+- [ ] `SETUP-REVIEW.md` lists every drafted decision lowest-confidence-first.
 - [ ] The model is pinned; the allow-list exists and the pipeline fails on any package outside it.
 - [ ] The pipeline runs and is green on the empty skeleton.
 - [ ] The human **locked down** — and only then did the first feature's build open.

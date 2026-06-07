@@ -46,8 +46,8 @@ Reject:
   - <bad input / situation> -> "<error_code>"
 After:
   - <state true once it succeeds>
-Assumptions — least-sure first:
-  ⚠ <most-likely-wrong assumption> — least sure because <why>; if wrong: <cost>
+Assumptions — lowest-confidence first:
+  ⚠ <most-likely-wrong assumption> — lowest confidence because <why>; if wrong: <cost>
   - [x] <confirmed / low-stakes assumption> — <one line>
 ```
 
