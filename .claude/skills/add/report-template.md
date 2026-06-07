@@ -34,10 +34,9 @@ NEXT      the single next action + what it unlocks
    line when it is right; overrule it only with a stated reason (e.g. planned
    tasks the state file cannot see yet).
 
-**The ask itself** — when block 2's decision becomes a literal question
-component (option picker, numbered menu), compose it as a summary: the detail
-stays in the report above, the question carries intent + what "yes" means +
-the flag count.
+**The ask itself** — when block 2's decision becomes a literal question component
+(option picker, numbered menu), compose it as a summary: the detail stays in the
+report above, the question carries intent + what "yes" means + the flag count.
 
 ## Hard rules
 
