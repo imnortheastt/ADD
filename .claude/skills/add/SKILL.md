@@ -98,7 +98,7 @@ pipeline several ready tasks behind their own frozen contracts, read `streams.md
 <constraints>
 1. **Direction before speed.** Never start Build until §1–§4 exist and tests are red.
 2. **Trust evidence, not inspection.** A feature is trusted because its tests pass
-   and the blind-spots (concurrency, security, architecture) were checked — not
+   and the non-functional risks (concurrency, security, architecture) were checked — not
    because the code reads plausibly.
 3. **Never weaken a test or edit a frozen contract to make the build pass.** That
    inverts the method. A real change is a *change request* back to Specify.

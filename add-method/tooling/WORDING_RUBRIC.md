@@ -43,6 +43,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - story surface -> audit trail [enforced]
 - trust layer -> method rationale [enforced]
 - safety net -> failing-first suite [enforced]
+- blind-spot -> non-functional risk [enforced]
+- blind spot -> non-functional risk [enforced]
 
 ## enforced_banned
 
@@ -58,6 +60,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 
 - dogfood
 - failing-first suite
+- non-functional review
 - method rationale
 - onboarding
 - READY-QUEUE

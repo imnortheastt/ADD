@@ -61,7 +61,7 @@ A locked run has a hard boundary. It MAY:
 
 - write and rewrite **code** (`src/`) — code is disposable below the seam;
 - drive the **tests** to green WITHOUT weakening them (a weakened test is a method violation);
-- gather **evidence** for the verify gate (test output, blind-spot checks).
+- gather **evidence** for the verify gate (test output, non-functional review).
 
 It MUST NOT:
 
@@ -85,7 +85,7 @@ on a trustworthy result with three loops:
   Stopping at the first green is how defects survive; the run stops only when the well runs dry.
 - **adversarial verify** — for every "done" claim, an independent skeptic tries to REFUTE it. The
   claim survives only if it withstands refutation, not because one pass looked plausible.
-- **completeness-critic** — a final pass that asks "what did we NOT cover — a scenario, a blind-spot,
+- **completeness-critic** — a final pass that asks "what did we NOT cover — a scenario, a non-functional risk,
   an unstated assumption?" Whatever it finds re-enters the run.
 
 The run ends only when the loops go dry AND the auto-gate's evidence is satisfied. This is the run
@@ -150,7 +150,7 @@ autonomy: auto | conservative
 **high-risk or method-defining scope** — anything where a wrong-but-plausible result is expensive or
 hard to reverse (auth, money, data-loss paths, the method/trust-layer itself) — `auto` must be lowered
 to `conservative`; leaving it at `auto` there is the reject code **`unguarded_high_risk_auto`**. This
-closes the v6 dogfood blind-spot, where the whole milestone ran at `auto` on the riskiest possible
+closes the v6 dogfood gap, where the whole milestone ran at `auto` on the riskiest possible
 scope (defining the method) with no friction. The default is `auto` *for ordinary, well-tested scope*;
 high risk still earns a human gate.
 

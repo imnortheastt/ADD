@@ -86,7 +86,7 @@ python3 .add/tooling/add.py status      # where am I? (resume point)
 1. **Direction before speed** — no Build until spec, scenarios, contract, and *red*
    tests exist.
 2. **Trust evidence, not inspection** — a feature is trusted because its tests pass
-   and the blind spots (concurrency, security, architecture) were checked.
+   and the non-functional risks (concurrency, security, architecture) were checked.
 3. **Never weaken a test or edit a frozen contract** to make the build pass.
 4. **No silent skips** — every Verify records `PASS`, `RISK-ACCEPTED`, or
    `HARD-STOP`. Security findings are always `HARD-STOP`.

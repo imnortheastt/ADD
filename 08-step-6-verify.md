@@ -12,7 +12,7 @@
 
 The build produced passing tests. That is necessary but not sufficient. Verification is where a person establishes trust — and the principle governing it is *trust through evidence, not inspection.*
 
-This needs care, because it is easy to misread. "Not by inspection" does not mean "do not look at the code." It means the *basis* of trust is the passing evidence plus a deliberate check of the specific things tests cannot easily catch — not a general impression that the code reads plausibly. Plausibility is exactly the trap: AI code is frequently plausible and wrong. So verification has two parts: confirm the evidence, then check the known blind spots.
+This needs care, because it is easy to misread. "Not by inspection" does not mean "do not look at the code." It means the *basis* of trust is the passing evidence plus a deliberate check of the specific things tests cannot easily catch — not a general impression that the code reads plausibly. Plausibility is exactly the trap: AI code is frequently plausible and wrong. So verification has two parts: confirm the evidence, then check the known non-functional risks.
 
 ## Who resolves Verify — the evidence auto-gate
 
@@ -21,7 +21,7 @@ Verify can be resolved two ways, set per task by the `autonomy:` header (see [go
 - **Auto (the default).** When `autonomy: auto`, the run resolves the gate on **evidence** rather than waiting for a person — but only when *all* of these hold: every test green, coverage not decreased, no test weakened and no contract edited, the convergence loops dry, and **no residue** (security, concurrency, or architecture). It records `PASS` as *auto-resolved*, naming the run as the accountable owner — an explicit pass, not a skip. This is principle 7: a gate may be resolved by evidence when that evidence is sufficient and the result is logged.
 - **Human.** When `autonomy: conservative`, or whenever the run finds residue it cannot judge, the gate stops for a person; the two parts below are theirs.
 
-**Security is always a `HARD-STOP` and is never auto-passed, at any autonomy level.** The two parts that follow — confirm the evidence, then check the blind spots — are what *either* resolver works through; the only question is whether a person or the recorded run signs the outcome.
+**Security is always a `HARD-STOP` and is never auto-passed, at any autonomy level.** The two parts that follow — confirm the evidence, then check the non-functional risks — are what *either* resolver works through; the only question is whether a person or the recorded run signs the outcome.
 
 ## Part one — confirm the evidence
 
@@ -63,7 +63,7 @@ A security finding is always a `HARD-STOP`; it is never waved through with a wai
 
 ## Common mistakes
 
-- **Shipping on plausibility.** Reading the diff, finding it reasonable, and approving — without the evidence and the blind-spot checks — is the precise failure the method exists to prevent.
+- **Shipping on plausibility.** Reading the diff, finding it reasonable, and approving — without the evidence and the non-functional review — is the precise failure the method exists to prevent.
 - **Treating a security gap as acceptable risk.** It is a `HARD-STOP`, not a waiver.
 - **Skipping the concurrency check** because the tests are green. Tests rarely exercise simultaneity; this is a manual check by design.
 

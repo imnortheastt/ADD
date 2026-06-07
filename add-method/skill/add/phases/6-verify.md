@@ -1,4 +1,4 @@
-# Phase 6 — Verify (evidence + blind-spot checks)
+# Phase 6 — Verify (evidence + non-functional review)
 
 Goal: establish trust and record an outcome. Passing tests are necessary, not
 sufficient. Fill **§6** in TASK.md including the GATE RECORD.
@@ -42,7 +42,7 @@ If any is false, stop and return to Build — there is nothing to verify yet.
 ## Exit gate / Next
 
 <exit_gate>
-- [ ] Evidence confirmed, blind-spots checked, outcome recorded — a person approved, or
+- [ ] Evidence confirmed, non-functional risks checked, outcome recorded — a person approved, or
   (under `autonomy: auto` with no residue) the run auto-resolved as the accountable owner.
 </exit_gate>
 

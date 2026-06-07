@@ -52,6 +52,8 @@
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 
+**Non-functional review** (formerly "blind-spot checks") — the deliberate verify-time check of the risks tests rarely catch: concurrency, security, architecture. Security findings always escalate.
+
 **Failing-first suite** (formerly "red safety net") — the per-feature test suite written before any code and confirmed red for the right reason (a missing implementation, not a broken test); the TDD red phase at ADD step 4.
 
 **Method rationale** (formerly "trust layer") — the *why* behind every rule: the AIDD book in `.add/docs/`, read on demand via each phase guide's chapter pointer, never auto-loaded.
