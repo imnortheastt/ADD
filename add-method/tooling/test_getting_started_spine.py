@@ -100,7 +100,7 @@ class SpineTest(unittest.TestCase):
         for term in ("intake", "milestone", "one-approval"):
             self.assertIn(term, low,
                           f"the on-ramp steps must name {term!r} in this section")
-        self.assertIn("on-ramp", low, "the On-ramp callout survives")
+        self.assertIn("onboarding", low, "the On-ramp callout survives")
 
     def test_what_just_happened_overrides(self):
         sec = _section(_text(), "what just happened")

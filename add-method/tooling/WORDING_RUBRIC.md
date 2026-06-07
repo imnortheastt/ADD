@@ -36,6 +36,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
      test_idiom_map_fully_enforced fence forbids [mapped] residue between commits (execution call
      derived from the binding suite-green-per-commit invariant; v17 rewrite-core delta precedent). -->
 
+- on-ramp -> onboarding [enforced]
+
 ## enforced_banned
 
 Seeded EMPTY at freeze (only already-absent entries belong here), so F1 is green now. Rewrite
@@ -49,6 +51,7 @@ Load-bearing method vocabulary — reworded AROUND, never renamed (a rename brea
 cross-refs, and tests). F3 asserts each still appears on the surface.
 
 - dogfood
+- onboarding
 - READY-QUEUE
 - REVIEW-QUEUE
 - change request

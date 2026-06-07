@@ -91,7 +91,7 @@ class V8DocsTest(unittest.TestCase):
             self.assertEqual(_md5(GLOSSARY), _md5(GLOSSARY_DOGFOOD),
                              "appendix-c-glossary.md differs between canonical and dogfood trees")
         low = GLOSSARY.read_text(encoding="utf-8").lower()
-        self.assertTrue(re.search(r"\*\*on-ramp\*\*", low),
+        self.assertTrue(re.search(r"\*\*onboarding\*\*", low),
                         "glossary must define the term **On-ramp**")
 
 

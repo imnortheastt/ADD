@@ -67,14 +67,14 @@ handoff — from here on it's conversation, not terminal commands.
 
 ## 2 · Your first feature — talk to the agent
 
-In Claude Code, the whole on-ramp is one move:
+In Claude Code, the whole onboarding is one move:
 
 ```
 in Claude Code:  /add
 you:             "I want to let users transfer money between their own accounts."
 ```
 
-From there the agent runs the **on-ramp** for you:
+From there the agent runs the **onboarding** for you:
 
 1. **Orient** — it reads the project state (the resume point), never re-reading
    your repo. On a fresh install it initialises the project itself and drafts
@@ -93,7 +93,7 @@ contract → review the result.** Everything between is the agent. For the
 transfer-money feature above, that's four short conversations — and zero typed
 commands.
 
-> New term: **On-ramp** — the install→first-milestone path. See `.add/docs/appendix-c-glossary.md`.
+> New term: **Onboarding** — the install→first-milestone path. See `.add/docs/appendix-c-glossary.md`.
 
 ---
 
