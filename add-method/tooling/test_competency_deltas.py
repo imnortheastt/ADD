@@ -113,7 +113,7 @@ class CompetencyDeltasTest(unittest.TestCase):
     def test_glossary_has_competency_delta_entry(self):
         text = GLOSSARY.read_text(encoding="utf-8")
         self.assertIsNotNone(
-            re.search(r"\*\*Competency delta\*\*", text, re.IGNORECASE),
+            re.search(r"\*\*Lesson learned\*\*", text, re.IGNORECASE),
             "appendix-c-glossary.md has no 'Competency delta' entry")
 
 

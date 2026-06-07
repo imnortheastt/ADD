@@ -158,7 +158,7 @@ ripgrep otherwise. Design every IO path for failure — timeouts, retries, rollb
 <return>   <!-- the worker PROPOSES; the orchestrator RECORDS. A worker never runs add.py. -->
 End with a structured verdict AND write the same into SUMMARY.md in the task dir:
 { task, outcome: PASS|RISK-ACCEPTED|HARD-STOP|ESCALATE, evidence: <tests+coverage>,
-  residue: [security|concurrency|architecture findings], deltas: [open competency deltas] }.
+  residue: [security|concurrency|architecture findings], deltas: [open lessons learned] }.
 Do NOT touch add.py or any shared file — the orchestrator gates on your verdict.
 </return>
 ```

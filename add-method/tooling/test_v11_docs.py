@@ -83,7 +83,7 @@ class ShippedFeatureChaptersTest(unittest.TestCase):
 
     def test_loop_chapter_covers_deltas_and_fold(self):
         low = _read(DOCS / "09-the-loop.md").lower()
-        self.assertIn("competency delta", low)
+        self.assertIn("lessons learned", low)
         self.assertIn("udd", low, "the five-competency tagging must appear (UDD is distinctive)")
         self.assertIn("fold", low, "09 must describe the foundation fold")
         self.assertIn("add.py deltas", low, "09 must name the deltas tooling")

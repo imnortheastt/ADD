@@ -99,7 +99,7 @@ Every task, regardless of milestone, produces this artifact chain. The depth var
 | 4 Tests | `tests/<task>_*` | one test per scenario, red first | [06](./06-step-4-tests.md) |
 | 5 Build | source code + evidence bundle | all tests green, nothing weakened | [07](./07-step-5-build.md) |
 | 6 Verify | gate outcome record | `PASS` / `RISK-ACCEPTED` / `HARD-STOP` (auto-resolved on evidence under `autonomy: auto`; security always escalates) | [08](./08-step-6-verify.md) |
-| 7 Observe | `TASK.md` §7 OBSERVE block | released behind a flag; scenario-monitors live; spec delta + competency deltas captured | [09](./09-the-loop.md) |
+| 7 Observe | `TASK.md` §7 OBSERVE block | released behind a flag; scenario-monitors live; spec delta + lessons learned captured | [09](./09-the-loop.md) |
 
 A task is **done** when the build's documents exist and the Verify record reads `PASS` (or a signed `RISK-ACCEPTED`); the seventh step — **Observe** (§7) — then runs in production and feeds the next loop's Specify. See the master shippable checklist in [Appendix E](./appendix-e-checklists.md).
 

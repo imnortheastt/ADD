@@ -1,6 +1,6 @@
-# Competency deltas — how each loop sharpens the foundation
+# Lessons learned — how each loop sharpens the foundation
 
-A **competency delta** is a single learning a task produces, tagged by which of ADD's five
+A **lesson learned** is a single learning a task produces, tagged by which of ADD's five
 competencies it improves. You write deltas in a task's **OBSERVE** phase; later, the
 `foundation-update-loop` gathers the confirmed ones and folds them into a versioned `PROJECT.md`.
 This is how `DDD · SDD · UDD · TDD · ADD` stop being write-once and start converging.

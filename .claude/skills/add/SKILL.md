@@ -81,7 +81,7 @@ milestone close), follow `report-template.md` — SUMMARY → DECISION → ⚠ F
 EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a seam —
 and the question is a summary, never the artifact.
 
-In **observe**, also emit **competency deltas** — learnings tagged by which of the five
+In **observe**, also emit **lessons learned** — learnings tagged by which of the five
 (`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.
 You write them as `open`; the human folds them into `PROJECT.md`. Read `deltas.md` for the
 grammar and the status lifecycle. At milestone close (or on demand), run the fold ritual that

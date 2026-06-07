@@ -10,7 +10,7 @@
 
 **Artifact** — a durable work product: the spec, the scenarios, the contract, the tests. The artifacts survive; the code is disposable.
 
-**Competency delta** — a single learning a loop produces, tagged by which of the five competencies (`DDD · SDD · UDD · TDD · ADD`) it improves, written in a task's OBSERVE phase as `- [<COMPETENCY> · <status>] <learning> (evidence: …)`. Emitted `open` by the AI; the human folds it into a versioned `PROJECT.md` (`folded`) or declines it (`rejected`). The mechanism by which the foundation self-improves instead of drifting. See the `add` skill's `deltas.md`.
+**Lesson learned** (formerly "competency delta") — a single learning a loop produces, tagged by which of the five competencies (`DDD · SDD · UDD · TDD · ADD`) it improves, written in a task's OBSERVE phase as `- [<COMPETENCY> · <status>] <learning> (evidence: …)`. Emitted `open` by the AI; the human folds it into a versioned `PROJECT.md` (`folded`) or declines it (`rejected`). The mechanism by which the foundation self-improves instead of drifting. See the `add` skill's `deltas.md`.
 
 **Contract** — the fixed external shape of a feature: interfaces, data structures, names, and error cases. Frozen before the build, it is the surface the AI builds against.
 
@@ -20,7 +20,7 @@
 
 **Evidence bundle** — the proof attached to a change (passing tests, clean security scan, no coverage loss) that justifies trusting it and may unlock more AI autonomy.
 
-**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed competency deltas are folded into the foundation. It makes the living documentation's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the fold ritual (see the `add` skill's `fold.md`).
+**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed lessons learned are folded into the foundation. It makes the living documentation's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the fold ritual (see the `add` skill's `fold.md`).
 
 **Gate** — a checkpoint with an explicit pass/fail exit. Its outcome is `PASS`, `RISK-ACCEPTED`, or `HARD-STOP`.
 

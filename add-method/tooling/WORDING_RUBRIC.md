@@ -62,6 +62,7 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - every altitude -> every scope level [enforced]
 - lock-down -> baseline approval [enforced]
 - lock down -> approve the baseline [enforced]
+- competency delta -> lesson learned [enforced]
 
 ## enforced_banned
 
@@ -79,6 +80,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - automated quality gate
 - autonomy level
 - baseline approval
+- lesson learned
 - living doc
 - scope level
 - change scope

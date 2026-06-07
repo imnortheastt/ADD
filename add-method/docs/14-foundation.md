@@ -108,7 +108,7 @@ life of the product, owned above any single milestone.
 A milestone is a *version bump* to the foundation, not a fresh start: when it
 closes, fold what it validated into `PROJECT.md` (a decision, a settled domain
 term, a confirmed user journey) and open the next one against the same, now-richer,
-ground. The fold is not informal: each loop emits **competency deltas** (tagged
+ground. The fold is not informal: each loop emits **lessons learned** (tagged
 `DDD · SDD · UDD · TDD · ADD`) in its Observe step, and at milestone close a person
 gathers the open ones and folds them — append-only, with the `foundation-version:`
 bumped — into the foundation. See [09 · The loop](./09-the-loop.md#competency-deltas-and-the-foundation-fold)

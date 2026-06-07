@@ -90,13 +90,17 @@ def extended_surface():
     return [f for f in files if f.exists()]
 
 
+MACHINE_HEADINGS = ("### Competency deltas",)  # engine-parsed TASK.md format keys (add.py _DELTA block
+# locator + 46 historical task files) — Group C machine tokens per the frozen §3 contract; prose-only ban.
+
+
 def scan(regex, files):
-    """All (file, lineno, line) hits for regex, skipping glossary bridge lines."""
+    """All (file, lineno, line) hits for regex, skipping glossary bridge lines and machine-format headings."""
     pat = re.compile(regex, re.IGNORECASE)
     hits = []
     for f in files:
         for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
-            if BRIDGE_MARKER in line:
+            if BRIDGE_MARKER in line or line.strip() in MACHINE_HEADINGS:
                 continue
             if pat.search(line):
                 hits.append(f"{f.relative_to(PKG.parent)}:{n}: {line.strip()[:100]}")

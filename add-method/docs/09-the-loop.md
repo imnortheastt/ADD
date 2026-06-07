@@ -33,9 +33,9 @@ Every defect, surprise, or new need is written up as a change to the specificati
 
 This is also where the AI returns to a useful role: summarizing telemetry, clustering errors into themes, and drafting the proposed spec delta for a person to review. But the production decisions — what to roll back, what to prioritize — remain human.
 
-## Competency deltas and the foundation fold
+## Lessons learned and the foundation fold
 
-A spec delta feeds the *next feature*. But a loop also teaches the **method itself** — that the domain model missed a boundary, that a whole class of scenario was never tested, that a build convention helped or hurt. AIDD captures those as **competency deltas**: a single tagged learning, written in the Observe step, marking which of the five competencies it sharpens.
+A spec delta feeds the *next feature*. But a loop also teaches the **method itself** — that the domain model missed a boundary, that a whole class of scenario was never tested, that a build convention helped or hurt. AIDD captures those as **lessons learned**: a single tagged learning, written in the Observe step, marking which of the five competencies it sharpens.
 
 | tag | competency | a delta here means you learned something about… |
 |-----|------------|--------------------------------------------------|

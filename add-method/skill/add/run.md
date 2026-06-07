@@ -115,7 +115,7 @@ honestly — the line between a pass and a skip is the recorded outcome, not a f
 ## Emitting deltas — feeding the foundation back
 
 The completeness-critic does not discard what it finds. Every gap, surprise, or convention that helped
-or hurt becomes an **`open` competency delta** in the task's OBSERVE block, in the `deltas.md` grammar,
+or hurt becomes an **`open` lesson learned** in the task's OBSERVE block, in the `deltas.md` grammar,
 tagged by competency:
 
 - a finding the run FIXED but that taught the foundation something (a missing scenario -> `TDD`);

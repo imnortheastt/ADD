@@ -1,6 +1,6 @@
 # Folding deltas — how the foundation self-improves
 
-This **closes the loop**. `deltas.md` lets a task EMIT learnings (`open` competency deltas in its
+This **closes the loop**. `deltas.md` lets a task EMIT learnings (`open` lessons learned in its
 OBSERVE phase); folding gathers the confirmed ones and writes them into a **versioned foundation**,
 so `DDD · SDD · UDD · TDD · ADD` sharpen across milestones instead of drifting.
 
@@ -15,7 +15,7 @@ lives here so the engine stays judgment-free.
 
 ## The ritual
 
-1. **Gather** — scan every task's OBSERVE `### Competency deltas` block for lines still `open`.
+1. **Gather** — scan every task's §7 OBSERVE block for lesson-learned lines still `open` (`add.py deltas` reads them by the machine heading).
 2. **Group** — bucket them by competency (`DDD · SDD · UDD · TDD · ADD`).
 3. **Propose** — for each, draft the exact foundation edit (see routing) and show the human.
 4. **Confirm** — the human accepts or declines each delta. No write happens without this.
