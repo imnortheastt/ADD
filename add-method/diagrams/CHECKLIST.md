@@ -7,7 +7,7 @@ Exact order + essence (spelling must match):
 1. Specify — the rules
 2. Scenarios — pass/fail cases
 3. Contract — freeze the shape
-4. Tests — safety net (red)
+4. Tests — failing-first suite (red)
 5. Build — AI writes code
 6. Verify — evidence + checks
 → Observe — in production
@@ -25,7 +25,7 @@ Five, in order, each: acronym — name · essence · key artifacts
 - DDD — Domain-Driven · "the language & boundaries" · domain model · context map
 - SDD — Spec-Driven · "the living document" · SPEC.md · acceptance checklist
 - UDD — UI/UX-Driven · "users use the interface" · user flows · UI states
-- TDD — Test-Driven · "the failing safety net" · test suite · coverage
+- TDD — Test-Driven · "the failing-first suite" · test suite · coverage
 - ADD — AI-Driven · "you command, AI executes" · working code · reviewed PR
 Banner: DDD · SDD · UDD · TDD = context engine → feeds → ADD
 Note: first four human-led (AI assists); ADD = AI-led under direction

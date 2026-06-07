@@ -40,7 +40,7 @@ Everyone on an AIDD team becomes, in part, a *verifier*; most also become *autho
 
 ## QA / Test Engineer
 
-- **Mission:** make "done" machine-checkable; you are the safety net for AI-written code.
+- **Mission:** make "done" machine-checkable; you are the guardrail for AI-written code.
 - **Leads:** Tests. **Contributes to:** Scenarios (turning rules into checkable form); the loop (production monitors).
 - **Owns:** the test suite, the scenario files, the coverage target, the test report at each gate.
 - **Done means:** every scenario has a test that was red before the build; the suite is honest (nothing passes by default); coverage never regresses.

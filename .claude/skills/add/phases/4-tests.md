@@ -1,4 +1,4 @@
-# Phase 4 — Tests (red safety net)
+# Phase 4 — Tests (failing-first suite)
 
 Goal: turn scenarios + contract into automated tests and confirm they FAIL before
 any code exists. This operationalizes red/green TDD: red now, green only after

@@ -18,7 +18,7 @@ The reason is mechanical. If code is written first and tests after, the tests ar
 
 ## The must-fail principle
 
-After generating the tests, you run them — and they must **fail**, because no implementation exists yet. This sounds trivial and is not. A test that passes before any code is written is testing nothing; it is a false reassurance that will later wave bad code through. Confirming the suite is "red for the right reason" (a missing implementation, not a broken test) is what makes it a genuine safety net.
+After generating the tests, you run them — and they must **fail**, because no implementation exists yet. This sounds trivial and is not. A test that passes before any code is written is testing nothing; it is a false reassurance that will later wave bad code through. Confirming the suite is "red for the right reason" (a missing implementation, not a broken test) is what makes it genuinely protective.
 
 ## What to test
 

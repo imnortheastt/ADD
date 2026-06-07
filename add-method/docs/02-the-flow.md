@@ -14,7 +14,7 @@ AIDD is one repeatable flow of **seven steps**: six build the feature — Specif
 flowchart LR
   S1["1 Specify<br/>the rules"] --> S2["2 Scenarios<br/>pass/fail cases"]
   S2 --> S3["3 Contract<br/>freeze the shape"]
-  S3 --> S4["4 Tests<br/>safety net (red)"]
+  S3 --> S4["4 Tests<br/>failing-first (red)"]
   S4 --> S5["5 Build<br/>AI writes code"]
   S5 --> S6["6 Verify<br/>evidence + checks"]
   S6 --> OBS["Observe<br/>in production"]
@@ -58,7 +58,7 @@ Each step produces exactly one artifact, and each artifact is the input to the n
 | 1 Specify | the rules | scenarios, and everything after |
 | 2 Scenarios | pass/fail cases | the tests |
 | 3 Contract | the fixed shape | the tests and the build |
-| 4 Tests | the failing safety net | the build and the verification |
+| 4 Tests | the failing-first suite | the build and the verification |
 | 5 Build | the code | the verification |
 | 6 Verify | a trusted, releasable change | the release and the next loop |
 
