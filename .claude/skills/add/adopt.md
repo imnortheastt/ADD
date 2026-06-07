@@ -4,7 +4,7 @@ When ADD is pointed at a repo that already has code, onboarding is **silent**: t
 answers the questions a greenfield interview would ask, so you read it rather than ask.
 This is the **brownfield path** of setup (the greenfield path keeps the 4-lens interview —
 see `phases/0-setup.md`). You fill the living-documentation files from evidence, then stop at the one
-human gate: the **lock-down** (`add.py lock`).
+human gate: the **baseline approval** (`add.py lock`).
 
 ## The signal — and arming the gate
 
@@ -14,7 +14,7 @@ Enter a brownfield repo with `--await-lock`:
 python3 .add/tooling/add.py init --await-lock
 ```
 
-`--await-lock` does two things. It seeds an **unlocked** setup, which *arms the lock-down gate*
+`--await-lock` does two things. It seeds an **unlocked** setup, which *arms the baseline-approval gate*
 — the engine then refuses a second task, crossing into build, and recording a gate until you
 `lock`. And init, being brownfield-aware, prints a line that begins:
 
@@ -46,11 +46,11 @@ Two rules that never bend:
    already wrote `PROJECT.md`, you READ it, you do not overwrite it. Add, never replace.
 2. **Tag every drafted decision `evidence-grounded` vs `guessed`.** A line you read from the
    code is *evidence-grounded* (cite the file). A line you inferred because the code was silent
-   is *guessed*. The human's single lock-down is only honest if they can see which is which —
+   is *guessed*. The human's single baseline approval is only honest if they can see which is which —
    the guesses are what they actually need to check. (The tags feed `SETUP-REVIEW.md`.)
 </constraints>
 
-## Where it ends — the lock-down
+## Where it ends — the baseline approval
 
 Brownfield onboarding draws no per-step approvals. You map the foundation, then draft the
 first milestone's scope and the first task's candidate front exactly as greenfield does, and

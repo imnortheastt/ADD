@@ -52,6 +52,8 @@
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 
+**Baseline approval** (formerly "the lock-down") — the single human gate ending autonomous setup: an explicit yes that freezes the foundation, first scope, and first contract together; runs as `add.py lock --by <name>`.
+
 **Scope level** (formerly "altitude") — the granularity a decision lives at: intake level (request → versioned scope) · milestone level · setup/foundation level · task level. One ⚠-assumption notation is shared across every scope level.
 
 **Autonomy level** (formerly "autonomy dial") — the per-task setting (`autonomy: auto | conservative`) choosing who resolves Verify; high-risk scope refuses an unguarded `auto`.

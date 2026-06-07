@@ -6,9 +6,9 @@ This chapter covers two operational matters: what you set up once per project, a
 
 ---
 
-## Setup: the AI drafts, you lock down
+## Setup: the AI drafts, you approve the baseline
 
-Before the first feature, the project needs a foundation — but standing it up is no longer your chore. Point ADD at the repo and **the AI does the drafting**: it runs `init` itself, reads what is there, and fills the foundation the whole project depends on. Your single act is the **lock-down** — the one human gate that freezes it.
+Before the first feature, the project needs a foundation — but standing it up is no longer your chore. Point ADD at the repo and **the AI does the drafting**: it runs `init` itself, reads what is there, and fills the foundation the whole project depends on. Your single act is the **baseline approval** — the one human gate that freezes it.
 
 **What the AI drafts.** From an existing codebase it works **silently** — the code answers the questions a setup interview would ask. On an empty repo it runs a short **four-lens interview** (domain · spec · users · decisions), then drafts. Either way it fills the living documentation — the files that outlive all code — and drafts the first milestone's scope and the first task's candidate contract:
 
@@ -23,7 +23,7 @@ Before the first feature, the project needs a foundation — but standing it up 
 
 Every drafted decision is tagged **evidence-grounded** (read from the code) or **guessed** (thin or inferred) and listed least-sure-first in a `SETUP-REVIEW.md`, so the one signature you give is informed rather than a rubber stamp.
 
-**The lock-down.** The AI presents `SETUP-REVIEW.md`; you check the `guessed` rows; you **lock** — once. That single act freezes the foundation, the first scope, and the first contract together. It is the setup-level analog of the [contract freeze](./05-step-3-contract.md), and it doubles as the first task's contract approval — so there is no separate sign-off. Before the lock the engine lets the AI draft but refuses to cross into build; after it, the build opens.
+**The baseline approval.** The AI presents `SETUP-REVIEW.md`; you check the `guessed` rows; you **lock** — once. That single act freezes the foundation, the first scope, and the first contract together. It is the setup-level analog of the [contract freeze](./05-step-3-contract.md), and it doubles as the first task's contract approval — so there is no separate sign-off. Before the lock the engine lets the AI draft but refuses to cross into build; after it, the build opens.
 
 **Setup exit check**
 
@@ -33,7 +33,7 @@ Every drafted decision is tagged **evidence-grounded** (read from the code) or *
 - [ ] The pipeline runs and is green on the empty skeleton.
 - [ ] The human **locked down** — and only then did the first feature's build open.
 
-Do not start a feature until the pipeline is green and the foundation is locked. The lock-down turns the AI's draft into committed direction; the pipeline enforces every later exit check without anyone having to remember to.
+Do not start a feature until the pipeline is green and the foundation is locked. The baseline approval turns the AI's draft into committed direction; the pipeline enforces every later exit check without anyone having to remember to.
 
 ---
 

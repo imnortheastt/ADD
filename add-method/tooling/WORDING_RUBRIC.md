@@ -60,6 +60,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - setup altitude -> setup level [enforced]
 - foundation altitude -> foundation level [enforced]
 - every altitude -> every scope level [enforced]
+- lock-down -> baseline approval [enforced]
+- lock down -> approve the baseline [enforced]
 
 ## enforced_banned
 
@@ -76,6 +78,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - dogfood
 - automated quality gate
 - autonomy level
+- baseline approval
 - living doc
 - scope level
 - change scope

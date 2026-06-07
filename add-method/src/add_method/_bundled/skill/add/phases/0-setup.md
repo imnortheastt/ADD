@@ -1,14 +1,14 @@
-# Phase 0 — Setup (autonomous draft → one human lock-down)
+# Phase 0 — Setup (autonomous draft → one human baseline approval)
 
 Goal: point ADD at a repo and **you** draft the whole foundation — domain, first-milestone scope,
-and the first task's contract — then hand the human exactly one decision: the **lock-down**. Brownfield
+and the first task's contract — then hand the human exactly one decision: the **baseline approval**. Brownfield
 is silent (the code answers the questions); greenfield keeps a short interview. Either way, the human's
 only gate is `add.py lock`. This is the setup-level analog of a task's one-approval contract freeze.
 
 ## 1 · Zero-touch entry — you run init yourself
 
 When there is no `.add/state.json`, do **not** tell the human to initialise — run it yourself. Infer the
-project name and stage from the repo, and **arm the lock-down gate** with `--await-lock`:
+project name and stage from the repo, and **arm the baseline-approval gate** with `--await-lock`:
 
 ```bash
 python3 .add/tooling/add.py init --name "<inferred from repo/dir>" --stage <prototype|poc|mvp|production> --await-lock
@@ -66,10 +66,10 @@ tag thin or inferred answers `guessed`.
 4. **Write `.add/SETUP-REVIEW.md`** per `setup-review.md`: every decision you drafted (foundation, scope,
    first contract), **least-sure-first**, each tagged `guessed` | `evidence-grounded`.
 
-## 4 · The one human gate — the lock-down
+## 4 · The one human gate — the baseline approval
 
 Present `SETUP-REVIEW.md` least-sure-first (the `guessed` rows are what the human must actually check). They
-confirm **once** — an explicit yes to the lock-down itself, in conversation; ambient agreement mid-stream is
+confirm **once** — an explicit yes to the baseline approval itself, in conversation; ambient agreement mid-stream is
 not a confirmation. On that recorded confirmation, you run the lock with their name:
 
 ```bash
@@ -82,7 +82,7 @@ build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the huma
 
 ## 5 · After the lock
 
-- The lock **is** the first task's contract approval — the v7 one-approval-front and the lock-down collapse
+- The lock **is** the first task's contract approval — the v7 one-approval-front and the baseline approval collapse
   into this single signature. Do **not** ask for a separate contract-freeze sign-off (that double-gates).
 - Stamp the first task's §3 `Status: FROZEN @ v1` (lock-authorized), then read `phases/5-build.md` — build is
   now open. Everything before this signature, you drafted.
@@ -93,7 +93,7 @@ build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the huma
 - [ ] `.add/state.json` exists; setup was seeded unlocked (`--await-lock`) then locked.
 - [ ] Living docs filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
 - [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written least-sure-first.
-- [ ] Human confirmed the lock-down and `add.py lock --by` ran with their name; first task §3 `FROZEN @ v1`; build open.
+- [ ] Human confirmed the baseline approval and `add.py lock --by` ran with their name; first task §3 `FROZEN @ v1`; build open.
 </exit_gate>
 
 ## Next

@@ -82,7 +82,7 @@ PHASE_FILES = {
             "## 2a · Brownfield — map it silently",
             "## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation level",
             "## 3 · Draft to the lock (both paths)",
-            "## 4 · The one human gate — the lock-down",
+            "## 4 · The one human gate — the baseline approval",
             "## 5 · After the lock",
             "## Next",
         )},
@@ -239,7 +239,7 @@ ENGINE_FILES = {
         "tags": {"constraints"},  # "Two rules that never bend" lives INSIDE "## The silent mapping"
         "narrative": (
             "## The signal — and arming the gate",
-            "## Where it ends — the lock-down",
+            "## Where it ends — the baseline approval",
         )},
     "report-template.md": {
         "tags": {"constraints"},

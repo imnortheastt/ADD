@@ -76,7 +76,7 @@ the detail belongs in a milestone or a contract, not the foundation. The foundat
 is the *thin, durable* context the engine reads first — not a place to relocate the
 work. And you do not hand-write it: at setup the AI **drafts** all four sections —
 silently from an existing codebase, or from a short four-lens interview on a
-greenfield repo — and a single human **lock-down** freezes that draft as committed
+greenfield repo — and a single human **baseline approval** freezes that draft as committed
 direction (the setup-level analog of a contract freeze).
 
 ## How it feeds the engine — and takes feedback back
@@ -117,7 +117,7 @@ for the grammar, the ritual, and the tooling (`add.py deltas`, `add.py check`).
 ## In the tooling
 
 - `add.py init` scaffolds `PROJECT.md` as a living-doc file; the AI then drafts its
-  content and a single human **lock-down** (`add.py lock`) freezes it. Like every
+  content and a single human **baseline approval** (`add.py lock`) freezes it. Like every
   living-doc file, `init` **never overwrites a hand-edited one**.
 - `add.py status` shows a one-line pointer to the foundation, so a fresh session
   re-orients on context before code.

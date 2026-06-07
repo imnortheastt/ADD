@@ -1,6 +1,6 @@
 # Setup review — the one page the human signs
 
-Autonomous setup ends at a single human gate: the **lock-down** (`add.py lock`). Before that
+Autonomous setup ends at a single human gate: the **baseline approval** (`add.py lock`). Before that
 signature is honest, the human needs to see *what you drafted and how sure you were* — not re-derive
 it. `SETUP-REVIEW.md` is that page: every decision you made while drafting the foundation, first-scope,
 and the first contract, **ordered least-sure-first** so the riskiest guesses meet their eye first.
@@ -52,7 +52,7 @@ Rows are numbered for reference at the gate ("row 1 is the one I'm least sure ab
 
 ## Where it ends
 
-`SETUP-REVIEW.md` is **read-only context** for the lock-down. You do not ask the human to approve it
+`SETUP-REVIEW.md` is **read-only context** for the baseline approval. You do not ask the human to approve it
 field-by-field; you present it, least-sure-first; they confirm in conversation, and you run the lock
 with their name:
 

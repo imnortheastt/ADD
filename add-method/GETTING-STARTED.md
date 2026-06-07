@@ -78,7 +78,7 @@ From there the agent runs the **onboarding** for you:
 
 1. **Orient** — it reads the project state (the resume point), never re-reading
    your repo. On a fresh install it initialises the project itself and drafts
-   the foundation for your sign-off (the **lock-down** — the one signature the
+   the foundation for your sign-off (the **baseline approval** — the one signature the
    installer's closing message points at).
 2. **Intake** — it sizes your request into versioned scope and proposes a **milestone**
    (goal · scope · breadth-first tasks · exit criteria). *You confirm the shape.*
@@ -215,7 +215,7 @@ python3 .add/tooling/add.py new-task transfer --title "Transfer money between my
 ```
 
 > **Note:** the installer's closing hint shows `init --await-lock` — that form
-> arms the lock-down gate so a *human* signs the AI-drafted foundation before
+> arms the baseline-approval gate so a *human* signs the AI-drafted foundation before
 > any build. Plain `init` skips that gate, which is fine here: by hand, the
 > human IS the one driving every step.
 

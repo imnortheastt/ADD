@@ -34,7 +34,7 @@ python3 .add/tooling/add.py status
 - **No `.add/state.json` yet** (a fresh install drops tooling + docs but does *not* init — so `status` says
   `no .add/ project found`) → enter **autonomous setup**: YOU run init yourself —
   `add.py init --name "<inferred>" --stage <picked> --await-lock` (don't tell the human to) — then read
-  `phases/0-setup.md` and draft the foundation + first scope + first contract through to the human lock-down.
+  `phases/0-setup.md` and draft the foundation + first scope + first contract through to the human baseline approval.
 - **A task is active** → open `.add/tasks/<active>/TASK.md`, look at its `phase:`
   marker, and read the matching `phases/<n>-<phase>.md`. Work *only* that phase.
 - **No active task** → first SIZE the request (see Intake below), then create the
@@ -60,7 +60,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 
 | Phase | Guide | Produces (TASK.md section) | Who leads |
 |-------|-------|----------------------------|-----------|
-| setup | `phases/0-setup.md` | `.add/` + living docs + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the lock-down) |
+| setup | `phases/0-setup.md` | `.add/` + living docs + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the baseline approval) |
 | specify | `phases/1-specify.md` | §1 rules + ranked least-sure flag | AI drafts (co-specify)† |
 | scenarios | `phases/2-scenarios.md` | §2 Given/When/Then | AI drafts† |
 | contract | `phases/3-contract.md` | §3 frozen shape | AI drafts → **human approves once** (the seam)† |
