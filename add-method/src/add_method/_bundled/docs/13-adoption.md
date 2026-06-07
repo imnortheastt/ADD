@@ -19,7 +19,7 @@ Adopt the method on one real product, not as an all-at-once mandate.
 
 | Choose… | When… |
 |---------|-------|
-| **Express** | startup, spike, or internal tool; speed of learning dominates; small blast radius |
+| **Express** | startup, spike, or internal tool; speed of learning dominates; small scope of impact |
 | **Standard** | a normal product with real users and ordinary risk |
 | **Regulated** | finance, health, or anything audited; failure is expensive or legally consequential |
 

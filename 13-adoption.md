@@ -10,7 +10,7 @@ How a team starts using AIDD, and how a new person becomes productive in it.
 
 Adopt the method on one real product, not as an all-at-once mandate.
 
-1. **Days 1–15 — Set the foundation.** Stand up the one-time setup on one pilot service: conventions, glossary, dependency allow-list, model record, and the prompt playbook ([Appendix B](./appendix-b-prompts.md)).
+1. **Days 1–15 — Lock the foundation.** On one pilot service, let the AI draft the foundation — conventions, glossary, dependency allow-list, model record — from the existing code (or the four-lens interview if greenfield), then **lock it down** with one signature. The prompt playbook is [Appendix B](./appendix-b-prompts.md).
 2. **Days 16–45 — One feature, end to end.** Run a single feature through the whole flow at the **Express** profile. Capture friction; tune the prompts' golden cases as you go.
 3. **Days 46–75 — Turn on the gates.** Wire the three reports and the gate-fail protocol into the pipeline; introduce the autonomy ladder at the generate-behind-gate level.
 4. **Days 76–90 — Promote.** Move the pilot to the **Standard** profile, draft the **Regulated** variant for any compliance-bound product, and publish the prompts as a shared, versioned playbook.
@@ -19,7 +19,7 @@ Adopt the method on one real product, not as an all-at-once mandate.
 
 | Choose… | When… |
 |---------|-------|
-| **Express** | startup, spike, or internal tool; speed of learning dominates; small blast radius |
+| **Express** | startup, spike, or internal tool; speed of learning dominates; small scope of impact |
 | **Standard** | a normal product with real users and ordinary risk |
 | **Regulated** | finance, health, or anything audited; failure is expensive or legally consequential |
 
@@ -53,7 +53,7 @@ Switching tools changes the discovery convention and nothing structural.
 | Role | First-week task |
 |------|------------------|
 | Product / Domain | run the Specify prompt on a real input; produce a glossary you would defend |
-| Architect / Lead | stand up setup and freeze one contract; wire the architecture check into the pipeline |
+| Architect / Lead | review the AI's setup draft and lock it down (the first contract freezes with it); wire the architecture check into the pipeline |
 | Engineer (Senior) | run the Build prompt on one small task; produce a full evidence bundle |
 | Engineer (Junior) | take a handed-over spec; make a red test green without weakening it |
 | QA / Test | convert one rule into a scenario, then a failing test |

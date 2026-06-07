@@ -95,7 +95,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - autonomy level
 - baseline approval
 - lesson learned
-- living doc
+- living documentation
 - scope level
 - change scope
 - failing-first suite

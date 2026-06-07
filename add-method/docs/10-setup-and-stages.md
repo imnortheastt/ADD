@@ -21,7 +21,7 @@ Before the first feature, the project needs a foundation — but standing it up 
 | Prompt playbook | `playbook/` | the six prompts from [Appendix B](./appendix-b-prompts.md) |
 | Repository + pipeline | — | runs the gates on every change |
 
-Every drafted decision is tagged **evidence-grounded** (read from the code) or **guessed** (thin or inferred) and listed lowest-confidence-first in a `SETUP-REVIEW.md`, so the one signature you give is informed rather than a rubber stamp.
+Every drafted decision is tagged **evidence-grounded** (read from the code) or **guessed** (thin or inferred) and listed lowest-confidence-first in a `SETUP-REVIEW.md`, so the one signature you give is informed rather than given without reading.
 
 **The baseline approval.** The AI presents `SETUP-REVIEW.md`; you check the `guessed` rows; you **lock** — once. That single act freezes the foundation, the first scope, and the first contract together. It is the setup-level analog of the [contract freeze](./05-step-3-contract.md), and it doubles as the first task's contract approval — so there is no separate sign-off. Before the lock the engine lets the AI draft but refuses to cross into build; after it, the build opens.
 
@@ -93,7 +93,7 @@ The default is one task at a time. But when a milestone holds several tasks whos
 **Two queues, no new state** — both read from `add.py status`:
 
 - **READY-QUEUE** — tasks in the active milestone where the phase is not `done` and every dependency already reads `gate=PASS`. These are the only tasks a worker may pick up; a task finishing `PASS` unblocks its dependents on the next `status`.
-- **REVIEW-QUEUE** — the irreducibly serial part: the **bundle approval** (contract freeze) and any **Verify escalation**. One human, one queue, presented one at a time — never a batch that invites a rubber stamp.
+- **REVIEW-QUEUE** — the irreducibly serial part: the **bundle approval** (contract freeze) and any **Verify escalation**. One human, one queue, presented one at a time — never a batch that invites approval without reading.
 
 **The autonomy level is the throttle.** At `conservative`, both gates queue on the human (pure pipelining — builds overlap, nothing auto-resolves). At `auto` (the default), only the bundle-approval decision point and residue escalations queue; Verify auto-PASSes on evidence, so real concurrency follows. The floor never drops below **one human approval per task, at the contract decision point**.
 

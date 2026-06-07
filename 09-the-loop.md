@@ -15,7 +15,7 @@ That information is the input to the next cycle. What you learn in production be
 
 ## Release deliberately
 
-Release behind a mechanism that limits the blast radius of a mistake — a feature flag, a gradual rollout, or both. The verification step established that the feature is correct against everything you anticipated; a controlled release is your protection against what you did not anticipate. If something is wrong, you want to affect a few users and roll back, not affect everyone and scramble.
+Release behind a mechanism that limits the scope of impact of a mistake — a feature flag, a gradual rollout, or both. The verification step established that the feature is correct against everything you anticipated; a controlled release is your protection against what you did not anticipate. If something is wrong, you want to affect a few users and roll back, not affect everyone and scramble.
 
 ## Reuse the scenarios as monitors
 

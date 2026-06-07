@@ -63,7 +63,7 @@ The autonomy granted in this step should match the evidence and your review capa
 
 ## Common mistakes
 
-- **Batches too large to review.** Shrinks verification to rubber-stamping.
+- **Batches too large to review.** Shrinks verification to approving without reading.
 - **Letting the AI add unknown dependencies.** The allow-list check in the pipeline should block this automatically; if it does not, the supply-chain risk is real (an AI may invent a plausible package name that an attacker has registered).
 - **Accepting "all tests pass" without reading the change.** Passing tests are necessary, not sufficient — the next step exists for exactly this reason.
 

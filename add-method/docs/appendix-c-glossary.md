@@ -74,7 +74,7 @@
 
 **Method rationale** (formerly "trust layer") — the *why* behind every rule: the AIDD book in `.add/docs/`, read on demand via each phase guide's chapter pointer, never auto-loaded.
 
-**Working state** (formerly "state surface") — everything an agent loads every session: the `add` skill (router `SKILL.md` + the active phase) and the lean operational docs — `PROJECT.md`, the active `MILESTONE.md` and `TASK.md`, and `state.json`. Kept small to avoid context rot. Contrast **audit trail**.
+**Working state** (formerly "state surface" — one of the two record surfaces) — everything an agent loads every session: the `add` skill (router `SKILL.md` + the active phase) and the lean operational docs — `PROJECT.md`, the active `MILESTONE.md` and `TASK.md`, and `state.json`. Kept small to avoid context rot. Contrast **audit trail**.
 
 **Stop signal** — the boolean an autonomous harness reads from `add.py … --json` (`stop = owner != "ai"`): true means pause for a person before proceeding. The irreducible stops are the contract freeze and the Verify gate. See **Owner (of a phase)**.
 

@@ -19,7 +19,7 @@ There is also a diagnostic value: **if you cannot write the spec, you do not yet
 A specification is not dictated by one side. It is made in three moves:
 
 1. **Diverge — brainstorm by both.** Before drafting, the AI surfaces the *decision space*: the two or three genuine ways to frame the feature, and the open questions it would otherwise resolve by guessing. You react — add, kill, redirect. This is the brainstorm, and it lives in the conversation, not in a new document.
-2. **Converge — the AI drafts, and ranks its own uncertainty.** The AI writes the spec below, then ranks where its confidence is lowest. It does not hand you a flat wall of equal-looking assumptions to nod through; it tells you *where it is most likely wrong, and what that would cost.*
+2. **Converge — the AI drafts, and ranks its own uncertainty.** The AI writes the spec below, then ranks where its confidence is lowest. It does not hand you a flat list of equal-looking assumptions to nod through; it tells you *where it is most likely wrong, and what that would cost.*
 3. **Validate — you decide, with the AI's advice.** You read the ranked uncertainty first, then confirm, correct, or send it back. Your approval is real because your attention was aimed.
 
 The brainstorm leaves a *light trace, not a document.* What you chose becomes a rule; what you weighed and dropped becomes a one-line **`Framings weighed:`** note; what stayed genuinely uncertain becomes a **lowest-confidence flag**. Nothing new to maintain — the residue lands in the spec you were writing anyway.
@@ -87,7 +87,7 @@ The defining instruction: *if a requirement is unclear, ask — do not resolve i
 - **Stating only the happy path.** The "Reject" list is where most real complexity lives; an empty one usually means it has not been thought through.
 - **Free-text errors.** Errors must be named codes, not sentences, so they can become scenarios and contract responses.
 - **Hidden assumptions.** If an assumption is not written down, it is not confirmed — it is a future bug with a delay timer.
-- **A flat wall of "confirmed" assumptions.** Eight equal-looking ticks invite a reflex approval. Rank them; flag the one or two that are load-bearing. An unranked list hides the risk inside the noise.
+- **A flat list of "confirmed" assumptions.** Eight equal-looking ticks invite a reflex approval. Rank them; flag the one or two that are load-bearing. An unranked list hides the risk inside the noise.
 
 ## Exit check
 
@@ -108,7 +108,7 @@ If you cannot state a rule clearly, the feature is not ready to build. Stop, tak
 
 ## The one approval, and where the flag really lands
 
-In the one-approval flow, you do not approve the spec alone — you approve the whole frozen bundle (spec, scenarios, contract, tests) once, at the contract freeze. So the lowest-confidence flag is **bundle-wide**: at that single decision point the AI leads with *"of everything I'm asking you to freeze, these one or two points are most likely wrong"* — and a flag may point at an uncovered scenario or the contract shape, not only a spec assumption. The ranking you do here in Specify is the first feeder into that one gate. See [05 Contract](./05-step-3-contract.md) and the `add` skill's `run.md`.
+In the one-approval flow, you do not approve the spec alone — you approve the whole frozen bundle (spec, scenarios, contract, tests) once, at the contract freeze. So the lowest-confidence flag is **bundle-wide**: at that single decision point the AI leads with *"of everything I'm asking you to freeze, these one or two points are most likely wrong"* — and a flag may point at an uncovered scenario or the contract shape, not only a spec assumption. The ranking you do here in Specify is the first input into that one gate. See [05 Contract](./05-step-3-contract.md) and the `add` skill's `run.md`.
 
 ---
 
