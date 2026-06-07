@@ -1,4 +1,4 @@
-# WORDING_RUBRIC — v17 prompt-clarity   (FROZEN @ v1 · 2026-06-06)
+# WORDING_RUBRIC — prompt-clarity wording layer   (FROZEN @ v2 · 2026-06-07 · CR: ubiquitous-language; v1 2026-06-06)
 
 The single source for the v17 wording rewrite. `wording_lint.py` reads its lists FROM this
 file (no hardcoded duplicate). The rewrite is PHRASING, never RULES — semantics are owned by
@@ -30,6 +30,12 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - first feeder -> first input [enforced]
 - blast radius -> scope of impact [enforced]
 
+<!-- ubiquitous-language wave (CR: task ubiquitous-language, contract FROZEN @ v1 2026-06-07).
+     The 17-row retirement plan lives in that task's §3 CONTRACT. Rows enter THIS map directly as
+     [enforced] in the same commit that clears the term from the surface — the standing
+     test_idiom_map_fully_enforced fence forbids [mapped] residue between commits (execution call
+     derived from the binding suite-green-per-commit invariant; v17 rewrite-core delta precedent). -->
+
 ## enforced_banned
 
 Seeded EMPTY at freeze (only already-absent entries belong here), so F1 is green now. Rewrite
@@ -42,18 +48,7 @@ tasks promote idioms here as they retire them.
 Load-bearing method vocabulary — reworded AROUND, never renamed (a rename breaks GLOSSARY,
 cross-refs, and tests). F3 asserts each still appears on the surface.
 
-- one-approval front
-- seam
-- fold
-- competency delta
-- least-sure
-- touch-boundary
-- trust layer
-- evidence auto-gate
-- autonomy dial
-- survivor
 - dogfood
-- intake altitude
 - READY-QUEUE
 - REVIEW-QUEUE
 - change request
