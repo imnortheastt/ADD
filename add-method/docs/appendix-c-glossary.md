@@ -20,7 +20,7 @@
 
 **Evidence bundle** — the proof attached to a change (passing tests, clean security scan, no coverage loss) that justifies trusting it and may unlock more AI autonomy.
 
-**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed competency deltas are folded into the foundation. It makes the survivor layer's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the fold ritual (see the `add` skill's `fold.md`).
+**Foundation version** — a monotonic integer marker in `PROJECT.md` that advances by one each time confirmed competency deltas are folded into the foundation. It makes the living documentation's evolution auditable: a rising version with fewer new deltas per milestone is the signal that a competency is converging rather than drifting. Bumped only by the fold ritual (see the `add` skill's `fold.md`).
 
 **Gate** — a checkpoint with an explicit pass/fail exit. Its outcome is `PASS`, `RISK-ACCEPTED`, or `HARD-STOP`.
 
@@ -70,7 +70,7 @@
 
 **Audit trail** (formerly "story surface") — the book (`docs/*`): the whole method, read once by a person to trust ADD, then referenced by a pointer and **never auto-loaded** into agent context. Contrast **working state**.
 
-**Survivor layer** — the set of durable artifacts (conventions, glossary, frozen contracts) that outlive any particular code.
+**Living documentation** (formerly "survivor layer") — the set of durable artifacts (conventions, glossary, frozen contracts) that outlives any particular code.
 
 **Trust ladder / autonomy ladder** — the graduated levels of AI autonomy, earned with evidence and verification capacity.
 

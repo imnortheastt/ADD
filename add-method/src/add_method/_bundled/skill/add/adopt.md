@@ -3,7 +3,7 @@
 When ADD is pointed at a repo that already has code, onboarding is **silent**: the code
 answers the questions a greenfield interview would ask, so you read it rather than ask.
 This is the **brownfield path** of setup (the greenfield path keeps the 4-lens interview —
-see `phases/0-setup.md`). You fill the survivor files from evidence, then stop at the one
+see `phases/0-setup.md`). You fill the living-documentation files from evidence, then stop at the one
 human gate: the **lock-down** (`add.py lock`).
 
 ## The signal — and arming the gate
@@ -29,9 +29,9 @@ code (a mechanical fact); it never reads or fills it — interpreting it is your
 
 ## The silent mapping
 
-Fill each survivor file in `.add/` from what the code actually shows — **ask nothing**:
+Fill each living-doc file in `.add/` from what the code actually shows — **ask nothing**:
 
-| Survivor | Read it from |
+| Living doc | Read it from |
 |----------|--------------|
 | `PROJECT.md` (foundation) | the domain nouns, entry points, the README, the first milestone the code implies |
 | `CONVENTIONS.md` | the languages, folder layout, naming, lint config, error style already in the tree |
@@ -42,7 +42,7 @@ Fill each survivor file in `.add/` from what the code actually shows — **ask n
 Two rules that never bend:
 
 <constraints>
-1. **Never clobber a survivor.** `init` already skips any survivor that exists; if a human
+1. **Never clobber a living doc.** `init` already skips any living-doc file that exists; if a human
    already wrote `PROJECT.md`, you READ it, you do not overwrite it. Add, never replace.
 2. **Tag every drafted decision `evidence-grounded` vs `guessed`.** A line you read from the
    code is *evidence-grounded* (cite the file). A line you inferred because the code was silent

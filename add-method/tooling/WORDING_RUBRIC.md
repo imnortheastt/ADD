@@ -51,6 +51,9 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - autonomy dial -> autonomy level [enforced]
 - the dial -> the autonomy level [enforced]
 - lower the dial -> lower the autonomy level [enforced]
+- survivor layer -> living documentation [enforced]
+- the survivors -> the living documentation [enforced]
+- survivor file -> living-doc file [enforced]
 
 ## enforced_banned
 
@@ -67,6 +70,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - dogfood
 - automated quality gate
 - autonomy level
+- living doc
 - change scope
 - failing-first suite
 - non-functional review

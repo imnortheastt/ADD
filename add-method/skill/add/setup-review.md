@@ -13,7 +13,7 @@ The engine never reads this file — `add.py lock` is judgment-free, the signatu
 
 Write **one** artifact at `.add/SETUP-REVIEW.md`. **Never clobber a human-edited one** — if it already
 exists with hand edits, append/update, don't overwrite (the same non-clobber rule `init` applies to
-survivors). It is a per-onboarding, setup-altitude artifact; it sits beside `PROJECT.md`, not under a task.
+living docs). It is a per-onboarding, setup-altitude artifact; it sits beside `PROJECT.md`, not under a task.
 
 ## The template
 
@@ -46,7 +46,7 @@ Rows are numbered for reference at the gate ("row 1 is the one I'm least sure ab
      onboarding (a near-empty repo, only the 4-lens answers) produces these. These are what the human
      must check; that is why they sit on top.
 
-   The tag vocabulary is shared with `adopt.md` — the brownfield map tags each filled survivor decision
+   The tag vocabulary is shared with `adopt.md` — the brownfield map tags each filled living-doc decision
    `guessed`/`evidence-grounded`, and those tags flow straight into this table.
 </constraints>
 

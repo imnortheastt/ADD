@@ -10,11 +10,11 @@ This appendix maps every AIDD document to a three-level project hierarchy, so th
 
 | Level | What it is | AIDD meaning | Spans |
 |-------|-----------|--------------|-------|
-| **Project** | the whole product or engagement | the survivor layer — documents created once and kept for the life of the product | all milestones |
+| **Project** | the whole product or engagement | the living documentation — documents created once and kept for the life of the product | all milestones |
 | **Milestone** | a stage or release | one pass of the flow at a chosen depth: Prototype, POC, MVP, or Production-Ready; groups many tasks | many tasks |
 | **Task** | one feature through the flow | a single pass of Specify → … → Verify → Observe; the smallest unit with its own gate records | the seven steps |
 
-A **project** sets up the survivor-layer documents once. A **milestone** is a depth-bounded goal that groups tasks and has its own entry and exit document gates. A **task** is one feature, and it produces the per-feature artifacts.
+A **project** sets up the living documentation once. A **milestone** is a depth-bounded goal that groups tasks and has its own entry and exit document gates. A **task** is one feature, and it produces the per-feature artifacts.
 
 ## How the hierarchy decomposes
 
@@ -53,12 +53,12 @@ Which document lives at which level, who is accountable for it, and how long it 
 | `SLO.md` (objectives) | Milestone (MVP+) | from MVP | from MVP onward | DevOps / SRE |
 | `SPEC.md` | Task | per feature | living | Product / Domain |
 | `features/*.feature` | Task | per feature | living | QA / Test |
-| `contracts/*.md` | Task → **Project** | per feature, then frozen | survivor (promoted to project) | Architect / Lead |
+| `contracts/*.md` | Task → **Project** | per feature, then frozen | living doc (promoted to project) | Architect / Lead |
 | `tests/*` | Task | per feature | living | QA / Engineer |
 | Source code | Task | per feature | **disposable** | Engineer |
 | Gate outcome records | Task | per step | kept for audit | the reviewer |
 
-> Note the one promotion: a **contract** is authored at task level but, once frozen, becomes part of the project's survivor layer — other tasks depend on it. That promotion is why a contract change is a project-level change request, not a task-local edit.
+> Note the one promotion: a **contract** is authored at task level but, once frozen, becomes part of the project's living documentation — other tasks depend on it. That promotion is why a contract change is a project-level change request, not a task-local edit.
 
 ---
 
@@ -136,13 +136,13 @@ The tests are the source of truth; this table is their index. If a row here is e
 
 ## Worked example — the hierarchy filled in
 
-- **Project:** *Mobile Banking App.* Survivor-layer documents: `CONVENTIONS.md`, `GLOSSARY.md` (defines *account*, *balance*, *transfer*), `MODEL_REGISTRY.md`, `dependencies.allowlist`, `playbook/`.
+- **Project:** *Mobile Banking App.* Living documentation: `CONVENTIONS.md`, `GLOSSARY.md` (defines *account*, *balance*, *transfer*), `MODEL_REGISTRY.md`, `dependencies.allowlist`, `playbook/`.
 - **Milestone:** *MVP — core money movement.* Exit requires the full per-feature document set for each task below, plus a light `SLO.md` and a milestone exit report.
   - **Task:** *Transfer between own accounts* → `SPEC.md`, `features/transfer.feature`, `contracts/transfer.md` (frozen at v1), `tests/transfer_test.py`, code, and a `PASS` gate record. (The full set is in [Appendix D](./appendix-d-worked-example.md).)
   - **Task:** *View balance* → its own SPEC, feature, contract, tests, code, record.
   - **Task:** *Transaction history* → its own set.
 
-When all three tasks read `PASS` and the milestone documents exist, the MVP milestone exits — and the frozen `transfer` contract is now a project-level survivor artifact the next milestone builds on.
+When all three tasks read `PASS` and the milestone documents exist, the MVP milestone exits — and the frozen `transfer` contract is now a project-level living-documentation artifact the next milestone builds on.
 
 ---
 

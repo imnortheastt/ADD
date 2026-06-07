@@ -33,7 +33,7 @@ Note: first four human-led (AI assists); ADD = AI-led under direction
 ## 3 · add-foundation.png — Engine on ground (ch14)
 - Top box: "TDD ⇄ ADD — the engine"  (per-feature loop)
 - Arrow up: "feeds context up"
-- Foundation, 3 stacked (survivor · cross-milestone):
+- Foundation, 3 stacked (living docs · cross-milestone):
   - UDD — UI/UX · user flows · UI states
   - SDD — Spec · what we build now (living)
   - DDD — Domain · the language & boundaries

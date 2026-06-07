@@ -60,7 +60,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 
 | Phase | Guide | Produces (TASK.md section) | Who leads |
 |-------|-------|----------------------------|-----------|
-| setup | `phases/0-setup.md` | `.add/` + survivors + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the lock-down) |
+| setup | `phases/0-setup.md` | `.add/` + living docs + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the lock-down) |
 | specify | `phases/1-specify.md` | §1 rules + ranked least-sure flag | AI drafts (co-specify)† |
 | scenarios | `phases/2-scenarios.md` | §2 Given/When/Then | AI drafts† |
 | contract | `phases/3-contract.md` | §3 frozen shape | AI drafts → **human approves once** (the seam)† |

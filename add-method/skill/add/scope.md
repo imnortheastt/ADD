@@ -45,7 +45,7 @@ Rank assumptions least-sure first; the top 1–2 get the flag the human reads at
 - **Scope In/Out** — the explicit anti-creep deferral list. Naming what is OUT is as important
   as what is IN; an empty Out list usually means the scope is not yet thought through.
 - **Shared decisions & glossary deltas** — cross-cutting rules every task must honor, named from
-  the glossary. New terms get a glossary entry (the survivor layer stays honest).
+  the glossary. New terms get a glossary entry (the living documentation stays honest).
 - **Shared / risky contracts to freeze first** — the seams between tasks; name the owning task.
 - **Tasks (breadth-first)** — `slug · depends-on · one line` each. Decompose by deliverable, not
   by phase; keep each task one-file-sized. Order by dependency, not by guesswork.

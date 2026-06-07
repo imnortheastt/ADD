@@ -57,7 +57,7 @@ This installs:
 | `.add/tooling/add.py` | scaffolder + state tracker (Python, stdlib only) |
 | `.add/docs/` | the AIDD book — the method rationale |
 
-Project state (`.add/state.json`) and the survivor-layer files (`CONVENTIONS.md`,
+Project state (`.add/state.json`) and the living-documentation files (`CONVENTIONS.md`,
 `GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`) are *not* created
 here — the installer drops files only; initialisation is the agent's first move
 when you run `/add`.

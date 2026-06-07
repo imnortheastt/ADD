@@ -28,7 +28,7 @@ python3 .add/tooling/add.py init --name "<inferred from repo/dir>" --stage <prot
 ## 2a · Brownfield — map it silently
 
 The code answers the questions a greenfield interview would ask, so **read it instead of asking**. Open
-`adopt.md` and follow it: fill each survivor file from the code, never clobber an existing one, and tag
+`adopt.md` and follow it: fill each living-doc file from the code, never clobber an existing one, and tag
 every decision `evidence-grounded` (cite the file) or `guessed`. Ask the human **nothing** at this step.
 
 ## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation altitude
@@ -51,7 +51,7 @@ tag thin or inferred answers `guessed`.
 
 ## 3 · Draft to the lock (both paths)
 
-1. **Fill the survivors** (they outlive all code): `.add/PROJECT.md` (the foundation — Domain · Spec/active
+1. **Fill the living documentation** (it outlives all code): `.add/PROJECT.md` (the foundation — Domain · Spec/active
    milestone · UI/UX · Key Decisions, one screen), `CONVENTIONS.md`, `GLOSSARY.md`, `MODEL_REGISTRY.md`,
    `dependencies.allowlist`. Brownfield: from the code. Greenfield: from the interview, gaps flagged `guessed`.
 2. **Size the first milestone** (read `scope.md`) and draft its `MILESTONE.md` — goal · scope · exit criteria
@@ -91,7 +91,7 @@ build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the huma
 
 <exit_gate>
 - [ ] `.add/state.json` exists; setup was seeded unlocked (`--await-lock`) then locked.
-- [ ] Survivors filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
+- [ ] Living docs filled (brownfield: from code, tagged evidence-grounded; greenfield: from the interview).
 - [ ] First task created; §1–§3 drafted; `.add/SETUP-REVIEW.md` written least-sure-first.
 - [ ] Human confirmed the lock-down and `add.py lock --by` ran with their name; first task §3 `FROZEN @ v1`; build open.
 </exit_gate>

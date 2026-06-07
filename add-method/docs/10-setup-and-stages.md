@@ -10,12 +10,12 @@ This chapter covers two operational matters: what you set up once per project, a
 
 Before the first feature, the project needs a foundation — but standing it up is no longer your chore. Point ADD at the repo and **the AI does the drafting**: it runs `init` itself, reads what is there, and fills the foundation the whole project depends on. Your single act is the **lock-down** — the one human gate that freezes it.
 
-**What the AI drafts.** From an existing codebase it works **silently** — the code answers the questions a setup interview would ask. On an empty repo it runs a short **four-lens interview** (domain · spec · users · decisions), then drafts. Either way it fills the survivor layer — the files that outlive all code — and drafts the first milestone's scope and the first task's candidate contract:
+**What the AI drafts.** From an existing codebase it works **silently** — the code answers the questions a setup interview would ask. On an empty repo it runs a short **four-lens interview** (domain · spec · users · decisions), then drafts. Either way it fills the living documentation — the files that outlive all code — and drafts the first milestone's scope and the first task's candidate contract:
 
 | Item | File | Purpose |
 |------|------|---------|
 | Foundation | `PROJECT.md` | domain · active spec · UI/UX · key decisions — the context every task reads first |
-| Conventions | `CONVENTIONS.md` | naming, layout, language, formatter — the survivor layer |
+| Conventions | `CONVENTIONS.md` | naming, layout, language, formatter — living documentation |
 | Model record | `MODEL_REGISTRY.md` | which AI model and version the project uses, for reproducibility and audit |
 | Dependency allow-list | `dependencies.allowlist` | the packages the AI may use; the pipeline rejects others |
 | Prompt playbook | `playbook/` | the six prompts from [Appendix B](./appendix-b-prompts.md) |
@@ -27,7 +27,7 @@ Every drafted decision is tagged **evidence-grounded** (read from the code) or *
 
 **Setup exit check**
 
-- [ ] Foundation + survivors drafted (brownfield: from the code, evidence-tagged; greenfield: from the interview, gaps flagged `guessed`).
+- [ ] Foundation + living docs drafted (brownfield: from the code, evidence-tagged; greenfield: from the interview, gaps flagged `guessed`).
 - [ ] `SETUP-REVIEW.md` lists every drafted decision least-sure-first.
 - [ ] The model is pinned; the allow-list exists and the pipeline fails on any package outside it.
 - [ ] The pipeline runs and is green on the empty skeleton.
@@ -80,7 +80,7 @@ The durable thing is never the code:
 | POC → MVP | the spike code | the validated approach + the risky-interface contract |
 | MVP → Production | nothing | everything; the code is real and is hardened |
 
-The survivor layer thickens as you move right: a prototype leaves you a validated design; a proof of concept adds a proven approach and a contract; the MVP adds real, kept code. By production, you are hardening, not rebuilding.
+The living documentation thickens as you move right: a prototype leaves you a validated design; a proof of concept adds a proven approach and a contract; the MVP adds real, kept code. By production, you are hardening, not rebuilding.
 
 ---
 

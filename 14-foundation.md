@@ -18,7 +18,7 @@ guesses. That is the same failure the method exists to prevent ([00](./00-introd
 one level up.
 
 The **foundation** is the layer that holds this context and *outlives every
-milestone*. It is not new ceremony; it is the [survivor layer](./appendix-f-requirements-matrix.md)
+milestone*. It is not new ceremony; it is the [living documentation](./appendix-f-requirements-matrix.md)
 the method already names, made explicit as three concerns.
 
 ## Three concerns, one foundation
@@ -53,14 +53,14 @@ fifth, where the AI executes on it:
 
 ![ADD's five competencies — DDD · SDD · UDD · TDD · ADD: the first four are human-led and feed context to ADD, which is AI-led under your direction](./add-competencies.png)
 
-> The diagram's foundation (DDD · SDD · UDD) and the method's own words — survivor
-> layer · living document · ubiquitous language — name the same three ideas. This
+> The diagram's foundation (DDD · SDD · UDD) and the method's own words — living
+> documentation · the foundation document · ubiquitous language — name the same three ideas. This
 > chapter is where the diagram and the text finally meet.
 
 ## One file, not three
 
 A foundation that takes a week to write is a foundation no one keeps current. So
-ADD realizes all three concerns as **one survivor document — `PROJECT.md`** — with
+ADD realizes all three concerns as **one living document — `PROJECT.md`** — with
 one short section each, plus an append-only record of key decisions:
 
 ```
@@ -74,7 +74,10 @@ one short section each, plus an append-only record of key decisions:
 Keep it to one screen. If a section wants to grow into a manual, that is a signal
 the detail belongs in a milestone or a contract, not the foundation. The foundation
 is the *thin, durable* context the engine reads first — not a place to relocate the
-work.
+work. And you do not hand-write it: at setup the AI **drafts** all four sections —
+silently from an existing codebase, or from a short four-lens interview on a
+greenfield repo — and a single human **lock-down** freezes that draft as committed
+direction (the setup-altitude analog of a contract freeze).
 
 ## How it feeds the engine — and takes feedback back
 
@@ -98,7 +101,7 @@ life of the product, owned above any single milestone.
 
 | Tier | Lives in | Lifespan | Holds |
 |------|----------|----------|-------|
-| **Project** (foundation) | `.add/PROJECT.md` + survivor files | whole product | domain, spec stance, users, decisions |
+| **Project** (foundation) | `.add/PROJECT.md` + living-doc files | whole product | domain, spec stance, users, decisions |
 | **Milestone** | `.add/milestones/<slug>/MILESTONE.md` | one depth-bounded goal | scope, shared contracts, exit criteria |
 | **Task** | `.add/tasks/<slug>/TASK.md` | one feature | the seven-step artifacts |
 
@@ -113,8 +116,9 @@ for the grammar, the ritual, and the tooling (`add.py deltas`, `add.py check`).
 
 ## In the tooling
 
-- `add.py init` scaffolds `PROJECT.md` as a survivor file — and, like every
-  survivor file, **never overwrites a hand-edited one**.
+- `add.py init` scaffolds `PROJECT.md` as a living-doc file; the AI then drafts its
+  content and a single human **lock-down** (`add.py lock`) freezes it. Like every
+  living-doc file, `init` **never overwrites a hand-edited one**.
 - `add.py status` shows a one-line pointer to the foundation, so a fresh session
   re-orients on context before code.
 - The guideline block written into `CLAUDE.md` / `AGENTS.md` tells any agent the
