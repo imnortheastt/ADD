@@ -18,7 +18,7 @@ class TwoSurfaceDocGateTest(unittest.TestCase):
         # case-insensitive: the CONTRACT freezes that the *term* appears, not its
         # casing in prose (a term at a sentence start is capitalised).
         text = PRINCIPLES.read_text(encoding="utf-8").lower()
-        for term in ("state surface", "story surface", "never auto-loaded"):
+        for term in ("working state", "audit trail", "never auto-loaded"):
             self.assertIn(term, text, f"01-principles.md must name: {term!r}")
 
     def test_flow_reconciles_loopback_and_order(self):

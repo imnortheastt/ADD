@@ -39,6 +39,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - on-ramp -> onboarding [enforced]
 - forward spine -> primary flow [enforced]
 - the spine -> the primary flow [enforced]
+- state surface -> working state [enforced]
+- story surface -> audit trail [enforced]
 
 ## enforced_banned
 
