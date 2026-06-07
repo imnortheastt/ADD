@@ -125,7 +125,7 @@ These `open` deltas feed v5's human-gated fold (`fold.md`) at milestone close: t
 the human folds. That is the loop closing — **v6 run -> v5 foundation** — so a dynamic run sharpens the
 five competencies instead of letting its findings evaporate at end-of-run.
 
-## The autonomy dial
+## The autonomy level
 
 <constraints>
 How much a run may auto-gate is a **per-scope setting**, not a global switch (principle 5: trust is
@@ -143,10 +143,10 @@ autonomy: auto | conservative
 
 > **v7 reversal (recorded, not hidden).** Earlier the default was `conservative` and `auto` was the
 > earned exception; v7 flips this — `auto` is the default, `conservative` is the deliberate lowering.
-> What did **not** change is principle 5: the dial is still **per-scope**, the level still lives in the
+> What did **not** change is principle 5: the autonomy level is still **per-scope**, and it still lives in the
 > `TASK.md` header, and you still lower it anywhere risk demands. Only the starting point moved.
 
-**The high-risk guard — `auto` is refused where it matters most.** The dial is not a blank cheque. On a
+**The high-risk guard — `auto` is refused where it matters most.** The autonomy level is not a blank cheque. On a
 **high-risk or method-defining scope** — anything where a wrong-but-plausible result is expensive or
 hard to reverse (auth, money, data-loss paths, the method/trust-layer itself) — `auto` must be lowered
 to `conservative`; leaving it at `auto` there is the reject code **`unguarded_high_risk_auto`**. This
@@ -155,7 +155,7 @@ scope (defining the method) with no friction. The default is `auto` *for ordinar
 high risk still earns a human gate.
 
 Judging *what* is high-risk stays human — the scope declares **`risk: high`** in the same `TASK.md`
-header where the dial lives, reviewed at the freeze like every header line (the engine never
+header where the autonomy level lives, reviewed at the freeze like every header line (the engine never
 classifies scope). **Since v14 the guard is mechanical for the declared case:**
 the engine refuses the declared combination — `add.py gate` will not complete (`PASS`/`RISK-ACCEPTED`) a task whose header
 carries `risk: high` without `autonomy: conservative` (error `unguarded_high_risk_auto`; `HARD-STOP`

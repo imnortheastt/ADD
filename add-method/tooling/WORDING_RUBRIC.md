@@ -48,6 +48,9 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - touch-boundary -> change scope [enforced]
 - touch boundary -> change scope [enforced]
 - evidence auto-gate -> automated quality gate [enforced]
+- autonomy dial -> autonomy level [enforced]
+- the dial -> the autonomy level [enforced]
+- lower the dial -> lower the autonomy level [enforced]
 
 ## enforced_banned
 
@@ -63,6 +66,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 
 - dogfood
 - automated quality gate
+- autonomy level
 - change scope
 - failing-first suite
 - non-functional review

@@ -6,26 +6,34 @@ This chapter covers two operational matters: what you set up once per project, a
 
 ---
 
-## One-time setup
+## Setup: the AI drafts, you lock down
 
-Before the first feature, establish the foundation the whole project depends on. Done once, it makes every later checkpoint enforceable automatically.
+Before the first feature, the project needs a foundation — but standing it up is no longer your chore. Point ADD at the repo and **the AI does the drafting**: it runs `init` itself, reads what is there, and fills the foundation the whole project depends on. Your single act is the **lock-down** — the one human gate that freezes it.
+
+**What the AI drafts.** From an existing codebase it works **silently** — the code answers the questions a setup interview would ask. On an empty repo it runs a short **four-lens interview** (domain · spec · users · decisions), then drafts. Either way it fills the survivor layer — the files that outlive all code — and drafts the first milestone's scope and the first task's candidate contract:
 
 | Item | File | Purpose |
 |------|------|---------|
-| Repository + pipeline | — | runs the gates on every change |
+| Foundation | `PROJECT.md` | domain · active spec · UI/UX · key decisions — the context every task reads first |
 | Conventions | `CONVENTIONS.md` | naming, layout, language, formatter — the survivor layer |
 | Model record | `MODEL_REGISTRY.md` | which AI model and version the project uses, for reproducibility and audit |
 | Dependency allow-list | `dependencies.allowlist` | the packages the AI may use; the pipeline rejects others |
 | Prompt playbook | `playbook/` | the six prompts from [Appendix B](./appendix-b-prompts.md) |
+| Repository + pipeline | — | runs the gates on every change |
+
+Every drafted decision is tagged **evidence-grounded** (read from the code) or **guessed** (thin or inferred) and listed least-sure-first in a `SETUP-REVIEW.md`, so the one signature you give is informed rather than a rubber stamp.
+
+**The lock-down.** The AI presents `SETUP-REVIEW.md`; you check the `guessed` rows; you **lock** — once. That single act freezes the foundation, the first scope, and the first contract together. It is the setup-altitude analog of the [contract freeze](./05-step-3-contract.md), and it doubles as the first task's contract approval — so there is no separate sign-off. Before the lock the engine lets the AI draft but refuses to cross into build; after it, the build opens.
 
 **Setup exit check**
 
+- [ ] Foundation + survivors drafted (brownfield: from the code, evidence-tagged; greenfield: from the interview, gaps flagged `guessed`).
+- [ ] `SETUP-REVIEW.md` lists every drafted decision least-sure-first.
+- [ ] The model is pinned; the allow-list exists and the pipeline fails on any package outside it.
 - [ ] The pipeline runs and is green on the empty skeleton.
-- [ ] The model is pinned.
-- [ ] The allow-list exists and the pipeline fails on any package outside it.
-- [ ] The playbook is present.
+- [ ] The human **locked down** — and only then did the first feature's build open.
 
-Do not start a feature until the pipeline is green. It is the thing that will enforce every later exit check without anyone having to remember to.
+Do not start a feature until the pipeline is green and the foundation is locked. The lock-down turns the AI's draft into committed direction; the pipeline enforces every later exit check without anyone having to remember to.
 
 ---
 
@@ -87,7 +95,7 @@ The default is one task at a time. But when a milestone holds several tasks whos
 - **READY-QUEUE** — tasks in the active milestone where the phase is not `done` and every dependency already reads `gate=PASS`. These are the only tasks a worker may pick up; a task finishing `PASS` unblocks its dependents on the next `status`.
 - **REVIEW-QUEUE** — the irreducibly serial part: the **one-approval front** (contract freeze) and any **Verify escalation**. One human, one queue, presented one at a time — never a batch that invites a rubber stamp.
 
-**The autonomy dial is the throttle.** At `conservative`, both gates queue on the human (pure pipelining — builds overlap, nothing auto-resolves). At `auto` (the default), only the front seam and residue escalations queue; Verify auto-PASSes on evidence, so real concurrency follows. The floor never drops below **one human approval per task, at the contract seam**.
+**The autonomy level is the throttle.** At `conservative`, both gates queue on the human (pure pipelining — builds overlap, nothing auto-resolves). At `auto` (the default), only the front seam and residue escalations queue; Verify auto-PASSes on evidence, so real concurrency follows. The floor never drops below **one human approval per task, at the contract seam**.
 
 **Design for failure (required).** Lease each task to its worker with a timeout — if a worker dies, release the claim back to READY rather than trusting partial work. A worker that hits a stop-and-escalate blocks only its own task; siblings keep running. And if several workers fail in one wave, trip a circuit-breaker and fall back to sequential — repeated failure means the scope was wrong, not the parallelism.
 

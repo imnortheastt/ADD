@@ -35,7 +35,7 @@ Compute both from one `python3 .add/tooling/add.py status` — no new state:
        └──────────────── a task gating PASS unblocks its dependents ──────────────┘
 ```
 
-## The dial is the throttle (not a new flag)
+## The autonomy level is the throttle (not a new flag)
 
 How much concurrency you actually get is set by each task's `autonomy:` header
 (`run.md`), not by this rubric:

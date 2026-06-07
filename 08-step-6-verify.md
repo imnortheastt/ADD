@@ -16,7 +16,7 @@ This needs care, because it is easy to misread. "Not by inspection" does not mea
 
 ## Who resolves Verify — the automated quality gate
 
-Verify can be resolved two ways, set per task by the `autonomy:` header (see [governance](./11-governance.md) and the autonomy dial):
+Verify can be resolved two ways, set per task by the `autonomy:` header (see [governance](./11-governance.md) and the autonomy level):
 
 - **Auto (the default).** When `autonomy: auto`, the run resolves the gate on **evidence** rather than waiting for a person — but only when *all* of these hold: every test green, coverage not decreased, no test weakened and no contract edited, the convergence loops dry, and **no residue** (security, concurrency, or architecture). It records `PASS` as *auto-resolved*, naming the run as the accountable owner — an explicit pass, not a skip. This is principle 7: a gate may be resolved by evidence when that evidence is sufficient and the result is logged.
 - **Human.** When `autonomy: conservative`, or whenever the run finds residue it cannot judge, the gate stops for a person; the two parts below are theirs.
