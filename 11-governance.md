@@ -19,7 +19,7 @@ How much the AI is allowed to do is not one switch; it is a setting chosen per a
 
 The governing rule, restated from the principles: **operate only at the level your review capacity can sustain.** If the AI produces more than the team can verify, drop a level.
 
-The **per-scope default is auto-with-evidence behind a one-approval decision point**: the AI drafts the front, a human approves the frozen contract once, and the build auto-gates on evidence. You *lower* a scope toward draft-and-review or suggest wherever risk is high or evidence is thin — and a high-risk or method-defining scope is *always* lowered (it is never auto-run). The default sets where you start; review capacity and risk set where you stay.
+The **per-scope default is auto-with-evidence behind a one-approval decision point**: the AI drafts the specification bundle, a human approves the frozen contract once, and the build auto-gates on evidence. You *lower* a scope toward draft-and-review or suggest wherever risk is high or evidence is thin — and a high-risk or method-defining scope is *always* lowered (it is never auto-run). The default sets where you start; review capacity and risk set where you stay.
 
 ## The gate-fail protocol and the three reports
 
@@ -46,7 +46,7 @@ When someone proposes skipping a step "to go faster," this table is the answer:
 
 ## The continuous concerns
 
-Four concerns are not steps but threads that run through every step, starting at project setup. Pulling them to the front ("shifting left") is far cheaper than bolting them on at the end.
+Four concerns are not steps but threads that run through every step, starting at project setup. Pulling them forward ("shifting left") is far cheaper than bolting them on at the end.
 
 | Concern | Begins at | Enforced at the build gate by |
 |---------|-----------|-------------------------------|

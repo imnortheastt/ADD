@@ -6,7 +6,7 @@ your presentation, never a replacement for it — and your prose is never a
 replacement for the digest.
 
 Use it every time you report at or near a decision point: an intake proposal, a
-bundle/front approval, a verify gate, a task completion, a milestone close.
+bundle approval, a verify gate, a task completion, a milestone close.
 
 ## The five blocks, in order
 

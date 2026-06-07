@@ -67,8 +67,8 @@ class OnboardingAlignTest(unittest.TestCase):
                     f"{surface.name} still carries the version caveat {caveat!r} "
                     f"(version_caveat_in_onboarding)")
             self.assertIn(
-                "one-approval front", text.lower(),
-                f"{surface.name} must name the one-approval front as THE flow")
+                "specification bundle", text.lower(),
+                f"{surface.name} must name the specification bundle as THE flow")
 
     # --- GETTING-STARTED leads AI-first; manual walk demoted --------------
     def test_getting_started_leads_ai_first(self):

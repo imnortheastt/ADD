@@ -6,7 +6,7 @@
 > **Produces:** `features/<name>.feature`.
 > **Person's job:** decide what "correct" looks like in concrete situations. **AI's job:** draft the scenarios.
 
-> **Part of the one-approval front (v7).** In the default flow these scenarios are drafted by the AI alongside the spec, contract, and failing tests as **one bundle**, approved by a person **once**, at the contract freeze — not signed off step by step. This chapter is how to get the scenarios *right*; [05 Contract](./05-step-3-contract.md) is where the bundle is frozen. See [11 Governance](./11-governance.md).
+> **Part of the specification bundle (v7).** In the default flow these scenarios are drafted by the AI alongside the spec, contract, and failing tests as **one bundle**, approved by a person **once** (the one approval), at the contract freeze — not signed off step by step. This chapter is how to get the scenarios *right*; [05 Contract](./05-step-3-contract.md) is where the bundle is frozen. See [11 Governance](./11-governance.md).
 
 ---
 
@@ -14,7 +14,7 @@
 
 A plain rule is still open to interpretation. "Source must have enough balance" leaves open: enough for what, exactly? What happens to the balances when it is *not* enough? A scenario removes the interpretation by pinning a specific situation to a specific expected result.
 
-Scenarios occupy a unique position: they are **readable by people and checkable by machines at the same time.** A product owner can confirm a scenario is what they meant; a test can be generated directly from it. This makes them the bridge between the human-led front of the flow and the machine-led back. They are the single most leverage-bearing artifact in the method, because everything downstream — the tests, and through them the build's definition of success — is generated from them.
+Scenarios occupy a unique position: they are **readable by people and checkable by machines at the same time.** A product owner can confirm a scenario is what they meant; a test can be generated directly from it. This makes them the bridge between the human-led half of the flow and the machine-led back. They are the single most leverage-bearing artifact in the method, because everything downstream — the tests, and through them the build's definition of success — is generated from them.
 
 ## The form
 

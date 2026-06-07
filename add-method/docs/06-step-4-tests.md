@@ -6,7 +6,7 @@
 > **Produces:** a failing (red) automated test suite.
 > **Person's job:** set the targets and coverage. **AI's job:** generate the tests.
 
-> **Part of the one-approval front (v7).** In the default flow these tests are drafted by the AI as part of the front **bundle** (spec · scenarios · contract · tests) and approved by a person **once**, at the contract freeze — the tests are part of what that single approval covers. They still must be **red before the build**. See [11 Governance](./11-governance.md).
+> **Part of the specification bundle (v7).** In the default flow these tests are drafted by the AI as part of the specification **bundle** (spec · scenarios · contract · tests) and approved by a person **once**, at the contract freeze — the tests are part of what that one approval covers. They still must be **red before the build**. See [11 Governance](./11-governance.md).
 
 ---
 

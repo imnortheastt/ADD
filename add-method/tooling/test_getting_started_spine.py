@@ -97,7 +97,7 @@ class SpineTest(unittest.TestCase):
         low = sec.lower()
         self.assertIn("/add", sec, "the /add prompt fence must lead the section")
         self.assertIn("transfer money", low, "the worked example survives")
-        for term in ("intake", "milestone", "one-approval"):
+        for term in ("intake", "milestone", "specification bundle"):
             self.assertIn(term, low,
                           f"the on-ramp steps must name {term!r} in this section")
         self.assertIn("onboarding", low, "the On-ramp callout survives")

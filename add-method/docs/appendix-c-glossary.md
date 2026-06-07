@@ -32,9 +32,11 @@
 
 **Living document** — an artifact expected to change as the loop learns; never frozen forever (the one exception being a versioned contract, which changes only via a change request).
 
-**Onboarding** (formerly "on-ramp") — the path a new user walks from install to their first milestone: install → `/add` → describe the goal → the agent runs intake (sizing the request into a milestone the human confirms) → the one-approval front → the self-driving run. The AI-first entry to the method; the human talks to the agent rather than hand-typing `add.py`.
+**Onboarding** (formerly "on-ramp") — the path a new user walks from install to their first milestone: install → `/add` → describe the goal → the agent runs intake (sizing the request into a milestone the human confirms) → the specification bundle → the self-driving run. The AI-first entry to the method; the human talks to the agent rather than hand-typing `add.py`.
 
 **Decision point** (formerly "seam") — a place where the flow stops for human judgment: the contract-freeze approval (the one approval), an escalated verify gate, intake confirmation, milestone close. The machine layer keeps the legacy name: the `--json` owner enum `seam`, the decide-digest key `seam`, and the `seam-audit` CI job.
+
+**Specification bundle** (formerly "the one-approval front") — §1–§4 of a task (spec · scenarios · contract · failing tests) drafted by the AI as one piece and approved by a person **once**, at the contract freeze. Rejecting any part returns the whole bundle to draft. The single approval it carries is the bundle approval.
 
 **Retrospective consolidation** (formerly "the fold / fold ritual") — the milestone-close (or on-demand) step where a person gathers `open` lessons learned, confirms each, and the AI writes them append-only into the versioned foundation, bumping `foundation-version:`. The AI never self-approves a consolidation. The machine names keep their names: `fold.md`, the `folded` delta status, and `add.py deltas`.
 

@@ -70,7 +70,7 @@ ADD is AI-first: you talk to the agent; it drives the method. In Claude Code, ru
 > `/add` — *"I want to let users transfer money between their own accounts."*
 
 The agent orients from `state.json`, **sizes your request into a milestone** (you
-confirm the shape), then drafts each feature's **one-approval front** — Spec +
+confirm the shape), then drafts each feature's **specification bundle** — Spec +
 Scenarios + Contract + Tests as one bundle — and you give **one approval at the
 frozen contract**. A self-driving build→verify run takes it to green; security
 findings always stop back to you.

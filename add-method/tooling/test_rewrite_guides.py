@@ -94,7 +94,7 @@ class TestIdiomRetirement(unittest.TestCase):
     V17_IDIOMS = {"blast radius", "collapses to", "first feeder", "rubber-stamp", "wall of"}
     # ubiquitous-language wave (CR-3, ratified by Tin Dang 2026-06-07 at the build decision point):
     # grows ONLY with that task's frozen §3 map — one enumerated addition per landed term commit.
-    UBIQUITOUS_IDIOMS = {"on-ramp", "forward spine", "the spine", "state surface", "story surface", "trust layer", "safety net", "blind-spot", "blind spot", "touch-boundary", "touch boundary", "evidence auto-gate", "autonomy dial", "the dial", "lower the dial", "survivor layer", "the survivors", "survivor file", "intake altitude", "milestone altitude", "setup-altitude", "setup altitude", "foundation altitude", "every altitude", "lock-down", "lock down", "competency delta", "least-sure", "least sure", "the seam", "a seam", "decision seam", "freeze seam", "human seam", "seam template", "the fold", "fold ritual", "self-fold"}
+    UBIQUITOUS_IDIOMS = {"on-ramp", "forward spine", "the spine", "state surface", "story surface", "trust layer", "safety net", "blind-spot", "blind spot", "touch-boundary", "touch boundary", "evidence auto-gate", "autonomy dial", "the dial", "lower the dial", "survivor layer", "the survivors", "survivor file", "intake altitude", "milestone altitude", "setup-altitude", "setup altitude", "foundation altitude", "every altitude", "lock-down", "lock down", "competency delta", "least-sure", "least sure", "the seam", "a seam", "decision seam", "freeze seam", "human seam", "seam template", "the fold", "fold ritual", "self-fold", "one-approval front", "the front", "whole front"}
 
     def test_idiom_map_fully_enforced(self) -> None:
         rubric = load_rubric()

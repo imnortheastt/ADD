@@ -82,7 +82,7 @@ From there the agent runs the **onboarding** for you:
    installer's closing message points at).
 2. **Intake** — it sizes your request into versioned scope and proposes a **milestone**
    (goal · scope · breadth-first tasks · exit criteria). *You confirm the shape.*
-3. **One-approval front** — for each task it drafts Spec + Scenarios + Contract + Tests
+3. **Specification bundle** — for each task it drafts Spec + Scenarios + Contract + Tests
    as one bundle, led by its lowest-confidence points. *You give one approval at the
    frozen contract.*
 4. **Self-driving run** — build→verify runs to green; a security finding always stops
@@ -196,7 +196,7 @@ to a human), never the auditor.
 
 ## Under the hood — the seven phases by hand (escape hatch)
 
-Everything above is what the agent drives for you through the one-approval front. This
+Everything above is what the agent drives for you through the one-approval flow. This
 appendix is the **escape hatch**: the same seven phases run by hand, so you can see what
 each one produces and step in manually whenever you want to. You never *have* to type
 these — they are the agent's hands, and yours when you take the wheel.

@@ -56,13 +56,13 @@ tag thin or inferred answers `guessed`.
    `dependencies.allowlist`. Brownfield: from the code. Greenfield: from the interview, gaps flagged `guessed`.
 2. **Size the first milestone** (read `scope.md`) and draft its `MILESTONE.md` — goal · scope · exit criteria
    · breadth-first tasks.
-3. **Create the first task and draft its candidate front.** `new-task` is allowed pre-lock:
+3. **Create the first task and draft its candidate specification bundle.** `new-task` is allowed pre-lock:
    ```bash
    python3 .add/tooling/add.py new-task <slug> --title "<first feature>"
    ```
    Draft §1 (specify) · §2 (scenarios) · §3 (contract). **Leave §3 `Status: DRAFT`** — the lock is its
    approval (see §5). You MAY `advance` through specify → scenarios → contract → tests pre-lock, but the
-   engine **refuses crossing into build** until you `lock` (`setup_unlocked`). Sequence: front → lock → build.
+   engine **refuses crossing into build** until you `lock` (`setup_unlocked`). Sequence: bundle → lock → build.
 4. **Write `.add/SETUP-REVIEW.md`** per `setup-review.md`: every decision you drafted (foundation, scope,
    first contract), **lowest-confidence-first**, each tagged `guessed` | `evidence-grounded`.
 
@@ -82,7 +82,7 @@ build. It is judgment-free — it does **not** parse `SETUP-REVIEW.md`; the huma
 
 ## 5 · After the lock
 
-- The lock **is** the first task's contract approval — the v7 one-approval-front and the baseline approval collapse
+- The lock **is** the first task's contract approval — the v7 specification-bundle approval and the baseline approval collapse
   into this single signature. Do **not** ask for a separate contract-freeze sign-off (that double-gates).
 - Stamp the first task's §3 `Status: FROZEN @ v1` (lock-authorized), then read `phases/5-build.md` — build is
   now open. Everything before this signature, you drafted.

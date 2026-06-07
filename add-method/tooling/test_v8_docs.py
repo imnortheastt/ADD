@@ -76,8 +76,8 @@ class V8DocsTest(unittest.TestCase):
         # v7 has now shipped, so that disclaimer is false — honesty now means naming the ONE
         # shipped flow (the one-approval front) and carrying NO stale designed-vs-shipped narration.
         blob = (GETTING_STARTED.read_text(encoding="utf-8") + README.read_text(encoding="utf-8")).lower()
-        self.assertIn("one-approval front", blob,
-                      "onboarding prose must name the shipped one-approval front (post-ship honesty)")
+        self.assertIn("specification bundle", blob,
+                      "onboarding prose must name the shipped specification bundle (post-ship honesty)")
         self.assertFalse(re.search(r"as designed in v7|today's \*\*shipped\*\*|three-gate front", blob),
                          "onboarding prose must not carry stale designed-vs-shipped narration "
                          "now that v7 has shipped (post-ship honesty)")

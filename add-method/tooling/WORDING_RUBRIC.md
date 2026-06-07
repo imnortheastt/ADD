@@ -74,6 +74,9 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - the fold -> the retrospective consolidation [enforced]
 - fold ritual -> retrospective consolidation [enforced]
 - self-fold -> self-approve a consolidation [enforced]
+- one-approval front -> specification bundle [enforced]
+- the front -> the specification bundle [enforced]
+- whole front -> whole specification bundle [enforced]
 
 ## enforced_banned
 
@@ -102,6 +105,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - lowest-confidence
 - decision point
 - retrospective consolidation
+- specification bundle
 - READY-QUEUE
 - REVIEW-QUEUE
 - change request

@@ -53,7 +53,7 @@ Two rules that never bend:
 ## Where it ends — the baseline approval
 
 Brownfield onboarding draws no per-step approvals. You map the foundation, then draft the
-first milestone's scope and the first task's candidate front exactly as greenfield does, and
+first milestone's scope and the first task's candidate specification bundle exactly as greenfield does, and
 present it all at **one** human gate. The human reviews the decisions (lowest-confidence / `guessed`
 first) and confirms in conversation; you run the lock with their name:
 

@@ -3,19 +3,18 @@
 Once a task's CONTRACT is frozen (phase 3), the scope is *locked*: the external shape will not move.
 That lock is ADD's autonomy decision point — below it code is disposable; above it nothing breaks. This rubric
 covers what runs on the far side of the decision point: the **build->verify half, executed as a dynamic,
-self-improving run** instead of a manual, sequential build. The human-led FRONT (Specify · Scenarios
+self-improving run** instead of a manual, sequential build. The human-led **specification bundle** (Specify · Scenarios
 · Contract) still owns *direction*, but v7 compresses it to a **single human approval at the decision point**
-(see "The one-approval front" below) — the AI drafts the whole front, a human approves it once.
+(see "The specification bundle" below) — the AI drafts the whole bundle, a human approves it once.
 
 > **Self-improving = within-run convergence + emit v5 deltas** — same definition as v5: tracked,
 > evidence-backed, never autonomous training. The run converges in-turn AND feeds the human-gated
 > consolidation loop (`deltas.md` · `fold.md`). The engine stays judgment-free: this is a rubric, not `add.py`.
 
-## The one-approval front (v7)
+## The specification bundle (v7)
 
-The human-led front used to be three separate approvals — Specify, then Scenarios, then the Contract
-freeze. v7 compresses it to **one**. From the user's input the AI **drafts the whole front as a single
-bundle** — the Spec, the Scenarios, the Contract, and the failing Tests — and presents it together. The
+The specification bundle used to be three separate approvals — Specify, then Scenarios, then the Contract
+freeze. v7 compresses it to **one**. From the user's input the AI **drafts the whole specification bundle in one pass** — the Spec, the Scenarios, the Contract, and the failing Tests — and presents it together. The
 human gives **one approval, at the frozen contract** (the decision point). That single approval is the green light
 for the self-driving run.
 
@@ -50,7 +49,7 @@ The trigger is the **frozen contract**, nothing else. A run may start only when:
 - §3 CONTRACT is marked `FROZEN @ vN` (the shape is fixed), AND
 - §4 TESTS exist and are RED for the right reason (the target the run drives to green).
 
-No frozen contract -> no run: you are still on the human-led front, and starting early is the
+No frozen contract -> no run: you are still inside the specification bundle, and starting early is the
 forward-skip the flow forbids. The lock is what makes autonomous execution *safe* — the AI cannot
 drift the interface, because the interface is frozen above it.
 
@@ -69,11 +68,11 @@ It MUST NOT:
   the run STOPS and hands back to a human to reopen Specify (principle 4). The run never re-locks
   scope on its own.
 - weaken, delete, or skip a **test** to make the build pass (that inverts the method).
-- touch the **human-led front artifacts** (§1–§3) except to halt and escalate.
+- touch the **specification-bundle artifacts** (§1–§3) except to halt and escalate.
 </constraints>
 
 Crossing the boundary is not a fast run; it is an unverified one. When the run hits something only the
-front can resolve, it stops — and that stop is the loop working, not failing.
+specification bundle can resolve, it stops — and that stop is the loop working, not failing.
 
 ## The dynamic run — fan-out and in-run convergence
 

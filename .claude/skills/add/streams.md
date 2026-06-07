@@ -13,7 +13,7 @@ orchestrator*, drive several tasks at once by reading the dependency DAG that
 With **one human reviewer** you cannot beat `review_time × N_tasks` (the human-led
 decision points are serial — `docs/10-setup-and-stages.md:91`). So the win is **not throughput**:
 it is that the reviewer is **never blocked waiting on a build**. While the human reviews
-task A's frozen front, the builds for B·C·D run behind *their* frozen contracts. You hide
+task A's frozen bundle, the builds for B·C·D run behind *their* frozen contracts. You hide
 build latency under human latency. Do not promise more than that.
 
 ## The two queues
@@ -24,7 +24,7 @@ Compute both from one `python3 .add/tooling/add.py status` — no new state:
   `deps=` task already shows `gate=PASS`. These are the only tasks a worker may pick up.
   A task with unmet deps stays queued; a task finishing PASS unblocks its dependents on
   the next `status`.
-- **REVIEW-QUEUE** — the irreducibly serial part: the **one-approval front** (contract
+- **REVIEW-QUEUE** — the irreducibly serial part: the **bundle approval** (contract
   freeze) and any **Verify escalation**. One human, one queue. Present these one at a
   time, never in a batch the human will approve without reading.
 
@@ -42,8 +42,8 @@ How much concurrency you actually get is set by each task's `autonomy:` header
 
 | `autonomy` (TASK.md) | What serializes on the human | Concurrency |
 |----------------------|------------------------------|-------------|
-| `conservative` | one-approval front **+** every Verify | pure pipelining — builds overlap, both gates queue |
-| `auto` (default) | one-approval front **only**; Verify auto-PASSes on evidence | real concurrency — only the decision point + residue escalations queue |
+| `conservative` | bundle approval **+** every Verify | pure pipelining — builds overlap, both gates queue |
+| `auto` (default) | bundle approval **only**; Verify auto-PASSes on evidence | real concurrency — only the decision point + residue escalations queue |
 | `auto` but **high-risk** | refused → forced `conservative` (`unguarded_high_risk_auto`) | back to pipelining, by design |
 
 The irreducible floor is **one human approval per task at the contract decision point** — the decision point
@@ -68,7 +68,7 @@ never drops to zero (`run.md:22`). That floor is correct; do not engineer around
 ## Design for failure (required)
 
 - **Fresh worktree base (verify base == HEAD)** — create each worker's worktree from current
-  `HEAD` **after** you commit the task's frozen front (spec · scenarios · contract · tests). A
+  `HEAD` **after** you commit the task's frozen specification bundle (spec · scenarios · contract · tests). A
   worktree forked from a stale base forces the worker to recreate the frozen artifacts by hand
   (the v10 dogfood hit exactly this). Before the worker starts, confirm `git -C <worktree>
   rev-parse HEAD` equals the orchestrator's `HEAD`; if it drifted, `git merge` the base in first.
@@ -109,7 +109,7 @@ changes. Fill every `{{...}}` per stream. The ADD-specific value is `<touch_boun
 Execute the LOCKED dynamic run for task '{{TASK_SLUG}}' in milestone {{MILESTONE}}:
 drive §4 TESTS red→green against the FROZEN contract {{CONTRACT_VERSION}}, converge, and
 resolve verify per autonomy={{AUTONOMY}}. You own ONLY the machine-led span — the two human
-decision points (front approval · escalated Verify) are NOT yours.
+decision points (bundle approval · escalated Verify) are NOT yours.
 </objective>
 
 <persona>
@@ -128,7 +128,7 @@ Self-Eval; if any < 0.9, refine before returning.
 <touch_boundary>   <!-- from run.md:56-73; the worker's contract, identical on every runner -->
 MAY:  rewrite code in src/ · drive tests green WITHOUT weakening them · gather verify evidence.
 MUST NOT: edit the frozen CONTRACT or locked scope · weaken/delete/skip any test ·
-          touch §1–§3 front artifacts · write MILESTONE.md / state.json / any sibling stream.
+          touch §1–§3 bundle artifacts · write MILESTONE.md / state.json / any sibling stream.
 STOP-and-escalate (return your findings; do not decide):
   • a discovered scope/contract gap  → backward-correction, reopen Specify (principle 4)
   • any SECURITY finding              → HARD-STOP, always
@@ -188,7 +188,7 @@ worktree, then points the agent at that directory.
 |-----------|----------|----------------------------------|-----------------------------------------------|
 | spawn a worker | prompt + label | `Task(description=…, prompt=…)` | `cd $WT && <agent> run --prompt-file PROMPT.md` |
 | pick the model | tier → id | `model="opus"\|"sonnet"` | a `--model <id>` flag |
-| isolate | worktree | `isolation="worktree"` | `git worktree add $WT HEAD` (after committing the front; verify base == HEAD), then run inside it |
+| isolate | worktree | `isolation="worktree"` | `git worktree add $WT HEAD` (after committing the bundle; verify base == HEAD), then run inside it |
 | load context | files / cwd | `<context_files>` + repo cwd | run inside `$WT`; paths are relative |
 | domain expertise | skill / preamble | a Claude skill in `<expertise>` | a system-prompt / profile preamble |
 | return a verdict | structured | final message (optionally a schema) | stdout JSON the orchestrator parses |

@@ -5,7 +5,7 @@ signature is honest, the human needs to see *what you drafted and how sure you w
 it. `SETUP-REVIEW.md` is that page: every decision you made while drafting the foundation, first-scope,
 and the first contract, **ordered lowest-confidence-first** so the riskiest guesses meet their eye first.
 
-This is the setup-level analog of presenting a task's front lowest-confidence-first at the contract freeze.
+This is the setup-level analog of presenting a task's specification bundle lowest-confidence-first at the contract freeze.
 The engine never reads this file — `add.py lock` is judgment-free, the signature *is* the gate (see
 `setup-lock-state`). The human **reading** this page is the review; your job is to make the reading honest.
 

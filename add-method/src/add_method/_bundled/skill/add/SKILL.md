@@ -69,14 +69,14 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | verify | `phases/6-verify.md` | §6 checks + gate record | **AI auto-gates on evidence**; human on residue/security‡ |
 | observe | `phases/7-observe.md` | §7 spec delta | human + AI |
 
-† **One-approval front (v7).** §1–§4 are one bundle; the human gives **one approval at the
+† **The specification bundle (v7).** §1–§4 are one bundle; the human gives **one approval at the
 contract freeze** (the decision point), presented lowest-confidence-first. See `run.md`.
 ‡ **Verify auto-gate (v6–v7).** Under `autonomy: auto` (the default) a run may auto-PASS on
 complete evidence — recorded as *auto-resolved*, an explicit PASS, not a skip. **Security always
 escalates** (HARD-STOP); so do concurrency / architecture residue and `conservative` autonomy.
 See `run.md`.
 
-Whenever you present a decision point to the human in chat (intake · front approval · gate ·
+Whenever you present a decision point to the human in chat (intake · bundle approval · gate ·
 milestone close), follow `report-template.md` — SUMMARY → DECISION → ⚠ FLAGS →
 EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a decision point —
 and the question is a summary, never the artifact.
@@ -87,7 +87,7 @@ You write them as `open`; the human consolidates them into `PROJECT.md`. Read `d
 grammar and the status lifecycle. At milestone close (or on demand), run the retrospective consolidation that
 gathers confirmed deltas into a versioned foundation — read `fold.md`.
 
-## Beyond the front — load on demand
+## Beyond the bundle — load on demand
 
 Once **§3 CONTRACT is FROZEN**, the build→verify half is a dynamic, auto-gated run
 (`autonomy: auto` default, lowered to `conservative` for a human gate) — read `run.md`. To

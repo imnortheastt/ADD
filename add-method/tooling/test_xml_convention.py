@@ -212,7 +212,7 @@ ENGINE_FILES = {
     "run.md": {
         "tags": {"constraints"},
         "narrative": (
-            "## The one-approval front (v7)",
+            "## The specification bundle (v7)",
         )},
     "streams.md": {
         "tags": {"constraints"},
