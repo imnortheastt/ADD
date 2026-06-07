@@ -54,6 +54,12 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - survivor layer -> living documentation [enforced]
 - the survivors -> the living documentation [enforced]
 - survivor file -> living-doc file [enforced]
+- intake altitude -> intake level [enforced]
+- milestone altitude -> milestone level [enforced]
+- setup-altitude -> setup-level [enforced]
+- setup altitude -> setup level [enforced]
+- foundation altitude -> foundation level [enforced]
+- every altitude -> every scope level [enforced]
 
 ## enforced_banned
 
@@ -71,6 +77,7 @@ cross-refs, and tests). F3 asserts each still appears on the surface.
 - automated quality gate
 - autonomy level
 - living doc
+- scope level
 - change scope
 - failing-first suite
 - non-functional review

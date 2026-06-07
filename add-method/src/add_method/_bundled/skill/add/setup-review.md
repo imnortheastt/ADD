@@ -5,7 +5,7 @@ signature is honest, the human needs to see *what you drafted and how sure you w
 it. `SETUP-REVIEW.md` is that page: every decision you made while drafting the foundation, first-scope,
 and the first contract, **ordered least-sure-first** so the riskiest guesses meet their eye first.
 
-This is the setup-altitude analog of presenting a task's front least-sure-first at the contract freeze.
+This is the setup-level analog of presenting a task's front least-sure-first at the contract freeze.
 The engine never reads this file — `add.py lock` is judgment-free, the signature *is* the gate (see
 `setup-lock-state`). The human **reading** this page is the review; your job is to make the reading honest.
 
@@ -13,7 +13,7 @@ The engine never reads this file — `add.py lock` is judgment-free, the signatu
 
 Write **one** artifact at `.add/SETUP-REVIEW.md`. **Never clobber a human-edited one** — if it already
 exists with hand edits, append/update, don't overwrite (the same non-clobber rule `init` applies to
-living docs). It is a per-onboarding, setup-altitude artifact; it sits beside `PROJECT.md`, not under a task.
+living docs). It is a per-onboarding, setup-level artifact; it sits beside `PROJECT.md`, not under a task.
 
 ## The template
 

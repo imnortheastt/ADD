@@ -26,7 +26,7 @@
 
 **`HARD-STOP`** — a gate outcome meaning work cannot proceed; triggered by any failing test or security finding.
 
-**Intake** — the step *before* a task: sizing a raw request into versioned scope by classifying it into one **request bucket**. The AI proposes `{bucket, rationale, command}`; the human confirms. Lives in the `add` skill's `intake.md` (the intake altitude, above the per-task flow).
+**Intake** — the step *before* a task: sizing a raw request into versioned scope by classifying it into one **request bucket**. The AI proposes `{bucket, rationale, command}`; the human confirms. Lives in the `add` skill's `intake.md` (the intake level, above the per-task flow).
 
 **Least-sure flag** — the AI's ranked declaration of the **1–2 things most likely to be wrong** in what it is asking a human to approve, each carrying *why* it is uncertain and *what it costs if wrong* (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`). It reshapes the old flat assumptions list into a ranked one, so a single approval aims the reviewer's attention at the real risk instead of a wall of equal-looking ticks. Bundle-wide at the one-approval freeze seam; the §1 assumptions are its first feeder. If nothing is materially uncertain it still names the single biggest risk — never a blank "none". It makes a genuine review cheap and a lazy one visibly negligent, but cannot *force* the read. The "AI advises" half of **co-specification**.
 
@@ -51,6 +51,8 @@
 **Cross-cutting concern** (formerly "spine / continuous concern") — a concern that runs through every step rather than being one step: security, testing, observability, cost.
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
+
+**Scope level** (formerly "altitude") — the granularity a decision lives at: intake level (request → versioned scope) · milestone level · setup/foundation level · task level. One ⚠-assumption notation is shared across every scope level.
 
 **Autonomy level** (formerly "autonomy dial") — the per-task setting (`autonomy: auto | conservative`) choosing who resolves Verify; high-risk scope refuses an unguarded `auto`.
 

@@ -3,7 +3,7 @@
 Goal: point ADD at a repo and **you** draft the whole foundation — domain, first-milestone scope,
 and the first task's contract — then hand the human exactly one decision: the **lock-down**. Brownfield
 is silent (the code answers the questions); greenfield keeps a short interview. Either way, the human's
-only gate is `add.py lock`. This is the setup-altitude analog of a task's one-approval contract freeze.
+only gate is `add.py lock`. This is the setup-level analog of a task's one-approval contract freeze.
 
 ## 1 · Zero-touch entry — you run init yourself
 
@@ -31,10 +31,10 @@ The code answers the questions a greenfield interview would ask, so **read it in
 `adopt.md` and follow it: fill each living-doc file from the code, never clobber an existing one, and tag
 every decision `evidence-grounded` (cite the file) or `guessed`. Ask the human **nothing** at this step.
 
-## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation altitude
+## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation level
 
 An empty repo has no code to read, so run the short interview. This is the **co-specify at foundation
-altitude** move — the same diverge → converge → validate brainstorm a task's §1 uses (`phases/1-specify.md`),
+level** move — the same diverge → converge → validate brainstorm a task's §1 uses (`phases/1-specify.md`),
 lifted to the foundation. Ask the one load-bearing question per lens (diverge), draft the foundation
 (converge), then rank what you're least sure of and show the top flag first (validate):
 
@@ -46,7 +46,7 @@ lifted to the foundation. Ask the one load-bearing question per lens (diverge), 
 | Decisions | What's already decided that you'd regret re-litigating? (first Key Decision row) |
 
 Ask only the live ones; skip what the request already answers. Rank your drafts least-sure-first using the
-one notation every altitude shares — `⚠ <assumption> — least sure because <why>; if wrong: <cost>` — and
+one notation every scope level shares — `⚠ <assumption> — least sure because <why>; if wrong: <cost>` — and
 tag thin or inferred answers `guessed`.
 
 ## 3 · Draft to the lock (both paths)

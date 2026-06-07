@@ -80,7 +80,7 @@ PHASE_FILES = {
         "narrative": (
             "## 1 · Zero-touch entry — you run init yourself",
             "## 2a · Brownfield — map it silently",
-            "## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation altitude",
+            "## 2b · Greenfield — the 4-lens interview (kept): co-specify at foundation level",
             "## 3 · Draft to the lock (both paths)",
             "## 4 · The one human gate — the lock-down",
             "## 5 · After the lock",

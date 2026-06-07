@@ -20,7 +20,7 @@ scope drafting honors intake's classification — it never re-sizes a request:
 means one drafting pass, NOT auto-creation. Nothing is written to disk — single draft or the
 whole batch — until the human confirms. You propose; you wait.
 
-## Brainstorm before you draft — co-specify at milestone altitude
+## Brainstorm before you draft — co-specify at milestone level
 
 Don't draft a MILESTONE.md from thin input. Run the same three-move co-specify as a
 task's §1 (`phases/1-specify.md`) — Diverge (framings + open questions) → Converge

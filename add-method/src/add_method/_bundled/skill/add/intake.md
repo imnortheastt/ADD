@@ -1,7 +1,7 @@
 # Intake — size a request into versioned scope
 
 Before a task exists, ADD turns a raw request into correctly-sized, versioned scope.
-This is the **intake altitude**: the per-task flow is phases 0–7; intake is the step
+This is the **intake level**: the per-task flow is phases 0–7; intake is the step
 *before* a task — request → milestone or task. You (the AI) **propose**; the human
 **confirms**. Never create scope without a confirmed proposal.
 

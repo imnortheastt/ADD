@@ -39,7 +39,7 @@ ENGINE_PATHS = (
 
 # anchors the cospecify suite already pins — the §4 reword must not disturb them
 COSPECIFY_ANCHORS = (
-    "co-specify at foundation altitude",
+    "co-specify at foundation level",
     "Domain (DDD)", "Spec (SDD)", "Users (UDD)",
     "phases/1-specify.md",
 )

@@ -77,7 +77,7 @@ is the *thin, durable* context the engine reads first — not a place to relocat
 work. And you do not hand-write it: at setup the AI **drafts** all four sections —
 silently from an existing codebase, or from a short four-lens interview on a
 greenfield repo — and a single human **lock-down** freezes that draft as committed
-direction (the setup-altitude analog of a contract freeze).
+direction (the setup-level analog of a contract freeze).
 
 ## How it feeds the engine — and takes feedback back
 
