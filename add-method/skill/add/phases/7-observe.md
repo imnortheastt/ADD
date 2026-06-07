@@ -6,7 +6,7 @@ about the feature finally appears. Fill **§7** in TASK.md.
 
 ## Do
 
-1. **Release behind a blast-radius limit** — feature flag and/or gradual rollout.
+1. **Release behind a scope-of-impact limit** — feature flag and/or gradual rollout.
 2. **Reuse scenarios as monitors** — the §2 scenarios that defined "correct" now
    define what you alert on: overall error rate, each rejection's rate (a spike in
    one is a signal), latency of the risky operation under load.
