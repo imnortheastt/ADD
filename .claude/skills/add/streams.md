@@ -72,12 +72,60 @@ never drops to zero (`run.md:22`). That floor is correct; do not engineer around
   worktree forked from a stale base forces the worker to recreate the frozen artifacts by hand
   (the v10 dogfood hit exactly this). Before the worker starts, confirm `git -C <worktree>
   rev-parse HEAD` equals the orchestrator's `HEAD`; if it drifted, `git merge` the base in first.
-- **Lease + timeout** — record which worker holds which task; if a worker dies, release
-  the claim back to READY (re-spawn, do not assume partial work is sound).
+- **Lease + timeout** — record which worker holds which task (in the wave ledger, below);
+  if a worker dies, release the claim back to READY (re-spawn, do not assume partial work is sound).
 - **Failure isolates** — a worker that hits a STOP-and-escalate (below) blocks only its
   own task. Siblings keep running; the escalation joins the REVIEW-QUEUE.
 - **Circuit-breaker** — if N workers fail in a wave, stop fanning out and fall back to
   sequential. Repeated failure means the scope was wrong, not the parallelism.
+
+## Wave ledger — the wave's resume point
+
+A single task resumes from `state.json`; a wave used to resume from nothing — the
+task ↔ lease ↔ fork-base ↔ autonomy ↔ merge-order mapping lived only in the orchestrator's
+chat context, and the v12-1 recurrence proved that discipline without an artifact fails
+(the base check existed in prose and never ran). The ledger fixes both: it is the file you
+re-orient from, and its evidence cells cannot be filled without executing the checks.
+
+**The file** — `.add/milestones/<m>/WAVE.md`, orchestrator-owned like `MILESTONE.md` and
+`state.json`. ONE live wave per milestone at a time; opening a second while one is live is
+refused (`wave_already_live`). **Workers never read WAVE.md** — the orchestrator copies the
+relevant mid-wave decisions into each worker's PROMPT.md at spawn/respawn, so the worker
+contract below stays unchanged and no worker widens into sibling state.
+
+```markdown
+# WAVE.md — transient wave ledger (orchestrator-owned · one live wave per milestone)
+wave: <n> · opened: <date> · status: live|merging
+base: <orchestrator HEAD at spawn — the sha every fork must equal>
+
+### Roster (lease ledger)
+| task   | lease (worker) | fork-base (pasted)                          | autonomy | spawned | timeout |
+|--------|----------------|---------------------------------------------|----------|---------|---------|
+| <slug> | wt-a           | <paste `git -C <wt> rev-parse HEAD` output> | auto     | <time>  | <dur>   |
+
+### Mid-wave decisions
+- <date> <decision a later or respawned worker must honor — copy it into that worker's PROMPT.md>
+
+### Merge order (serial; integration Verify per merge)
+1. <slug> → 2. <slug>
+```
+
+**Evidence cells, not ticks.** The fork-base cell holds the PASTED output of
+`git -C <worktree> rev-parse HEAD`, and it must equal `base:`. A tick is not evidence; a row
+you can only fill by running the command is the fresh-worktree-base check EXECUTING — the
+v12-1 lesson (words-exist ≠ method-works) closed structurally. Spawning a worker whose roster
+row lacks that evidence is refused (`unverified_fork_base`).
+
+**Lifecycle — open → consume → digest → delete.** Open the ledger when the first worker
+spawns. The serial integration Verify consumes it (the merge order is read from it, one
+worktree at a time). At wave close, absorb the evidence digest — wave base · roster→fork-base
+evidence · merge order · integration-Verify outcome — into `MILESTONE.md` as an append-only
+`## Wave log` block (this is the integration-Verify *record*, previously homeless), and only
+then remove the file. Removing WAVE.md before the digest is absorbed is refused
+(`digest_not_absorbed`) — the proof the checks ran must outlive the file.
+
+**Resume rule.** On session start, a live WAVE.md is the wave's resume point: re-orient from
+the file — roster, bases, decisions, merge order — never from conversational memory.
 
 ## Merge is serial — integration Verify
 
@@ -87,8 +135,8 @@ checks that `run.md:102` says automation cannot judge. Two green tasks in isolat
 still conflict when merged; this step is where that surfaces. Never auto-pass it.
 
 Each worktree carries a full copy of `.add/`. Merge back **only** `src/`, `tests/`, and the
-worker's own `.add/tasks/<slug>/` (TASK.md · SUMMARY.md) — `.add/state.json` and
-`MILESTONE.md` stay orchestrator-owned, or a parallel merge will drag stale state back.
+worker's own `.add/tasks/<slug>/` (TASK.md · SUMMARY.md) — `.add/state.json`, `MILESTONE.md`,
+and the live `WAVE.md` stay orchestrator-owned, or a parallel merge will drag stale state back.
 
 ## The worker contract — portable across coding agents
 
