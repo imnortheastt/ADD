@@ -22,7 +22,7 @@ CI_YML = REPO / ".github" / "workflows" / "ci.yml"
 PUBLISH_YML = REPO / ".github" / "workflows" / "publish.yml"
 
 VERSION = "1.1.0"
-ENGINE_MD5 = "1082fd0fbc353e855fd1d7f983718dfb"
+from engine_pin import ENGINE_MD5
 CANONICAL_AUDIT = "run: python3 .add/tooling/add.py audit"
 # the five v14 features the release notes must name
 FEATURE_ANCHORS = ("add.py audit", "seam-audit", "unguarded_high_risk_auto",
