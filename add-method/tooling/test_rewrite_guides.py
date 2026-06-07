@@ -90,19 +90,22 @@ class TestIdiomRetirement(unittest.TestCase):
                          "idiom occurrences (either written form) survive on the surface:\n  "
                          + "\n  ".join(hits))
 
+    # The five v17 idioms — this core set may never shrink or swap (clarity-greenstate, 2026-06-07).
+    V17_IDIOMS = {"blast radius", "collapses to", "first feeder", "rubber-stamp", "wall of"}
+    # ubiquitous-language wave (CR-3, ratified by Tin Dang 2026-06-07 at the build decision point):
+    # grows ONLY with that task's frozen §3 map — one enumerated addition per landed term commit.
+    UBIQUITOUS_IDIOMS = set()
+
     def test_idiom_map_fully_enforced(self) -> None:
         rubric = load_rubric()
         self.assertEqual(rubric.mapped_idioms, [],
                          f"idiom_map entries still [mapped]: {[i for i, _ in rubric.mapped_idioms]}")
-        self.assertEqual(len(rubric.enforced_banned), 5,
-                         f"expected all 5 idioms [enforced], got {rubric.enforced_banned}")
         # named-set equality (additive tightening, clarity-greenstate frozen contract 2026-06-07):
         # count alone passes a delete-one-add-another swap in the map; identity does not.
-        self.assertEqual(set(rubric.enforced_banned),
-                         {"blast radius", "collapses to", "first feeder",
-                          "rubber-stamp", "wall of"},
-                         f"enforced_banned must be EXACTLY the 5 idiom_map idioms, "
-                         f"got {sorted(rubric.enforced_banned)}")
+        expected = self.V17_IDIOMS | self.UBIQUITOUS_IDIOMS
+        self.assertEqual(set(rubric.enforced_banned), expected,
+                         f"enforced_banned must be EXACTLY the ratified idiom set "
+                         f"({len(expected)} names), got {sorted(rubric.enforced_banned)}")
 
 
 class TestGateBlindGuards(unittest.TestCase):

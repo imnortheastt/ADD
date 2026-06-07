@@ -304,6 +304,20 @@ Status: FROZEN @ v1 — approved by Tin Dang · date: 2026-06-07   <!-- the one 
 > exemption is honor-bound — the human verify read is the backstop.
 > [scenario] bare-token regexes (the front · dial · spine) may catch legitimate English in book prose —
 > resolved by rewording at build; the lint itself stays phrase-bound (intake decision).
+
+> **Build-time ratifications (dated addenda — the frozen text above is unedited):**
+> **CR-3 (ratified by Tin Dang, 2026-06-07, at the build decision point):** the frozen closed-set guard
+> `test_idiom_map_fully_enforced` (clarity-greenstate) pins enforced idioms to exactly the 5 v17 names —
+> un-pre-declared by §3 and discovered at term 1. Ratified shape: `V17_IDIOMS | UBIQUITOUS_IDIOMS`, where
+> UBIQUITOUS_IDIOMS grows ONLY with this task's §3 map, one enumerated addition per landed term commit;
+> identity semantics, no-[mapped]-residue, and the never-shrinking v17 core are preserved. Landed as an
+> isolated commit with UBIQUITOUS empty (provable no-op), then grown per term.
+> **Execution calls (v17 rewrite-core delta class — derived from the binding suite-green-per-commit
+> invariant; to ratify at verify):** (1) idiom rows enter the rubric directly as `[enforced]` in their
+> term's commit, never `[mapped]` at rest — the standing fence forbids residue; (2) CR-2-class test
+> string-literal updates ride the SAME commit as the prose they quote (an isolated-but-red commit pair
+> would break the invariant); enumerated per commit message; (3) the `enforced_banned` SECTION stays
+> `(none yet)` — the `[enforced]` row IS the promotion (the parser unions both; duplicating double-counts).
 <!-- The freeze IS the one approval. Lead it with the bundle's least-sure flag: the 1–2 points
      most likely wrong across the whole bundle, tagged [spec|scenario|contract|test], with why + cost.
      The §1 ⚠ assumptions are its first feeder; a flag may point at a scenario or the contract too. See run.md. -->
