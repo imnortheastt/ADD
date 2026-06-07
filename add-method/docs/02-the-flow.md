@@ -8,7 +8,7 @@
 
 AIDD is one repeatable flow of **seven steps**: six build the feature — Specify → Scenarios → Contract → Tests → Build → Verify — and the seventh, **Observe**, feeds what production teaches back into the next Specify. In the default flow the AI drafts the front (steps 1–4) and a person approves it **once**, at the contract freeze; the AI performs the Build; and Verify is resolved on evidence under `autonomy: auto`, with a person owning any residue. (See [11 Governance](./11-governance.md) for the autonomy dial and the one-approval seam.)
 
-![The ADD flow — a solid forward spine Specify→Scenarios→Contract→Tests→Build→Verify→Observe, with dashed backward-correction arrows (any phase may return to an earlier one), a Tests⇄Build red/green engine, and Observe looping back to the next Specify](./add-flow.png)
+![The ADD flow — a solid primary flow Specify→Scenarios→Contract→Tests→Build→Verify→Observe, with dashed backward-correction arrows (any phase may return to an earlier one), a Tests⇄Build red/green engine, and Observe looping back to the next Specify](./add-flow.png)
 
 ```mermaid
 flowchart LR
@@ -30,7 +30,7 @@ flowchart LR
   class S5,S6 machine;
 ```
 
-> **Solid arrows are the forward spine** — you never start a phase before its input exists (forward-skip forbidden). **Dashed arrows are backward correction** — any phase may return to an earlier one to repair its artifact (the long loop, Observe → Specify, is the same rule at milestone scale). The tight Tests ⇄ Build cycle is the per-feature red/green engine.
+> **Solid arrows are the primary flow** — you never start a phase before its input exists (forward-skip forbidden). **Dashed arrows are backward correction** — any phase may return to an earlier one to repair its artifact (the long loop, Observe → Specify, is the same rule at milestone scale). The tight Tests ⇄ Build cycle is the per-feature red/green engine.
 
 ```text
   human-led ─────────────────►│◄─────────── machine-led ──► human verify
@@ -47,7 +47,7 @@ flowchart LR
 
 The shape is deliberate: the human-led steps establish direction, a frozen contract forms the seam in the middle, and the AI-led build runs fast and safely on the far side because everything it needs is already fixed.
 
-> **What changed in v7 (the diagrams above show the structural spine, which is unchanged).** The *steps* and their order are exactly as drawn — only **who resolves them** moved. The AI now drafts the whole front (steps 1–4) and a person approves it **once**, at the contract freeze (not a sign-off at each step); and **Verify is auto-gated on evidence** under `autonomy: auto` (the default), escalating security — always a `HARD-STOP` — and other residue to a person. Lower the dial to `conservative` to keep a human at the Verify gate. See [11 Governance](./11-governance.md).
+> **What changed in v7 (the diagrams above show the structural flow, which is unchanged).** The *steps* and their order are exactly as drawn — only **who resolves them** moved. The AI now drafts the whole front (steps 1–4) and a person approves it **once**, at the contract freeze (not a sign-off at each step); and **Verify is auto-gated on evidence** under `autonomy: auto` (the default), escalating security — always a `HARD-STOP` — and other residue to a person. Lower the dial to `conservative` to keep a human at the Verify gate. See [11 Governance](./11-governance.md).
 
 ## Why the order is the order
 

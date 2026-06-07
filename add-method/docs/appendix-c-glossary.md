@@ -48,7 +48,7 @@
 
 **Spec (`SPEC.md`)** — the plain-language statement of what a feature must do, must reject, and assumes.
 
-**Spine / continuous concern** — a concern that runs through every step rather than being one step: security, testing, observability, cost.
+**Cross-cutting concern** (formerly "spine / continuous concern") — a concern that runs through every step rather than being one step: security, testing, observability, cost.
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 

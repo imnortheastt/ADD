@@ -32,7 +32,7 @@
 
 **Living document** — an artifact expected to change as the loop learns; never frozen forever (the one exception being a versioned contract, which changes only via a change request).
 
-**On-ramp** — the path a new user walks from install to their first milestone: install → `/add` → describe the goal → the agent runs intake (sizing the request into a milestone the human confirms) → the one-approval front → the self-driving run. The AI-first entry to the method; the human talks to the agent rather than hand-typing `add.py`.
+**Onboarding** (formerly "on-ramp") — the path a new user walks from install to their first milestone: install → `/add` → describe the goal → the agent runs intake (sizing the request into a milestone the human confirms) → the one-approval front → the self-driving run. The AI-first entry to the method; the human talks to the agent rather than hand-typing `add.py`.
 
 **Owner (of a phase)** — who drives a phase, exposed by `add.py … --json` as `human`, `seam`, or `ai`. It tells an autonomous harness where it may run (`ai`) and where it must checkpoint to a person (`human`/`seam`), following the who-does-what table (Verify is always `human`).
 
@@ -48,7 +48,7 @@
 
 **Spec (`SPEC.md`)** — the plain-language statement of what a feature must do, must reject, and assumes.
 
-**Spine / continuous concern** — a concern that runs through every step rather than being one step: security, testing, observability, cost.
+**Cross-cutting concern** (formerly "spine / continuous concern") — a concern that runs through every step rather than being one step: security, testing, observability, cost.
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 

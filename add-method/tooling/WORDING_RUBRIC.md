@@ -37,6 +37,8 @@ in the SAME commit it removes it — the lint stays green at every task close; t
      derived from the binding suite-green-per-commit invariant; v17 rewrite-core delta precedent). -->
 
 - on-ramp -> onboarding [enforced]
+- forward spine -> primary flow [enforced]
+- the spine -> the primary flow [enforced]
 
 ## enforced_banned
 
