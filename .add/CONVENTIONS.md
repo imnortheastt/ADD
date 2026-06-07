@@ -214,3 +214,49 @@ Architecture:
   preserve bytes (a "verbatim reproduction" doc), do it with a script that asserts the invariant — bodies
   byte-identical · tag/fence counts equal · no placeholder leak — BEFORE it writes, so "verbatim" is provable,
   not trusted. [appendix-templates-xml — folded foundation-version 15]
+- (TDD) **A deterministic preservation gate is NECESSARY-not-SUFFICIENT — pair it with a human-led
+  conservative verify.** The gate proves anchors/tokens survived, but it is blind to an inversion AROUND
+  surviving anchors (an added "unless"/negation/scope-narrowing that keeps every anchor word) and
+  near-SILENT on files carrying no frozen unit — a GREEN there means "nothing was checked", not "meaning
+  preserved". The human diff-read at the conservative gate owns that ceded class, and it works: of 4
+  positivizations all-gates-green, the human reverted exactly the one whose obligation moved (CR-3).
+  [rewrite-core + semantic-inventory + rewrite-guides — folded foundation-version 16]
+- (ADD) **Empty-diff-as-evidence: a gate-blind protected class is verified by byte-identity, never by
+  gates.** Ship protected safety lines byte-unchanged and SHOW the empty diff at the gate as the proof
+  (`git diff <freeze>..HEAD` over the protected files); pin the exact strings with green-guards so the
+  byte-identity survives future tasks. [rewrite-guides — folded foundation-version 16]
+- (TDD) **On a guard-dense surface the per-commit battery must cover every edited line's pinned
+  needles.** Boundary-scoped guard lists miss out-of-boundary pins — grep the tooling tests for the
+  literal phrases of EVERY line you edit, or run the whole suite per commit (test_no_ceremony pinned a
+  phrase a positivize pass moved; caught only at task-close → CR-2). [rewrite-guides — folded foundation-version 16]
+- (TDD) **F3 keep-term presence guards a TOTAL loss, never a PARTIAL rename.** Short substring-prone
+  keep terms (`ADD` · `PASS` · `Role:`) appear so widely a real global rename could leave the substring
+  present and F3 green — don't oversell it; rename-safety for those terms belongs to semantic-inventory's
+  per-file unit diff + human review. [wording-rubric — folded foundation-version 16]
+- (SDD) **A numeric figure in a contract ("trim ~290 words") is an ESTIMATE, not an obligation.**
+  Express the target as the behavior ("remove duplicative content"), not a hard count — the safe trim
+  was 180 W; stopping short to keep load-bearing prose was correct, and the close records the criterion
+  met-WITH-deviation rather than silently satisfied. [rewrite-core + clarity-greenstate — folded foundation-version 16]
+- (SDD) **Positivization has a boundary: when the negative IS the obligation, keep it.** "Never clobber"
+  prohibits destruction; "keep unchanged" prohibits modification — the reword moved the rule, not the
+  framing. Guide prose should mirror engine semantics verbatim (add.py's own comment carried the
+  original wording). [rewrite-guides — folded foundation-version 16]
+- (ADD) **Build ORDER derives from a frozen contract's BINDING PROPERTIES, not its prose staging
+  order.** §3's narrative listed restructure→CR-1, but the binding invariants (CR isolated AND gates
+  green per commit) uniquely forced CR-1 first — derive the order from the invariants before the first
+  commit. [rewrite-core — folded foundation-version 16]
+- (ADD) **A staged-by-risk plan can have a LEGITIMATE no-op stage — record it as a finding, never skip
+  silently.** 7 of 10 files were already rubric-clean, so a planned commit was a true no-op; the record
+  is what distinguishes "verified nothing to do" from "forgot". [rewrite-core — folded foundation-version 16]
+- (ADD) **A contract carrying a code table needs a freeze-time self-consistency lint over ITS OWN
+  table.** §3 mapped one condition to TWO reject codes and the collision survived the one-approval
+  freeze, caught only at build — cheap to check whenever a contract carries a code table.
+  [wording-rubric — folded foundation-version 16]
+- (ADD) **A milestone close needs an exit-criteria ROLL-UP with deviations surfaced.** Roll each
+  criterion up to the task that delivered it and rule on every met-WITH-deviation at the close seam —
+  a deviation that lives only in a delta gets folded, not ruled on (the ~290→180 trim).
+  [clarity-greenstate — folded foundation-version 16]
+- (ADD) **A behavioral spot-check is steering-evidence, never preservation-proof.** Blind cold agents
+  meeting the hard-stops proves the CURRENT prose steers; preservation vs the OLD prose needs a
+  baseline — that proof lives in the review leg (the human diff-reads). Keep the labels straight at the
+  close. [clarity-greenstate — folded foundation-version 16]

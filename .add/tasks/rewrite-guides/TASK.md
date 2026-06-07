@@ -309,15 +309,15 @@ rewrites don't retry them: 1-specify L24 (contrast example) · L58 (run.md consi
 L145 (load-bearing field warning) · 0-setup L31 (CR-3: the negative IS the obligation).
 
 ### Competency deltas
-- [TDD · open] on a guard-dense surface the per-commit battery must grep the tooling tests for pinned
+- [TDD · folded] on a guard-dense surface the per-commit battery must grep the tooling tests for pinned
   needles of EVERY edited line (or run the whole suite per commit) — boundary-scoped guard lists miss
   out-of-boundary pins (evidence: test_no_ceremony collision surfaced only at task-close → CR-2).
-- [ADD · open] empty-diff-as-evidence: a gate-blind protected class is verified by byte-identity, not
+- [ADD · folded] empty-diff-as-evidence: a gate-blind protected class is verified by byte-identity, not
   by gates — show the empty diff at the gate as the proof (evidence: `git diff e10150b..HEAD` empty on
   5-build/6-verify/4-tests carried the ⚠ SECURITY escalation to resolution).
-- [ADD · open] the conservative gate's human read catches what no gate can: of 4 positivizations all
+- [ADD · folded] the conservative gate's human read catches what no gate can: of 4 positivizations all
   gates-green, the human reverted exactly the one whose obligation moved (evidence: CR-3 on 0-setup
   L31, directed at the gate with lint/inventory/suite green throughout).
-- [SDD · open] positivization has a boundary: when the negative IS the obligation ("never clobber"),
+- [SDD · folded] positivization has a boundary: when the negative IS the obligation ("never clobber"),
   rewording shifts semantics — guide prose should mirror engine semantics verbatim (evidence:
   add.py:353 "never clobber an existing one" matched the original L31; the reword silently diverged).

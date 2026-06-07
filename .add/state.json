@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "clarity-greenstate",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -418,58 +418,10 @@
       "depends_on": [],
       "created": "2026-06-04T09:03:06+00:00",
       "updated": "2026-06-04T09:33:33+00:00"
-    },
-    "wording-rubric": {
-      "title": "Freeze the wording rubric + ship wording-lint",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v17",
-      "depends_on": [],
-      "created": "2026-06-06T09:03:25+00:00",
-      "updated": "2026-06-06T10:50:11+00:00"
-    },
-    "semantic-inventory": {
-      "title": "Capture the semantic-preservation inventory + ship the deterministic diff gate",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v17",
-      "depends_on": [],
-      "created": "2026-06-06T11:30:39+00:00",
-      "updated": "2026-06-06T12:34:35+00:00"
-    },
-    "rewrite-core": {
-      "title": "Rewrite SKILL.md + 9 engine docs to the frozen rubric + 2 structural wins",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v17",
-      "depends_on": [],
-      "created": "2026-06-06T12:46:06+00:00",
-      "updated": "2026-06-06T16:58:11+00:00"
-    },
-    "rewrite-guides": {
-      "title": "Rewrite the 8 phase guides + appendix-b to the frozen rubric",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v17",
-      "depends_on": [
-        "wording-rubric",
-        "semantic-inventory"
-      ],
-      "created": "2026-06-07T04:33:29+00:00",
-      "updated": "2026-06-07T05:53:19+00:00"
-    },
-    "clarity-greenstate": {
-      "title": "Greenstate verification + three-leg preserved record + milestone close",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v17",
-      "depends_on": [],
-      "created": "2026-06-07T05:58:52+00:00",
-      "updated": "2026-06-07T06:55:07+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-07T06:55:07+00:00",
+  "updated": "2026-06-07T07:00:14+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -574,17 +526,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v17": {
-      "title": "prompt-clarity",
-      "goal": "Rewrite the agent-facing prompt surface to be literal, direct, and positively-framed \u2014 with semantics provably preserved \u2014 without breaking the method's defined vocabulary",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-06T09:02:14+00:00",
-      "updated": "2026-06-06T09:02:14+00:00"
     }
   },
-  "active_milestone": "v17",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -667,6 +611,19 @@
         "mirror-greenstate"
       ],
       "archived": "2026-06-06"
+    },
+    {
+      "slug": "v17",
+      "title": "prompt-clarity",
+      "tasks": 5,
+      "task_slugs": [
+        "wording-rubric",
+        "semantic-inventory",
+        "rewrite-core",
+        "rewrite-guides",
+        "clarity-greenstate"
+      ],
+      "archived": "2026-06-07"
     }
   ]
 }

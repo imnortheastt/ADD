@@ -371,7 +371,7 @@ What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
 
-- [ADD · open] the gate is near-silent on the surface files that carry NO frozen unit — most phase guides hold
+- [ADD · folded] the gate is near-silent on the surface files that carry NO frozen unit — most phase guides hold
   zero token_layer entries + zero invariants, so a GREEN there means "nothing was checked", not "meaning preserved";
   rewrite-guides must inherit this as an explicit input — on those files review + wording-lint + the indicative
   behavioral eval are the ENTIRE safety net, the semantic gate adds nothing (evidence: SEMANTIC_INVENTORY.md

@@ -260,9 +260,9 @@ the rigorous behavioral eval harness (model-in-loop, N-sampled, graded) · few-s
 blocks · harness-ENFORCED hard-stops (deterministic security/contract gate in code).
 
 ### Competency deltas
-- [ADD · open] a milestone close needs an exit-criteria ROLL-UP with deviations surfaced — a
+- [ADD · folded] a milestone close needs an exit-criteria ROLL-UP with deviations surfaced — a
   criterion met-with-deviation must be ruled on at the close seam, not buried in a delta
   (evidence: the ~290 W→180 W trim deviation lived only in an SDD delta until this close).
-- [ADD · open] a behavioral spot-check is steering-evidence, never preservation-proof —
+- [ADD · folded] a behavioral spot-check is steering-evidence, never preservation-proof —
   preservation lives in the review leg of the three-leg record (evidence: 9/9 met on
   over-determined hard-stops, with no pre-rewrite baseline to compare against).

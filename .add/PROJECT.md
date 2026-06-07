@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 15
+slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 16
 
 ---
 
@@ -125,6 +125,18 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 15
   prose placeholders, resolved by the PAIRED-tag rule (a convention tag = the intersection open∩close; a lone
   `<x>` is prose, ignored). Templates (`*.tmpl`) assessed: pure fill-in forms, nothing executable to tag. The
   release/version bump for the convention is OUT of v16 — a future milestone when the team ships it.
+- v17 (prompt-clarity): **APPLIED 2026-06-07** — the agent-facing prompt surface (SKILL.md + 9 engine
+  docs + 8 phase guides + appendix-b) rewritten literal/direct/positively-framed behind TWO frozen
+  deterministic gates (wording-lint F1–F4 · semantic-inventory S1–S3), with "semantics provably
+  preserved" recorded against a THREE-LEG definition: deterministic gate (necessary) + human review of
+  the ceded classes at two conservative verify gates (CR-2 ratified needle · CR-3 reverted the one
+  obligation-moving positivization) + an indicative behavioral spot-check (9/9 blind cold passes met
+  the hard-stops — steering-evidence, never preservation-proof). All 5 idiom_map idioms retired in
+  BOTH written forms surface-wide and [enforced] (named-set pinned); 180 W of always-loaded summary
+  trimmed (the criterion's ~290 W recorded met-WITH-deviation — the figure was an estimate, the stop
+  kept load-bearing prose); run.md auto-gate/high-risk rules moved into `<constraints>` (ratified
+  ENGINE_FILES CR-1); emphasis reserved for the true hard-stops. 517 tests. Deferred OUT: the rigorous
+  N-sampled behavioral harness · few-shot `<example>` blocks · harness-ENFORCED hard-stops · release bump.
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -219,3 +231,4 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-06 · foundation-version: 15
 | 2026-06-06 | ship v15 Zero-command on-ramp: after one install command a newcomer reaches their first verified feature by talking to the AI — GETTING-STARTED conversational spine (7-phases-by-hand → escape-hatch appendix); both installers print an AI handoff + infer `--name/--stage`; protocol-walk test drives fresh-install→gated-task issuing every add.py call itself; the lock moves human-typed → AGENT-run on the human's explicit confirmation (consent prose-guarded) | the human's only post-install act is conversation; the CLI becomes the agent's hands + the human's override, never a required keystroke | v15 SHIPPED 3/3, 3/3 criteria; 457 tests; engine feature-frozen (md5 pinned ×3); a CR v2 closed a cross-surface gap (same human-types instruction in 2 unswept guides) found by the adversarial lens, not the suite |
 | 2026-06-06 | fold v15 learnings → foundation-version 14 (9 open deltas: 4 new conventions · 1 §Spec v15 bullet · 1 §UDD precise-promises bullet · 2 flip-cite reinforcements) | human-gated fold at v15 close; all 9 confirmed (none rejected) | +4 CONVENTIONS bullets (pin-behavior-at-edges · multi-surface-parity-hunter · cross-cutting-reword-enumerates-every-surface · move-who-executes-needs-tight-trigger); §Spec v15 bullet (behavioral-journey≠prose-coherence); §UDD precise-promises bullet; UNION-rule + reverify-routed-gap flip-cited as validated; deltas flipped open→folded |
 | 2026-06-06 | fold v16 learnings → foundation-version 15 (15 open deltas: 5 new conventions · 2 flip-cite reinforcements · 1 §Spec v16 bullet carrying the paired-tag SDD rule · 1 §UDD leanness bullet) | human-gated fold at v16 close (the standing autonomous run STOPPED here — fold.md mandates confirmation; presented + confirmed via AskUserQuestion); all 15 confirmed (none rejected); per the human's call #8+#9 merged (RED-before-build-no-runtime) and #1+#15 merged (per-file-narrative + census) into single CONVENTIONS homes | +5 CONVENTIONS bullets (tag-by-audience · vocab-test-blind-to-render · content-guard-both-halves+triage-RED · census-guard-whole-and-closed · verbatim-transform-is-a-script); green-state-sweep + RED-before-build-no-runtime flip-cited onto existing bullets; dial-gradient (applying a frozen contract < authoring it) validated; §Spec v16 + §UDD v16 bullets; deltas flipped open→folded |
+| 2026-06-07 | fold v17 learnings → foundation-version 16 (13 open deltas: 11 new CONVENTIONS bullets — the 4-delta gate-blindness cluster merged into 2 per the human's call — + 1 §Spec v17 bullet) | human-gated fold at v17 close; the ONE-SEAM close (gate + fold + push ruled together via AskUserQuestion, deltas rendered in full first); all 13 confirmed (none rejected) | +11 CONVENTIONS bullets (necessary-not-sufficient-pair-with-human-verify · empty-diff-as-evidence · needle-grep-guard-dense · F3-total-not-partial · numeric-figure-is-estimate · positivization-boundary · binding-properties-order · legitimate-no-op-recorded · contract-code-table-self-lint · close-needs-criteria-rollup · spot-check-is-steering-evidence); §Spec v17 bullet; criterion 3 ruled met-WITH-deviation (~290→180 W); deltas flipped open→folded |

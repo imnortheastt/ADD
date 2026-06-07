@@ -328,14 +328,14 @@ Spec delta for the next loop: <what production taught you>
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [TDD · open] F3 keep-term presence is near-vacuous for SHORT substring-prone keep terms like
+- [TDD · folded] F3 keep-term presence is near-vacuous for SHORT substring-prone keep terms like
   `ADD`/`PASS`/`DDD`/`TDD`/`Role:` — they appear so widely a real global rename could leave the
   lowercase substring present and F3 would stay green; F3 guards a TOTAL loss, never a PARTIAL rename.
   Don't oversell F3 in the v17 retro — semantic-inventory (task 2) + human review own rename-safety
   for these terms; a per-term occurrence-count fix is a metric, refused here, so its home is
   semantic-inventory's per-file unit diff (evidence: F3 is a lenient lowercase-substring presence
   check over the whole surface — keep_term_findings in wording_lint.py)
-- [ADD · open] §3 carried an internal contradiction — substring-of-keep mapped to TWO reject codes,
+- [ADD · folded] §3 carried an internal contradiction — substring-of-keep mapped to TWO reject codes,
   line 49 to `ambiguous_ban` and lines 53–54 to `rubric_self_collision` — that survived the
   one-approval contract freeze and was caught only at build. A freeze-time self-consistency lint over
   the CONTRACT's own reject-code table, not just the rubric, would have caught it before the seam;

@@ -389,21 +389,21 @@ Spec delta for the next loop: RE-RAISE the HELD surface-wide idiom-promotion rul
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 
-- [ADD · open] build ORDER must be derived from a frozen contract's BINDING PROPERTIES, not its prose
+- [ADD · folded] build ORDER must be derived from a frozen contract's BINDING PROPERTIES, not its prose
   staging order: §3 staged "run.md restructure → CR-1", but the binding invariants (CR-1 isolated AND gates
   green after every commit) uniquely forced CR-1 to land BEFORE Win 2 — tagging the sections while still
   listed as narrative would have tripped test_engine_narrative_untagged (evidence: commit 64ebe30 + the
   green-after-every-commit verification trail)
-- [TDD · open] a deterministic preservation gate is NECESSARY-not-SUFFICIENT and must be paired with a
+- [TDD · folded] a deterministic preservation gate is NECESSARY-not-SUFFICIENT and must be paired with a
   human-led conservative verify: semantic_inventory proves tokens/anchors survived but is blind to an
   inversion AROUND surviving anchors (an added "unless"/scope-narrowing that keeps every anchor word), so the
   conservative verify gate's human diff-read is the real protection for that class (evidence: §6 GATE RECORD —
   semantic_inventory 0 findings while the SKILL.md trim still required the human's read)
-- [SDD · open] a word-count figure in a contract ("trim ~290 words") is an ESTIMATE, not a spec obligation:
+- [SDD · folded] a word-count figure in a contract ("trim ~290 words") is an ESTIMATE, not a spec obligation:
   the safe trim was 180 words and stopping short of the number to avoid cutting load-bearing prose was correct —
   express such targets as "remove duplicative content" not a hard count (evidence: trim variance disclosed at
   the verify gate, 180 removed vs ~290 estimated; remainder rolls to rewrite-guides)
-- [ADD · open] a staged-by-risk plan can have a LEGITIMATE no-op stage and it must be recorded as a finding,
+- [ADD · folded] a staged-by-risk plan can have a LEGITIMATE no-op stage and it must be recorded as a finding,
   not silently skipped: 7 of the 10 core files were already rubric-clean, so the planned "positivize the other
   core files" commit was a true no-op (evidence: commit-2 no-op — 0 wording_lint findings on those 7 files
   before any edit)
