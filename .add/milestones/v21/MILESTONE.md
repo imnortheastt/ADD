@@ -40,11 +40,11 @@ Out: any engine/method BEHAVIOR change (docs-only — no add.py edit) · citatio
   INTO it, so its format is frozen before they start.
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] references-appendix   depends-on: none                                    — curated annotated bibliography (grouped by theme, "how ADD relates" each) + spec-kit↔ADD phase table; book appendix ×4; every link verified
-- [ ] foundations-chapter   depends-on: references-appendix                     — narrative "Foundations & Lineage" chapter: RSI closing-the-loop story + spec-kit divergence + evidence chain; cites the appendix
-- [ ] inline-citations      depends-on: references-appendix,foundations-chapter — weave citations into existing specify / process / loop chapters at grounded points, resolving to the appendix
+- [x] references-appendix   depends-on: none                                    — curated annotated bibliography (grouped by theme, "how ADD relates" each) + spec-kit↔ADD phase table; book appendix ×4; every link verified
+- [x] foundations-chapter   depends-on: references-appendix                     — narrative "Foundations & Lineage" chapter: RSI closing-the-loop story + spec-kit divergence + evidence chain; cites the appendix
+- [x] inline-citations      depends-on: references-appendix,foundations-chapter — weave citations into existing specify / process / loop chapters at grounded points, resolving to the appendix
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] the AIDD book carries a references appendix (4 copies byte-identical) — curated VERIFIED sources grouped by theme, a "how ADD relates" line each, + the spec-kit↔ADD phase table; no [UNVERIFIED] source present   (← references-appendix)
-- [ ] the book carries a "Foundations & Lineage" chapter naming the RSI closing-the-loop framing, the spec-kit↔ADD divergence (tests-first gate + fold + dynamic loop), and the evidence chain                              (← foundations-chapter)
-- [ ] the specify / process / loop chapters carry inline citations resolving to the appendix at the grounded points                                                                                                          (← inline-citations)
+- [x] the AIDD book carries a references appendix (4 copies byte-identical) — curated VERIFIED sources grouped by theme, a "how ADD relates" line each, + the spec-kit↔ADD phase table; no [UNVERIFIED] source present   (← references-appendix)
+- [x] the book carries a "Foundations & Lineage" chapter naming the RSI closing-the-loop framing, the spec-kit↔ADD divergence (tests-first gate + fold + dynamic loop), and the evidence chain                              (← foundations-chapter)
+- [x] the specify / process / loop chapters carry inline citations resolving to the appendix at the grounded points                                                                                                          (← inline-citations)

@@ -516,7 +516,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T13:14:15+00:00",
+  "updated": "2026-06-08T13:22:34+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -626,9 +626,9 @@
       "title": "V21",
       "goal": "a reader of the ADD book can trace the method's intellectual lineage \u2014 recursive self-improvement, spec-driven development, agentic + tests-first research \u2014 and see ADD as the human-gated, evidence-trusted instance of 'closing the loop', grounded in verified, citable sources woven through the book",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-08T08:08:05+00:00",
-      "updated": "2026-06-08T08:08:05+00:00"
+      "updated": "2026-06-08T13:22:34+00:00"
     }
   },
   "active_milestone": "v21",
