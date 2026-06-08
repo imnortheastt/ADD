@@ -31,6 +31,22 @@ If any is false, stop and return to Build — there is nothing to verify yet.
   note reviewed by the auto-gate is an audit finding (`unescalated_security_note`).
 - **Architecture** — does it respect layering/dependency rules in CONVENTIONS.md?
 
+## Part three — the deep check (do not skim)
+
+Green tests prove behavior on the inputs you thought of. They do not prove the change
+is *wired in*, nor that you did not leave a dead end behind — and for a non-coding change
+they prove nothing about whether you actually *read* the thing you signed off. So one more
+requirement, every gate:
+
+Deep check — do not skim. If the task produced code, record that every new symbol is
+referenced (wiring) and that no new dead/unused code was introduced. If it produced prose
+or non-code, record a semantic read — what you read in full and what it confirmed. Which
+path applies is the resolver's judgement; the engine never classifies.
+
+Record it in the §6 **Deep checks** block — where each new symbol is called (a reference
+search), the dead-code scan result, or the prose you read in full and what it confirmed.
+An unfilled Deep checks block is a **shallow verify**, not a PASS.
+
 ## Record exactly one outcome (no silent pass)
 
 | Outcome | When |

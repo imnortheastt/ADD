@@ -7,6 +7,7 @@ Phase: a step of the flow — specify, scenarios, contract, tests, build, verify
 Stage: project depth — prototype, poc, mvp, production (controls how deeply each phase is run).
 Gate: a checkpoint with an explicit outcome: PASS, RISK-ACCEPTED, or HARD-STOP. No silent skips.
 GOAL: the one durable outcome a project (and each milestone) runs toward — the loop's orientation anchor, declared as the lowercase `goal:` line in PROJECT.md / MILESTONE.md and surfaced by status/guide every session; distinct from a task's §1 Must (a single required behavior, not the whole-project outcome).
+deep verify: the deepened Verify evidence (v20) required beyond passing tests — for a task that produced code, that every new symbol is referenced (wiring) and no new dead/unused code exists; for prose/non-code, a recorded no-skim semantic read; which path applies is resolver-judged and the engine never classifies (a rubric, not add.py).
 Contract: the frozen external shape (interfaces, data, names, errors); changing it is a change request.
 Survivor layer: documents kept for the whole project (CONVENTIONS, GLOSSARY, MODEL_REGISTRY, allowlist).
 State: `.add/state.json` — the single source of truth for where the project is (the resume point).

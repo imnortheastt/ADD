@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "project-goal",
+  "active_task": "verify-deepen",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -484,12 +484,12 @@
     },
     "verify-deepen": {
       "title": "Deepen verify: wiring + dead-code as code-evidence, semantic no-skim as prose-evidence",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v20",
       "depends_on": [],
       "created": "2026-06-08T02:19:29+00:00",
-      "updated": "2026-06-08T02:19:29+00:00"
+      "updated": "2026-06-08T03:27:31+00:00"
     },
     "reopen-transition": {
       "title": "Engine reopen action + task lifecycle re-freeze",
@@ -516,7 +516,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T02:48:00+00:00",
+  "updated": "2026-06-08T03:27:31+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

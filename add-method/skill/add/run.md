@@ -99,7 +99,13 @@ sufficient and the result is recorded (principle 7, reframed: an automated, reco
 explicit pass, not a skip).
 
 - **Auto-PASS requires ALL of:** every test green; coverage not decreased; no test weakened and no
-  contract edited; the convergence loops dry; the completeness-critic found nothing open.
+  contract edited; the convergence loops dry; the completeness-critic found nothing open; and the
+  deep check below recorded.
+- **The deep check (every gate, no skim).** Deep check — do not skim. If the task produced code, record
+  that every new symbol is referenced (wiring) and that no new dead/unused code was introduced. If it
+  produced prose or non-code, record a semantic read — what you read in full and what it confirmed.
+  Which path applies is the resolver's judgement; the engine never classifies. An unfilled deep check is
+  a **shallow verify**, not an auto-PASS — evidence the work is wired, not merely plausible.
 - **Always escalates to a human (never auto-passed):** any **security** finding (HARD-STOP, always);
   a **concurrency**/timing risk the tests cannot exercise; an **architecture**/layering violation; and
   any failing test. These are the residue principle 2 names — automation cannot judge them.

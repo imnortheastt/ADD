@@ -40,6 +40,14 @@ Automated tests are excellent at behavior on defined inputs and poor at a few sp
 - **Security.** Are there exposed secrets, injection openings, or unexpected dependencies? AI-generated code is known to hardcode secrets and to pull in packages by plausible-but-wrong names.
 - **Architecture conformance.** Does the change respect the layering and dependency rules in `CONVENTIONS.md`? Speed with no architectural check produces a fast-growing tangle that becomes unmaintainable within months.
 
+## Part three — the deep check (do not skim)
+
+Two failures slip straight past green tests. The first is code that is never *wired in* — a new function that nothing calls, an endpoint no route reaches: the tests for it pass in isolation while the feature is, in practice, absent. The second is the opposite — code left *dead* behind a path nothing exercises, quietly rotting. And for a change that produced prose rather than code, the equivalent failure is signing off on a claim you never actually read in full. Plausibility hides all three. So verification carries one explicit requirement beyond the non-functional review:
+
+> Deep check — do not skim. If the task produced code, record that every new symbol is referenced (wiring) and that no new dead/unused code was introduced. If it produced prose or non-code, record a semantic read — what you read in full and what it confirmed. Which path applies is the resolver's judgement; the engine never classifies.
+
+This is *evidence*, not impression: a reference search showing where each new symbol is called, a scan confirming nothing new is orphaned, or — for prose — a note of exactly what was read and what it confirmed. An unfilled deep check is a **shallow verify**, not a pass. The engine cannot judge wiring, dead code, or whether prose was truly read; the resolver records the evidence, and a person (under `conservative`) or the recorded run (under `auto`) signs it.
+
 ## Recording the outcome
 
 Every verification ends with exactly one recorded outcome, with an accountable owner — never a silent pass:
@@ -58,6 +66,7 @@ A security finding is always a `HARD-STOP`; it is never waved through with a wai
 - [ ] Concurrency/timing of the risky operation is safe.
 - [ ] No exposed secrets, injection openings, or unexpected dependencies.
 - [ ] Layering and dependencies follow `CONVENTIONS.md`.
+- [ ] Deep check (do not skim): for code, every new symbol is referenced (wiring) and no new dead/unused code was introduced; for prose/non-code, a semantic read is recorded.
 - [ ] The change is approved — by a person, **or** (under `autonomy: auto`, no residue) auto-resolved by the run as the recorded accountable owner.
 - [ ] An outcome is recorded (`PASS` / `RISK-ACCEPTED` / `HARD-STOP`).
 
