@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "inline-citations",
+  "active_task": "foundations-chapter",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -491,7 +491,16 @@
         "references-appendix"
       ],
       "created": "2026-06-08T08:08:17+00:00",
-      "updated": "2026-06-08T11:18:20+00:00"
+      "updated": "2026-06-08T13:14:15+00:00",
+      "reopens": [
+        {
+          "from": "done",
+          "to": "build",
+          "reason": "cross-task aptness finding from inline-citations (a85b81a): ch.15 line 41 frames [Yuan et al. 2024] as a cautionary example ('judges its own reward drifts') but the paper's result is positive (self-rewarding improves). Reframe to the self-rewarding exemplar ADD diverges from, matching the 09 fix. Human-approved at the inline-citations gate 2026-06-08.",
+          "at": "2026-06-08T13:12:07+00:00",
+          "prior_gate": "PASS"
+        }
+      ]
     },
     "inline-citations": {
       "title": "Weave inline citations into specify/process/loop chapters",
@@ -507,7 +516,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T13:10:19+00:00",
+  "updated": "2026-06-08T13:14:15+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

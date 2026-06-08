@@ -37,9 +37,9 @@ arrived later — a scaffolding program that improves the code that improves cod
 that keep verbal reflections and retry [Shinn et al. 2023], an agent that grows a reusable
 skill library over time [Wang et al. 2023], and an evolutionary coder that beat a
 long-standing matrix-multiplication record under continuous checking
-[Novikov et al. 2025]. The cautionary thread runs alongside: a model that judges its own
-reward drifts [Yuan et al. 2024] — which is exactly why ADD makes the tests and a human the
-reward signal, not the model's own opinion.
+[Novikov et al. 2025]. And where a self-rewarding loop has the model judge its own reward
+[Yuan et al. 2024], ADD diverges by design — it makes the tests and a human the reward
+signal, not the model's own opinion.
 
 **Autonomous and agentic workflows.** The architecture vocabulary comes from the canonical
 taxonomy of prompt-chaining, routing, orchestrator-workers, and the evaluator-optimizer loop
