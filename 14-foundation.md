@@ -1,6 +1,6 @@
 # 14 · The foundation: project context across milestones
 
-[← 13 Adoption](./13-adoption.md) · [Contents](./README.md) · Next: [Appendix A Templates →](./appendix-a-templates.md)
+[← 13 Adoption](./13-adoption.md) · [Contents](./README.md) · Next: [15 Foundations & Lineage →](./15-foundations-and-lineage.md)
 
 ---
 

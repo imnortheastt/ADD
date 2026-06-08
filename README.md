@@ -121,6 +121,9 @@ Releases: `@pilotspace/add` (npm) · `pilotspace-add` (PyPI) — one tag publish
 - [13 · Adoption and onboarding](./13-adoption.md)
 - [14 · The foundation: project context across milestones](./14-foundation.md)
 
+**Lineage**
+- [15 · Foundations & Lineage](./15-foundations-and-lineage.md)
+
 **Part IV — Reference**
 - [Appendix A · Templates](./appendix-a-templates.md)
 - [Appendix B · Prompt library](./appendix-b-prompts.md)
