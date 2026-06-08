@@ -6,6 +6,7 @@
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
 slug: AIDD-Book · stage: mvp · updated: 2026-06-08 · foundation-version: 19
+goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---
 

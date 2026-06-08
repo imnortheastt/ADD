@@ -26,6 +26,10 @@ from pathlib import Path
 ROOT_DIRNAME = ".add"
 STATE_FILE = "state.json"
 MILESTONE_FILE = "MILESTONE.md"
+# The project GOAL (v20) is read live from PROJECT.md — never copied into state.json
+# (single-source; the foundation is the truth). A missing/blank source degrades to
+# this sentinel so the read-only orientation surfaces never blank or crash.
+GOAL_UNSET = "(unset — add a 'goal:' line to PROJECT.md)"
 STAGES = ("prototype", "poc", "mvp", "production")
 PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
@@ -659,6 +663,13 @@ def cmd_status(args: argparse.Namespace) -> None:
     unlocked = not _setup_locked(state)
     print(f"project : {state.get('project', '(unknown)')}")
     print(f"stage   : {state.get('stage', '(unknown)')}")
+    # project GOAL + active-milestone goal (v20) — the loop's orientation anchor, read
+    # LIVE from PROJECT.md / MILESTONE.md (never state.json). Additive: every existing
+    # line stays put. A missing source degrades to a sentinel — one never blanks the other.
+    print(f"goal    : {_project_goal(root)}")
+    _active_ms = state.get("active_milestone")
+    if _active_ms:
+        print(f"m-goal  : {_milestone_doc(root, _active_ms)[1]}   (← {_active_ms})")
     # foundation pointer — read the cross-milestone context first (anti-rot)
     if (root / "PROJECT.md").exists():
         print("context : .add/PROJECT.md  (foundation: domain · spec · UI/UX — read first)")
@@ -799,6 +810,7 @@ def cmd_guide(args: argparse.Namespace) -> None:
         _die(f"task '{slug}' has unknown phase '{phase}' (state.json corrupted?)")
     action, chapter = entry
     print(f"active : {slug}  (phase: {phase})")
+    print(f"goal   : {_project_goal(root)}")   # v20 — the next-step surface still shows what the work is FOR
     print(f"next   : {action}")
     print(f"read   : .add/docs/{chapter}")
     gp = _phase_guide_path(root.parent, phase)
@@ -1306,6 +1318,21 @@ def _colorize(s: str) -> str:
     s = re.sub(r"\bRISK\b", c["yellow"] + "RISK" + c["reset"], s)
     s = re.sub(r"\bSTOP\b", c["red"] + "STOP" + c["reset"], s)
     return s
+
+
+def _project_goal(root: Path) -> str:
+    """The project GOAL — the value of the first `goal:` line in PROJECT.md, else
+    GOAL_UNSET. Read-only and fail-closed: a missing/unreadable foundation or a
+    blank value degrades to the sentinel (orientation never raises). Mirrors how
+    _milestone_doc reads the milestone goal — the foundation is the single source."""
+    f = root / "PROJECT.md"
+    try:
+        for line in f.read_text(encoding="utf-8").splitlines():
+            if line.startswith("goal:"):
+                return line.split(":", 1)[1].strip() or GOAL_UNSET
+    except OSError:
+        pass
+    return GOAL_UNSET
 
 
 def _milestone_doc(root: Path, mslug: str) -> tuple[str, str]:

@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "wave-protocol-runtime",
+  "active_task": "project-goal",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,10 +472,51 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
+    },
+    "project-goal": {
+      "title": "Explicit project GOAL in the foundation, surfaced by status/guide",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v20",
+      "depends_on": [],
+      "created": "2026-06-08T02:19:29+00:00",
+      "updated": "2026-06-08T02:48:00+00:00"
+    },
+    "verify-deepen": {
+      "title": "Deepen verify: wiring + dead-code as code-evidence, semantic no-skim as prose-evidence",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v20",
+      "depends_on": [],
+      "created": "2026-06-08T02:19:29+00:00",
+      "updated": "2026-06-08T02:19:29+00:00"
+    },
+    "reopen-transition": {
+      "title": "Engine reopen action + task lifecycle re-freeze",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v20",
+      "depends_on": [
+        "verify-deepen"
+      ],
+      "created": "2026-06-08T02:19:29+00:00",
+      "updated": "2026-06-08T02:19:29+00:00"
+    },
+    "dynamic-task-loop": {
+      "title": "Folds + extras become AI-proposed, human-confirmed next tasks; goal-gated milestone-done",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v20",
+      "depends_on": [
+        "project-goal",
+        "reopen-transition"
+      ],
+      "created": "2026-06-08T02:19:29+00:00",
+      "updated": "2026-06-08T02:19:29+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T01:44:06+00:00",
+  "updated": "2026-06-08T02:48:00+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -580,9 +621,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v20": {
+      "title": "Goal-Driven Dynamic Loop",
+      "goal": "a milestone self-drives toward its GOAL \u2014 verify proves each task's code is wired and dead-code-free (or, for prose, semantically read not skimmed), reopens any task that misses a criterion, and turns folds + extras into the next tasks, looping until the goal is met",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-08T02:18:45+00:00",
+      "updated": "2026-06-08T02:18:45+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "v20",
   "archived": [
     {
       "slug": "v5",

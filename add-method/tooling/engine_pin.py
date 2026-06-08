@@ -10,4 +10,4 @@ it can never detect drift. The literal was recorded at the commit that first
 introduced it and is updated only by a deliberate, human-approved task.
 """
 
-ENGINE_MD5 = "1082fd0fbc353e855fd1d7f983718dfb"
+ENGINE_MD5 = "54f54e3a95a4b46ddf2494f244955248"  # re-aimed @ v20 project-goal (goal: surfaces on status/guide)

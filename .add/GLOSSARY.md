@@ -6,6 +6,7 @@ Task: one feature taken through the flow; lives in `.add/tasks/<slug>/TASK.md`.
 Phase: a step of the flow — specify, scenarios, contract, tests, build, verify, observe, done.
 Stage: project depth — prototype, poc, mvp, production (controls how deeply each phase is run).
 Gate: a checkpoint with an explicit outcome: PASS, RISK-ACCEPTED, or HARD-STOP. No silent skips.
+GOAL: the one durable outcome a project (and each milestone) runs toward — the loop's orientation anchor, declared as the lowercase `goal:` line in PROJECT.md / MILESTONE.md and surfaced by status/guide every session; distinct from a task's §1 Must (a single required behavior, not the whole-project outcome).
 Contract: the frozen external shape (interfaces, data, names, errors); changing it is a change request.
 Survivor layer: documents kept for the whole project (CONVENTIONS, GLOSSARY, MODEL_REGISTRY, allowlist).
 State: `.add/state.json` — the single source of truth for where the project is (the resume point).
