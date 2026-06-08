@@ -343,3 +343,22 @@ Architecture:
 - (SDD) **Import a sibling test module by reference, not by name, when the bare name would shadow a local.**
   `import md_section` over `from md_section import section` — name-collision awareness extends to import style
   (test_audit_ci / test_intake_interview carry a local `section`). [fence-aware-section — folded foundation-version 19]
+- (ADD) **The instrument-reaction guard-class set depends on the ARTIFACT you ship.** A CLI verb trips three —
+  the subcommand census (`test_min_pillar` LIFECYCLE), the `engine_pin` re-aim + 3-copy mirror, and the
+  ubiquitous-language prose-ban on add.py literals. A NEW skill/doc FILE additionally trips two more — bundle/tree
+  parity (the file-SET + byte-identity across the 3 skill trees) and the wording-lint surface-COUNT contract
+  (shipping `loop.md` turned test_bundle_parity / test_tree_parity / test_wording_lint::surface red until each was
+  updated). Pre-declare BY type: CLI verb → census + engine_pin + prose-ban; new skill/doc file → + bundle/tree
+  parity + surface-count. Supersedes the "all three guard classes" note as artifact-keyed. [dynamic-task-loop — folded foundation-version 20]
+- (ADD) **A precondition on a lifecycle-CLOSING verb ripples to EVERY test that drives that lifecycle to close.**
+  v20's goal-gate on `milestone-done` broke ~12 closer/decide-next tests at once — the new-milestone template ships
+  an unchecked exit-criteria box, so total>0 by default; the same default that makes the gate real makes the
+  reaction universal. Cost is one ADDITIVE fixture file-write per reactor (git numstat: 0 deletions across the 9
+  fixtures, 0 assertions weakened) — budget a file-write each, not an argv append. [dynamic-task-loop — folded foundation-version 20]
+- (TDD) **A cross-surface "stated identically" drift sentinel normalizes whitespace, not bytes.** "Stated
+  identically" means same WORDING; each surface (guide · book · run.md) wraps at its own column, so a byte-equality
+  sentinel false-fails on a line-wrap while a `_norm`'d one still fails on genuinely different words. [verify-deepen — folded foundation-version 20]
+- (ADD) **The §6 Deep-checks block (WIRING · DEAD-CODE · SEMANTIC · SECURITY) is standard AND has teeth.** It now
+  travels onto every verify (the template carries it); on verify-deepen's OWN task its WIRING path caught a real
+  defect — §4 declared an empty `./tests/` so the test-count reported 0 while the real 10-test suite lived in
+  `tooling/` (count 0→10, fixed pre-gate). A plausible-looking §4 can silently count zero tests. [reopen-transition+verify-deepen — folded foundation-version 20]

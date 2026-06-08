@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-08 · foundation-version: 19
+slug: AIDD-Book · stage: mvp · updated: 2026-06-08 · foundation-version: 20
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---
@@ -155,6 +155,18 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   files, not the stamp). 562 tests. OPEN: engine parsing of form-tag content (`<must>`/`<reject>`
   rule-level reporting) — form tags made fill regions machine-delimited so that lands without touching
   templates again.
+- v20 (Goal-Driven Dynamic Loop): **SHIPPED 2026-06-08** — a milestone self-drives toward its GOAL.
+  `milestone-done <slug>` REFUSES to close while the milestone has exit criteria and not all are met
+  (`milestone_goal_unmet`, fires only when total>0 — criteria-less milestones close as before); the exit-criteria
+  checkbox IS the human's goal-met affirmation (the engine reads the [x]/[ ] tally, never judges); decide-next
+  names the feed-forward inventory instead of "archive" while the goal is unmet; a guide (`loop.md`) + the book's
+  loop chapter document the propose→confirm cycle. 626 tests; engine md5 ×3. Mirror counts a contract must name:
+  add.py ×3 (canonical · _bundled · dogfood) · book ×4 · engine_pin ×1 · test_min_pillar ×1 (engine_pin is
+  single-source, not "copies"). The milestone-reactivation residual is resolved-by-deferral — the gate holds the
+  milestone `active`, so in-loop reopens happen while it is still active; the only cross-milestone residual (reopen
+  in an already-closed milestone) is surfaced by `check`. OPEN: the total==0 dodge — a milestone created with zero
+  exit-criteria boxes is never held; a stricter `milestone_no_criteria` reject is a clean v21 follow-up (its own
+  bundle — it would trip the WIDE reaction across the 14 pre-v20 milestones).
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -206,6 +218,14 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   tags (tags mark block boundaries only; skeleton labels like `Role:`/`Never:` stay plain text) precisely to
   keep the prose scannable; and on a RENDERED page (appendix-b) the tag wraps an intact code fence so the page
   still renders verbatim — the reader's experience, not just the agent's parse, set the layout.
+- **The goal-gate prevents theater only if the human writes REAL, checkable exit-criteria lines (v20 · UDD):**
+  a box checked without a real goal behind it is goal-met theater — the same failure mode the method warns about
+  for an unearned `gate=PASS`. The engine reads the [x]/[ ] tally; it cannot judge whether the box was earned, so
+  the trust model is human discipline (surfaced in `loop.md`). v20's own close dogfooded it: each of the 4 exit
+  criteria mapped to a done+PASS task with observable proof BEFORE the boxes were checked. Two UX follow-ups for
+  v21: the `milestone-done` success line (add.py:1088) still asks the human to "confirm the boxes" the gate now
+  ENFORCES (stale prose); and a fresh `init`'s `status` prints the PROJECT.md template placeholder `goal: <…>`
+  verbatim at the most-lost moment (soften the template, or teach `_project_goal` a placeholder sentinel).
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -255,3 +275,4 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 | 2026-06-07 | fold v18 learnings → foundation-version 18 (14 open deltas: 8 new CONVENTIONS bullets · 3 appends onto existing (mirror-clause-all-copies · census-grow-on-new-section · numeric-pin-count-first) · 4 GLOSSARY terms (heavy archive/compact · recovery bundle · instruction tags · form tags) · 1 §Spec v18 bullet) | human-gated fold at v18 close; all 14 confirmed (none rejected); DDD routed to GLOSSARY — the deltas' own named home; fold.md/nudge edits deferred as method-surface tasks | GLOSSARY +4 terms; CONVENTIONS +8 new +3 appends; §Spec v18 bullet; deltas flipped open→folded |
 | 2026-06-08 | ship v19 Guard hygiene as ADD's FIRST real parallel wave (2 workers · isolated worktrees · serial cherry-pick merge · integration Verify per merge): single-source ENGINE_MD5 (engine_pin.py, 5 importers) + fence-aware md_section slicer (4 importers); the WAVE.md ledger ran open→consume→digest→delete end-to-end | exercise the wave protocol in anger + close two [TDD] deltas from the wave-ledger / status-hint loop | v19 SHIPPED 2/2 tasks, 3/3 criteria; 586 tests; both gates auto-resolved PASS (human approval = the two freezes); D1 sync gate FIRED 2/2 on a stale worktree pool; declared overlap test_review_checklist.py 3-way auto-merged both lanes intact (conflict-RESOLUTION path therefore untested — recorded in the Wave log) |
 | 2026-06-08 | fold v19 learnings → foundation-version 19 (10 open deltas: 4 new CONVENTIONS bullets · 1 new SDD import-idiom bullet · 3 flip-cite reinforcements · 1 §Spec v19 bullet · 1 auto-dial validation note; the streams.md merge-time fork-base + worker-commits-SUMMARY CR routed to a tracked task) | human-gated fold at v19 close; all 10 confirmed (none rejected); THREE deltas were self-closing loops — this wave shipped exactly what v18's deltas named (shared-pin · status-hint · fence hazard); the auto dial's first ENGINE-scope-era run validated (disclosed judgment call logged, not escalated) | +5 CONVENTIONS bullets (fence-aware-slicing · contract-expected-harmless · fix-a-flag-first-at-freeze · worker-commits-summary · import-by-reference); worktree-from-HEAD amended with the spawn-time runtime exception (check shifts to merge-time, never skips); duplicate-tripwire-pins SHIPPED-cite + ubiquitous-language-reaches-verbs flip-cited; §Spec v19 bullet; deltas flipped open→folded; streams.md text edit → wave-protocol-runtime task |
+| 2026-06-08 | fold v20 learnings → foundation-version 20 (13 open deltas: 4 new CONVENTIONS bullets · 1 §Spec v20 SHIPPED bullet carrying 2 SDD learnings + the reactivation-resolved note · 1 §Users goal-met-theater bullet carrying 2 UX follow-ups) | human-gated fold at v20 close — the FIRST dogfood of v20's own goal-gate: it held v20 at 0/4 exit criteria until the 4 were affirmed, then released at 4/4 | +4 CONVENTIONS bullets (instrument-reaction-by-artifact · lifecycle-precondition-ripples-wide · whitespace-normalized-drift-sentinel · deep-checks-block-has-teeth); §Spec v20 bullet (mirror-counts + total==0 OPEN → v21 milestone_no_criteria); §UDD bullet (real-criteria-not-theater + stale-success-msg + template-placeholder-goal → v21); 3 forward candidates seed v21 intake; all 13 confirmed (none rejected); deltas flipped open→folded |

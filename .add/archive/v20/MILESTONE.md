@@ -35,7 +35,7 @@ Out: engine auto-spawn of tasks without human confirm (chosen: AI-proposes-human
 - [ ] dynamic-task-loop  depends-on: project-goal,reopen-transition — folds + extras → AI-proposed, human-confirmed next tasks; `milestone-done` holds until GOAL met
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `add.py status` and `guide` print the project GOAL; PROJECT.md carries an explicit goal line                                            (← project-goal)
-- [ ] verify requires, for a coding task, evidence the new symbol is referenced + no new dead code; for a non-coding task, a recorded semantic no-skim read — stated identically in guide + book   (← verify-deepen)
-- [ ] `add.py reopen <done-task> --to <phase>` returns the task with a recorded reason; the lifecycle contract is re-frozen vN; the record is never silent                                       (← reopen-transition)
-- [ ] at observe/close, folds + extra items surface as confirmable next tasks attached to the active milestone, and `milestone-done` does not pass while the GOAL's criteria are unmet            (← dynamic-task-loop)
+- [x] `add.py status` and `guide` print the project GOAL; PROJECT.md carries an explicit goal line                                            (← project-goal)
+- [x] verify requires, for a coding task, evidence the new symbol is referenced + no new dead code; for a non-coding task, a recorded semantic no-skim read — stated identically in guide + book   (← verify-deepen)
+- [x] `add.py reopen <done-task> --to <phase>` returns the task with a recorded reason; the lifecycle contract is re-frozen vN; the record is never silent                                       (← reopen-transition)
+- [x] at observe/close, folds + extra items surface as confirmable next tasks attached to the active milestone, and `milestone-done` does not pass while the GOAL's criteria are unmet            (← dynamic-task-loop)

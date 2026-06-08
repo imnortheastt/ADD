@@ -235,7 +235,7 @@ PROJECT.md. Disclosed here; no contract owns it yet.
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [UDD · open] a freshly-`init`'d project's `status` prints the PROJECT.md template's literal `goal: <the one
+- [UDD · folded] a freshly-`init`'d project's `status` prints the PROJECT.md template's literal `goal: <the one
   durable outcome…>` placeholder verbatim, at the most-lost moment — colliding with the UDD principle "one
   clear next step at the most-lost moment" (evidence: template ships an angle-bracket placeholder; `goal_unset`
   rejects only absent/blank, so a placeholder passes through; goal line prints before the first-run panel).
