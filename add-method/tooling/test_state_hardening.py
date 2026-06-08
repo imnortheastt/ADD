@@ -17,12 +17,24 @@ import contextlib
 import io
 import json
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 
 def _run(argv):
@@ -59,6 +71,7 @@ class StateHardeningTest(unittest.TestCase):
         add.main(["new-task", slug])
         add.main(["phase", "verify", slug])
         add.main(["gate", "PASS", slug])
+        _meet_exit_criteria(ms)      # v20 goal-gate: meet criteria before close
 
     # --- load_state fails closed --------------------------------------------
     def test_corrupt_state_dies_clean_not_traceback(self):

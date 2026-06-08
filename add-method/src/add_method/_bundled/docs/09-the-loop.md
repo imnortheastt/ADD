@@ -57,5 +57,11 @@ Two principles converge here. *The flow is re-entrant* — any step can send you
 
 A team operating this way does not experience requirements changing as a failure of planning. It experiences it as the system working: reality is teaching the specification, and the specification is teaching the next build.
 
+## The milestone holds until its goal is met
+
+A single feature loops through Observe back to Specify; a **milestone** has the same shape at a larger scale, and a gate to match. A milestone is not finished when its tasks are done — it is finished when its **goal** is met, expressed as the exit criteria in `MILESTONE.md`. So `add.py milestone-done` is **goal-gated**: it refuses to close a milestone while any exit criterion is still unchecked, and **holds until** every box is checked. Those checkboxes are the human's affirmation that the goal is genuinely met — the engine reads the tally, it never judges the goal itself. (A milestone with no exit criteria closes as before; `milestone-done` is the only path to `done`, and archiving refuses anything not yet done — so the one gate cannot be slipped.)
+
+While the milestone is held open, the work each task leaves behind — open lessons, and items discovered but out of scope — becomes its next tasks: the AI proposes them, the human confirms, and the loop continues until the goal is reached. The milestone is the loop made concrete; the exit criteria are its finish line.
+
 > **Do:** release small, watch the scenarios, and feed every learning back into the spec.
 > **Don't:** treat shipping as the end. The most valuable information about a feature arrives *after* it ships.

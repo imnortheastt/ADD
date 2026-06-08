@@ -25,11 +25,25 @@ Run: python3 -m unittest test_min_pillar -v
 import argparse
 import os
 import pathlib
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. The new-milestone template ships one unchecked placeholder box; a census
+    that drives a milestone to close must satisfy it first (the contracted instrument
+    reaction). Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 # The FULL public surface: every subcommand `add.py` exposes, driven in one valid
 # order, so the read-spy below observes EVERY command — not a convenient subset.
@@ -93,6 +107,8 @@ class MinimalPillarTest(unittest.TestCase):
         # init scaffolds no book; the Story is referenced by path, never installed.
         self.assertEqual(self._docs_dirs(), [], "init must not scaffold a docs/ Story")
         for argv in LIFECYCLE:
+            if argv[:2] == ["milestone-done", "mvp"]:
+                _meet_exit_criteria("mvp")   # v20 goal-gate: meet criteria before close
             try:
                 add.main(argv)
             except SystemExit as e:
@@ -114,6 +130,8 @@ class MinimalPillarTest(unittest.TestCase):
         pathlib.Path.read_text = spy
         try:
             for argv in LIFECYCLE:
+                if argv[:2] == ["milestone-done", "mvp"]:
+                    _meet_exit_criteria("mvp")   # v20 goal-gate: meet criteria before close
                 try:
                     add.main(argv)
                 except SystemExit as e:

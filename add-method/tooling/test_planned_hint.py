@@ -12,12 +12,24 @@ import hashlib
 import io
 import json
 import os
+import re
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 HINT = "not yet scaffolded"
 FROZEN_DECIDE_KEYS = {"seam", "milestone", "task", "phase", "gate",
@@ -89,6 +101,7 @@ class PlannedHintTest(unittest.TestCase):
             add.main(["phase", "verify"])
             add.main(["gate", "PASS", "alpha"])
         self._plan("- [ ] alpha — done", "- [ ] beta — planned only")
+        _meet_exit_criteria("v13")   # v20 goal-gate: criteria met so footer shows archive path
         out, _, code = self._run("v13")
         self.assertEqual(code, 0)
         self.assertIn("archive-milestone", out)      # precedence unchanged

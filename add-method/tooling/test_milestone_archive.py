@@ -9,12 +9,24 @@ an active/incomplete milestone is refused (no data loss). Backward-compatible vi
 import io
 import json
 import os
+import re
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 
 class MilestoneArchiveTest(unittest.TestCase):
@@ -50,6 +62,7 @@ class MilestoneArchiveTest(unittest.TestCase):
             add.main(["phase", "verify", t])        # escape hatch: scaffold to verify
             add.main(["gate", "PASS", t])           # gate PASS -> phase done -> _task_done
             members.append(t)
+        _meet_exit_criteria(ms)      # v20 goal-gate: meet criteria before close
         add.main(["milestone-done", ms])             # status -> done
         return members
 
@@ -147,6 +160,7 @@ class MilestoneArchiveTest(unittest.TestCase):
         add.main(["new-task", "auth", "--milestone", "m1"])
         add.main(["phase", "verify", "auth"])     # escape hatch: scaffold to verify
         add.main(["gate", "PASS", "auth"])
+        _meet_exit_criteria("m1")    # v20 goal-gate: meet criteria before close
         add.main(["milestone-done", "m1"])
         add.main(["new-milestone", "m2", "--title", "M2"])
         add.main(["new-task", "transfer", "--milestone", "m2", "--depends-on", "auth"])

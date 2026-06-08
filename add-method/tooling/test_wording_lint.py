@@ -166,12 +166,13 @@ class TestLiveSurfaceGreen(unittest.TestCase):
         self.assertEqual([f for f in live if f.code == "banned_idiom_present"], [])
 
     def test_surface_files_cover_the_contract(self) -> None:
-        """The surface is skill/add (18 files) + docs/appendix-b-prompts.md, per §3."""
+        """The surface is skill/add (19 files: +loop.md @ v20) + docs/appendix-b-prompts.md, per §3."""
         files = wl.surface_files()
         names = {p.name for p in files}
         self.assertIn("SKILL.md", names)
+        self.assertIn("loop.md", names)
         self.assertIn("appendix-b-prompts.md", names)
-        self.assertEqual(len(files), 19, f"expected 18 skill files + appendix-b, got {len(files)}")
+        self.assertEqual(len(files), 20, f"expected 19 skill files + appendix-b, got {len(files)}")
 
 
 if __name__ == "__main__":

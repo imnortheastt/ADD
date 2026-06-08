@@ -28,6 +28,17 @@ from pathlib import Path
 import add
 
 _TOOLING = Path(add.__file__).resolve().parent
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 _REPO = _TOOLING.parents[1]  # .../AIDD-Book
 
 # the contracted reject codes (TASK.md §3) — compact's full error vocabulary
@@ -76,6 +87,7 @@ class _ArchivedMilestoneBase(unittest.TestCase):
             add.main(["new-task", slug, "--milestone", "v1"])
             add.main(["phase", "verify", slug])
             add.main(["gate", "PASS", slug])
+        _meet_exit_criteria("v1")   # v20 goal-gate: meet criteria before close
         _run(["milestone-done", "v1"])
         _run(["archive-milestone", "v1"])
         self.root = Path(self.tmp) / ".add"

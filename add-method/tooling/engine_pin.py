@@ -10,4 +10,4 @@ it can never detect drift. The literal was recorded at the commit that first
 introduced it and is updated only by a deliberate, human-approved task.
 """
 
-ENGINE_MD5 = "611fa233508e2faa1366ae0f83141b53"  # re-aimed @ v20 reopen-transition (engine `reopen` action)
+ENGINE_MD5 = "27192f007b14c50b461732db71d833de"  # re-aimed @ v20 dynamic-task-loop (goal-gate on milestone-done + decide-next)

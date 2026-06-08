@@ -1060,6 +1060,17 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
             t = members[s]
             print(f"  - {s} (phase={t.get('phase')}, gate={t.get('gate')})", file=sys.stderr)
         _die("milestone_incomplete")
+    # Goal-gate (v20 dynamic-task-loop): a milestone holds until its exit criteria are
+    # met. The engine READS the checkbox tally (the human's goal-met affirmation, like a
+    # gate=PASS) — it never judges the goal. Fires ONLY when criteria exist, so a
+    # criteria-less milestone and every pre-v20 close path stay valid. milestone-done is
+    # the SOLE status->done transition; archive-milestone/compact already refuse a
+    # non-done milestone, so this single gate has no back door. Refuse BEFORE any write.
+    met, total = _exit_criteria(root, slug)
+    if total > 0 and met < total:
+        _die(f"milestone_goal_unmet: milestone '{slug}' has {met}/{total} exit criteria met "
+             f"— check the remaining boxes in MILESTONE.md (the goal-gate holds the loop "
+             f"open) or propose the next tasks (add.py deltas)")
     # Fail-closed: render+persist the exit report (RETRO.md) BEFORE committing the
     # status flip, so a write failure rolls back naturally (status never commits ->
     # no done-without-retro state). The retro step is read-only on state.json.
@@ -2018,6 +2029,14 @@ def _decide_next_base(state: dict, d: dict) -> str:
         return f"resolve HARD-STOP on {stopped[0]['slug']}"
     s = d["summary"]
     if s["tasks_done"] == s["tasks_total"]:
+        # tasks complete — but the milestone holds while the goal (exit criteria) is
+        # unmet (v20). Point at the feed-forward inventory the loop draws from, instead
+        # of "archive". Fires only when criteria exist; else the prompt is unchanged.
+        ec = s.get("exit_criteria") or {}
+        met, total = ec.get("met", 0), ec.get("total", 0)
+        if total > 0 and met < total:
+            return (f"goal not met ({met}/{total} exit criteria) — propose next tasks "
+                    f"from open deltas / the unscaffolded plan (add.py deltas)")
         return f"consolidate learnings + archive-milestone {ms}"
     active = state.get("active_task")
     order = sorted(rows, key=lambda r: 0 if r["slug"] == active else 1)  # stable

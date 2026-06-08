@@ -93,6 +93,10 @@ Once **§3 CONTRACT is FROZEN**, the build→verify half is a dynamic, auto-gate
 (`autonomy: auto` default, lowered to `conservative` for a human gate) — read `run.md`. To
 pipeline several ready tasks behind their own frozen contracts, read `streams.md`.
 
+When a milestone's tasks are all done but its **goal** (the `MILESTONE.md` exit criteria) is not
+yet met, `milestone-done` holds the milestone open — read `loop.md` for the dynamic loop that turns
+open deltas + extras into the next tasks, proposed by you and confirmed by the human, until the goal is met.
+
 ## Non-negotiable rules (from the method)
 
 <constraints>

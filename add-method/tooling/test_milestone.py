@@ -5,12 +5,24 @@ Run: python3 -m unittest test_milestone -v
 import io
 import json
 import os
+import re
 import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 
 class MilestoneTierTest(unittest.TestCase):
@@ -71,6 +83,7 @@ class MilestoneTierTest(unittest.TestCase):
         add.main(["new-task", "t"])
         add.main(["phase", "verify", "t"])        # escape hatch: scaffold to verify
         add.main(["gate", "PASS", "t"])
+        _meet_exit_criteria("mvp")   # v20 goal-gate: meet criteria before close
         add.main(["milestone-done", "mvp"])
         self.assertEqual(self._state()["milestones"]["mvp"]["status"], "done")
 

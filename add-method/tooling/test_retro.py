@@ -11,6 +11,7 @@ the retro step is read-only on state.json, and a failed retro write FAILS THE CL
 import io
 import json
 import os
+import re
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -18,6 +19,17 @@ from pathlib import Path
 from unittest import mock
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 
 class RetroArtifactTest(unittest.TestCase):
@@ -68,6 +80,7 @@ class RetroArtifactTest(unittest.TestCase):
         for t in tasks:
             add.main(["new-task", t, "--title", t.title()])
             self._done_pass(t)
+        _meet_exit_criteria(mslug)   # v20 goal-gate: meet criteria before close
 
     # ---- scenarios --------------------------------------------------------
     def test_close_writes_canonical_retro(self):

@@ -7,11 +7,23 @@ Run: python3 -m unittest test_waiver -v
 """
 import json
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 WAIVER = ["--owner", "alice", "--ticket", "T-1", "--expires", "2026-12-31"]
 
@@ -85,6 +97,7 @@ class WaiverCompletesMilestoneTest(unittest.TestCase):
         add.main(["new-task", "t", "--title", "Feature"])   # auto-linked to mvp
         add.main(["phase", "verify", "t"])
         add.main(["gate", "RISK-ACCEPTED", "t", *WAIVER])    # t is done via a signed waiver
+        _meet_exit_criteria("mvp")   # v20 goal-gate: meet criteria before close
 
     def tearDown(self):
         os.chdir(self._cwd)

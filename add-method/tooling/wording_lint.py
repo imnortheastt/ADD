@@ -1,7 +1,7 @@
 """wording_lint.py — the v17 prompt-clarity regression FENCE.
 
 Reads its lists FROM WORDING_RUBRIC.md (single source — no hardcoded duplicate) and checks the
-agent-facing surface (skill/add 18 files + docs/appendix-b-prompts.md). Four collision-free
+agent-facing surface (skill/add 19 files + docs/appendix-b-prompts.md). Four collision-free
 fences, each able to fail ONLY on a literal regression — never on a good rewrite:
 
   F1  no ENFORCED banned phrase present     (case-INSENSITIVE, word-boundary, inflection-tolerant)
@@ -201,7 +201,7 @@ def lint_surface(rubric: Rubric, files: list[Path]) -> list[Finding]:
 
 # ── surface + IO ───────────────────────────────────────────────────────────────────────────
 def surface_files() -> list[Path]:
-    """The canonical agent-facing surface: skill/add (18 files) + docs/appendix-b-prompts.md.
+    """The canonical agent-facing surface: skill/add (19 files) + docs/appendix-b-prompts.md.
     The _bundled & .claude mirrors are byte-identical (test_bundle_parity/test_tree_parity),
     so checking the canonical tree suffices."""
     files = sorted(_SKILL.glob("*.md")) + sorted((_SKILL / "phases").glob("*.md"))

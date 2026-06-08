@@ -11,11 +11,23 @@ Run: python3 -m unittest test_fold_nudge -v
 import contextlib
 import io
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
 import add
+
+
+def _meet_exit_criteria(ms: str) -> None:
+    """v20 goal-gate: check the milestone's '## Exit criteria' box so milestone-done
+    releases. Targets only the Exit-criteria section — never the Tasks rows."""
+    root = add.find_root()
+    p = root / "milestones" / ms / add.MILESTONE_FILE
+    text = p.read_text(encoding="utf-8")
+    text = re.sub(r"## Exit criteria.*?(?=\n## |\Z)",
+                  lambda m: m.group(0).replace("- [ ]", "- [x]"), text, flags=re.S)
+    p.write_text(text, encoding="utf-8")
 
 
 def _run(argv):
@@ -51,6 +63,7 @@ class FoldNudgeTest(unittest.TestCase):
         add.main(["new-task", slug])
         add.main(["phase", "verify", slug])   # escape hatch: scaffold straight to verify
         add.main(["gate", "PASS", slug])      # task is now done
+        _meet_exit_criteria(ms)              # v20 goal-gate: meet criteria before close
 
     # --- status: a passive nudge --------------------------------------------
     def test_status_nudges_when_open_deltas(self):
