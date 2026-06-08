@@ -349,7 +349,10 @@ Architecture:
   parity (the file-SET + byte-identity across the 3 skill trees) and the wording-lint surface-COUNT contract
   (shipping `loop.md` turned test_bundle_parity / test_tree_parity / test_wording_lint::surface red until each was
   updated). Pre-declare BY type: CLI verb → census + engine_pin + prose-ban; new skill/doc file → + bundle/tree
-  parity + surface-count. Supersedes the "all three guard classes" note as artifact-keyed. [dynamic-task-loop — folded foundation-version 20]
+  parity + surface-count. Supersedes the "all three guard classes" note as artifact-keyed. [dynamic-task-loop — folded foundation-version 20] **v21 refinement:** a new `add-method/docs/*.md` ALSO trips the EXTENDED
+  ubiquitous-language surface — `extended_surface()` globs every docs file + skill + templates + diagrams +
+  README + GETTING-STARTED, not only the wording-lint surface-count; predict the EXTENDED surface for a new
+  doc, not just the lint count. [references-appendix — folded foundation-version 21]
 - (ADD) **A precondition on a lifecycle-CLOSING verb ripples to EVERY test that drives that lifecycle to close.**
   v20's goal-gate on `milestone-done` broke ~12 closer/decide-next tests at once — the new-milestone template ships
   an unchecked exit-criteria box, so total>0 by default; the same default that makes the gate real makes the
@@ -362,3 +365,26 @@ Architecture:
   travels onto every verify (the template carries it); on verify-deepen's OWN task its WIRING path caught a real
   defect — §4 declared an empty `./tests/` so the test-count reported 0 while the real 10-test suite lived in
   `tooling/` (count 0→10, fixed pre-gate). A plausible-looking §4 can silently count zero tests. [reopen-transition+verify-deepen — folded foundation-version 20]
+- (TDD) **A passing structural/resolution test over a grounding or prose deliverable is necessary, never
+  sufficient — the human SEMANTIC check must carry what the resolver is blind to.** A resolver proves cites
+  RESOLVE / sections EXIST / tokens are banned; it cannot see (a) **APTNESS** — whether the source grounds the
+  claim: for any claim MORE specific than the appendix annotation, verify against the PRIMARY SOURCE, because
+  the annotation fixed existence+title+author, not characterization depth; (b) internal **CONSISTENCY** — a
+  counting pass ("three currents" over a four-currents heading slipped 642-green); (c) load-bearing **FIGURES**
+  — spot-check each citable number against its source. Declare the §6 SEMANTIC blind-spots explicitly so green
+  never reads as done. v21 hit this THREE times (form-test missed link-existence · resolution-test missed
+  consistency · resolution-test missed aptness: [Yuan et al. 2024]'s "drifts" overstatement passed 649-green,
+  caught only by WebFetch of arxiv 2401.10020 showing self-rewarding *improves*).
+  [references-appendix + foundations-chapter + inline-citations — folded foundation-version 21]
+- (TDD) **A cite-resolver that matches one [Author Year] per bracket reads the appendix's own `;`-joined form
+  `[A; B]` as a single dangling key.** Split the bracket body on `; ` and resolve each key. A FROZEN test that
+  predates the multi-cite form keeps the single-key limitation — copy its regexes into a NEW `;`-aware test,
+  never refactor the frozen one (copy, don't couple). v21: 2 red→green fixes forced single-key brackets in
+  foundations; inline-citations shipped the `;`-aware resolver + a real `[Schmidhuber 2003; Zelikman et al. 2023]`
+  exercising the split. [foundations-chapter + inline-citations — folded foundation-version 21]
+- (TDD) **An invariant can be guarded LATENTLY by a count-vs-set assertion — name it so it is not "fixed"
+  twice.** "Exactly one entry per cite-key" has no dedicated uniqueness test, but `test_appendix_g_frozen`
+  asserts `len(set(keys)) == 27` against 27 entry-lead lines, so a duplicate collapses the set to 26 and turns
+  the suite red. The dup is latent-not-present (green in 649/649); a dedicated uniqueness test is optional
+  hardening, not a gap. Before writing a "missing" guard, check whether an existing assertion already trips on
+  the failure. [references-appendix — folded foundation-version 21]

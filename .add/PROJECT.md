@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-08 · foundation-version: 20
+slug: AIDD-Book · stage: mvp · updated: 2026-06-08 · foundation-version: 21
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---
@@ -167,6 +167,16 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   in an already-closed milestone) is surfaced by `check`. OPEN: the total==0 dodge — a milestone created with zero
   exit-criteria boxes is never held; a stricter `milestone_no_criteria` reject is a clean v21 follow-up (its own
   bundle — it would trip the WIDE reaction across the 14 pre-v20 milestones).
+- v21 (Foundations & Lineage / grounding): **SHIPPED 2026-06-08** — the book gains a references appendix (27
+  grouped, verified sources, a "how ADD relates" line each + a spec-kit↔ADD phase table), a "Foundations &
+  Lineage" chapter, and inline citations woven into 02/03/09, all ×4 byte-identical. Three SDD learnings: a
+  survey/lineage chapter's natural citation density is NEAR-COMPLETE (26/27, each load-bearing), not the sparse
+  "subset" a spec instinctively pictures — spec a survey as near-full coverage; and the cross-task-finding path
+  is the recorded `reopen` — a defect found while working task N in an already-done task M is fixed by `reopen M`
+  (recorded, gate reset), never a silent out-of-scope edit (validated: inline-citations → reopen foundations-chapter
+  to reframe the [Yuan et al. 2024] framing). OPEN: the cite-key suffix-assignment order (2025a/b/c) is
+  deterministic-by-appendix-reading-order but undocumented in appendix-g "How to cite" — a one-line note hardens
+  it (deferred, a doc touch for a future appendix milestone). [folded foundation-version 21]
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -226,6 +236,11 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   v21: the `milestone-done` success line (add.py:1088) still asks the human to "confirm the boxes" the gate now
   ENFORCES (stale prose); and a fresh `init`'s `status` prints the PROJECT.md template placeholder `goal: <…>`
   verbatim at the most-lost moment (soften the template, or teach `_project_goal` a placeholder sentinel).
+- **The dogfood book copy `.add/docs/` can drift silently — it is gitignored and outside `test_bundle_parity`
+  (v21 · UDD):** parity guards canonical↔`_bundled` only, so the dogfood install tree is unprotected; its README
+  carried pre-existing drift (a missing ch.14 line) found only while wiring ch.15. Accept it as a known-throwaway
+  install artifact (regenerated on install) OR extend a parity check to the dogfood README — for now named as a
+  known gap, not silently trusted. [folded foundation-version 21]
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -276,3 +291,4 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 | 2026-06-08 | ship v19 Guard hygiene as ADD's FIRST real parallel wave (2 workers · isolated worktrees · serial cherry-pick merge · integration Verify per merge): single-source ENGINE_MD5 (engine_pin.py, 5 importers) + fence-aware md_section slicer (4 importers); the WAVE.md ledger ran open→consume→digest→delete end-to-end | exercise the wave protocol in anger + close two [TDD] deltas from the wave-ledger / status-hint loop | v19 SHIPPED 2/2 tasks, 3/3 criteria; 586 tests; both gates auto-resolved PASS (human approval = the two freezes); D1 sync gate FIRED 2/2 on a stale worktree pool; declared overlap test_review_checklist.py 3-way auto-merged both lanes intact (conflict-RESOLUTION path therefore untested — recorded in the Wave log) |
 | 2026-06-08 | fold v19 learnings → foundation-version 19 (10 open deltas: 4 new CONVENTIONS bullets · 1 new SDD import-idiom bullet · 3 flip-cite reinforcements · 1 §Spec v19 bullet · 1 auto-dial validation note; the streams.md merge-time fork-base + worker-commits-SUMMARY CR routed to a tracked task) | human-gated fold at v19 close; all 10 confirmed (none rejected); THREE deltas were self-closing loops — this wave shipped exactly what v18's deltas named (shared-pin · status-hint · fence hazard); the auto dial's first ENGINE-scope-era run validated (disclosed judgment call logged, not escalated) | +5 CONVENTIONS bullets (fence-aware-slicing · contract-expected-harmless · fix-a-flag-first-at-freeze · worker-commits-summary · import-by-reference); worktree-from-HEAD amended with the spawn-time runtime exception (check shifts to merge-time, never skips); duplicate-tripwire-pins SHIPPED-cite + ubiquitous-language-reaches-verbs flip-cited; §Spec v19 bullet; deltas flipped open→folded; streams.md text edit → wave-protocol-runtime task |
 | 2026-06-08 | fold v20 learnings → foundation-version 20 (13 open deltas: 4 new CONVENTIONS bullets · 1 §Spec v20 SHIPPED bullet carrying 2 SDD learnings + the reactivation-resolved note · 1 §Users goal-met-theater bullet carrying 2 UX follow-ups) | human-gated fold at v20 close — the FIRST dogfood of v20's own goal-gate: it held v20 at 0/4 exit criteria until the 4 were affirmed, then released at 4/4 | +4 CONVENTIONS bullets (instrument-reaction-by-artifact · lifecycle-precondition-ripples-wide · whitespace-normalized-drift-sentinel · deep-checks-block-has-teeth); §Spec v20 bullet (mirror-counts + total==0 OPEN → v21 milestone_no_criteria); §UDD bullet (real-criteria-not-theater + stale-success-msg + template-placeholder-goal → v21); 3 forward candidates seed v21 intake; all 13 confirmed (none rejected); deltas flipped open→folded |
+| 2026-06-08 | fold v21 learnings → foundation-version 21 (12 open deltas: 1 NEW headline TDD bullet merging 5 — aptness/consistency/figure-spot-check the resolver is blind to · 2 new TDD bullets — `;`-aware resolver + latent-uniqueness-guard · 1 ADD flip-cite onto instrument-reaction naming the EXTENDED surface · 1 §Spec v21 bullet carrying 3 SDD learnings · 1 §Users dogfood-parity-gap bullet) | human-gated fold at v21 (grounding/lineage) close; the milestone's headline learning recurred 3× (a structural/resolution test is necessary-not-sufficient → the human SEMANTIC check must carry aptness · internal consistency · figure spot-checks) | the cross-task Yuan defect was already FIXED in be382b9 via recorded `reopen` (not deferred); +3 CONVENTIONS bullets + 1 flip-cite; §Spec v21 + §Users v21 bullets; all 12 confirmed (none rejected); deltas flipped open→folded |
