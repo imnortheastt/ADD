@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "foundations-chapter",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,51 +472,10 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
-    },
-    "references-appendix": {
-      "title": "Curated annotated references appendix + spec-kit\u2194ADD phase table",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v21",
-      "depends_on": [],
-      "created": "2026-06-08T08:08:17+00:00",
-      "updated": "2026-06-08T09:04:32+00:00"
-    },
-    "foundations-chapter": {
-      "title": "Foundations & Lineage narrative chapter",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v21",
-      "depends_on": [
-        "references-appendix"
-      ],
-      "created": "2026-06-08T08:08:17+00:00",
-      "updated": "2026-06-08T13:14:15+00:00",
-      "reopens": [
-        {
-          "from": "done",
-          "to": "build",
-          "reason": "cross-task aptness finding from inline-citations (a85b81a): ch.15 line 41 frames [Yuan et al. 2024] as a cautionary example ('judges its own reward drifts') but the paper's result is positive (self-rewarding improves). Reframe to the self-rewarding exemplar ADD diverges from, matching the 09 fix. Human-approved at the inline-citations gate 2026-06-08.",
-          "at": "2026-06-08T13:12:07+00:00",
-          "prior_gate": "PASS"
-        }
-      ]
-    },
-    "inline-citations": {
-      "title": "Weave inline citations into specify/process/loop chapters",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v21",
-      "depends_on": [
-        "references-appendix",
-        "foundations-chapter"
-      ],
-      "created": "2026-06-08T08:08:17+00:00",
-      "updated": "2026-06-08T13:10:19+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T13:22:34+00:00",
+  "updated": "2026-06-08T13:30:59+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -621,17 +580,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v21": {
-      "title": "V21",
-      "goal": "a reader of the ADD book can trace the method's intellectual lineage \u2014 recursive self-improvement, spec-driven development, agentic + tests-first research \u2014 and see ADD as the human-gated, evidence-trusted instance of 'closing the loop', grounded in verified, citable sources woven through the book",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-08T08:08:05+00:00",
-      "updated": "2026-06-08T13:22:34+00:00"
     }
   },
-  "active_milestone": "v21",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -767,6 +718,18 @@
         "verify-deepen",
         "reopen-transition",
         "dynamic-task-loop"
+      ],
+      "archived": "2026-06-08",
+      "compacted": "2026-06-08"
+    },
+    {
+      "slug": "v21",
+      "title": "V21",
+      "tasks": 3,
+      "task_slugs": [
+        "references-appendix",
+        "foundations-chapter",
+        "inline-citations"
       ],
       "archived": "2026-06-08",
       "compacted": "2026-06-08"
