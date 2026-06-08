@@ -382,9 +382,11 @@ Architecture:
   never refactor the frozen one (copy, don't couple). v21: 2 red→green fixes forced single-key brackets in
   foundations; inline-citations shipped the `;`-aware resolver + a real `[Schmidhuber 2003; Zelikman et al. 2023]`
   exercising the split. [foundations-chapter + inline-citations — folded foundation-version 21]
-- (TDD) **An invariant can be guarded LATENTLY by a count-vs-set assertion — name it so it is not "fixed"
-  twice.** "Exactly one entry per cite-key" has no dedicated uniqueness test, but `test_appendix_g_frozen`
-  asserts `len(set(keys)) == 27` against 27 entry-lead lines, so a duplicate collapses the set to 26 and turns
-  the suite red. The dup is latent-not-present (green in 649/649); a dedicated uniqueness test is optional
-  hardening, not a gap. Before writing a "missing" guard, check whether an existing assertion already trips on
-  the failure. [references-appendix — folded foundation-version 21]
+- (TDD) **A count-vs-set assertion guards an invariant only against the mutation it can see — name the blind
+  spot, or a "latent guard" reads as a false all-clear.** "Exactly one entry per cite-key" has no dedicated
+  uniqueness test; `test_appendix_g_frozen` asserts `len(set(keys)) == 27`, so an entry EDITED to collide
+  collapses the set to 26 → red. But a 28th entry ADDED with a colliding key gives 28 lines / 27 unique → green:
+  the entry count is only floored (`assertGreaterEqual(len(entries), 18)`), never pinned at 27. A dedicated
+  uniqueness (or exact-count) assert therefore closes a REAL gap for the add-case — not optional hardening.
+  The headline lesson a 4th time: `len(set)==27` is necessary, never sufficient, blind to the mutation no test
+  names. [references-appendix — folded foundation-version 21; sharpened by advisor re-check]
