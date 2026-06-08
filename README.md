@@ -128,6 +128,7 @@ Releases: `@pilotspace/add` (npm) · `pilotspace-add` (PyPI) — one tag publish
 - [Appendix D · The worked example, end to end](./appendix-d-worked-example.md)
 - [Appendix E · Checklists](./appendix-e-checklists.md)
 - [Appendix F · Document requirements matrix (Project → Milestone → Task)](./appendix-f-requirements-matrix.md)
+- [Appendix G · References & lineage](./appendix-g-references.md)
 
 ---
 

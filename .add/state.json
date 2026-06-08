@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "references-appendix",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,10 +472,42 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
+    },
+    "references-appendix": {
+      "title": "Curated annotated references appendix + spec-kit\u2194ADD phase table",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v21",
+      "depends_on": [],
+      "created": "2026-06-08T08:08:17+00:00",
+      "updated": "2026-06-08T09:04:32+00:00"
+    },
+    "foundations-chapter": {
+      "title": "Foundations & Lineage narrative chapter",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v21",
+      "depends_on": [
+        "references-appendix"
+      ],
+      "created": "2026-06-08T08:08:17+00:00",
+      "updated": "2026-06-08T08:08:17+00:00"
+    },
+    "inline-citations": {
+      "title": "Weave inline citations into specify/process/loop chapters",
+      "phase": "specify",
+      "gate": "none",
+      "milestone": "v21",
+      "depends_on": [
+        "references-appendix",
+        "foundations-chapter"
+      ],
+      "created": "2026-06-08T08:08:17+00:00",
+      "updated": "2026-06-08T08:08:17+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T06:50:03+00:00",
+  "updated": "2026-06-08T09:04:32+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -580,9 +612,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "v21": {
+      "title": "V21",
+      "goal": "a reader of the ADD book can trace the method's intellectual lineage \u2014 recursive self-improvement, spec-driven development, agentic + tests-first research \u2014 and see ADD as the human-gated, evidence-trusted instance of 'closing the loop', grounded in verified, citable sources woven through the book",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-08T08:08:05+00:00",
+      "updated": "2026-06-08T08:08:05+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "v21",
   "archived": [
     {
       "slug": "v5",
