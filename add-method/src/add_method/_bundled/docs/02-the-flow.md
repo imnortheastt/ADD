@@ -66,6 +66,8 @@ The single rule of discipline follows directly: **do not begin a step until the 
 
 The flow runs in two directions under two rules that never conflict. **Backward correction is always allowed:** any phase may send you back to an earlier one to repair its artifact — a failing Build that exposes a missing rule sends you back to Specify, and that is the loop working ([principle 4](./01-principles.md)), not a failure. **Forward-skipping is forbidden:** you never start a phase before its input artifact exists. Correct backward freely; never skip forward.
 
+**`done` is terminal — except via the recorded reopen.** Backward correction moves a *live* task; a task at `done` has already passed its gate. The one way back from `done` is the recorded `reopen` action (`add.py reopen <task> --to <phase> --reason "..."`): it returns the task to an earlier phase, resets the gate, and writes down *why* — so a done verdict is never quietly un-done. This is the same backward-correction rule, made explicit at the one state where it would otherwise be bypassed silently.
+
 ## Who does what
 
 | Step | Person's job | AI's job |

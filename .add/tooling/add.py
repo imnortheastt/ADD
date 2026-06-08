@@ -596,6 +596,45 @@ def cmd_gate(args: argparse.Namespace) -> None:
         print("HARD-STOP recorded: return to BUILD; nothing ships on a failing/security gate.")
 
 
+def cmd_reopen(args: argparse.Namespace) -> None:
+    """Return an already-`done` task to an earlier phase with a never-silent record.
+
+    The flow already permits backward correction (book ch02: "any phase may return
+    to an earlier one"); `done` is terminal EXCEPT via this recorded action. reopen
+    sets the phase back, resets the gate to "none" (the task must re-earn its
+    verdict), and appends an append-only `reopens` entry recording WHY. A done task
+    done via RISK-ACCEPTED carries a live `waiver`; reopen records it inside the entry
+    (prior_gate / prior_waiver) and drops the live key, so no signed waiver lingers
+    without a verdict. Judgement of WHEN to reopen stays the resolver's; the engine
+    only enforces the recorded, coherent transition.
+    """
+    root = _require_root()
+    state = load_state(root)
+    slug = _resolve_task(state, args.slug)
+    t = state["tasks"][slug]
+    if t.get("phase") != "done":
+        _die(f"reopen_not_done: task '{slug}' is at '{t.get('phase')}', not done — "
+             "backward correction inside a live run is `add.py phase` / HARD-STOP, not reopen")
+    reason = (args.reason or "").strip()
+    if not reason:
+        _die("reopen_reason_required: reopen records WHY — supply a non-empty --reason")
+    target = args.to
+    if target not in PHASES[:7]:        # specify..observe; never "done", never an unknown name
+        _die(f"reopen_target_invalid: --to must be one of {', '.join(PHASES[:7])} (got {target!r})")
+    now = _now()
+    entry = {"from": "done", "to": target, "reason": reason, "at": now,
+             "prior_gate": t.get("gate", "none")}
+    if t.get("waiver"):                 # void verdict's waiver -> history, drop the live key
+        entry["prior_waiver"] = t.pop("waiver")
+    t.setdefault("reopens", []).append(entry)
+    t["phase"] = target
+    t["gate"] = "none"
+    t["updated"] = now
+    _sync_task_marker(root, slug, target)
+    save_state(root, state)
+    print(f"task '{slug}' reopened: done -> {target} (reason recorded); gate reset to none")
+
+
 def cmd_lock(args: argparse.Namespace) -> None:
     """The human baseline approval: freeze the autonomously-drafted setup in ONE atomic write.
 
@@ -2492,6 +2531,14 @@ def build_parser() -> argparse.ArgumentParser:
     pg.add_argument("--ticket", help="RISK-ACCEPTED waiver: tracking ticket/link")
     pg.add_argument("--expires", help="RISK-ACCEPTED waiver: expiry date")
     pg.set_defaults(func=cmd_gate)
+
+    pr = sub.add_parser("reopen", help="return a done task to an earlier phase with a recorded reason")
+    pr.add_argument("slug", nargs="?", default=None)
+    # --to / --reason are validated in-body (not argparse choices) so the named reject
+    # codes fire (reopen_target_invalid / reopen_reason_required), not a bare exit-2.
+    pr.add_argument("--to", default=None, help="target phase (specify..observe)")
+    pr.add_argument("--reason", default="", help="why the task is reopened (required, non-empty)")
+    pr.set_defaults(func=cmd_reopen)
 
     ps = sub.add_parser("stage", help="set the project stage")
     ps.add_argument("stage", choices=STAGES)

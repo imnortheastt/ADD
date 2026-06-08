@@ -37,7 +37,9 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   milestone (scope.md), task (§1); named diverge seeds + foundation lenses make
   "ask before draft" checkable (cospecify-lift v5).
 - Frozen contracts (survivor): `set-milestone`, `milestone-done`, `check` exit
-  codes; the 7-phase task flow; the milestone tier (`MILESTONE.md` + `depends_on`);
+  codes; the 7-phase task flow (re-frozen v20: `done` is terminal EXCEPT via the recorded
+  `reopen` back-edge — `add.py reopen <task> --to <phase> --reason "…"` resets the gate and
+  records why; never a silent un-done); the milestone tier (`MILESTONE.md` + `depends_on`);
   `report` / `report --json` (read-only awareness) + `report_data` facts seam;
   `report <task>` / `report <m> <task>` (read-only phase drill-down) + `task_phases` extraction
   seam (per-phase fields + `(empty)` fail-closed; smart milestone-first-else-task resolution).

@@ -55,6 +55,8 @@ LIFECYCLE = [
     ["audit"],                                 # read-only seam audit (no recorded seams yet ->
                                                # clean exit 0; reads TASK.md/state, never docs/)
     ["gate", "PASS", "t"],
+    ["reopen", "t", "--to", "verify", "--reason", "census"],  # done -> verify (recorded, gate reset)
+    ["gate", "PASS", "t"],                                    # re-complete so milestone-done stays valid
     ["status"],
     ["check"],
     ["ready"],
