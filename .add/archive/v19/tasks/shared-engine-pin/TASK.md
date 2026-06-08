@@ -166,5 +166,5 @@ Watch (reuse scenarios as monitors): the next legitimate engine change — was t
 Spec delta for the next loop: none — the contract shipped as frozen; wave-level findings live in the v19 Wave log digest.
 
 ### Competency deltas
-- [TDD · open] a human pre-freeze change-request made the bundle strictly stronger at near-zero cost — sweep widened to all *.py + cwd-independence subprocess-proven; the "Fix a flag first" option earns its place in every freeze presentation (evidence: this task's freeze round-trip)
-- [ADD · open] worker SUMMARY.md must be IN the worker's commit, not just written — uncommitted worktree files survive only by harness courtesy; the worker contract's <return> should say "commit SUMMARY.md with your code" (evidence: wt-A's SUMMARY.md/deltas.md were left uncommitted and had to be hand-copied before worktree removal)
+- [TDD · folded] a human pre-freeze change-request made the bundle strictly stronger at near-zero cost — sweep widened to all *.py + cwd-independence subprocess-proven; the "Fix a flag first" option earns its place in every freeze presentation (evidence: this task's freeze round-trip)
+- [ADD · folded] worker SUMMARY.md must be IN the worker's commit, not just written — uncommitted worktree files survive only by harness courtesy; the worker contract's <return> should say "commit SUMMARY.md with your code" (evidence: wt-A's SUMMARY.md/deltas.md were left uncommitted and had to be hand-copied before worktree removal)

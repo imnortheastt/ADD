@@ -1,0 +1,31 @@
+{
+  "milestone": {
+    "title": "V19",
+    "goal": "tooling guards become single-source and truncation-proof \u2014 shipped as ADD's first real parallel wave (WAVE.md proof-in-anger)",
+    "stage": "mvp",
+    "status": "done",
+    "created": "2026-06-07T16:59:30+00:00",
+    "updated": "2026-06-08T01:43:59+00:00"
+  },
+  "tasks": {
+    "shared-engine-pin": {
+      "title": "one ENGINE_MD5 source, five importers",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v19",
+      "depends_on": [],
+      "created": "2026-06-07T16:59:30+00:00",
+      "updated": "2026-06-07T17:25:13+00:00"
+    },
+    "fence-aware-section": {
+      "title": "fence-aware section slicer for words-exist guards",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v19",
+      "depends_on": [],
+      "created": "2026-06-07T16:59:30+00:00",
+      "updated": "2026-06-07T17:28:02+00:00"
+    }
+  },
+  "archived_at": "2026-06-08T01:43:59+00:00"
+}

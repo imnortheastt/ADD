@@ -93,6 +93,13 @@ Architecture:
   v12-1: stream B forked one commit behind the front (7f7ee54 vs c896698) because the orchestrator never
   ran the check — it must EXECUTE pre-spawn, not merely exist in streams.md (words-exist ≠ method-works).
   [status-lock-hint — folded foundation-version 10]
+  Runtime reality v19: on a runner that creates the worktree AT spawn from a pool (Claude Code), that pool
+  can hand out a STALE base, so the pre-spawn evidence cell is UNSATISFIABLE — verified 2/2 workers forked a
+  v17-era base. The `unverified_fork_base` check then SHIFTS to worker step-0 (sync-to-base + re-echo)
+  verified by the orchestrator at MERGE-time before merge-back — the check shifts, it never skips (the
+  founding lesson: a check that lives only in prose never runs, recursing onto the wave ledger itself).
+  [shared-engine-pin + fence-aware-section — folded foundation-version 19; streams.md text amended by the
+  wave-protocol-runtime task]
 - (ADD) **Close an unscaffolded milestone by a scope audit, not by building its task list.** A planned-but-
   never-scaffolded milestone (0 TASK.md) may have tasks already superseded/delivered/obsolete by later work;
   audit each against shipped code and keep only the real residue. [ship-clean — folded foundation-version 9]
@@ -285,6 +292,9 @@ Architecture:
   is blind to "one-approval-front" — a fence clause banning hyphen+space forms misses the all-hyphen
   form; the raw-grep recipe (substring, no boundaries) is the closing sweep.
   [ubiquitous-language — folded foundation-version 18]
+  Discipline reaches prose VERBS, not only nouns: "fold" used as a PROMPT instruction verb collided with the
+  method's own fold ritual — same-concept-same-name applies to actions too, so a worker PROMPT must avoid a
+  reserved method verb for an unrelated step. [wave-ledger — folded foundation-version 19]
 - (TDD) **Run the FULL suite once during the TESTS phase, not only the new file.** Instrument reactions
   (census, prose bans) are discoverable pre-freeze — found there they enter the contract; found
   post-build they become gate residue. [archive-compaction — folded foundation-version 18]
@@ -295,6 +305,10 @@ Architecture:
   every intentional engine edit a 5-file re-stamp; a single shared pin keeps the tripwire at 1/5 the
   ceded surface (the actual test refactor is its own future task, not part of the fold).
   [ubiquitous-language — folded foundation-version 18]
+  SHIPPED v19: engine_pin.py holds the one literal, five suites import it (`from engine_pin import
+  ENGINE_MD5`) — the "future task" named at v18 is done; a legitimate engine change now re-aims ONE line, and
+  a sweep over EVERY tooling *.py (not just test files) keeps a second pin from hiding in a helper.
+  [shared-engine-pin — folded foundation-version 19]
 - (ADD) **Archive is a TWO-STEP lifecycle: `archive-milestone` (state) → `compact` (files).** Close a
   milestone consolidation-first, then light-archive, then compact; recovery is a reverse move, state
   needs no edit. Naming compact in the close nudge / fold.md is deferred — a method-surface edit is its
@@ -307,3 +321,25 @@ Architecture:
   boundary was discovered five separate times mid-build (### heading · ⚠ glyph · seam-audit job ·
   folded status · owner enum), each costing an execution call — pre-draw the line once (or have add.py
   emit the registry). [ubiquitous-language — folded foundation-version 18]
+- (TDD) **A prose-slicing guard must be fence-aware.** A words-exist guard that slices a section at `\n## `
+  truncates at a `## ` line inside a fenced example — silently scanning a prefix while claiming the whole;
+  route slicing through ONE fence-aware slicer (`md_section.section`, whose terminator scan skips ``` fences)
+  so an embedded template may use real `##` headings. This RETIRES the prior workaround (### headings forced
+  into the WAVE.md template). [fence-aware-section — folded foundation-version 19]
+- (TDD) **Contract the expected-harmless and let the suite arbitrate — don't pre-shim.** A ⚠ "probably
+  harmless" assumption (heading-inclusion across four importers) was resolved GREEN with zero compensating
+  strips; a pre-emptive compatibility shim would have shipped untested code for a non-problem. Flag the
+  assumption, contract the simple shape, and let the red→green suite confirm or refute it.
+  [fence-aware-section — folded foundation-version 19]
+- (ADD) **Offer "fix a flag first" at the bundle freeze.** The contract-freeze presentation includes a
+  pre-freeze change-request path; a human hardening BEFORE the freeze is strictly-strengthening at near-zero
+  cost (the sweep widened to every tooling *.py + cwd-independence subprocess-proven, both landed before the
+  freeze). Distinct from the in-build strengthening amendment (disclosed at the gate, :audit-ci) — this one
+  reshapes the contract while it is still open. [shared-engine-pin — folded foundation-version 19]
+- (ADD) **A wave worker commits its own SUMMARY.md/deltas.md with its code.** Uncommitted worktree files
+  survive only by harness courtesy (they had to be hand-copied before `git worktree remove`); the worker
+  `<return>` contract must say "commit SUMMARY.md + deltas.md in the worktree, not just write them."
+  [shared-engine-pin — folded foundation-version 19; enacted by the wave-protocol-runtime task]
+- (SDD) **Import a sibling test module by reference, not by name, when the bare name would shadow a local.**
+  `import md_section` over `from md_section import section` — name-collision awareness extends to import style
+  (test_audit_ci / test_intake_interview carry a local `section`). [fence-aware-section — folded foundation-version 19]

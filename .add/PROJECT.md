@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 18
+slug: AIDD-Book · stage: mvp · updated: 2026-06-08 · foundation-version: 19
 
 ---
 
@@ -43,6 +43,11 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 18
 - Surfaces evolve **additively**: a new output tier or field (a WARN level; `warnings`/`warned` in
   `--json`) leaves existing semantics + exit codes unchanged, so no existing consumer breaks — additive
   is the backward-safe way to extend a frozen seam (orphan-task-guard v8-1).
+- v19 (guard hygiene) SHIPPED as ADD's first real parallel wave: single-source ENGINE_MD5
+  (`engine_pin.py`, five importers) + a fence-aware prose slicer (`md_section.py`, four importers). The wave
+  tooling itself shipped earlier in this loop — the `WAVE.md` ledger convention (streams.md) and a live
+  `add.py status` wave hint (engine surface, precedent cmd_status-hint v9); a runtime gap in the wave
+  protocol (spawn-time-worktree fork-base check) is tracked as the `wave-protocol-runtime` task.
 - Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@pilotspace/add`,
   PROJECT.md foundation, dynamic-by-reference guideline injection; **per-phase report
   drill-down** (SHIPPED v9-1: `report <task>` renders each phase's RESULT). OPEN — interactive
@@ -245,3 +250,5 @@ slug: AIDD-Book · stage: mvp · updated: 2026-06-07 · foundation-version: 18
 | 2026-06-07 | fold question-summary-layer learnings → foundation-version 17 (2 open deltas: 1 SDD shape-line-figure refinement + 1 ADD dogfood-at-own-seams reinforcement, both appended onto existing CONVENTIONS bullets) | on-demand fold before opening new scope (intake-interview); human-gated per fold.md, both confirmed via AskUserQuestion (none rejected) | numeric-figure-is-estimate bullet gains the shape-line-≈ rule; dogfood-own-rule bullet gains the approval-seams clause; deltas flipped open→folded |
 | 2026-06-07 | ship v18 Prompt structure & file hygiene: form-tag template amendment (closed 6-tag fill-region class + parse-seam suite) + `compact` heavy archive (recovery bundle · 6 reject codes · deltas-consolidated-first) | XML-structure the fill surfaces for AI effectiveness; done work compacts out of the active tree | v18 SHIPPED 2/2 tasks, 2/2 criteria; 562 tests; engine md5 ×3 trees; two instrument residues disclosed + human-accepted at the gate |
 | 2026-06-07 | fold v18 learnings → foundation-version 18 (14 open deltas: 8 new CONVENTIONS bullets · 3 appends onto existing (mirror-clause-all-copies · census-grow-on-new-section · numeric-pin-count-first) · 4 GLOSSARY terms (heavy archive/compact · recovery bundle · instruction tags · form tags) · 1 §Spec v18 bullet) | human-gated fold at v18 close; all 14 confirmed (none rejected); DDD routed to GLOSSARY — the deltas' own named home; fold.md/nudge edits deferred as method-surface tasks | GLOSSARY +4 terms; CONVENTIONS +8 new +3 appends; §Spec v18 bullet; deltas flipped open→folded |
+| 2026-06-08 | ship v19 Guard hygiene as ADD's FIRST real parallel wave (2 workers · isolated worktrees · serial cherry-pick merge · integration Verify per merge): single-source ENGINE_MD5 (engine_pin.py, 5 importers) + fence-aware md_section slicer (4 importers); the WAVE.md ledger ran open→consume→digest→delete end-to-end | exercise the wave protocol in anger + close two [TDD] deltas from the wave-ledger / status-hint loop | v19 SHIPPED 2/2 tasks, 3/3 criteria; 586 tests; both gates auto-resolved PASS (human approval = the two freezes); D1 sync gate FIRED 2/2 on a stale worktree pool; declared overlap test_review_checklist.py 3-way auto-merged both lanes intact (conflict-RESOLUTION path therefore untested — recorded in the Wave log) |
+| 2026-06-08 | fold v19 learnings → foundation-version 19 (10 open deltas: 4 new CONVENTIONS bullets · 1 new SDD import-idiom bullet · 3 flip-cite reinforcements · 1 §Spec v19 bullet · 1 auto-dial validation note; the streams.md merge-time fork-base + worker-commits-SUMMARY CR routed to a tracked task) | human-gated fold at v19 close; all 10 confirmed (none rejected); THREE deltas were self-closing loops — this wave shipped exactly what v18's deltas named (shared-pin · status-hint · fence hazard); the auto dial's first ENGINE-scope-era run validated (disclosed judgment call logged, not escalated) | +5 CONVENTIONS bullets (fence-aware-slicing · contract-expected-harmless · fix-a-flag-first-at-freeze · worker-commits-summary · import-by-reference); worktree-from-HEAD amended with the spawn-time runtime exception (check shifts to merge-time, never skips); duplicate-tripwire-pins SHIPPED-cite + ubiquitous-language-reaches-verbs flip-cited; §Spec v19 bullet; deltas flipped open→folded; streams.md text edit → wave-protocol-runtime task |
