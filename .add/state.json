@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "foundations-chapter",
+  "active_task": "inline-citations",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -495,19 +495,19 @@
     },
     "inline-citations": {
       "title": "Weave inline citations into specify/process/loop chapters",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v21",
       "depends_on": [
         "references-appendix",
         "foundations-chapter"
       ],
       "created": "2026-06-08T08:08:17+00:00",
-      "updated": "2026-06-08T08:08:17+00:00"
+      "updated": "2026-06-08T13:10:19+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-08T11:18:20+00:00",
+  "updated": "2026-06-08T13:10:19+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

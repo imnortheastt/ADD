@@ -10,7 +10,7 @@
 
 ## Why this step is first
 
-The specification is the description the AI will build from. Every other artifact descends from it. Anything vague here does not stay vague — it becomes a concrete wrong guess in the code, discovered late. The cheapest moment to remove an ambiguity is now, in a sentence, before anything depends on it.
+The specification is the description the AI will build from. Every other artifact descends from it — the spec as the executable source of truth, the organizing idea of spec-driven development [GitHub 2025]. Anything vague here does not stay vague — it becomes a concrete wrong guess in the code, discovered late. The cheapest moment to remove an ambiguity is now, in a sentence, before anything depends on it.
 
 There is also a diagnostic value: **if you cannot write the spec, you do not yet understand the feature well enough to build it.** The inability to specify is information, not an obstacle to push past.
 
@@ -33,7 +33,7 @@ Four parts, kept short:
 3. **After** — the state that is true once it succeeds (what changed).
 4. **Assumptions — lowest-confidence first** — the things you are taking for granted, **ranked so the most-likely-wrong come first.** The top one or two carry a `⚠` flag with *why it is uncertain* and *what it costs if wrong*; the rest are the low-stakes tail. A spec with genuinely nothing uncertain still names its single biggest risk, however small — the AI never claims a blank mind.
 
-Naming the errors matters. "Reject bad amounts" is an instruction to guess; `amount <= 0 -> "amount_invalid"` is a rule that produces a testable scenario and a defined contract response.
+Naming the errors matters. "Reject bad amounts" is an instruction to guess; `amount <= 0 -> "amount_invalid"` is a rule that produces a testable scenario and a defined contract response — decomposing the spec into checkable units, which is more reliable than one large prompt [Delimarsky 2025].
 
 ## Template
 

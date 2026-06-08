@@ -11,11 +11,11 @@
 
 Older mental models end at "ship." That framing is the source of a common pathology: teams treat release as a finish line, and so they hide defects to protect the line rather than manage them in the open. In AIDD, release is not the end of the flow — it is the point where the most reliable information about the feature finally becomes available: how it behaves with real users, real data, and real load.
 
-That information is the input to the next cycle. What you learn in production becomes the next specification, and the flow returns to [Step 1](./03-step-1-specify.md). The cycle is continuous.
+That information is the input to the next cycle. What you learn in production becomes the next specification, and the flow returns to [Step 1](./03-step-1-specify.md): a result that misses expectation becomes feedback for the next attempt, not a dead end [Shinn et al. 2023]. The cycle is continuous.
 
 ## Release deliberately
 
-Release behind a mechanism that limits the scope of impact of a mistake — a feature flag, a gradual rollout, or both. The verification step established that the feature is correct against everything you anticipated; a controlled release is your protection against what you did not anticipate. If something is wrong, you want to affect a few users and roll back, not affect everyone and scramble.
+Release behind a mechanism that limits the scope of impact of a mistake — a feature flag, a gradual rollout, or both. The verification step established that the feature is correct against everything you anticipated; a controlled release is your protection against what you did not anticipate. If something is wrong, you want to affect a few users and roll back, not affect everyone and scramble — the same checkpoint-and-rollback discipline that lets autonomous agents work safely [Anthropic 2025a].
 
 ## Reuse the scenarios as monitors
 
@@ -35,7 +35,7 @@ This is also where the AI returns to a useful role: summarizing telemetry, clust
 
 ## Lessons learned and the retrospective consolidation
 
-A spec delta feeds the *next feature*. But a loop also teaches the **method itself** — that the domain model missed a boundary, that a whole class of scenario was never tested, that a build convention helped or hurt. AIDD captures those as **lessons learned**: a single tagged learning, written in the Observe step, marking which of the five competencies it sharpens.
+A spec delta feeds the *next feature*. But a loop also teaches the **method itself** — that the domain model missed a boundary, that a whole class of scenario was never tested, that a build convention helped or hurt. AIDD captures those as **lessons learned**: a single tagged learning, written in the Observe step, marking which of the five competencies it sharpens. This is recursive self-improvement turned inward on the method — consolidating confirmed learnings back into the process that produced them, and changing only on proven evidence [Schmidhuber 2003; Zelikman et al. 2023].
 
 | tag | competency | a delta here means you learned something about… |
 |-----|------------|--------------------------------------------------|
@@ -45,7 +45,7 @@ A spec delta feeds the *next feature*. But a loop also teaches the **method itse
 | `TDD` | Test | how we prove correctness — a missing scenario, a flaky or hollow test |
 | `ADD` | AI/build | how the AI builds — a harness, prompt, or convention that helped or hurt |
 
-Each delta is one tagged entry — `- [COMPETENCY · status] the learning (evidence: a pointer)` — and the evidence is **required**: a failing scenario, a production signal, a review note. No evidence means it is an opinion, not a delta. The AI **emits** deltas as `open`; it never consolidates its own. Consolidation is judgment, and judgment is the human's — the same verify/observe decision point that keeps the AI from grading its own work.
+Each delta is one tagged entry — `- [COMPETENCY · status] the learning (evidence: a pointer)` — and the evidence is **required**: a failing scenario, a production signal, a review note. No evidence means it is an opinion, not a delta. The AI **emits** deltas as `open`; it never consolidates its own. Consolidation is judgment, and judgment is the human's — the same verify/observe decision point that keeps the AI from grading its own work: where a self-rewarding loop has the model judge its own reward [Yuan et al. 2024], ADD makes the tests and a human the reward signal instead.
 
 **The consolidation.** At milestone close (or on demand, when open deltas pile up), a person runs the retrospective consolidation: **gather** every `open` delta across the milestone's tasks, **group** them by competency, **propose** the exact foundation edit for each, **confirm** with the human one by one, then **write** — append-only — flipping each delta to `folded` (merged) or `rejected` (considered and deliberately not merged, left in place so the trail survives), and bumping the `foundation-version:` marker. `DDD`/`SDD`/`UDD` deltas consolidate into the matching section of `PROJECT.md`; `TDD`/`ADD` consolidate into `CONVENTIONS.md` (they sharpen the engine, not the product); and **every** consolidation also appends one row to `PROJECT.md` §Key Decisions — the universal, auditable record of what the foundation learned.
 
