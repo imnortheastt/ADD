@@ -30,7 +30,7 @@ flowchart LR
   class S5,S6 machine;
 ```
 
-> **Solid arrows are the primary flow** — you never start a phase before its input exists (forward-skip forbidden). **Dashed arrows are backward correction** — any phase may return to an earlier one to repair its artifact (the long loop, Observe → Specify, is the same rule at milestone scale). The tight Tests ⇄ Build cycle is the per-feature red/green engine — the **evaluator-optimizer** loop of the agentic-workflow taxonomy, with the tests standing in as the evaluator [Schluntz & Zhang 2024].
+> **Solid arrows are the primary flow** — you never start a phase before its input exists (forward-skip forbidden). **Dashed arrows are backward correction** — any phase may return to an earlier one to repair its artifact (the long loop, Observe → Specify, is the same rule at milestone scale). The tight Tests ⇄ Build cycle is the per-feature red/green engine.
 
 ```text
   human-led ─────────────────►│◄─────────── machine-led ──► human verify
