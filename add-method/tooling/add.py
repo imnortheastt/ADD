@@ -31,6 +31,9 @@ MILESTONE_FILE = "MILESTONE.md"
 # this sentinel so the read-only orientation surfaces never blank or crash.
 GOAL_UNSET = "(unset — add a 'goal:' line to PROJECT.md)"
 STAGES = ("prototype", "poc", "mvp", "production")
+# v22 stage-graduation: the read-only cue `status` shows when the MVP is covered.
+# Worded as the ACTION (never a file) so it stands before graduate.md exists.
+GRADUATION_CUE = "MVP covered → propose graduation"
 PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
 
@@ -665,19 +668,42 @@ def cmd_lock(args: argparse.Namespace) -> None:
         print(f"locked setup ({','.join(layers)}) by {who} @ {when}")
 
 
+def _has_production_roadmap(state: dict) -> bool:
+    """True iff ≥1 milestone in state has stage == "production" (STATUS-AGNOSTIC).
+    The single source of the stage-graduation floor (v22 graduate-guide): the guard counts
+    that a production-roadmap RECORD exists — it never judges whether those milestones are
+    done/good/sufficient (gather-not-judge). An archived-out-of-state roadmap falls to --force."""
+    return any(m.get("stage") == "production"
+               for m in state.get("milestones", {}).values())
+
+
 def cmd_stage(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
     if args.stage not in STAGES:
         _die(f"stage must be one of: {', '.join(STAGES)}")
+    # v22 stage-graduation guard: the →production TRANSITION refuses without a roadmap — a tally
+    # check (≥1 production milestone exists), never a readiness judgment. Scoped to production
+    # ONLY; every other flip is the existing bare flip, byte-unchanged. --force overrides
+    # (precedent: lock --force). The flip is graduate.md's FINAL, confirmed-roadmap step.
+    forced = getattr(args, "force", False)
+    bypassing = False
+    if args.stage == "production":
+        roadmap = _has_production_roadmap(state)
+        if not roadmap and not forced:
+            _die("stage_no_roadmap: no production milestone drafted. Draft ≥1 via "
+                 "graduate.md (new-milestone --stage production), or use --force to override.")
+        bypassing = forced and not roadmap
     state["stage"] = args.stage
     save_state(root, state)
     print(f"project stage -> {args.stage}")
+    if bypassing:
+        print("(--force: bypassed roadmap check — no production milestone drafted)")
 
 
 def cmd_status(args: argparse.Namespace) -> None:
     if getattr(args, "json", False):
-        _, state = _load_state_for_json()
+        root, state = _load_state_for_json()
         tasks = state.get("tasks") or {}
         milestones = state.get("milestones") or {}
         ms_list = []
@@ -686,12 +712,15 @@ def cmd_status(args: argparse.Namespace) -> None:
             ms_list.append({"slug": mslug, "status": m.get("status", "active"),
                             "done": sum(1 for t in members if _task_done(t)),
                             "total": len(members)})
+        grad_ready, grad_met, grad_total = _graduation_ready(root, state)
         print(json.dumps({
             "project": state.get("project"), "stage": state.get("stage"),
             "active_task": state.get("active_task"),
             "milestones": ms_list,
             "tasks": [{"slug": s, "phase": t.get("phase"), "gate": t.get("gate"),
-                       "milestone": t.get("milestone")} for s, t in tasks.items()]}))
+                       "milestone": t.get("milestone")} for s, t in tasks.items()],
+            "graduation_ready": grad_ready,
+            "stage_criteria": {"met": grad_met, "total": grad_total}}))
         return
     root = _require_root()
     state = load_state(root)
@@ -732,6 +761,12 @@ def cmd_status(args: argparse.Namespace) -> None:
             mark = "*" if mslug == active_ms else " "
             print(f"  {mark} {mslug:<20} {done}/{len(members)} tasks done"
                   f"   status={m.get('status', 'active')}")
+        # graduation cue (v22): project-global + read-only. Fires only when every milestone
+        # is done AND the human's PROJECT.md stage-goal-criteria are all checked — additive
+        # (a new line solely when ready; the non-ready output is byte-identical to before).
+        grad_ready, _gm, _gt = _graduation_ready(root, state)
+        if grad_ready:
+            print(f"  → {GRADUATION_CUE}")
 
     # archived rollup — one line keeps state visible without re-bloating status
     archived = state.get("archived") or []
@@ -1412,6 +1447,41 @@ def _exit_criteria(root: Path, mslug: str) -> tuple[int, int]:
     met = len(re.findall(r"- \[x\]", sec))
     total = met + len(re.findall(r"- \[ \]", sec))
     return met, total
+
+
+def _stage_criteria(root: Path) -> tuple[int, int]:
+    """(met, total) checkbox tally inside PROJECT.md's 'Stage goal criteria' section — the
+    PROJECT.md analog of _exit_criteria (v22): the human's stage-covered affirmation. Read-only
+    and fail-closed to (0, 0): a missing file, a missing section, or any read error never raises
+    and never fabricates a cue (so an unreadable foundation withholds graduation, design-for-failure)."""
+    try:
+        text = (root / "PROJECT.md").read_text(encoding="utf-8")
+    except OSError:
+        return 0, 0
+    m = re.search(r"## Stage goal criteria.*?(?=\n## |\Z)", text, re.S)
+    if not m:
+        return 0, 0
+    sec = m.group(0)
+    met = len(re.findall(r"- \[x\]", sec))
+    total = met + len(re.findall(r"- \[ \]", sec))
+    return met, total
+
+
+def _all_milestones_done(state: dict) -> bool:
+    """True when the project HAS milestones and EVERY one is status=done (v22). Archived
+    milestones are absent from state['milestones'] (removed by the archive lifecycle), so they
+    do not count; a project with zero milestones is not 'covered' and returns False."""
+    ms = state.get("milestones") or {}
+    return bool(ms) and all(m.get("status") == "done" for m in ms.values())
+
+
+def _graduation_ready(root: Path, state: dict) -> tuple[bool, int, int]:
+    """(ready, met, total) for the stage-graduation cue (v22): every milestone done AND the
+    human's stage-goal-criteria all checked (total>0 and met==total). The SINGLE source the
+    text and --json status branches share, so the cue and the json signal can never disagree."""
+    met, total = _stage_criteria(root)
+    ready = _all_milestones_done(state) and total > 0 and met == total
+    return ready, met, total
 
 
 def _count_test_defs(f: Path) -> int:
@@ -2333,6 +2403,144 @@ def cmd_audit(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def _retro_carried(path: Path) -> int:
+    """Parse the 'LEARNINGS (N carried)' count from a RETRO.md; absent/unreadable -> 0.
+    READ-ONLY (the graduation harvest's carried-delta facet for the consolidated tier)."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return 0
+    m = re.search(r"LEARNINGS \((\d+) carried\)", text)
+    return int(m.group(1)) if m else 0
+
+
+def graduation_data(root: Path, state: dict) -> dict:
+    """The single source of FACTS for the graduation harvest — PURE, NO writes (mirrors
+    report_data). Both the `graduation-report` text dashboard and `--json` render from this
+    one dict, so the human view and the machine view can never disagree.
+
+    GATHER, never JUDGE: every value is a RECORD the human verifies by looking; there is no
+    readiness/score/ranking field by construction (would_be_judging is structurally impossible).
+    Two tiers: LIVE = in-state (state + on-disk TASK.md); CONSOLIDATED = compacted milestones,
+    a RETRO record only. A missing/unreadable source is SKIPPED, never a crash (fail-closed)."""
+    tasks = state.get("tasks") or {}
+    milestones = state.get("milestones") or {}
+    archived = state.get("archived") or []
+
+    # a — open deltas by competency (reuse the project-wide harvester; compacted folded out)
+    by_comp = _collect_open_deltas(root)
+    open_deltas = {"total": sum(len(v) for v in by_comp.values()),
+                   "by_competency": {c: v for c, v in by_comp.items() if v}}
+
+    # b — open RISK-ACCEPTED waivers, soonest expiry first (missing/unparseable expiry sorts LAST)
+    waivers = []
+    for slug, t in tasks.items():
+        if t.get("gate") == "RISK-ACCEPTED" and t.get("waiver"):
+            w = t["waiver"]
+            waivers.append({"slug": slug, "owner": w.get("owner", "?"),
+                            "ticket": w.get("ticket", "?"), "expires": w.get("expires", "?")})
+
+    def _exp_key(wv):
+        try:
+            return (0, date.fromisoformat(wv["expires"]).isoformat())
+        except (ValueError, TypeError):
+            return (1, "")          # unparseable/missing -> after every real date
+    waivers.sort(key=_exp_key)
+
+    # c — RETRO records: LIVE under milestones/, CONSOLIDATED under archive/ (the compacted backbone)
+    retros = []
+    for sub_dir, tier in ((root / "milestones", "live"), (root / "archive", "consolidated")):
+        if sub_dir.is_dir():
+            for retro in sorted(sub_dir.glob("*/RETRO.md")):
+                if retro.is_file():     # a directory at the path is not a ledger (fail-closed)
+                    retros.append({"milestone": retro.parent.name,
+                                   "path": str(retro.relative_to(root)),
+                                   "carried_deltas": _retro_carried(retro), "tier": tier})
+
+    # d-i — residue gate records: the residue-class facet (RISK-ACCEPTED shares the waivers[] record)
+    residue_gates = [{"slug": s, "gate": t.get("gate")} for s, t in tasks.items()
+                     if t.get("gate") in ("RISK-ACCEPTED", "HARD-STOP")]
+
+    # d-ii — §6 disclosed residue: in-state tasks' '- [⚠]' VERIFY list items (the pinned rule)
+    # e   — coverage-gaps proxy: in-state §7 Watch still the '<error rate' placeholder head
+    residue_disclosed, coverage_gaps = [], []
+    for slug in tasks:
+        try:
+            text = (root / "tasks" / slug / "TASK.md").read_text(encoding="utf-8")
+        except OSError:
+            continue                 # unreadable TASK.md -> skip this task's prose records
+        m = re.search(r"##\s*6\b.*?(?=\n##\s*\d|\Z)", text, re.S)   # the VERIFY section only
+        for line in (m.group(0) if m else "").splitlines():
+            st = line.strip()
+            if st.startswith("- [⚠]"):
+                residue_disclosed.append({"slug": slug, "line": st[len("- [⚠]"):].strip()})
+        for line in text.splitlines():
+            if line.startswith("Watch") and "<error rate" in line:  # unfilled <…> template head
+                coverage_gaps.append({"slug": slug})
+                break
+
+    return {
+        "open_deltas": open_deltas,
+        "waivers": waivers,
+        "retros": retros,
+        "residue_gates": residue_gates,
+        "residue_disclosed": residue_disclosed,
+        "coverage_gaps": coverage_gaps,
+        "summary": {
+            "open_deltas": open_deltas["total"], "waivers": len(waivers), "retros": len(retros),
+            "residue_gates": len(residue_gates), "residue_disclosed": len(residue_disclosed),
+            "coverage_gaps": len(coverage_gaps),
+            "milestones_live": len(milestones), "milestones_consolidated": len(archived),
+        },
+    }
+
+
+def cmd_graduation_report(args: argparse.Namespace) -> None:
+    """Read-only: GATHER the MVP loop's evidence into five labeled record-sets for the
+    graduate.md interview. text (default) or --json (the frozen JSON facts interface). Exit 0 ALWAYS —
+    a gather, not a gate; the ONLY non-zero exit is no_project. Judges nothing. NO writes."""
+    root = find_root()
+    if root is None:                 # frozen contract: fail-closed with a no_project signal
+        _die("no_project: no .add/ project found. Run `add.py init` first.")
+    state = load_state(root)
+    d = graduation_data(root, state)
+
+    if getattr(args, "json", False):
+        print(json.dumps(d, ensure_ascii=False, indent=2))
+        return
+
+    s = d["summary"]
+    L = ["GRADUATION REPORT — MVP-loop evidence (gather, not judge)", ""]
+    L.append(f"Open deltas ({s['open_deltas']}) — unfolded lessons by competency:")
+    for comp, entries in d["open_deltas"]["by_competency"].items():
+        for e in entries:
+            L.append(f"  - [{comp}] {e['text']}  [{e['task']}]")
+    L.append("")
+    L.append(f"Waivers ({s['waivers']}) — open RISK-ACCEPTED, soonest expiry first:")
+    for w in d["waivers"]:
+        L.append(f"  - {w['slug']}: {w['owner']} · {w['ticket']} · expires {w['expires']}")
+    L.append("")
+    _live_retros = sum(1 for r in d["retros"] if r["tier"] == "live")
+    _cons_retros = s["retros"] - _live_retros
+    L.append(f"RETRO records ({s['retros']}: {_live_retros} live · {_cons_retros} consolidated) — "
+             f"milestones: {s['milestones_live']} live · "
+             f"{s['milestones_consolidated']} represented by RETRO record:")
+    for r in d["retros"]:
+        L.append(f"  - {r['milestone']} [{r['tier']}]: {r['path']} ({r['carried_deltas']} carried)")
+    L.append("")
+    L.append(f"Verify residue — gate records ({s['residue_gates']}, RISK-ACCEPTED/HARD-STOP):")
+    for g in d["residue_gates"]:
+        L.append(f"  - {g['slug']}: {g['gate']}")
+    L.append(f"Verify residue — disclosed §6 lines ({s['residue_disclosed']}):")
+    for r in d["residue_disclosed"]:
+        L.append(f"  - {r['slug']}: {r['line']}")
+    L.append("")
+    L.append(f"Coverage gaps ({s['coverage_gaps']}) — PROXY (monitor not declared; §7 Watch unfilled):")
+    for c in d["coverage_gaps"]:
+        L.append(f"  - {c['slug']}")
+    print("\n".join(L))
+
+
 def cmd_deltas(args: argparse.Namespace) -> None:
     """Read-only: report all open lessons learned grouped by competency.
 
@@ -2561,6 +2769,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     ps = sub.add_parser("stage", help="set the project stage")
     ps.add_argument("stage", choices=STAGES)
+    ps.add_argument("--force", action="store_true",
+                    help="override the →production roadmap guard (stage_no_roadmap)")
     ps.set_defaults(func=cmd_stage)
 
     pst = sub.add_parser("status", help="print where the project is (resume point)")
@@ -2604,6 +2814,13 @@ def build_parser() -> argparse.ArgumentParser:
                          help="read-only report: open lessons learned grouped by competency")
     pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pdt.set_defaults(func=cmd_deltas)
+
+    pgr = sub.add_parser("graduation-report",
+                         help="read-only: gather the MVP loop's evidence (deltas · waivers · RETROs · "
+                              "residue · coverage gaps) for a graduation interview — gathers, never judges")
+    pgr.add_argument("--json", action="store_true", help="emit the frozen JSON facts interface")
+    pgr.add_argument("--plain", action="store_true", help="ASCII/pipe-safe text (output is plain by default)")
+    pgr.set_defaults(func=cmd_graduation_report)
 
     pau = sub.add_parser("audit",
                          help="read-only: verify recorded human decision points left well-formed records "

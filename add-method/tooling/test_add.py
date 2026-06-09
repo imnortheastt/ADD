@@ -102,9 +102,15 @@ class AddToolTest(unittest.TestCase):
 
     # --- stage ---
     def test_stage_change(self):
+        # v22 graduate-guide: the →production flip is now GUARDED (it needs ≥1 production
+        # milestone — a roadmap), so this bare-flip mechanic is asserted on a NON-production
+        # stage; the guarded production path lives in test_graduate_guard.py. This is a
+        # precondition-change (the old premise — an unguarded production flip — no longer
+        # holds), NOT a weakening: the flip mechanic is still proven, just on a stage the
+        # transition guard does not gate.
         self._run("init")
-        self._run("stage", "production")
-        self.assertEqual(self._state()["stage"], "production")
+        self._run("stage", "poc")
+        self.assertEqual(self._state()["stage"], "poc")
 
     # --- find_root walks up ---
     def test_find_root_from_subdir(self):

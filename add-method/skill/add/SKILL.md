@@ -97,6 +97,12 @@ When a milestone's tasks are all done but its **goal** (the `MILESTONE.md` exit 
 yet met, `milestone-done` holds the milestone open — read `loop.md` for the dynamic loop that turns
 open deltas + extras into the next tasks, proposed by you and confirmed by the human, until the goal is met.
 
+When `add.py status` prints **`MVP covered → propose graduation`** (every milestone done AND the
+stage-goal-criteria all `[x]`), the project is ready to graduate its stage — read `graduate.md` for the
+orchestration: gather `graduation-report` analytics → co-specify interview → draft ≥1 production
+milestone → human confirm → then (and only then) `stage production`. The flip is guarded
+(`stage_no_roadmap`) and is the FINAL step — never a bare label change.
+
 ## Non-negotiable rules (from the method)
 
 <constraints>
@@ -130,7 +136,9 @@ The steps never change; their depth does. Read the stage from `add.py status`:
 - **prototype** — run light; code is throwaway; design/experience is the point.
 - **poc** — run contract/tests/build deeply on the single riskiest slice only.
 - **mvp** — full flow, narrow scope, light observation.
-- **production** — every step at full rigor + the observe loop.
+- **production** — every step at full rigor + the observe loop. Reach it via the graduation
+  orchestration (`graduate.md`) when status shows `MVP covered → propose graduation`, never a bare
+  `stage production` flip — the transition is guarded behind a human-confirmed roadmap.
 
 ## The method rationale
 
