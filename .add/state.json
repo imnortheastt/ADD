@@ -475,7 +475,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-09T13:48:25+00:00",
+  "updated": "2026-06-09T14:04:52+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -744,7 +744,8 @@
         "graduate-guide",
         "stage-book-align"
       ],
-      "archived": "2026-06-09"
+      "archived": "2026-06-09",
+      "compacted": "2026-06-09"
     },
     {
       "slug": "v23",
