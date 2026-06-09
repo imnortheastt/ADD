@@ -1,0 +1,44 @@
+{
+  "milestone": {
+    "title": "V23",
+    "goal": "Every human decision gate presents a transparent synthesized report \u2014 the goal it serves, what's been achieved toward it, and the plan ahead \u2014 so the human confirms with full sight of the work's arc, not a local snapshot.",
+    "stage": "mvp",
+    "status": "done",
+    "created": "2026-06-09T06:23:00+00:00",
+    "updated": "2026-06-09T12:40:34+00:00"
+  },
+  "tasks": {
+    "report-arc": {
+      "title": "Enrich report-template.md with the goal\u2192achievement\u2192plan decision arc",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v23",
+      "depends_on": [],
+      "created": "2026-06-09T06:24:25+00:00",
+      "updated": "2026-06-09T07:47:41+00:00"
+    },
+    "arc-gate-wiring": {
+      "title": "Wire every human-gate path to render the decision arc",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v23",
+      "depends_on": [
+        "report-arc"
+      ],
+      "created": "2026-06-09T08:33:56+00:00",
+      "updated": "2026-06-09T11:32:57+00:00"
+    },
+    "arc-book-align": {
+      "title": "Align the book + GLOSSARY with the decision arc",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v23",
+      "depends_on": [
+        "report-arc"
+      ],
+      "created": "2026-06-09T11:42:33+00:00",
+      "updated": "2026-06-09T12:32:53+00:00"
+    }
+  },
+  "archived_at": "2026-06-09T13:48:22+00:00"
+}
