@@ -36,6 +36,8 @@
 
 **Decision point** (formerly "seam") — a place where the flow stops for human judgment: the contract-freeze approval (the one approval), an escalated verify gate, intake confirmation, milestone close. The machine layer keeps the legacy name: the `--json` owner enum `seam`, the decide-digest key `seam`, and the `seam-audit` CI job.
 
+**The decision arc** — the three engine-sourced lines a gate report opens with at every **decision point**: `goal:` the milestone goal the work serves · `done:` the achievement, the proven progress toward it (the gate reports render this line as `done`) · `plan:` what comes next. What `done` reports adapts per gate (verify: tests + evidence · milestone close: exit-criteria met · intake: the request sized) while the three-part shape stays constant. Rendered first, above the report's summary, so the human confirms with sight of the whole trajectory, not a local snapshot. Engine-sourced like all evidence — goal · done · plan are pulled from `add.py` output, never re-typed. Presentation only: it never adds a gate or changes a `PASS` / `RISK-ACCEPTED` / `HARD-STOP` / freeze outcome. The report it opens is the chat report a person reads at a decision point — distinct from the three Test/Quality/Risk reports a verify gate produces ([11 Governance](./11-governance.md)). See the `add` skill's `report-template.md`.
+
 **Specification bundle** (formerly "the one-approval front") — §1–§4 of a task (spec · scenarios · contract · failing tests) drafted by the AI as one piece and approved by a person **once**, at the contract freeze. Rejecting any part returns the whole bundle to draft. The single approval it carries is the bundle approval.
 
 **Retrospective consolidation** (formerly "the fold / fold ritual") — the milestone-close (or on-demand) step where a person gathers `open` lessons learned, confirms each, and the AI writes them append-only into the versioned foundation, bumping `foundation-version:`. The AI never self-approves a consolidation. The machine names keep their names: `fold.md`, the `folded` delta status, and `add.py deltas`.
@@ -58,9 +60,15 @@
 
 **Stage** — one pass through the flow at a chosen depth: Prototype, Proof of Concept, MVP, or Production-Ready.
 
+**Stage graduation** — the orchestration loop that proposes the move to the next **stage** as a human-confirmed roadmap, never a bare flip; the 4th scope level after setup · intake · milestone-loop. The cue is every milestone `done` with the **stage-goal-criteria** all `[x]`; the flow is gather **graduation analytics** → interview *what production means here* → draft ≥1 production milestone → human confirms → `add.py stage production` as the final step. The →production flip is guarded: it refuses with `stage_no_roadmap` (a tally, not a readiness judgment) until ≥1 production milestone exists; `--force` overrides. Lives in the `add` skill's `graduate.md`.
+
+**Graduation analytics** — the five record-sets `add.py graduation-report` clusters from the whole MVP loop for the graduation interview: open deltas by competency · open RISK-ACCEPTED waivers by expiry · RETRO records · verify residue · observe-loop coverage gaps. It gathers, never judges — there is no readiness verdict, only the records the human reasons from (gather-not-judge).
+
+**Stage-goal-criteria** — the human-authored `[x]` checklist in `PROJECT.md` that defines "MVP covered" for this project; when every milestone is `done` and these are all checked, `add.py status` prints the graduation cue. Authored by the human (judgment), never inferred by the engine.
+
 **Baseline approval** (formerly "the lock-down") — the single human gate ending autonomous setup: an explicit yes that freezes the foundation, first scope, and first contract together; runs as `add.py lock --by <name>`.
 
-**Scope level** (formerly "altitude") — the granularity a decision lives at: intake level (request → versioned scope) · milestone level · setup/foundation level · task level. One ⚠-assumption notation is shared across every scope level.
+**Scope level** (formerly "altitude") — the granularity a decision lives at: intake level (request → versioned scope) · milestone level · setup/foundation level · task level. (A cross-stage decision lives one level out, at the **stage-graduation** loop — which `graduate.md` also numbers as a scope level; see **Stage graduation**.) One ⚠-assumption notation is shared across every scope level.
 
 **Autonomy level** (formerly "autonomy dial") — the per-task setting (`autonomy: auto | conservative`) choosing who resolves Verify; high-risk scope refuses an unguarded `auto`.
 
