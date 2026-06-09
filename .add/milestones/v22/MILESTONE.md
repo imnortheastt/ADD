@@ -65,18 +65,18 @@ Out: the production milestones THEMSELVES (the hardening work — SLOs, rollback
 - [x] stage-book-align      depends-on: graduate-guide                             — align docs/10 (stages) + GLOSSARY so the stage-graduation scope level reads consistently with the three existing scope levels (slug `stage-book-align`: declared `book-align` collided with the done v12 task)
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] With all milestones `done` AND the stage-goal-criteria all `[x]`, `add.py status` emits a
+- [x] With all milestones `done` AND the stage-goal-criteria all `[x]`, `add.py status` emits a
       `MVP covered → propose graduation` cue; before that it stays silent — existing status output
       + exit codes byte-unchanged   (← stage-goal-criteria)
-- [ ] A project with no stage-goal-criteria block behaves exactly as today (no cue) — grandfathered,
+- [x] A project with no stage-goal-criteria block behaves exactly as today (no cue) — grandfathered,
       zero behavior change   (← stage-goal-criteria)
-- [ ] `add.py graduation-report` produces a clustered production-readiness report from existing
+- [x] `add.py graduation-report` produces a clustered production-readiness report from existing
       records, naming each evidence source (deltas · waivers+expiry · RETROs · residue · coverage
       gaps); read-only, judges nothing; `--json` is the stable facts seam   (← graduation-analytics)
-- [ ] `graduate.md` drives the full orchestration end-to-end and the stage NEVER reaches
+- [x] `graduate.md` drives the full orchestration end-to-end and the stage NEVER reaches
       `production` without a human-confirmed roadmap of ≥1 production milestone; the flip is the
       orchestration's final recorded step   (← graduate-guide)
-- [ ] SKILL routes to `graduate.md` on the cue; the "Depth by stage" lines point at the
+- [x] SKILL routes to `graduate.md` on the cue; the "Depth by stage" lines point at the
       orchestration, not just a depth hint   (← graduate-guide)
-- [ ] docs/10 + GLOSSARY describe stage-graduation, graduation analytics, and stage-goal-criteria
+- [x] docs/10 + GLOSSARY describe stage-graduation, graduation analytics, and stage-goal-criteria
       consistently with setup/intake/loop   (← stage-book-align)

@@ -514,7 +514,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-09T05:06:29+00:00",
+  "updated": "2026-06-09T05:34:40+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -624,9 +624,9 @@
       "title": "Stage Graduation",
       "goal": "When the MVP is covered, ADD proposes the move to production as an analytics-driven, interview-led roadmap of milestones the human confirms before the stage ever advances.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-08T15:35:55+00:00",
-      "updated": "2026-06-08T15:35:55+00:00"
+      "updated": "2026-06-09T05:34:40+00:00"
     }
   },
   "active_milestone": "v22",
