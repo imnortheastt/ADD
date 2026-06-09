@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "stage-book-align",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,49 +472,10 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
-    },
-    "stage-goal-criteria": {
-      "title": "Stage-goal-criteria block + status graduation cue",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v22",
-      "depends_on": [],
-      "created": "2026-06-08T15:49:04+00:00",
-      "updated": "2026-06-08T16:35:55+00:00"
-    },
-    "graduation-analytics": {
-      "title": "Read-only graduation-report: cluster MVP-loop evidence (gather, not judge)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v22",
-      "depends_on": [],
-      "created": "2026-06-08T16:49:29+00:00",
-      "updated": "2026-06-09T02:13:36+00:00"
-    },
-    "graduate-guide": {
-      "title": "graduate.md orchestration: cue \u2192 analytics \u2192 interview \u2192 production roadmap \u2192 confirmed flip",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v22",
-      "depends_on": [
-        "stage-goal-criteria",
-        "graduation-analytics"
-      ],
-      "created": "2026-06-09T02:24:28+00:00",
-      "updated": "2026-06-09T03:07:43+00:00"
-    },
-    "stage-book-align": {
-      "title": "Align docs/10 + GLOSSARY: stage-graduation reads consistently with setup/intake/loop",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v22",
-      "depends_on": [],
-      "created": "2026-06-09T03:47:54+00:00",
-      "updated": "2026-06-09T05:06:29+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-09T05:34:40+00:00",
+  "updated": "2026-06-09T06:09:57+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -619,17 +580,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "v22": {
-      "title": "Stage Graduation",
-      "goal": "When the MVP is covered, ADD proposes the move to production as an analytics-driven, interview-led roadmap of milestones the human confirms before the stage ever advances.",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-08T15:35:55+00:00",
-      "updated": "2026-06-09T05:34:40+00:00"
     }
   },
-  "active_milestone": "v22",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -780,6 +733,18 @@
       ],
       "archived": "2026-06-08",
       "compacted": "2026-06-08"
+    },
+    {
+      "slug": "v22",
+      "title": "Stage Graduation",
+      "tasks": 4,
+      "task_slugs": [
+        "stage-goal-criteria",
+        "graduation-analytics",
+        "graduate-guide",
+        "stage-book-align"
+      ],
+      "archived": "2026-06-09"
     }
   ]
 }
