@@ -322,19 +322,19 @@ Spec delta for the next loop: the **Decision point** glossary term still lists 4
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-  - [ADD · open] the book has FOUR mirror trees (root · canon · bundle · dogfood), and an APPENDIX's
+  - [ADD · folded] the book has FOUR mirror trees (root · canon · bundle · dogfood), and an APPENDIX's
     root copy is guarded by NO test (only chapters are, via test_inline_citations + test_flow_diagram);
     a docs task must sync all 4 by hand and md5-confirm the appendix root leg (evidence: the glossary
     root copy stayed stale through the v1 build with no test catching it; the chapter root copy was
     caught RED by test_inline_citations)
-  - [SDD · open] a presence fence is not a coverage fence — asserting a term EXISTS does not assert
+  - [SDD · folded] a presence fence is not a coverage fence — asserting a term EXISTS does not assert
     WHERE its claim holds; a consistency claim ("at every decision point") needs a test reconciling it
     against ground truth (evidence: 690 OK while the chapter named 5 of 7 wired gates; v2 added
     test_chapter_spans_all_wired_gates to fence the gap class)
-  - [ADD · open] dogfooding the deliverable at its own gate surfaced the gap the tests missed — the
+  - [ADD · folded] dogfooding the deliverable at its own gate surfaced the gap the tests missed — the
     verify report's `done:` arc line forced an honest 7-vs-5-vs-4 reconciliation no assertion checked
     (evidence: the milestone's own theme — transparent gates — exposed its own undocumented gate;
     advisor-confirmed at the verify gate)
-  - [ADD · open] the change-request is the method working, not a failure — a frozen-contract gap caught
+  - [ADD · folded] the change-request is the method working, not a failure — a frozen-contract gap caught
     at verify was fixed via reopen→contract→re-freeze (v1→v2), never a silent build edit (evidence:
     phase verify→contract→re-freeze @ v2 → re-verify, 691 OK; §3 carries both freeze stamps)

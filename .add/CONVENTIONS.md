@@ -390,3 +390,57 @@ Architecture:
   uniqueness (or exact-count) assert therefore closes a REAL gap for the add-case — not optional hardening.
   The headline lesson a 4th time: `len(set)==27` is necessary, never sufficient, blind to the mutation no test
   names. [references-appendix — folded foundation-version 21; sharpened by advisor re-check]
+- (ADD) **The book has FOUR mirror trees — root · canonical · bundle · dogfood — and an APPENDIX's root copy is
+  guarded by NO test.** Only CHAPTERS are cross-tree guarded (test_inline_citations + test_flow_diagram span all
+  four incl. the repo-root published copy); an appendix's root copy drifts silently. A docs task syncs all four
+  by hand and md5-confirms the appendix root leg — bundle-green is false comfort. Extends "Dogfood parity" /
+  the mirror-clause-enumerates-ALL-copies family. [arc-book-align — folded foundation-version 22]
+- (ADD) **Dogfooding a rule at its own gate is its first live proof — and catches what no test asserts.** Rendering
+  the decision arc · running the reconcile rule · presenting a presentation-contract AT the very gate that ships
+  it surfaced gaps every green suite missed: the 5-of-7 gate-coverage gap, the verbatim reconcile-rule
+  duplication, the digest-vs-prose mismatch. Practice the rule on its own gate the session it lands — reinforces
+  "a method-defining task dogfoods its own rule". [report-arc + arc-gate-wiring + arc-book-align — folded foundation-version 22]
+- (ADD) **The change-request is the method working, not a failure.** A frozen-contract gap caught at verify is
+  fixed via reopen→contract→re-freeze (the live-run form is `add.py phase contract`; `reopen` is for DONE tasks),
+  never a silent build edit; the §3 carries both freeze stamps. Reinforces "a frozen guard is fixed in the BUILD
+  output / route it as a human-ratified change-request". [arc-book-align v1→v2 — folded foundation-version 22]
+- (ADD) **A single-source rule is POINTED-to, never restated — and no presence test catches a verbatim restatement.**
+  The reconcile rule folded into report-template.md was duplicated verbatim into 6-verify.md; only review caught it.
+  A "traceable everywhere, defined once" design needs a no-restate lint or parity check, not a presence assertion
+  (words-exist≠method-works, applied to single-sourcing). [arc-gate-wiring — folded foundation-version 22]
+- (ADD) **To prove "X can NEVER reach state S", enumerate every WRITER of S — not the string-callers of the obvious
+  command.** Grep every assignment to the guarded state field; a transition guard's completeness IS the full set of
+  mutators (here: exactly two writers — `cmd_init` declared-at-init boundary + `cmd_stage` guard). [graduate-guide — folded foundation-version 22]
+- (ADD) **A multi-source report declares ONE traversal basis per tier (filesystem OR state), or the sets silently
+  diverge under archival.** `open_deltas` globs `tasks/*` while residue/coverage iterate `state["tasks"]`; they agree
+  only while every archived milestone is compacted out of `tasks/`. Same archive seam as the done-tally blind spot
+  (§Domain). Pin each tier's source-of-truth in the contract or document the divergence. [graduation-analytics — folded foundation-version 22]
+- (ADD) **A gate report's ⚠ FLAGS must reconcile with `add.py report --decide`'s open-item count before stamping —
+  fix the data (the TASK.md markers), never the sentence.** Prose calling an item "resolved" while the digest still
+  counts it open is the un-transparent gate the decision arc exists to kill. Now SHIPPED as report-template.md's
+  reconcile rule. [report-arc — folded foundation-version 22]
+- (ADD) **A cross-surface term can carry two axes — disambiguate before unifying, keep both senses + one bridging
+  clause.** "scope level" (decision-granularity vs orchestration-loop) and "report" (the chat report at a decision
+  point vs the verify gate's three Test/Quality/Risk reports) each carry two senses; never merge the lists.
+  [stage-book-align + arc-book-align "report" polysemy — folded foundation-version 22]
+- (ADD) **Reinterpreting or closing a contract sweeps the LOADED foundation prose for the stale shape, not just the
+  test guard.** A green suite cannot catch prose drift (tests don't exercise docs); add "sweep loaded-layer prose
+  for the old shape" to the change-request checklist (close-gap-before-gate). Reinforces stale-guard-sweep. [stage-goal-criteria — folded foundation-version 22]
+- (TDD) **A presence / marker / structural test is necessary-not-sufficient — it pins vocabulary or existence, never
+  that the CLAIM holds or the behavior works.** A presence fence ("the term exists") is not a coverage fence ("the
+  claim 'every X' is true" — the chapter named 5 of 7 wired gates, 690-green); a prose-marker test pins steps NAMED,
+  not orchestration DRIVEN; a gather-not-judge invariant is asserted STRUCTURALLY (no verdict field in the schema),
+  never via a word denylist that lags the contract. The human SEMANTIC read + the engine seam carry what the test is
+  blind to — recurring face of "words-exist≠method-works". [arc-book-align + graduate-guide + graduation-analytics — folded foundation-version 22]
+- (TDD) **A new guard that invalidates an existing test's PREMISE is adapted by SPLITTING, never loosening — and
+  disclosed at the gate.** Move the old guarantee to where it still holds (the bare flip → a non-guarded stage), add
+  the new guarantee (refuse@0 / succeed@≥1 / --force), surface the touched files as a strictly-strengthening
+  amendment for the human to judge. Reinforces "a strictly-strengthening in-build amendment is legal but never silent". [graduate-guide — folded foundation-version 22]
+- (SDD) **How-we-author contracts — five v22 sharpenings.** (1) A guarded transition must NAME its at-creation door
+  (`init --stage`) as a `declared_at_init` boundary, or the "NEVER reaches S" silently leaks through a second door.
+  (2) A data-shape-bounded reject clause NAMES its trigger (the first archived RISK-ACCEPTED/HARD-STOP) so it
+  re-opens as a change-request the day the shape stops being empty, instead of under-reporting. (3) An assumption
+  resolved-by-DESIGN yet milestone-spanning gets a *resolved-with-forward-watch* state (a §7 monitor), not a bare
+  `[x]`/`[ ]`/⚠. (4) A MILESTONE-declared task slug is checked against existing `tasks/` (and archived) dirs before
+  create — a collision would overwrite a done task. (5) Contract-freeze greps for the PRIOR contract that froze an
+  extended `--json`/state seam and states additive-vs-closed explicitly. [graduate-guide + graduation-analytics + report-arc + stage-book-align + stage-goal-criteria — folded foundation-version 22]
