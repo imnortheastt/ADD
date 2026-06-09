@@ -77,9 +77,9 @@ escalates** (HARD-STOP); so do concurrency / architecture residue and `conservat
 See `run.md`.
 
 Whenever you present a decision point to the human in chat (intake · bundle approval · gate ·
-milestone close), follow `report-template.md` — SUMMARY → DECISION → ⚠ FLAGS →
-EVIDENCE → NEXT, engine-sourced facts, show-before-ask, never pre-stamp a decision point —
-and the question is a summary, never the artifact.
+milestone close), follow `report-template.md` — open with the ARC (goal · done · plan,
+engine-sourced), then SUMMARY → DECISION → ⚠ FLAGS → EVIDENCE → NEXT, show-before-ask, never
+pre-stamp a decision point — and the question is a summary, never the artifact.
 
 In **observe**, also emit **lessons learned** — learnings tagged by which of the five
 (`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.

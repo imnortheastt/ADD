@@ -8,6 +8,46 @@ replacement for the digest.
 Use it every time you report at or near a decision point: an intake proposal, a
 bundle approval, a verify gate, a task completion, a milestone close.
 
+## The decision arc — rendered first, above the five blocks
+
+Every report at a human gate opens with the **ARC** — three labelled lines that
+place the decision in the work's whole arc, so the human confirms with sight of
+where this is going, not just the step in front of them. Render it first, then a
+separator, then the unchanged five blocks below:
+
+```
+ARC  goal: <the milestone / project goal this decision serves>
+     done: <proven progress — tasks done · exit-criteria met · what this gate proves>
+     plan: <this gate → the next step → the goal>
+```
+
+- **goal** — the milestone or project goal the decision serves, read from the
+  `m-goal` line in `add.py status`; never re-typed from memory.
+- **done** — proven progress only: exit-criteria met/total and tasks done from
+  the rollup, plus what this gate proves. An honest fact, never a hope.
+- **plan** — this gate → the next step → the goal, mirroring the rollup's
+  `DECIDE NEXT` line.
+
+The arc is required at every human gate: **baseline-lock · contract-freeze ·
+verify · intake · scope · milestone-close · graduation**. The three labels stay
+constant; their content adapts to the gate. The arc is presentation only — it
+adds no gate and changes no PASS / RISK-ACCEPTED / HARD-STOP / freeze outcome.
+
+Its facts are engine-sourced, exactly like EVIDENCE below: goal = `m-goal` ·
+done = exit-criteria met/total + tasks done · plan = `DECIDE NEXT`. If your arc
+and `add.py` output disagree, the engine wins — fix the arc, not the engine.
+
+### Per-gate examples — one shape, gate-specific content
+
+- **verify** — `goal:` ship the decision arc · `done:` report-arc tests 6/6
+  green, gate ready · `plan:` PASS this gate → wire the arc into every gate → goal.
+- **contract-freeze** — `goal:` … · `done:` bundle drafted, lowest-confidence
+  flag surfaced · `plan:` freeze §3 → build → goal.
+- **milestone-close** — `goal:` … · `done:` exit-criteria 3/3 met, all tasks
+  done · `plan:` close → archive → the next milestone.
+- **intake** — `goal:` the sized request · `done:` classified new-major,
+  rationale stated · `plan:` create the milestone → first contract → goal.
+
 ## The five blocks, in order
 
 ```
@@ -44,6 +84,11 @@ report above, the question carries intent + what "yes" means + the flag count.
 - **Summary-first.** Never bury the decision under a task list or a diff.
 - **Show before ask.** Render the artifact (digest · diff · report) before any
   approval question; the human decides on what they can see.
+- **Reconcile the count.** Before the ask, your ⚠ FLAGS must reconcile with
+  `add.py report --decide`'s open-item count. If your prose calls an item
+  resolved while the digest still counts it open, the engine wins — fix the data
+  (the TASK.md markers the digest reads), not the sentence. A report whose flag
+  count disagrees with the engine is the un-transparent gate the ARC exists to close.
 - **Never pre-stamp a human decision point.** Freeze / gate / lock fields stay DRAFT or
   blank until the answer returns: show → ask → stamp → advance. An artifact
   must never claim an approval that has not happened.
