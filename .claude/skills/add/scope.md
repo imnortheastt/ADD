@@ -36,7 +36,9 @@ Diverge seeds (pick the live ones):
 - **First slice** — which task unblocks the rest? (breadth-first order)
 
 Rank assumptions lowest-confidence first; the top 1–2 get the flag the human reads at confirm:
-`⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>`.
+`⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>`. Present the draft via
+`report-template.md` — open with the ARC (goal · done · plan): the goal this milestone serves,
+what is already covered, and the plan its task list lays out.
 
 ## Drafting a good MILESTONE.md (section by section)
 

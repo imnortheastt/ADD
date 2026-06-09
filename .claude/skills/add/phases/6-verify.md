@@ -49,6 +49,10 @@ An unfilled Deep checks block is a **shallow verify**, not a PASS.
 
 ## Record exactly one outcome (no silent pass)
 
+When you present this gate to the human, open with the ARC (goal · done · plan) per
+`report-template.md`, and reconcile its FLAGS with `add.py report --decide`'s open-item count
+before the ask — per that file's reconcile rule (verify is where a flag-vs-digest mismatch bites).
+
 | Outcome | When |
 |---------|------|
 | `PASS` | all checks met |

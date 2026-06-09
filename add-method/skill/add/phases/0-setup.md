@@ -68,7 +68,8 @@ tag thin or inferred answers `guessed`.
 
 ## 4 · The one human gate — the baseline approval
 
-Present `SETUP-REVIEW.md` lowest-confidence-first (the `guessed` rows are what the human must actually check). They
+Open the report with the ARC (goal · done · plan) per `report-template.md`, then present
+`SETUP-REVIEW.md` lowest-confidence-first (the `guessed` rows are what the human must actually check). They
 confirm **once** — an explicit yes to the baseline approval itself, in conversation; ambient agreement mid-stream is
 not a confirmation. On that recorded confirmation, you run the lock with their name:
 

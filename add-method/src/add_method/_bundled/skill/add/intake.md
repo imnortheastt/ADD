@@ -33,6 +33,9 @@ First ask "does this change already-frozen scope?" → if yes, it is a `change-r
 
 ## What you emit (the proposal)
 
+Present the proposal to the human via `report-template.md` — open with the ARC (goal · done ·
+plan): the goal this request serves, what is already covered, and the plan the chosen bucket sets up.
+
 For every request, emit ONE of:
 
 - **a classification** — `{ bucket, rationale, command }` — where `rationale` names WHY

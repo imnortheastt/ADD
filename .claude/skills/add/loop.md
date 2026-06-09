@@ -39,6 +39,8 @@ When every task is done but the goal is not, `add.py status` shows
 5. **Repeat** until the work the goal needs is done.
 6. **Close** — when the goal is genuinely met, check the exit-criteria boxes in `MILESTONE.md`,
    then `add.py milestone-done <slug>` succeeds (then consolidate the open deltas and archive).
+   Present the close via `report-template.md` — open with the ARC (goal · done · plan): the
+   milestone goal, the exit-criteria met that prove it, and the plan beyond the close.
 
 ## Reopen is the verb; this loop is the trigger
 
