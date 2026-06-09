@@ -82,6 +82,20 @@ The durable thing is never the code:
 
 The living documentation thickens as you move right: a prototype leaves you a validated design; a proof of concept adds a proven approach and a contract; the MVP adds real, kept code. By production, you are hardening, not rebuilding.
 
+### Graduating between stages
+
+Moving up a stage — most consequentially MVP → Production — is its own scope level, the fourth after setup, intake, and the milestone loop. It is *not* a label someone types: a project earns production through a human-confirmed roadmap of the hardening work, never through a bare flip. The `add` skill drives this in `graduate.md`; the shape is five steps.
+
+**The cue.** When every milestone is `done` *and* the human's **stage-goal-criteria** in `PROJECT.md` are all `[x]`, `add.py status` prints `→ MVP covered → propose graduation`. Until both tallies complete, nothing here applies — a project with no stage-goal-criteria block behaves exactly as before.
+
+1. **Gather the analytics.** `add.py graduation-report` clusters the whole MVP loop's evidence into five labeled record-sets — open deltas by competency, open RISK-ACCEPTED waivers by expiry, RETRO records, verify residue, and observe-loop coverage gaps. It *gathers, never judges*: there is no readiness verdict, only the records you reason from.
+2. **Interview.** Synthesize *what production means here* with the human, using those records as the agenda. This synthesis is the judgment the engine refuses to make.
+3. **Draft the roadmap.** For each production outcome the interview surfaces, draft a production milestone with the existing command — `add.py new-milestone <slug> --stage production --goal "…"` — and write its exit criteria. The roadmap is **≥1** milestone; the hardening work itself is what those milestones contain.
+4. **Human confirms.** The human accepts, edits, or declines each draft. Nothing is created on an unconfirmed draft.
+5. **Flip — the final step.** Only now run `add.py stage production`.
+
+**The floor the engine enforces.** `add.py stage production` is guarded: it refuses with `stage_no_roadmap` (non-zero exit, state byte-unchanged) when no milestone has `stage: production`. The check is a *tally* — does a production-roadmap record exist? — never a readiness judgment, mirroring the milestone goal-gate. `--force` overrides it for grandfathered or edge cases; use it deliberately, not as the normal path. The guard is on the `→production` transition only; flips to prototype/poc/mvp are unchanged. The engine never advances the stage on its own — it gathers, counts, and holds the floor while the human judges and confirms.
+
 ---
 
 ## Parallel streams (opt-in)
