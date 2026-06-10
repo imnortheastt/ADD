@@ -1,0 +1,35 @@
+{
+  "milestone": {
+    "title": "Goal-auto-ready \u2014 goal-clarity earns autonomy",
+    "goal": "a goal is auto-ready when its acceptance criteria are concrete enough for the engine to self-verify the result against \u2014 so autonomy is earned by goal-clarity, not assumed (with auto seeded as the project default)",
+    "stage": "mvp",
+    "status": "done",
+    "created": "2026-06-10T12:03:05+00:00",
+    "updated": "2026-06-10T15:47:05+00:00"
+  },
+  "tasks": {
+    "init-auto-default": {
+      "title": "Project seeds autonomy: auto by default at init",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "goal-auto-ready",
+      "depends_on": [],
+      "created": "2026-06-10T12:03:05+00:00",
+      "updated": "2026-06-10T14:43:15+00:00",
+      "flag_verified": true
+    },
+    "goal-auto-ready-gate": {
+      "title": "Define + check an auto-ready goal (machine-checkable acceptance criteria)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "goal-auto-ready",
+      "depends_on": [
+        "init-auto-default"
+      ],
+      "created": "2026-06-10T12:03:05+00:00",
+      "updated": "2026-06-10T15:45:32+00:00",
+      "flag_verified": true
+    }
+  },
+  "archived_at": "2026-06-10T16:00:16+00:00"
+}
