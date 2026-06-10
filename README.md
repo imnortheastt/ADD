@@ -43,13 +43,12 @@ From your project root (an empty folder or an existing repo), pick either ecosys
 
 ```bash
 # Node / npm
-npx @pilotspace/add init --name "My App" --stage prototype
+npx @pilotspace/add init
 ```
 
 ```bash
 # Python / pip
-pip install pilotspace-add
-pilotspace-add init --name "My App" --stage prototype
+pip install pilotspace-add && pilotspace-add init
 ```
 
 Pick the `--stage` that matches your intent — `prototype` · `poc` · `mvp` ·
