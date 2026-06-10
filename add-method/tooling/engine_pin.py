@@ -10,4 +10,4 @@ it can never detect drift. The literal was recorded at the commit that first
 introduced it and is updated only by a deliberate, human-approved task.
 """
 
-ENGINE_MD5 = "c0c9329c68fae0116138da3708d4cb88"  # re-aimed @ explicit-autonomy-dial (3-mode level: guard widened to any lowered rung + check lint + status surface + auto seed)
+ENGINE_MD5 = "6009233ac98e4aa2743ecd891a80ec0d"  # re-aimed @ reader-anchor defect fix (declaration-token readers anchor to line-start or `·`-separator — a title/prose substring no longer fools the autonomy/risk guards)

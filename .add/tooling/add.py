@@ -549,16 +549,21 @@ def cmd_advance(args: argparse.Namespace) -> None:
 # header at the freeze. The engine then enforces the pure token contradiction: risk: high
 # WITHOUT a lowered autonomy rung (manual or conservative) is unguarded, and completion is
 # refused. Tokens are read from the header region (text before the first section heading)
-# with HTML comments stripped — a documentation comment is never a declaration.
-_RISK_HIGH_RE = re.compile(r"\brisk:\s*high\b")
+# with HTML comments stripped — a documentation comment is never a declaration. A token
+# counts ONLY at a DECLARATION position — line-start (optionally indented) or just after the
+# `·` slug-line separator — so a freeform H1 title or quoted prose that happens to contain
+# "risk: high" / "autonomy: <x>" is never mistaken for a declaration (a title substring must
+# not be able to fool the guard either way).
+_RISK_HIGH_RE = re.compile(r"(?:^|·)[ \t]*risk:[ \t]*high\b", re.MULTILINE)
 
 # the explicit 3-mode autonomy dial (task explicit-autonomy-dial): an ordered ladder
 # manual < conservative < auto, declared as a per-task `autonomy:` header token.
 _AUTONOMY_LEVELS = ("manual", "conservative", "auto")
-# \b (not ^) so an inline token on the slug line — `… · autonomy: conservative` — is
-# read exactly like the legacy guard did; the value stops at space/`<`/`#`/`|` so an
-# unfilled `<manual | … >` placeholder captures nothing and reads as UNSET.
-_AUTONOMY_LINE_RE = re.compile(r"\bautonomy:\s*([^\s<#|]+)")
+# anchored to a DECLARATION position — line-start `autonomy:` OR the inline slug-line form
+# `… · autonomy: conservative` (the `·`-preceded shape) — never a title/prose substring; the
+# value stops at space/`<`/`#`/`|` so an unfilled `<manual | … >` placeholder captures nothing
+# and reads as UNSET.
+_AUTONOMY_LINE_RE = re.compile(r"(?:^|·)[ \t]*autonomy:[ \t]*([^\s<#|]+)", re.MULTILINE)
 
 
 def _autonomy_level(hdr: str):
