@@ -137,14 +137,19 @@ How much a run may auto-gate is a **per-scope setting**, not a global switch (pr
 earned per scope). A task declares its level in its `TASK.md` header:
 
 ```
-autonomy: auto | conservative
+autonomy: manual | conservative | auto
 ```
 
-- **auto (the default)** — the run may auto-PASS when the evidence + residue checks above are
+An ordered ladder — `manual < conservative < auto` — declared once in the header and reviewed at the freeze:
+
+- **auto (the seeded default)** — the run may auto-PASS when the evidence + residue checks above are
   satisfied. Security still always escalates. This is the default starting point: a frozen contract
   flips the task into a self-driving run that converges and auto-gates on evidence.
 - **conservative** — the deliberate *lowering*: the run does all the work and converges, but STOPS at
   the verify gate for a human. Auto-PASS is disabled. Choose it wherever evidence is thin or risk is high.
+- **manual** — the strict floor: the human owns the verify gate and the engine never auto-resolves
+  (behaviourally the conservative floor with the explicit "I drive this decision; the AI proposes only"
+  name). Choose it for the highest-stakes scope; like `conservative`, it satisfies the high-risk guard.
 
 > **v7 reversal (recorded, not hidden).** Earlier the default was `conservative` and `auto` was the
 > earned exception; v7 flips this — `auto` is the default, `conservative` is the deliberate lowering.
@@ -154,7 +159,8 @@ autonomy: auto | conservative
 **The high-risk guard — `auto` is refused where it matters most.** The autonomy level is not a blank cheque. On a
 **high-risk or method-defining scope** — anything where a wrong-but-plausible result is expensive or
 hard to reverse (auth, money, data-loss paths, the method/trust-layer itself) — `auto` must be lowered
-to `conservative`; leaving it at `auto` there is the reject code **`unguarded_high_risk_auto`**. This
+to a stricter rung — `conservative` or `manual`; leaving it at `auto` there is the reject code
+**`unguarded_high_risk_auto`**. This
 closes the v6 dogfood gap, where the whole milestone ran at `auto` on the riskiest possible
 scope (defining the method) with no friction. The default is `auto` *for ordinary, well-tested scope*;
 high risk still earns a human gate.
@@ -163,7 +169,7 @@ Judging *what* is high-risk stays human — the scope declares **`risk: high`** 
 header where the autonomy level lives, reviewed at the freeze like every header line (the engine never
 classifies scope). **Since v14 the guard is mechanical for the declared case:**
 the engine refuses the declared combination — `add.py gate` will not complete (`PASS`/`RISK-ACCEPTED`) a task whose header
-carries `risk: high` without `autonomy: conservative` (error `unguarded_high_risk_auto`; `HARD-STOP`
+carries `risk: high` without a lowered level — `conservative` or `manual` (error `unguarded_high_risk_auto`; `HARD-STOP`
 always records — stopping is never blocked), and `add.py audit` flags the same code on a finished
 record whose header was tampered or whose GATE RECORD reviewer is the auto-gate — which CI enforces
 (audit-ci). The honest limit mirrors the audit's: an **undeclared** high-risk scope passes; declaring

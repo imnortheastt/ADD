@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "unflagged-freeze",
+  "active_task": "explicit-autonomy-dial",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -482,10 +482,20 @@
       "created": "2026-06-10T07:36:11+00:00",
       "updated": "2026-06-10T08:03:16+00:00",
       "flag_verified": true
+    },
+    "explicit-autonomy-dial": {
+      "title": "Explicit 3-mode autonomy dial (manual/conservative/auto)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "flag-first-freeze",
+      "depends_on": [],
+      "created": "2026-06-10T08:18:41+00:00",
+      "updated": "2026-06-10T11:04:46+00:00",
+      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-10T08:03:16+00:00",
+  "updated": "2026-06-10T11:04:46+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

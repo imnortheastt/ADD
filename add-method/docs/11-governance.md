@@ -21,6 +21,8 @@ The governing rule, restated from the principles: **operate only at the level yo
 
 The **per-scope default is auto-with-evidence behind a one-approval decision point**: the AI drafts the specification bundle, a human approves the frozen contract once, and the build auto-gates on evidence. You *lower* a scope toward draft-and-review or suggest wherever risk is high or evidence is thin — and a high-risk or method-defining scope is *always* lowered (it is never auto-run). The default sets where you start; review capacity and risk set where you stay.
 
+The engine expresses this per task as an explicit three-rung level — `autonomy: manual | conservative | auto`, an ordered ladder `manual < conservative < auto` declared in the `TASK.md` header and reviewed at the freeze. `auto` is auto-with-evidence behind the one approval (the seeded default); `conservative` is the deliberate lowering that keeps a person at the verify gate; `manual` is the strict floor where the human owns the gate and nothing auto-resolves. A high-risk or method-defining scope refuses an unguarded `auto` (`unguarded_high_risk_auto`) — it must be lowered to `conservative` or `manual`. The prose here and that engine token are one rule: prose ≡ enforcement.
+
 ## The gate-fail protocol and the three reports
 
 Every checkpoint produces three short reports — **Test** (does it pass?), **Quality** (is it well-made and conformant?), and **Risk** (what could go wrong, and who owns it?) — and resolves to exactly one outcome:

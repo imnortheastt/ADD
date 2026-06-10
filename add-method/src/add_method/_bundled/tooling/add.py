@@ -84,6 +84,7 @@ _GUIDE_END = "<!-- ADD:END -->"
 _FALLBACK_TASK = """# TASK: {title}
 
 slug: {slug} · created: {date} · stage: {stage}
+autonomy: auto
 phase: specify
 
 ## 1 · SPECIFY
@@ -543,14 +544,40 @@ def cmd_advance(args: argparse.Namespace) -> None:
     print(f"task '{slug}' phase {cur} -> {nxt}")
 
 
-# The mechanized high-risk guard (run.md, v14): judging WHAT is high-risk stays
-# human — a scope declares `risk: high` in its TASK.md header at the freeze. The
-# engine then enforces the pure token contradiction: risk: high WITHOUT
-# autonomy: conservative is unguarded, and completion is refused. Tokens are
-# read from the header region (text before the first section heading) with HTML
-# comments stripped — a documentation comment is never a declaration.
+# The mechanized high-risk guard (run.md, v14; widened by explicit-autonomy-dial):
+# judging WHAT is high-risk stays human — a scope declares `risk: high` in its TASK.md
+# header at the freeze. The engine then enforces the pure token contradiction: risk: high
+# WITHOUT a lowered autonomy rung (manual or conservative) is unguarded, and completion is
+# refused. Tokens are read from the header region (text before the first section heading)
+# with HTML comments stripped — a documentation comment is never a declaration.
 _RISK_HIGH_RE = re.compile(r"\brisk:\s*high\b")
-_AUTONOMY_CONSERVATIVE_RE = re.compile(r"\bautonomy:\s*conservative\b")
+
+# the explicit 3-mode autonomy dial (task explicit-autonomy-dial): an ordered ladder
+# manual < conservative < auto, declared as a per-task `autonomy:` header token.
+_AUTONOMY_LEVELS = ("manual", "conservative", "auto")
+# \b (not ^) so an inline token on the slug line — `… · autonomy: conservative` — is
+# read exactly like the legacy guard did; the value stops at space/`<`/`#`/`|` so an
+# unfilled `<manual | … >` placeholder captures nothing and reads as UNSET.
+_AUTONOMY_LINE_RE = re.compile(r"\bautonomy:\s*([^\s<#|]+)")
+
+
+def _autonomy_level(hdr: str):
+    """The declared autonomy rung from a TASK.md header region (HTML comments
+    already stripped by _task_header). Returns a member of _AUTONOMY_LEVELS, or
+    None when no `autonomy:` line is present (UNSET — an unfilled `<…>` placeholder,
+    whose value the regex declines, counts as unset), or "?" when a REAL token outside
+    the set was written (unknown). PURE."""
+    m = _AUTONOMY_LINE_RE.search(hdr)
+    if not m:
+        return None
+    tok = m.group(1).strip().lower()
+    return tok if tok in _AUTONOMY_LEVELS else "?"
+
+
+def _autonomy_lowered(hdr: str) -> bool:
+    """True iff the declared rung is high-risk-safe (manual or conservative). A
+    high-risk scope must be lowered to one of these; `auto` and UNSET are not."""
+    return _autonomy_level(hdr) in ("manual", "conservative")
 
 
 def _task_header(root: Path, slug: str) -> str:
@@ -588,10 +615,10 @@ def cmd_gate(args: argparse.Namespace) -> None:
         # COMPLETION (PASS / RISK-ACCEPTED) until the dial is lowered and a human
         # owns the gate. HARD-STOP is never blocked — stopping is always allowed.
         hdr = _task_header(root, slug)
-        if _RISK_HIGH_RE.search(hdr) and not _AUTONOMY_CONSERVATIVE_RE.search(hdr):
+        if _RISK_HIGH_RE.search(hdr) and not _autonomy_lowered(hdr):
             _die(f"unguarded_high_risk_auto: task '{slug}' declares risk: high "
-                 "without autonomy: conservative — lower the autonomy level in the TASK.md "
-                 "header; a human must own a high-risk gate (run.md guard)")
+                 "without a lowered autonomy level — set autonomy: manual or conservative in "
+                 "the TASK.md header; a human must own a high-risk gate (run.md guard)")
     if args.outcome == "RISK-ACCEPTED":
         # A waiver must be SIGNED: owner, ticket, expiry (glossary). Stored in state
         # so a later `check` can read/expire it. Refuse a partial waiver outright.
@@ -791,6 +818,10 @@ def cmd_status(args: argparse.Namespace) -> None:
               f"({m_tasks} task{'s' if m_tasks != 1 else ''})")
 
     print(f"active  : {active or '(none)'}")
+    # surface the active task's autonomy level (task explicit-autonomy-dial) so the human
+    # reads the throttle every session; "unset" when no explicit `autonomy:` line is present.
+    if active and active in tasks:
+        print(f"autonomy: {_autonomy_level(_task_header(root, active)) or 'unset'}")
     if not tasks:
         # First-run panel: a brand-new project's status is the moment a user is most
         # lost. When the setup is unlocked, the only correct next move is review+lock —
@@ -964,6 +995,16 @@ def cmd_check(args: argparse.Namespace) -> None:
             # the intake flow — NOT a failure. Names structure, never the act of intake.
             warnings.append((f"task '{slug}'", "is outside a milestone — size it via the /add "
                                                "intake flow (or attach with --milestone)"))
+        # autonomy level (task explicit-autonomy-dial): a REAL out-of-set token is a hard
+        # unknown_autonomy_level; a LIVE task (phase before done/observe) with no `autonomy:`
+        # line is implicit_autonomy — a WARN, never red. Done/observe predecessors are SKIPPED
+        # (a fresh live-only predicate, NOT the audit open-front skip) so the board never floods.
+        _alvl = _autonomy_level(_task_header(root, slug))
+        checks.append((_alvl != "?", f"task '{slug}' autonomy level recognized",
+                       "unknown_autonomy_level (token outside manual|conservative|auto)"))
+        if _alvl is None and t.get("phase") not in ("done", "observe"):
+            warnings.append((f"task '{slug}'", "has no explicit autonomy level (implicit_autonomy) "
+                             "— set `autonomy: manual|conservative|auto` in the header"))
         for dep in t.get("depends_on") or []:
             checks.append((dep in tasks or dep in archived_slugs,
                            f"task '{slug}' dep '{dep}' resolves", "unknown task"))
@@ -2421,9 +2462,9 @@ def _audit_findings(root: Path, state: dict) -> tuple[int, list[dict]]:
         # catches post-gate header tampering and auto-resolved high-risk gates.
         hdr = _task_header(root, slug)
         if _RISK_HIGH_RE.search(hdr):
-            if not _AUTONOMY_CONSERVATIVE_RE.search(hdr):
+            if not _autonomy_lowered(hdr):
                 f(slug, "unguarded_high_risk_auto",
-                  "risk: high declared but autonomy is not 'conservative'")
+                  "risk: high declared but autonomy is not lowered (manual or conservative)")
             elif rev and "auto-gate" in rev.group(1):
                 f(slug, "unguarded_high_risk_auto",
                   "risk: high task whose GATE RECORD reviewer is the auto-gate")

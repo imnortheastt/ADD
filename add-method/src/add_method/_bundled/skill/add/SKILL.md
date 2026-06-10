@@ -73,7 +73,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 contract freeze** (the decision point), presented lowest-confidence-first. See `run.md`.
 ‡ **Verify auto-gate (v6–v7).** Under `autonomy: auto` (the default) a run may auto-PASS on
 complete evidence — recorded as *auto-resolved*, an explicit PASS, not a skip. **Security always
-escalates** (HARD-STOP); so do concurrency / architecture residue and `conservative` autonomy.
+escalates** (HARD-STOP); so do concurrency / architecture residue and a lowered autonomy level (`conservative` / `manual`).
 See `run.md`.
 
 Whenever you present a decision point to the human in chat (intake · bundle approval · gate ·
@@ -90,7 +90,7 @@ gathers confirmed deltas into a versioned foundation — read `fold.md`.
 ## Beyond the bundle — load on demand
 
 Once **§3 CONTRACT is FROZEN**, the build→verify half is a dynamic, auto-gated run
-(`autonomy: auto` default, lowered to `conservative` for a human gate) — read `run.md`. To
+(`autonomy: auto` default, lowered to `conservative` or `manual` for a human gate) — read `run.md`. To
 pipeline several ready tasks behind their own frozen contracts, read `streams.md`.
 
 When a milestone's tasks are all done but its **goal** (the `MILESTONE.md` exit criteria) is not
