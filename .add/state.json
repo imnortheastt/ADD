@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "explicit-autonomy-dial",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,30 +472,10 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
-    },
-    "unflagged-freeze": {
-      "title": "Flag-first freeze guard (fail-closed unflagged_freeze)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "flag-first-freeze",
-      "depends_on": [],
-      "created": "2026-06-10T07:36:11+00:00",
-      "updated": "2026-06-10T08:03:16+00:00",
-      "flag_verified": true
-    },
-    "explicit-autonomy-dial": {
-      "title": "Explicit 3-mode autonomy dial (manual/conservative/auto)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "flag-first-freeze",
-      "depends_on": [],
-      "created": "2026-06-10T08:18:41+00:00",
-      "updated": "2026-06-10T11:04:46+00:00",
-      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-10T11:04:46+00:00",
+  "updated": "2026-06-10T12:00:25+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -600,17 +580,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "flag-first-freeze": {
-      "title": "Flag-first freeze + autonomy dial",
-      "goal": "close the freeze-and-autonomy seam: the lowest-confidence flag is mechanically required at every freeze, and the autonomy level is an explicit 3-mode dial (manual/conservative/auto) the human sets",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-10T07:36:11+00:00",
-      "updated": "2026-06-10T07:36:11+00:00"
     }
   },
-  "active_milestone": "flag-first-freeze",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -786,6 +758,16 @@
       ],
       "archived": "2026-06-09",
       "compacted": "2026-06-09"
+    },
+    {
+      "slug": "flag-first-freeze",
+      "title": "Flag-first freeze + autonomy dial",
+      "tasks": 2,
+      "task_slugs": [
+        "unflagged-freeze",
+        "explicit-autonomy-dial"
+      ],
+      "archived": "2026-06-10"
     }
   ]
 }

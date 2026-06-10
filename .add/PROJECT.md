@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-09 · foundation-version: 22
+slug: AIDD-Book · stage: mvp · updated: 2026-06-10 · foundation-version: 23
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---
@@ -197,6 +197,15 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   seven gates may be incomplete — `fold.md`'s consolidation-confirm (the human approves a fold, the AI never
   self-approves) is a candidate 8th human decision point the arc could serve; weigh in a future milestone.
   [folded foundation-version 22]
+- flag-first-freeze (Flag-first freeze + explicit autonomy level): **SHIPPED 2026-06-10** — two fail-closed
+  guards on the freeze/autonomy seam: (1) the lowest-confidence flag is MECHANICALLY required at every freeze
+  (`unflagged_freeze`, fail-closed — advance refuses + audit verifies via a verified-marker on the guarded
+  crossing); (2) the per-task autonomy header is an explicit ordered 3-mode LEVEL — `autonomy: manual |
+  conservative | auto`, the high-risk guard widened to refuse any UN-lowered rung, `cmd_status` surfaces the
+  active level, `cmd_check` reds `unknown_autonomy_level` + WARNs live-only `implicit_autonomy`, seed default
+  `auto`. add.py ×3 byte-identical (re-pinned c0c9329c); prose ≡ enforcement pinned across GLOSSARY + book
+  (appendix-c · 10-setup · 11-governance) + skill (run.md · streams.md · SKILL.md). 717 tests.
+  [folded foundation-version 23]
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -315,3 +324,4 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 | 2026-06-08 | REVERT the v21 inline-citation weave (EC3): remove the 7 inline [Author Year] cites from body chapters 02/03/09, restoring them to pre-weave prose; keep the references appendix (task 1) and Foundations & Lineage ch.15 (task 2) — grounding now lives in ONE place, the appendix, not interrupting the body | human direction AFTER v21 close — the inline markers cluttered the prose; recorded here (not a silent edit) since EC3 was a goal-gated exit criterion. The fold LESSONS stay valid (the weave shipped, taught the aptness/`;`-resolver lessons, then was reverted) — only the artifact is removed, foundation-version 21 unchanged | chapters restored exactly from a85b81a^ (sole editor) ×4 byte-identical; 4 weave-resolution tests pruned from test_inline_citations.py, its 3 non-weave guards KEPT (appendix-g frozen@27 — the only exact-27 guard · 02/03/09 ×4 parity — the only root↔canonical guard for these chapters · ban-surface tripwire); suite 645/645 OK (649−4); add.py check 200/0 |
 | 2026-06-09 | ship v23 the decision arc: every human decision gate opens its report with goal·done·plan (rendered first, engine-sourced, presentation-only) — report-arc (the block + reconcile rule) · arc-gate-wiring (all 7 gate guides cue it) · arc-book-align (book + GLOSSARY describe it) | the user asked to make the synthesized report transparent — tie each gate's ask to the goal it serves, what's achieved, and the plan ahead, so the human confirms with the whole arc in sight, not a local snapshot | v23 SHIPPED 3/3, 3/3 criteria; 691 tests; book ×4 byte-identical; arc-book-align hit a v1→v2 change-request at verify (chapter named 5 of 7 wired gates — baseline-approval+scope undocumented; reopened→contract→re-froze→widened to 7 + a gate-coverage fence), the milestone's own theme catching its own gap |
 | 2026-06-09 | fold v22+v23 learnings → foundation-version 22 (24 open deltas: 12 new CONVENTIONS bullets covering ADD 12 + TDD 4 + SDD-how-we-author 6, several as explicit reinforcements · 1 §Spec v22 ship bullet · 1 §Spec v23 ship bullet carrying the 8th-gate SDD forward-question · 1 §Domain all-archived done-tally blind-spot) | human-gated bulk fold at v23 close clearing the unfolded v22 (stage-graduation) backlog + the v23 deltas; consolidate not append-24-bullets (lean foundation); all 24 confirmed (none rejected) | +12 CONVENTIONS bullets (four-book-trees+unguarded-appendix-root · dogfood-at-own-gate-proof · change-request-is-the-method · single-source-point-not-restate · enumerate-every-writer-of-S · one-traversal-basis-per-tier · reconcile-flags-with-digest · cross-surface-term-two-axes · sweep-loaded-prose · presence≠coverage-fence · split-don't-loosen · five-how-we-author-sharpenings); §Spec v22+v23 bullets; §Domain done-tally bullet; deltas flipped open→folded |
+| 2026-06-10 | ship flag-first-freeze + fold → foundation-version 23 (4 deltas: 2 new CONVENTIONS bullets — verified-marker-scopes-forward · prose-accord-pins-every-surface+word-ban-blind — · 1 cross-surface-term flip-cite · 1 §Spec ship bullet) | human-gated fold at flag-first-freeze close; the milestone's own theme (a guard with mechanical teeth) caught its own gap — DocsAccordTest pinned 1 of 4 named surfaces, surfaced by human review at the verify gate not CI; MILESTONE.md was a never-authored stub, back-filled at close | +2 CONVENTIONS +1 flip-cite; §Spec flag-first-freeze bullet; 22→23; 4 deltas open→folded; engine c0c9329c ×3 |

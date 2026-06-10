@@ -422,7 +422,10 @@ Architecture:
 - (ADD) **A cross-surface term can carry two axes — disambiguate before unifying, keep both senses + one bridging
   clause.** "scope level" (decision-granularity vs orchestration-loop) and "report" (the chat report at a decision
   point vs the verify gate's three Test/Quality/Risk reports) each carry two senses; never merge the lists.
-  [stage-book-align + arc-book-align "report" polysemy — folded foundation-version 22]
+  [stage-book-align + arc-book-align "report" polysemy — folded foundation-version 22] A lived working LABEL
+  drifts from its canonical glossary TERM the same way — §3's "Least-sure flag surfaced at freeze" vs the
+  glossary's "lowest-confidence flag" shipped bridged-not-migrated; introduce a working label only with a
+  bridge ("formerly …") or migrate it in the same breath, never a silent rename. [unflagged-freeze — folded foundation-version 23]
 - (ADD) **Reinterpreting or closing a contract sweeps the LOADED foundation prose for the stale shape, not just the
   test guard.** A green suite cannot catch prose drift (tests don't exercise docs); add "sweep loaded-layer prose
   for the old shape" to the change-request checklist (close-gap-before-gate). Reinforces stale-guard-sweep. [stage-goal-criteria — folded foundation-version 22]
@@ -444,3 +447,16 @@ Architecture:
   `[x]`/`[ ]`/⚠. (4) A MILESTONE-declared task slug is checked against existing `tasks/` (and archived) dirs before
   create — a collision would overwrite a done task. (5) Contract-freeze greps for the PRIOR contract that froze an
   extended `--json`/state seam and states additive-vs-closed explicitly. [graduate-guide + graduation-analytics + report-arc + stage-book-align + stage-goal-criteria — folded foundation-version 22]
+- (ADD) **A new guard gains teeth without retro-redding its predecessors via a VERIFIED-MARKER.** Stamp the
+  marker on the guarded crossing (the freeze/gate the guard newly governs) and enforce only on MARKED records;
+  pre-marker records pre-date the rule and stay green — no fabricated retro-pass, no silent grandfather.
+  Distinct from "adjudicate epoch debt at the human gate" (which retro-ratifies old records *by choice*; this
+  scopes enforcement forward *by construction*). [unflagged-freeze — folded foundation-version 23]
+- (TDD/ADD) **A prose-accord guard pins EVERY surface the contract names, and a word-ban is blind to a stale
+  multi-VALUED enumeration** — two faces of necessary-not-sufficient on a "prose ≡ enforcement" deliverable.
+  (a) DocsAccordTest pinned 1 of the 4 surfaces frozen §4 named ("GLOSSARY + the autonomy docs ×3"), so 2
+  shipped stale-green — caught by human review at the gate, not CI; enumerate every named surface or the accord
+  is only as wide as the pin (same shape as the census whole-and-closed rule). (b) A word-ban catches a banned
+  WORD, never a stale ENUMERATION — once a 3rd rung landed, "auto | conservative" descriptions read green to the
+  slang fence; widen level-set prose by a structural/test pin or a manual sweep, never the vocab ban.
+  [explicit-autonomy-dial — folded foundation-version 23]

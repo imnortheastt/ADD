@@ -212,5 +212,5 @@ warrants a separate naming-migration task across template + guides + lived task 
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [ADD · open] a guard gains teeth without retro-redding predecessors via a verified-marker — stamp on the guarded crossing, enforce only on marked records (evidence: live audit 48→49 clean; the 45 pre-existing frozen tasks stayed silent)
-- [SDD · open] a lived artifact label can drift from its canonical glossary term — §3 `Least-sure flag surfaced at freeze:` vs `lowest-confidence flag`; bridged, not migrated, this loop (evidence: needed a MACHINE_SPAN + GLOSSARY bridge + guide reword to keep the ubiquitous-language & wording linters green)
+- [ADD · folded] a guard gains teeth without retro-redding predecessors via a verified-marker — stamp on the guarded crossing, enforce only on marked records (evidence: live audit 48→49 clean; the 45 pre-existing frozen tasks stayed silent)
+- [SDD · folded] a lived artifact label can drift from its canonical glossary term — §3 `Least-sure flag surfaced at freeze:` vs `lowest-confidence flag`; bridged, not migrated, this loop (evidence: needed a MACHINE_SPAN + GLOSSARY bridge + guide reword to keep the ubiquitous-language & wording linters green)
