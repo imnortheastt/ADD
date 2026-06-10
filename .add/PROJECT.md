@@ -6,6 +6,7 @@
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
 slug: AIDD-Book · stage: mvp · updated: 2026-06-10 · foundation-version: 23
+autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---

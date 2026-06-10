@@ -1,7 +1,7 @@
-# TASK: {{title}}
+# TASK: Define + check an auto-ready goal (machine-checkable acceptance criteria)
 
-slug: {{slug}} · created: {{date}} · stage: {{stage}}
-autonomy: {{autonomy}}   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it. -->
+slug: goal-auto-ready-gate · created: 2026-06-10 · stage: mvp
+autonomy: auto   <!-- explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it. -->
 phase: specify   <!-- specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower the
      autonomy level to `manual` or `conservative` — the engine refuses an unguarded completion

@@ -10,4 +10,4 @@ it can never detect drift. The literal was recorded at the commit that first
 introduced it and is updated only by a deliberate, human-approved task.
 """
 
-ENGINE_MD5 = "6009233ac98e4aa2743ecd891a80ec0d"  # re-aimed @ reader-anchor defect fix (declaration-token readers anchor to line-start or `·`-separator — a title/prose substring no longer fools the autonomy/risk guards)
+ENGINE_MD5 = "cad072c123eb10fb0badb621a4052241"  # re-aimed @ init-auto-default (project-level autonomy default: init declares autonomy:auto, new-task inherits it via _project_autonomy, status surfaces it)

@@ -432,8 +432,16 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     (tdir / "tests").mkdir(parents=True, exist_ok=True)
     (tdir / "src").mkdir(parents=True, exist_ok=True)
     title = args.title or slug.replace("-", " ").replace("_", " ").title()
+    # inherit the project's DECLARED autonomy default (task init-auto-default) — fail-SAFE:
+    # absent -> auto, garbled -> conservative; the posture is project-scoped, not hardcoded.
+    autonomy = _project_autonomy(root)
     _atomic_write(task_md, _render_template(
-        "TASK.md", title=title, slug=slug, date=date.today().isoformat(), stage=state["stage"]))
+        "TASK.md", title=title, slug=slug, date=date.today().isoformat(),
+        stage=state["stage"], autonomy=autonomy))
+    if _project_autonomy_token(root) == "?":
+        print("warning: garbled_project_autonomy — PROJECT.md declares an unrecognized "
+              f"autonomy token; new task seeded fail-safe '{autonomy}' "
+              "(set autonomy: manual|conservative|auto in PROJECT.md)", file=sys.stderr)
 
     state["tasks"][slug] = {
         "title": title,
@@ -776,6 +784,9 @@ def cmd_status(args: argparse.Namespace) -> None:
     # Reuses the canonical helper — do NOT write a parallel predicate.
     unlocked = not _setup_locked(state)
     print(f"project : {state.get('project', '(unknown)')}")
+    # project autonomy default (task init-auto-default): the posture new tasks INHERIT,
+    # read LIVE from PROJECT.md so the human sees the project-wide throttle every session.
+    print(f"project autonomy: {_project_autonomy(root)}   (default — new tasks inherit)")
     print(f"stage   : {state.get('stage', '(unknown)')}")
     # project GOAL + active-milestone goal (v20) — the loop's orientation anchor, read
     # LIVE from PROJECT.md / MILESTONE.md (never state.json). Additive: every existing
@@ -1478,6 +1489,27 @@ def _project_goal(root: Path) -> str:
     except OSError:
         pass
     return GOAL_UNSET
+
+
+def _project_autonomy_token(root: Path):
+    """The RAW autonomy declaration in PROJECT.md — a recognized rung, None when no
+    declaration line is present, or "?" for a real-but-unrecognized token. Uses the
+    anchored _autonomy_level (a title/prose substring is never a declaration) with
+    HTML comments stripped. Unreadable foundation -> None. Read-only and PURE."""
+    try:
+        text = (root / "PROJECT.md").read_text(encoding="utf-8")
+    except OSError:
+        return None
+    return _autonomy_level(re.sub(r"<!--.*?-->", "", text, flags=re.S))
+
+
+def _project_autonomy(root: Path) -> str:
+    """The autonomy rung a new task INHERITS from the project default. Fail-SAFE:
+    no declaration -> "auto" (the method default; v7: absent = auto); an unrecognized
+    token -> "conservative" (NEVER silently "auto"); an unreadable foundation -> "auto".
+    Read-only and PURE — mirrors _project_goal; the seed source for cmd_new_task."""
+    tok = _project_autonomy_token(root)
+    return "auto" if tok is None else ("conservative" if tok == "?" else tok)
 
 
 def _milestone_doc(root: Path, mslug: str) -> tuple[str, str]:
