@@ -28,6 +28,9 @@ human sees the goal this freeze serves and the plan beyond it, not just the bund
 The human's one minute, aimed. Walk these six before saying yes:
 
 - **⚠ flags first** — read the lowest-confidence flags; accept each knowing its cost if wrong.
+  The engine refuses an unflagged freeze before build: a frozen §3 with no well-formed
+  lowest-confidence flag is rejected (`unflagged_freeze`), and `audit` re-checks it on every
+  record that crossed.
 - **Intent** — does §1 say what you actually want built (and is anything you expected missing)?
 - **Cases** — does every Must and Reject have an observable §2 scenario you care about?
 - **Shape** — glossary names, error codes, additive vs breaking: is THIS the shape to freeze?

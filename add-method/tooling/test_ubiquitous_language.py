@@ -193,6 +193,7 @@ class AddPyProseTest(unittest.TestCase):
         "(human|seam|ai)",                      # the owner-enum listing in cmd docs
         "(open|folded|rejected)",               # the delta-status grammar in _DELTA_RE
         "folded/rejected",                      # docstring reference to the status pair
+        "Least-sure flag surfaced at freeze",   # the §3 lowest-confidence-flag label (_FLAG_LABEL_RE)
     )
 
     def test_sync_guidelines_domain_clean(self):

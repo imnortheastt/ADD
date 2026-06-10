@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "unflagged-freeze",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,10 +472,20 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
+    },
+    "unflagged-freeze": {
+      "title": "Flag-first freeze guard (fail-closed unflagged_freeze)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "flag-first-freeze",
+      "depends_on": [],
+      "created": "2026-06-10T07:36:11+00:00",
+      "updated": "2026-06-10T08:03:16+00:00",
+      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-09T14:04:52+00:00",
+  "updated": "2026-06-10T08:03:16+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -580,9 +590,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "flag-first-freeze": {
+      "title": "Flag-first freeze + autonomy dial",
+      "goal": "close the freeze-and-autonomy seam: the lowest-confidence flag is mechanically required at every freeze, and the autonomy level is an explicit 3-mode dial (manual/conservative/auto) the human sets",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-10T07:36:11+00:00",
+      "updated": "2026-06-10T07:36:11+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "flag-first-freeze",
   "archived": [
     {
       "slug": "v5",

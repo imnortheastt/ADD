@@ -522,6 +522,20 @@ def cmd_advance(args: argparse.Namespace) -> None:
     # into build/verify/observe/done is refused until `add.py lock`.
     if not _setup_locked(state) and nxt in ("build", "verify", "observe", "done"):
         _die("setup_unlocked: lock the foundation first — add.py lock")
+    # flag-first freeze guard (task unflagged-freeze): a FROZEN §3 may not cross
+    # into build without a WELL-FORMED lowest-confidence flag. On pass, stamp the
+    # verified marker so `audit` enforces the flag on THIS record only (open/new
+    # freezes — the unmarked predecessors are never retro-redded). REFUSE writes
+    # nothing (fail-closed); below the build boundary the flag is never checked.
+    if nxt == "build":
+        raw3 = _raw_phase_bodies(root, slug).get(3, "")
+        if _contract_frozen(raw3):
+            if not _flag_well_formed(raw3):
+                _die("unflagged_freeze: a frozen §3 must surface a well-formed "
+                     "'Least-sure flag surfaced at freeze:' unit (>=1 [part] tag "
+                     "+ substantive content; bare 'none' only as 'none material — "
+                     "biggest risk: X') before crossing into build")
+            state["tasks"][slug]["flag_verified"] = True
     state["tasks"][slug]["phase"] = nxt
     state["tasks"][slug]["updated"] = _now()
     _sync_task_marker(root, slug, nxt)
@@ -1967,6 +1981,37 @@ def _contract_frozen(raw3: str) -> bool:
     return any(re.match(r"\s*Status:\s*FROZEN", ln) for ln in raw3.splitlines())
 
 
+_FLAG_LABEL_RE = re.compile(r"Least-sure flag surfaced at freeze\s*:", re.I)
+_FLAG_PART_RE = re.compile(
+    r"\[(?:spec|scenario|contract|test)(?:/(?:spec|scenario|contract|test))*\]")
+_FLAG_NONE_ESCAPE_RE = re.compile(
+    r"none material\s*[—-]+\s*biggest risk\s*:\s*\S", re.I)
+
+
+def _flag_well_formed(raw3: str) -> bool:
+    """A FROZEN §3 must surface a WELL-FORMED lowest-confidence flag — the unit
+    that NAMES which part of the bundle is least certain. Well-formed := the label
+    phrase + a unit carrying >=1 [part] tag (part in spec/scenario/contract/test,
+    slash-joinable like [spec/contract]) + substantive content. A bare 'none' is
+    refused unless it takes the honest escape 'none material — biggest risk: X'.
+    why/cost stay a human-read convention, never machine keywords (evidence: the
+    lived flags use em-dash/prose, never literal because/if-wrong). HTML comments
+    (template hints) never count. PURE — fail-closed on a missing label."""
+    body = re.sub(r"<!--.*?-->", "", raw3, flags=re.S)
+    m = _FLAG_LABEL_RE.search(body)
+    if not m:
+        return False
+    unit = body[m.end():].strip()
+    if not unit:
+        return False
+    if _FLAG_NONE_ESCAPE_RE.search(unit):    # the honest-none escape — no tag needed
+        return True
+    if not _FLAG_PART_RE.search(unit):       # must name WHICH part is uncertain
+        return False
+    residue = _FLAG_PART_RE.sub("", unit).replace("⚠", "").strip(" -—·\n\t")
+    return len(residue) >= 3                  # substantive content beyond the tag(s)
+
+
 def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
     """FACTS for the task-level decision-point digest (frozen shape). The decision comes
     from STATE ONLY: recorded (gate set / observe / done) · front (specify→tests) ·
@@ -2349,6 +2394,15 @@ def _audit_findings(root: Path, state: dict) -> tuple[int, list[dict]]:
         if not _AUDIT_STAMP_RE.search(s3):
             f(slug, "unstamped_freeze",
               "§3 lacks 'Status: FROZEN @ vN — approved by <name>'")
+        # verified-marker discriminator (task unflagged-freeze): enforce the
+        # lowest-confidence flag ONLY on records that crossed the guard (flag_verified).
+        # A marked record whose flag was deleted/corrupted post-freeze is
+        # tampering; unmarked predecessors are skipped — the board is never
+        # retro-redded.
+        if t.get("flag_verified") and not _flag_well_formed(s3):
+            f(slug, "unflagged_freeze",
+              "flag_verified record lost its well-formed "
+              "'Least-sure flag surfaced at freeze:' unit")
         outcomes = _AUDIT_OUTCOME_RE.findall(s6)
         if len(outcomes) != 1:
             f(slug, "malformed_gate_record",
