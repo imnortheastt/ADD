@@ -10,4 +10,4 @@ it can never detect drift. The literal was recorded at the commit that first
 introduced it and is updated only by a deliberate, human-approved task.
 """
 
-ENGINE_MD5 = "cad072c123eb10fb0badb621a4052241"  # re-aimed @ init-auto-default (project-level autonomy default: init declares autonomy:auto, new-task inherits it via _project_autonomy, status surfaces it)
+ENGINE_MD5 = "70d779c4e441e0419851be0941d7fdf2"  # re-aimed @ goal-auto-ready-gate (auto-ready goal: _exit_criteria_cited/_goal_auto_ready classify the active milestone, check WARNs goal_not_auto_ready, status surfaces goal-ready — all additive, freeze gate/autonomy/milestone_goal_unmet unchanged; verify-stage gap-close: the WARN excludes a done-but-not-yet-archived active milestone, Must #4 live-only)

@@ -795,6 +795,13 @@ def cmd_status(args: argparse.Namespace) -> None:
     _active_ms = state.get("active_milestone")
     if _active_ms:
         print(f"m-goal  : {_milestone_doc(root, _active_ms)[1]}   (← {_active_ms})")
+        # goal-ready (task goal-auto-ready-gate): is the active milestone's goal AUTO-READY
+        # — every exit criterion citing a verifier `(verify: …)` so the engine can self-verify
+        # the result against it? Read LIVE from MILESTONE.md; surfaced every session so the
+        # human sees the goal-clarity gap. Additive — human-readable only, never the JSON surface.
+        _gr_cited, _gr_total = _exit_criteria_cited(root, _active_ms)
+        _gr_state = "auto-ready ✓" if _goal_auto_ready(root, _active_ms) else "NOT auto-ready"
+        print(f"goal-ready: {_gr_state}   ({_gr_cited}/{_gr_total} exit criteria cite a verifier)")
     # foundation pointer — read the cross-milestone context first (anti-rot)
     if (root / "PROJECT.md").exists():
         print("context : .add/PROJECT.md  (foundation: domain · spec · UI/UX — read first)")
@@ -1050,6 +1057,22 @@ def cmd_check(args: argparse.Namespace) -> None:
                           if t.get("milestone") == mslug and not _task_done(t)]
             checks.append((not unfinished, f"done milestone '{mslug}' fully complete",
                            f"unfinished: {unfinished}"))
+
+    # goal-auto-ready (task goal-auto-ready-gate): nudge the ACTIVE milestone toward a
+    # machine-checkable goal — every exit criterion citing a verifier `(verify: …)` so the
+    # engine can self-verify the result against it. WARN, NEVER red (measurement, not a gate);
+    # fired IFF the goal HAS criteria but not all cite (total >= 1 AND cited < total) — a
+    # zero-criteria milestone is shaping's nudge, not this one's. LIVE-ONLY: the OPEN active
+    # milestone only — a done-but-not-yet-archived one (still the active pointer until
+    # archive clears it) and closed/archived predecessors are never retro-flagged (Must #4).
+    _active_ms = state.get("active_milestone")
+    if _active_ms in milestones and milestones[_active_ms].get("status") != "done":
+        _cited, _total = _exit_criteria_cited(root, _active_ms)
+        if _total >= 1 and _cited < _total:
+            warnings.append(("goal_not_auto_ready",
+                             f"milestone '{_active_ms}' goal not auto-ready "
+                             f"({_cited}/{_total} exit criteria cite a verifier) — add "
+                             "(verify: <test|command|metric>) to each bare criterion"))
 
     # dependency graph must be acyclic
     cycle = _find_cycle(tasks)
@@ -1539,6 +1562,41 @@ def _exit_criteria(root: Path, mslug: str) -> tuple[int, int]:
     met = len(re.findall(r"- \[x\]", sec))
     total = met + len(re.findall(r"- \[ \]", sec))
     return met, total
+
+
+# A non-empty `(verify: <citation>)` on an exit-criterion line — at least one non-whitespace
+# char inside, so a bare `(verify:)`/`(verify: )` does NOT count (the mid-text substring trap).
+_VERIFY_CITE_RE = re.compile(r"\(verify:\s*\S.*?\)", re.I)
+
+
+def _exit_criteria_cited(root: Path, mslug: str) -> tuple[int, int]:
+    """(cited, total) over MILESTONE.md's 'Exit criteria' section. total = every
+    `- [ ]`/`- [x]` criterion line; cited = those carrying a NON-EMPTY
+    `(verify: <citation>)`. Read-only and PURE; missing file/section -> (0, 0).
+    Mirrors _exit_criteria (the checkbox tally) — an ADDITIVE classification beside
+    it; it never touches `milestone_goal_unmet`."""
+    f = root / "milestones" / mslug / MILESTONE_FILE
+    if not f.exists():
+        return 0, 0
+    m = re.search(r"## Exit criteria.*?(?=\n## |\Z)", f.read_text(encoding="utf-8"), re.S)
+    if not m:
+        return 0, 0
+    cited = total = 0
+    for ln in m.group(0).splitlines():
+        if re.match(r"\s*- \[[ x]\]", ln):
+            total += 1
+            if _VERIFY_CITE_RE.search(ln):
+                cited += 1
+    return cited, total
+
+
+def _goal_auto_ready(root: Path, mslug: str) -> bool:
+    """True iff the milestone goal is AUTO-READY: its Exit criteria has >= 1 criterion
+    AND every one cites a verifier (cited == total) — so the engine can self-verify the
+    result against the goal without human judgement. A zero-criteria goal is NOT
+    auto-ready (you cannot self-verify against nothing). PURE."""
+    cited, total = _exit_criteria_cited(root, mslug)
+    return total >= 1 and cited == total
 
 
 def _stage_criteria(root: Path) -> tuple[int, int]:

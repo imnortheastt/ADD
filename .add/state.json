@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "init-auto-default",
+  "active_task": "goal-auto-ready-gate",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -485,18 +485,19 @@
     },
     "goal-auto-ready-gate": {
       "title": "Define + check an auto-ready goal (machine-checkable acceptance criteria)",
-      "phase": "specify",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "goal-auto-ready",
       "depends_on": [
         "init-auto-default"
       ],
       "created": "2026-06-10T12:03:05+00:00",
-      "updated": "2026-06-10T12:03:05+00:00"
+      "updated": "2026-06-10T15:45:32+00:00",
+      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-10T14:43:15+00:00",
+  "updated": "2026-06-10T15:47:05+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -606,9 +607,9 @@
       "title": "Goal-auto-ready \u2014 goal-clarity earns autonomy",
       "goal": "a goal is auto-ready when its acceptance criteria are concrete enough for the engine to self-verify the result against \u2014 so autonomy is earned by goal-clarity, not assumed (with auto seeded as the project default)",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-10T12:03:05+00:00",
-      "updated": "2026-06-10T12:03:05+00:00"
+      "updated": "2026-06-10T15:47:05+00:00"
     }
   },
   "active_milestone": "goal-auto-ready",

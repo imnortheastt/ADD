@@ -31,6 +31,6 @@ Out:
 - [ ] goal-auto-ready-gate  depends-on: init-auto-default   — define + check an auto-ready goal (machine-checkable acceptance criteria); risk: high
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `add.py init` writes `autonomy: auto` into the new PROJECT.md, and `add.py status` shows the inherited project default   (← init-auto-default)
-- [ ] a goal lacking machine-checkable acceptance criteria reads NOT-auto-ready (engine/check); one carrying them passes   (← goal-auto-ready-gate)
-- [ ] GLOSSARY + book name "auto-ready goal" + the goal→autonomy link, synced ×3   (← goal-auto-ready-gate)
+- [x] `add.py init` writes `autonomy: auto` into the new PROJECT.md, and `add.py status` shows the inherited project default   (← init-auto-default) (verify: `test_init_auto_default.py`)
+- [x] a goal lacking machine-checkable acceptance criteria reads NOT-auto-ready (engine/check); one carrying them passes   (← goal-auto-ready-gate) (verify: `test_goal_auto_ready_gate.ClassifierTest`)
+- [x] GLOSSARY + book name "auto-ready goal" + the goal→autonomy link, synced ×3   (← goal-auto-ready-gate) (verify: `test_goal_auto_ready_gate.DocsAccordTest`)

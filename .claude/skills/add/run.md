@@ -174,4 +174,13 @@ always records — stopping is never blocked), and `add.py audit` flags the same
 record whose header was tampered or whose GATE RECORD reviewer is the auto-gate — which CI enforces
 (audit-ci). The honest limit mirrors the audit's: an **undeclared** high-risk scope passes; declaring
 is the human decision point, the engine enforces what was declared.
+
+**Autonomy is earned by goal-clarity — the auto-ready goal.** The level decides *who* resolves Verify;
+an **auto-ready goal** decides whether a self-verifying run is even *meaningful*. A milestone goal is
+auto-ready when **every exit criterion cites a verifier** — `(verify: <test | command | metric>)` — so the
+run can check its own result against the goal without human judgment. `add.py check` raises a
+`goal_not_auto_ready` WARN (never red, the active milestone only) while criteria are uncited, and `status`
+prints a `goal-ready:` line every session. It **measures, never blocks** — it changes neither the freeze
+gate nor the autonomy level. The lint forces a citation slot per criterion (raising the floor) but cannot
+prove the citation is honest (`(verify: it works)` passes) — that judgment stays the human's.
 </constraints>
