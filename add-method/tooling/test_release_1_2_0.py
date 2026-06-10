@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Red/green tests for the 1.1.0 release readiness (task release-1-1-0, v14).
+"""Red/green tests for the 1.2.0 release readiness (task release-1-2-0).
 
-In-repo readiness only — the live-registry halves (npm/PyPI serving 1.1.0) are
+In-repo readiness only — the live-registry halves (npm/PyPI serving 1.2.0) are
 verify-gate EVIDENCE gathered after the human-gated tag push, never unit tests.
 Run:
-    python3 -m unittest test_release_1_1_0 -v
+    python3 -m unittest test_release_1_2_0 -v
 """
 import hashlib
 import json
@@ -21,23 +21,26 @@ CHANGELOG = PKG / "CHANGELOG.md"
 CI_YML = REPO / ".github" / "workflows" / "ci.yml"
 PUBLISH_YML = REPO / ".github" / "workflows" / "publish.yml"
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
+PRIOR_VERSIONS = ("1.1.0", "1.0.0")     # the changelog must keep its lineage
 from engine_pin import ENGINE_MD5
 CANONICAL_AUDIT = "run: python3 .add/tooling/add.py audit"
-# the five v14 features the release notes must name
-FEATURE_ANCHORS = ("add.py audit", "seam-audit", "unguarded_high_risk_auto",
-                   "agent", "freeze review checklist")
+# the headline capabilities the release notes must name (v18→v23 + flag-first)
+FEATURE_ANCHORS = ("decision arc", "graduate", "WAVE.md", "verify-deepen",
+                   "unflagged_freeze")
 
 
 class ChangelogTest(unittest.TestCase):
-    def test_changelog_has_1_1_0_entry(self):
+    def test_changelog_has_1_2_0_entry(self):
         self.assertTrue(CHANGELOG.is_file(), "CHANGELOG.md missing")
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertIn(f"## [{VERSION}]", text)
-        self.assertIn("## [1.0.0]", text, "the baseline entry must exist")
+        for prior in PRIOR_VERSIONS:
+            self.assertIn(f"## [{prior}]", text,
+                          f"the {prior} lineage entry must survive the bump")
         entry = text.split(f"## [{VERSION}]", 1)[1].split("## [", 1)[0]
         for anchor in FEATURE_ANCHORS:
-            self.assertIn(anchor, entry, f"1.1.0 entry must name: {anchor}")
+            self.assertIn(anchor, entry, f"1.2.0 entry must name: {anchor}")
 
     def test_changelog_ships_in_both_channels(self):
         files = json.loads((PKG / "package.json").read_text(encoding="utf-8"))["files"]
@@ -61,12 +64,18 @@ class WorkflowHygieneTest(unittest.TestCase):
 
 
 class ReleaseShapeTest(unittest.TestCase):
-    def test_versions_agree_at_1_1_0(self):
+    def test_versions_agree_at_1_2_0(self):
         pkg = json.loads((PKG / "package.json").read_text(encoding="utf-8"))["version"]
         py = re.search(r'(?m)^version\s*=\s*"([^"]+)"',
                        (PKG / "pyproject.toml").read_text(encoding="utf-8")).group(1)
         self.assertEqual((pkg, py), (VERSION, VERSION),
                          "publish.yml's guard would fail this release closed")
+
+    def test_runtime_version_agrees(self):
+        init = (PKG / "src" / "add_method" / "__init__.py").read_text(encoding="utf-8")
+        runtime = re.search(r'(?m)^__version__\s*=\s*"([^"]+)"', init).group(1)
+        self.assertEqual(runtime, VERSION,
+                         "add_method.__version__ must match the shipped version")
 
     def test_getting_started_mentions_guide_line(self):
         text = (PKG / "GETTING-STARTED.md").read_text(encoding="utf-8")

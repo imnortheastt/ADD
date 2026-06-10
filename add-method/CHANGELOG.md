@@ -4,6 +4,46 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.2.0] — 2026-06-10
+
+The decision-arc release: the method now narrates the build as one continuous
+arc of decisions, and the loop reaches past a single milestone — graduating a
+prototype to production, gating milestones on their own goal, and running tasks
+in parallel waves. All additive; no breaking changes (SemVer MINOR).
+
+### Added
+- **The decision arc** — every human-gate report opens by naming where you are
+  on the arc (intent → cases → contract → tests → build → verify → observe), and
+  the book + GLOSSARY describe it as the spine of the method. The one human
+  approval is always placed on the arc, never floating.
+- **Graduation to production** — `add.py graduate` plus a graduate-guide and a
+  `→production` stage guard turn the mvp→production transition into an
+  analytics-driven, criteria-gated step instead of a label flip: a
+  graduation-report surfaces the evidence and a stage-goal-criteria cue tells you
+  when the prototype has earned the next stage.
+- **Goal-gated milestones & the dynamic task loop** — an explicit project GOAL
+  now rides on `status`/`guide`, a milestone completes only when every success
+  criterion is met, and a recorded `done → phase` reopen-transition lets a closed
+  task legitimately re-open without losing its history.
+- **verify-deepen** — the verify phase gained a deep-check rubric
+  (wiring · dead-code · semantic) so verification probes intent, not just a green
+  suite.
+- **Parallel waves** — `WAVE.md`, the wave ledger that is the resume point for
+  parallel task execution; `status` surfaces a live wave so a multi-task wave can
+  pause and resume cleanly.
+- **The flag-first freeze guard** — declaring a contract freeze is now
+  fail-closed: an `unflagged_freeze` is refused at `advance` time and flagged by
+  `add.py audit`, so a freeze can never be recorded without its explicit marker.
+- **Foundations & Lineage chapter** — the book gained an annotated Foundations
+  chapter with author-year citations and a references appendix, tracing the
+  method's lineage.
+
+### Changed
+- Engine prose now speaks one ubiquitous language — `add.py` output uses
+  consistent domain terms (scope level, decision point, retrospective, …).
+- `add.py compact` keeps the active state lean by compacting heavy archive
+  history, with the bundled engine frozen in lockstep.
+
 ## [1.1.0] — 2026-06-05
 
 Production-ready enforcement: the gates are now verified by machinery distinct
