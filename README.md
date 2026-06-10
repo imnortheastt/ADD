@@ -51,17 +51,6 @@ npx @pilotspace/add init
 pip install pilotspace-add && pilotspace-add init
 ```
 
-Pick the `--stage` that matches your intent — `prototype` · `poc` · `mvp` ·
-`production` (you can change it later). This drops in, **without ever clobbering
-existing state**:
-
-| Path | What |
-|------|------|
-| `.claude/skills/add/` | the `add` skill Claude Code loads |
-| `.add/tooling/add.py` | scaffolder + state tracker (stdlib-only) |
-| `.add/docs/` | the AIDD book — the trust layer |
-| `.add/state.json` | where the project is (the resume point) |
-
 ### 2 · Spawn your first feature — talk to the agent
 
 In Claude Code, run **`/add`** and say what you want to build:
@@ -82,9 +71,7 @@ So your first feature is: **describe it → confirm the milestone → approve th
 
 ### 3 · Resume anytime
 
-```bash
-python3 .add/tooling/add.py status   # where am I? (your home base; the escape hatch is yours too)
-```
+> `/add` — *how are current status of this project?"*
 
 State lives on disk, not in the chat — close your laptop, come back tomorrow, and this
 tells you exactly where you left off. No context rot.
