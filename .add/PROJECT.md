@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-10 · foundation-version: 23
+slug: AIDD-Book · stage: mvp · updated: 2026-06-10 · foundation-version: 24
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
@@ -207,6 +207,19 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   `auto`. add.py ×3 byte-identical (re-pinned c0c9329c); prose ≡ enforcement pinned across GLOSSARY + book
   (appendix-c · 10-setup · 11-governance) + skill (run.md · streams.md · SKILL.md). 717 tests.
   [folded foundation-version 23]
+- goal-auto-ready (autonomy earned by goal-clarity): **SHIPPED 2026-06-10** — two halves of one lever.
+  (1) A project-level `autonomy: auto` default written to PROJECT.md at init, inherited by `new-task`,
+  fail-SAFE (`_project_autonomy`: absent→auto, garbled→conservative), surfaced in `status`. (2) The
+  **auto-ready-goal** check: a milestone goal is auto-ready iff its `## Exit criteria` has ≥1 criterion
+  AND every one cites a verifier `(verify: <test|command|metric>)`; `cmd_check` WARNs `goal_not_auto_ready`
+  (NEVER red, the OPEN active milestone only — done/archived never retro-flagged), `cmd_status` prints a
+  `goal-ready:` line, the term is named ×3 (GLOSSARY + book + skill). Surface-only by design: the freeze
+  gate, the per-task autonomy contract, and `milestone_goal_unmet` are UNCHANGED. add.py ×3 byte-identical
+  (re-pinned 70d779c4); 747 tests. **OPEN (SDD forward-question):** an `init --autonomy <level>` knob (a
+  non-auto project default at init) was DEFERRED as YAGNI — recorded so a future "configurable default"
+  need is not re-discovered from scratch. The deferred SPINE decision (can an auto-ready goal RELAX the
+  freeze gate / wire not-auto-ready → lowered autonomy) is its own later milestone, not this one's deliverable.
+  [folded foundation-version 24]
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -326,3 +339,4 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 | 2026-06-09 | ship v23 the decision arc: every human decision gate opens its report with goal·done·plan (rendered first, engine-sourced, presentation-only) — report-arc (the block + reconcile rule) · arc-gate-wiring (all 7 gate guides cue it) · arc-book-align (book + GLOSSARY describe it) | the user asked to make the synthesized report transparent — tie each gate's ask to the goal it serves, what's achieved, and the plan ahead, so the human confirms with the whole arc in sight, not a local snapshot | v23 SHIPPED 3/3, 3/3 criteria; 691 tests; book ×4 byte-identical; arc-book-align hit a v1→v2 change-request at verify (chapter named 5 of 7 wired gates — baseline-approval+scope undocumented; reopened→contract→re-froze→widened to 7 + a gate-coverage fence), the milestone's own theme catching its own gap |
 | 2026-06-09 | fold v22+v23 learnings → foundation-version 22 (24 open deltas: 12 new CONVENTIONS bullets covering ADD 12 + TDD 4 + SDD-how-we-author 6, several as explicit reinforcements · 1 §Spec v22 ship bullet · 1 §Spec v23 ship bullet carrying the 8th-gate SDD forward-question · 1 §Domain all-archived done-tally blind-spot) | human-gated bulk fold at v23 close clearing the unfolded v22 (stage-graduation) backlog + the v23 deltas; consolidate not append-24-bullets (lean foundation); all 24 confirmed (none rejected) | +12 CONVENTIONS bullets (four-book-trees+unguarded-appendix-root · dogfood-at-own-gate-proof · change-request-is-the-method · single-source-point-not-restate · enumerate-every-writer-of-S · one-traversal-basis-per-tier · reconcile-flags-with-digest · cross-surface-term-two-axes · sweep-loaded-prose · presence≠coverage-fence · split-don't-loosen · five-how-we-author-sharpenings); §Spec v22+v23 bullets; §Domain done-tally bullet; deltas flipped open→folded |
 | 2026-06-10 | ship flag-first-freeze + fold → foundation-version 23 (4 deltas: 2 new CONVENTIONS bullets — verified-marker-scopes-forward · prose-accord-pins-every-surface+word-ban-blind — · 1 cross-surface-term flip-cite · 1 §Spec ship bullet) | human-gated fold at flag-first-freeze close; the milestone's own theme (a guard with mechanical teeth) caught its own gap — DocsAccordTest pinned 1 of 4 named surfaces, surfaced by human review at the verify gate not CI; MILESTONE.md was a never-authored stub, back-filled at close | +2 CONVENTIONS +1 flip-cite; §Spec flag-first-freeze bullet; 22→23; 4 deltas open→folded; engine c0c9329c ×3 |
+| 2026-06-10 | ship goal-auto-ready + fold → foundation-version 24 (7 deltas: 3 new CONVENTIONS bullets — anchor-declaration-token-reader · live-only-guard-keys-on-terminal-status · lint-forces-a-slot-not-honesty — · 1 frozen-guard→fix-build flip-cite · 1 §Spec ship bullet carrying 2 SDD; the OSError-guard divergence on `_exit_criteria_cited` recorded as an ACCEPTED CEILING, not hardened in isolation — it mirrors the sibling `_exit_criteria` convention) | human-gated fold at goal-auto-ready close (2/2 tasks, 3/3 criteria); the verify adversarial pass caught its own Must #4 gap (the live-only WARN fired on a done-but-not-yet-archived milestone), closed test-first before the gate (close-gap-before-gate); all 7 confirmed (none rejected) | +3 CONVENTIONS +1 flip-cite; §Spec goal-auto-ready bullet (auto default + auto-ready-goal check, --autonomy knob deferred OPEN, spine decision deferred); 23→24; 7 deltas open→folded; engine 70d779c4 ×3 |

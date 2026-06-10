@@ -75,6 +75,9 @@ Architecture:
   a frozen matcher inline — even to fix a real false-negative — is self-ratifying a frozen-contract change;
   route it as a human-ratified change-request at test-design time (Rule 3, phase 4), not a silent inline
   edit logged as "no test weakened". [milestone-onboarding-docs — folded foundation-version 8]
+  Re-validated: a bonus `project_autonomy` key added to `status --json` tripped the frozen-surface guard
+  (`json_surface_unsanctioned_key`); the BUILD was fixed (the key removed), the frozen test left intact —
+  even a "harmless additive" key stays inside the frozen contract. [init-auto-default — flip-cite fv24]
 - (TDD) **Assert a message-specific phrase, not an ambient token.** A substring that paths/scaffold/harness
   can also contain false-GREENs (a `/add` match off the tmpdir name); assert a phrase only the real
   behavior emits ("not attached to a milestone"). [orphan-task-guard — folded foundation-version 8]
@@ -460,3 +463,21 @@ Architecture:
   WORD, never a stale ENUMERATION — once a 3rd rung landed, "auto | conservative" descriptions read green to the
   slang fence; widen level-set prose by a structural/test pin or a manual sweep, never the vocab ban.
   [explicit-autonomy-dial — folded foundation-version 23]
+- (ADD) **Anchor a declaration-token reader to a declaration POSITION — line-start or a `·`-separator,
+  never a bare substring.** A freeform H1 title or quoted prose containing `token: value` must never be
+  read as a declaration; the symmetric hazard is worse — a title faking a *lowered* rung can DEFEAT a
+  guard that trusts the first match. Anchor every header-token reader (autonomy AND risk) to its
+  declaration column. [init-auto-default — fixed @ 55d64d9 — folded foundation-version 24]
+- (TDD/ADD) **A live-only / never-retro guard must key on the milestone's terminal STATUS, not just the
+  active-pointer + dict-membership.** A done-but-not-yet-archived milestone stays the `active_milestone`
+  pointer (and in the dict) until `archive` clears it, so pointer-membership alone briefly flags a CLOSED
+  milestone — the build keyed the `goal_not_auto_ready` WARN on the pointer and fired on a `status=done`
+  milestone; the verify adversarial pass caught the Must #4 violation and closed it test-first
+  (`status != "done"` guard + `test_done_active_milestone_not_flagged`, red→green). Reinforces
+  verified-marker-scopes-forward (enforce live, never retro-red). [goal-auto-ready-gate — folded foundation-version 24]
+- (ADD) **A lint forces a SLOT, never honesty — the irreducible floor.** `(verify: <citation>)` on every
+  exit criterion raises the goal-clarity floor (a citation MUST exist, an empty `(verify:)` does not count)
+  but cannot prove the citation is real — `(verify: it works)` passes the lint (citation-theater). The
+  engine raises the floor; the human still owns whether the citation is honest (autonomy is EARNED, not
+  mechanically proven). Recurring face of necessary-not-sufficient; RESOLVING/running the cited verifier
+  (a test that exists, a command that passes) is the recorded forward upgrade. [goal-auto-ready-gate — folded foundation-version 24]
