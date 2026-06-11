@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ground-gather-hint",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,32 +472,10 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
-    },
-    "ground-context-sources": {
-      "title": "Broaden the \u00a70 GROUND gather to the full working-folder context",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "ground-context",
-      "depends_on": [],
-      "created": "2026-06-11T02:22:14+00:00",
-      "updated": "2026-06-11T02:42:58+00:00",
-      "flag_verified": true
-    },
-    "ground-gather-hint": {
-      "title": "Add the gather-method hint \u2014 prefer a subagent/skim sweep + deepen task-specifically",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "ground-context",
-      "depends_on": [
-        "ground-context-sources"
-      ],
-      "created": "2026-06-11T02:44:20+00:00",
-      "updated": "2026-06-11T03:24:21+00:00",
-      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T03:26:02+00:00",
+  "updated": "2026-06-11T03:47:20+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -602,17 +580,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "ground-context": {
-      "title": "Ground Context",
-      "goal": "",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-11T02:21:26+00:00",
-      "updated": "2026-06-11T03:26:02+00:00"
     }
   },
-  "active_milestone": "ground-context",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -817,6 +787,17 @@
         "ground-phase-engine",
         "ground-bundle-wiring",
         "ground-prose-align"
+      ],
+      "archived": "2026-06-11",
+      "compacted": "2026-06-11"
+    },
+    {
+      "slug": "ground-context",
+      "title": "Ground Context",
+      "tasks": 2,
+      "task_slugs": [
+        "ground-context-sources",
+        "ground-gather-hint"
       ],
       "archived": "2026-06-11",
       "compacted": "2026-06-11"
