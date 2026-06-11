@@ -78,6 +78,9 @@ LIFECYCLE = [
     ["gate", "PASS", "t"],                                    # re-complete so milestone-done stays valid
     ["status"],
     ["check"],
+    ["wave-verify"],                           # merge-time fork-base gate: read-only; no WAVE.md
+                                               # on this board -> wave_not_found (expected nonzero,
+                                               # tolerated below; reads WAVE.md/state, never docs/)
     ["ready"],
     ["guide", "t"],
     ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
@@ -98,7 +101,9 @@ _EXERCISED_IN_SETUP = {"init"}
 # heal is a loop/refusal verb (heal-then-escalate): a CONFIRMED cheat never completes with
 # exit 0 — it returns to build (exit 3) or escalates (exit 1). The lifecycle exercises it
 # (proving it reads no docs/ chapter) and tolerates its expected non-zero exit.
-_NONZERO_OK = {"heal"}
+# wave-verify is likewise a refusal verb on this board: no WAVE.md exists, so the
+# merge-time gate refuses (wave_not_found) — exercised under the read-spy, nonzero tolerated.
+_NONZERO_OK = {"heal", "wave-verify"}
 
 
 class MinimalPillarTest(unittest.TestCase):

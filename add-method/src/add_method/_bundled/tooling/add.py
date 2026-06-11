@@ -1156,6 +1156,29 @@ def cmd_check(args: argparse.Namespace) -> None:
                              f"task '{_at}' froze its contract without grounding — fill the "
                              "§0 GROUND anchors the contract cites (add.py guide)"))
 
+    # wave-ledger fork-base (engine-merge-base-enforcement): the engine EXECUTES the
+    # streams.md rule — every roster echo must match `base:`. A FILLED mismatch is red at
+    # ANY status; a pending row is red at `status: merging` (merge-time strictness) but only
+    # a WARN at `status: live` (measure-not-block: step-0 echoes land mid-wave). An
+    # unparseable ledger is fail-closed (`wave_ledger_malformed`) — never a silent skip.
+    for _wp in _wave_ledgers(root):
+        _wm = _wp.parent.name
+        _w = _parse_wave_ledger(_wp)
+        if _w.get("error"):
+            checks.append((False, f"wave '{_wm}' ledger parses",
+                           f"wave_ledger_malformed: {_w['error']}"))
+            continue
+        _bad = [r["task"] for r in _w["rows"] if r["filled"] and not r["matched"]]
+        _pending = [r["task"] for r in _w["rows"] if not r["filled"]]
+        if _w["status"] == "merging":
+            _bad += _pending           # merge-time strictness: pending == unverified
+            _pending = []
+        checks.append((not _bad, f"wave '{_wm}' fork-base echoes match base",
+                       "unverified_fork_base: " + ", ".join(_bad)))
+        for _t in _pending:
+            warnings.append(("fork_base_pending",
+                             f"wave '{_wm}' roster row '{_t}' awaits its step-0 echo"))
+
     # dependency graph must be acyclic
     cycle = _find_cycle(tasks)
     checks.append((cycle is None, "task dependencies are acyclic",
@@ -1182,6 +1205,144 @@ def cmd_check(args: argparse.Namespace) -> None:
         print(summary)
     if failed:
         raise SystemExit(1)
+
+
+# ---------------------------------------------------------------------------
+# wave-ledger fork-base enforcement (engine-merge-base-enforcement)
+#
+# streams.md states the rule; these helpers EXECUTE it (words-exist != method-works).
+# The ledger is the hand-written `.add/milestones/<m>/WAVE.md` per the streams.md
+# template: a `base: <sha>` line, a `status: live|merging` field on the header line,
+# and a `### Roster` table whose 3rd column holds the PASTED `rev-parse HEAD` echo.
+# Parsing is FAIL-CLOSED: anything off-grammar names the unparseable piece rather
+# than silently passing — a silent skip would un-guard the trust layer.
+
+_WAVE_SHA_RE = re.compile(r"\b[0-9a-f]{7,40}\b")
+
+
+def _sha_match(a: str, b: str) -> bool:
+    """Exact or prefix match, both tokens >=7 hex chars (git short-sha tolerant)."""
+    if len(a) < 7 or len(b) < 7:
+        return False
+    return a == b or a.startswith(b) or b.startswith(a)
+
+
+def _wave_ledgers(root: Path) -> list:
+    """Every live wave ledger, stable order (the same glob as the status hint)."""
+    return sorted(p for p in (root / "milestones").glob("*/WAVE.md") if p.is_file())
+
+
+def _parse_wave_ledger(path: Path) -> dict:
+    """Parse a WAVE.md against the streams.md template grammar. Fail-closed: a dict
+    with an "error" key names exactly the piece that did not parse."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as e:
+        return {"error": f"unreadable ({e.__class__.__name__})"}
+    # status is read ONLY from the FIRST `wave:` line — the header. Body text must
+    # never rescue a malformed/invalid header: not free prose (heal-1 FG-2, an
+    # unanchored search) and not a later wave:-prefixed line either (heal-2 FG-3 —
+    # `(?m)^wave:.*?status:` happily skipped a status-less header to a body line).
+    m_header = re.search(r"(?m)^wave:.*$", text)
+    if not m_header:
+        return {"error": "no 'wave:' header line"}
+    # the status value is the EXACT token after `status:`, terminated only by
+    # whitespace, the `·` separator, or end-of-line (v3): `\b` is not a token
+    # terminator on hand-written input — it fires at `|` and `-`, so the unfilled
+    # template placeholder `live|merging` (and drift like `live-ish`) parsed as
+    # its valid prefix and greened an unfilled ledger (5th refute pass). The
+    # `status:` label must itself START a field — start-of-line, whitespace, or
+    # `·` before it (v4): an embedded `substatus:` is not a status field
+    # (6th refute pass, N12).
+    m_status = re.search(r"(?:^|[\s·])status:[ \t]*([^\s·]*)", m_header.group(0))
+    if not m_status:
+        return {"error": "no 'status: live|merging' on the wave: header line"}
+    if m_status.group(1) not in ("live", "merging"):
+        return {"error": "status token "
+                f"{m_status.group(1)!r} is not exactly live or merging"}
+    # base is read ONLY from the FIRST `base:` line, token on THAT line (heal-3 Pex:
+    # `(?m)^base:\s*(\S+)` let \s cross the newline, so an EMPTY base: line parsed
+    # as filled with whatever token the next line started with).
+    m_base_line = re.search(r"(?m)^base:.*$", text)
+    base = ""
+    if m_base_line:
+        m_tok = re.search(r"base:[ \t]*(\S+)", m_base_line.group(0))
+        base = m_tok.group(1) if m_tok else ""
+    if not re.fullmatch(r"[0-9a-f]{7,40}", base):
+        return {"error": "no parseable 'base:' sha (7-40 hex)"}
+    rows, in_roster, echo_col = [], False, None
+    for line in text.splitlines():
+        if line.startswith("### "):
+            in_roster = line.lower().startswith("### roster")
+            echo_col = None
+            continue
+        if not in_roster or not line.lstrip().startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if echo_col is None:
+            # the column-header row MUST name the fork-base column, and the echo is
+            # read from WHEREVER that label sits (heal-3: a hardcoded cells[2] let an
+            # extra leading column hide the echo, and a headerless roster silently
+            # swallowed its first DATA row as the header — a silent skip, refused).
+            # EXACTLY one label may match (v2 ambiguity refusal): first-wins on a
+            # hand-written artifact is fail-open — a second matching label such as
+            # "fork-base-prev" would steal the echo and green a mismatched roster
+            # (4th refute pass, N1/N10).
+            matches = [i for i, c in enumerate(cells) if "fork-base" in c.lower()]
+            if not matches:
+                return {"error": "roster column-header row names no 'fork-base' column"}
+            if len(matches) > 1:
+                labels = ", ".join(cells[i] for i in matches)
+                return {"error": f"ambiguous fork-base columns: {labels}"}
+            echo_col = matches[0]
+            continue
+        if all(set(c) <= set("-: ") for c in cells):
+            continue                            # the |---| separator row
+        if len(cells) <= echo_col:
+            return {"error": f"roster row with no fork-base cell: {line.strip()!r}"}
+        shas = _WAVE_SHA_RE.findall(cells[echo_col])
+        # fail-closed cell semantics (heal-1 FG-1): the cell must BE the pasted echo,
+        # so EVERY sha token in it must match base — `any()` would green a drift note
+        # ("<alien-sha> synced-to <base-prefix>") that documents the very mismatch
+        # this gate exists to refuse. One alien token -> the row is NOT verified.
+        rows.append({"task": cells[0], "filled": bool(shas),
+                     "matched": bool(shas) and all(_sha_match(s, base) for s in shas)})
+    if not rows:
+        return {"error": "no roster row"}
+    return {"status": m_status.group(1), "base": base, "rows": rows}
+
+
+def cmd_wave_verify(args: argparse.Namespace) -> None:
+    """The explicit merge-time gate: strict at any status, read-only, judgment-free.
+    Exit 0 only when EVERY roster echo matches `base:` — run before the first
+    merge-back. Never mutates the ledger, its status field, or state.json."""
+    root = _require_root()
+    if args.milestone:
+        target = root / "milestones" / args.milestone / "WAVE.md"
+        if not target.is_file():
+            _die(f"wave_not_found: no WAVE.md for milestone '{args.milestone}'")
+    else:
+        ledgers = _wave_ledgers(root)
+        if not ledgers:
+            _die("wave_not_found: no WAVE.md under .add/milestones/ — nothing to verify")
+        if len(ledgers) > 1:
+            _die("wave_ambiguous: " + ", ".join(p.parent.name for p in ledgers)
+                 + " — name one: add.py wave-verify <milestone>")
+        target = ledgers[0]
+    w = _parse_wave_ledger(target)
+    if w.get("error"):
+        _die(f"wave_ledger_malformed: {w['error']} ({target.parent.name}/WAVE.md)")
+    bad = []
+    for r in w["rows"]:
+        verdict = "ok" if r["matched"] else ("MISMATCH" if r["filled"] else "PENDING")
+        print(f"  {r['task']}: {verdict}")
+        if not r["matched"]:
+            bad.append(r["task"])
+    if bad:
+        _die("unverified_fork_base: " + ", ".join(bad)
+             + f" — every roster echo must match base {w['base'][:12]} before merge-back")
+    print(f"wave '{target.parent.name}' verified — every fork-base echo matches base "
+          f"{w['base'][:12]}; merge-back may proceed (the ledger is untouched).")
 
 
 def cmd_new_milestone(args: argparse.Namespace) -> None:
@@ -3184,11 +3345,11 @@ def build_parser() -> argparse.ArgumentParser:
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
     pp.add_argument("phase", choices=PHASES)
     pp.add_argument("slug", nargs="?", default=None)
-    pp.set_defaults(func=cmd_phase)
+    pp.set_defaults(func=cmd_phase, _opt_positionals=("slug",))
 
     pa = sub.add_parser("advance", help="move a task to the next phase")
     pa.add_argument("slug", nargs="?", default=None)
-    pa.set_defaults(func=cmd_advance)
+    pa.set_defaults(func=cmd_advance, _opt_positionals=("slug",))
 
     pg = sub.add_parser("gate", help="record a verify gate outcome")
     pg.add_argument("outcome", choices=GATES)
@@ -3196,7 +3357,7 @@ def build_parser() -> argparse.ArgumentParser:
     pg.add_argument("--owner", help="RISK-ACCEPTED waiver: accountable owner")
     pg.add_argument("--ticket", help="RISK-ACCEPTED waiver: tracking ticket/link")
     pg.add_argument("--expires", help="RISK-ACCEPTED waiver: expiry date")
-    pg.set_defaults(func=cmd_gate)
+    pg.set_defaults(func=cmd_gate, _opt_positionals=("slug",))
 
     pr = sub.add_parser("reopen", help="return a done task to an earlier phase with a recorded reason")
     pr.add_argument("slug", nargs="?", default=None)
@@ -3204,14 +3365,14 @@ def build_parser() -> argparse.ArgumentParser:
     # codes fire (reopen_target_invalid / reopen_reason_required), not a bare exit-2.
     pr.add_argument("--to", default=None, help="target phase (ground..observe)")
     pr.add_argument("--reason", default="", help="why the task is reopened (required, non-empty)")
-    pr.set_defaults(func=cmd_reopen)
+    pr.set_defaults(func=cmd_reopen, _opt_positionals=("slug",))
 
     ph = sub.add_parser("heal", help="report a confirmed cheat: bounded return-to-build, then escalate")
     ph.add_argument("slug", nargs="?", default=None)
     # --reason validated in-body so the named rejects fire (heal_reason_required /
     # heal_not_at_verify), not a bare argparse usage-2.
     ph.add_argument("--reason", default="", help="the refute-read finding (required, non-empty)")
-    ph.set_defaults(func=cmd_heal)
+    ph.set_defaults(func=cmd_heal, _opt_positionals=("slug",))
 
     ps = sub.add_parser("stage", help="set the project stage")
     ps.add_argument("stage", choices=STAGES)
@@ -3227,6 +3388,13 @@ def build_parser() -> argparse.ArgumentParser:
     pck.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pck.set_defaults(func=cmd_check)
 
+    pwv = sub.add_parser("wave-verify",
+                         help="read-only merge-time gate: every WAVE.md roster echo must match "
+                              "base (refuses unverified_fork_base) — run before the first merge-back")
+    pwv.add_argument("milestone", nargs="?", default=None,
+                     help="milestone whose WAVE.md to verify (default: the single live ledger)")
+    pwv.set_defaults(func=cmd_wave_verify, _opt_positionals=("milestone",))
+
     psg = sub.add_parser("sync-guidelines",
                          help="(re)write the ADD guideline block into AGENTS.md + CLAUDE.md")
     psg.set_defaults(func=cmd_sync_guidelines)
@@ -3234,7 +3402,7 @@ def build_parser() -> argparse.ArgumentParser:
     pgd = sub.add_parser("guide", help="print the one concrete next step for the active task")
     pgd.add_argument("slug", nargs="?", default=None, help="task slug (default: active task)")
     pgd.add_argument("--json", action="store_true", help="machine-readable JSON output")
-    pgd.set_defaults(func=cmd_guide)
+    pgd.set_defaults(func=cmd_guide, _opt_positionals=("slug",))
 
     prp = sub.add_parser("report",
                          help="capture/render a milestone's what-happened report (read-only)")
@@ -3254,7 +3422,7 @@ def build_parser() -> argparse.ArgumentParser:
                      help="decision-point digest: what needs the human's judgment NOW "
                           "(task -> decision digest; milestone -> DECIDE NEXT only; "
                           "bare -> the active task)")
-    prp.set_defaults(func=cmd_report)
+    prp.set_defaults(func=cmd_report, _opt_positionals=("milestone", "task"))
 
     pdt = sub.add_parser("deltas",
                          help="read-only report: open lessons learned grouped by competency")
@@ -3280,9 +3448,33 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _rebind_optional_positionals(parser: argparse.ArgumentParser,
+                                 args: argparse.Namespace,
+                                 extras: list[str]) -> argparse.Namespace:
+    """argv portability (py<=3.12): argparse cannot bind an optional positional that
+    trails value-taking flags once a REQUIRED positional was consumed in an earlier
+    block — `gate RISK-ACCEPTED --owner X --ticket Y --expires Z <slug>` dies
+    `unrecognized arguments: <slug>` on 3.10/3.11/3.12 (3.13+ parses it natively).
+    Fix at main(): parse_known_args leaves the stranded slug in `extras`; re-bind
+    non-flag extras into UNFILLED (still-default-None) optional positionals, in the
+    order each subparser declared via set_defaults(_opt_positionals=...).
+    Safety rule (frozen §3, engine-argv-portability): ANY flag-like extra refuses the
+    WHOLE re-bind, and leftover extras re-raise the stock exit-2 error — a typo'd
+    flag's value must never be mis-bound as a slug (that would gate the WRONG task)."""
+    slots = [name for name in getattr(args, "_opt_positionals", ())
+             if getattr(args, name, None) is None]
+    if any(tok.startswith("-") for tok in extras) or len(extras) > len(slots):
+        parser.error("unrecognized arguments: " + " ".join(extras))
+    for name, value in zip(slots, extras):
+        setattr(args, name, value)
+    return args
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
-    args = parser.parse_args(argv)
+    args, extras = parser.parse_known_args(argv)
+    if extras:
+        args = _rebind_optional_positionals(parser, args, extras)
     args.func(args)
     return 0
 

@@ -569,7 +569,7 @@ Architecture:
   Generalizable to any "freeze X at phase A, enforce at phase B" (the tamper-tripwire snapshots md5(test paths + §3) at
   tests→build, re-checks at verify). The bounded loop returns a confirmed cheat to BUILD for an honest redo and counts
   attempts MONOTONICALLY — never auto-resetting, because the phase verb is unguarded (a tests→build re-cross would
-  otherwise zero the counter with zero human action); after the cap it forces the HARD-STOP. [verify-integrity: tamper-tripwire + heal-then-escalate — folded foundation-version 27]
+  otherwise zero the counter with zero human action); after the cap it forces the HARD-STOP. [verify-integrity: tamper-tripwire + heal-then-escalate — folded foundation-version 27] Validated under real fire: engine-merge-base-enforcement ran the loop to its cap TWICE — 3 honest src-only redos, then heal_exhausted HARD-STOP escalations the human routed as change-requests; refute→heal→re-refute converged to two consecutive EARNED passes. [flip-cite — folded foundation-version 28]
 - (TDD) **An engine change that legitimately invalidates an EXISTING assertion makes the test edit an EVOLUTION, not a
   weakening — iff three hold: the real invariant stays guarded, coverage holds-or-rises, and the reason is documented.**
   The reusable discriminator behind "split, never loosen": when the landed behavior makes an old assertion false (a
@@ -585,3 +585,37 @@ Architecture:
   stage describes without pre-empting the next's enforcement. (2) When a new feature needs the exact file set an existing
   counter resolves, extract a path-returning helper and delegate the counter to it (one resolution source), never
   re-glob — the snapshot and the engine then agree by construction. [verify-integrity: earned-green-rubric + tamper-tripwire — folded foundation-version 27]
+- (SDD) **Parsing a hand-written artifact: exactly-one-match + terminator-explicit — never substring-first-wins, never
+  regex-`\b`.** Two clauses, one discipline. A label lookup must match EXACTLY ONE candidate (>1 → refuse as malformed,
+  naming the collision) — first-wins on hand-written input is fail-open by construction: a decoy `fork-base-prev` label
+  stole the echo column. And a keyword token must name its terminators (whitespace/separator/end-of-line) or use exact
+  token equality — `\b` fires at `|` and `-`, so the unfilled template placeholder `live|merging` parsed as its valid
+  prefix and greened an unfilled ledger on both surfaces. [engine-merge-base-enforcement: refute passes 4–5 — folded foundation-version 28]
+- (SDD) **When a spec's enforcement crosses a seam the engine cannot observe, NAME the enforcement-deferral explicitly
+  at the freeze.** Prose must never masquerade as enforcement: the frozen flag that declared the spawn-time fork-base
+  check DEFERRED to a future engine task is what made the gap honest — and what engine-merge-base-enforcement closed.
+  [wave-protocol-runtime — folded foundation-version 28]
+- (TDD) **A refute-read's coverage gaps route as NEXT-LOOP deltas, never post-hoc test edits.** After the tests→build
+  snapshot the suite is tamper-guarded; hardening it in place reads as tamper. The honest absorb-point is the next
+  freeze (a change-request re-snapshot) — exactly how the 11 refute-discovered wave vectors became pinned fixtures.
+  [engine-argv-portability — folded foundation-version 28]
+- (TDD) **A red suite for a PARSER of hand-written artifacts must include grammar-DRIFT fixtures, not only
+  template-conformant ones.** Ten conformant tests stayed green across six contract-violating false-greens that only
+  adversarial probing surfaced — conformant fixtures test the happy grammar, not the fail-closed promise.
+  [engine-merge-base-enforcement: refute passes 1–4 — folded foundation-version 28]
+- (TDD) **Token-presence + ×N-mirror-parity is the honest test shape for a prose-discipline change with no executable
+  engine hook.** Lock the WORDS and the MIRROR; let the adversarial refute-read confirm the words carry mechanism —
+  red→green works on prose exactly like code when the assert is a vocabulary token. [wave-protocol-runtime — folded foundation-version 28]
+- (ADD) **Grounding probes against MUTATING engine verbs run in a sandbox, never the live project.** A §0 `new-task`/
+  `use` probe polluted live state.json and needed a git restore; read-only verbs may probe live, mutating verbs never.
+  [engine-argv-portability — folded foundation-version 28]
+- (ADD) **Close-gap-before-gate converges.** A disclosed non-finding observation routed as a MICRO change-request (one
+  contract sentence · one red fixture · one-line fix · targeted re-refute) closes in a single short cycle and lets the
+  gate record a clean PASS instead of a PASS-with-asterisk — disclosure plus a small honest loop beats waving residue
+  through. [engine-merge-base-enforcement: pass-6 N12 → v4 — folded foundation-version 28]
+- (ADD) **A folded runtime-exception must be MIRRORED onto every protocol surface it governs.** One surface carrying
+  the rule while a sibling protocol file contradicts it re-opens the prose-only gap the fold closed (the cross-surface
+  recursion v19 delta #7 named). [wave-protocol-runtime — folded foundation-version 28]
+- (ADD) **Design-for-failure on a concurrency invariant: the check SHIFTS, never SKIPS, when its evidence cell is
+  unsatisfiable.** Relocate the guarantee (pre-spawn rev-parse → worker step-0 echo + merge-time verify), never drop
+  it — an unsatisfiable check that silently lifts un-guards the invariant it existed for. [wave-protocol-runtime — folded foundation-version 28]
