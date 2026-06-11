@@ -48,6 +48,12 @@ Two failures slip straight past green tests. The first is code that is never *wi
 
 This is *evidence*, not impression: a reference search showing where each new symbol is called, a scan confirming nothing new is orphaned, or — for prose — a note of exactly what was read and what it confirmed. An unfilled deep check is a **shallow verify**, not a pass. The engine cannot judge wiring, dead code, or whether prose was truly read; the resolver records the evidence, and a person (under `conservative`) or the recorded run (under `auto`) signs it.
 
+## Part four — was the green earned?
+
+Passing tests say the code satisfies the cases you wrote down. They do not say it earned that pass honestly — and the mechanical tamper tripwire (Step 6's floor) only catches an *edited* test or contract, not a build that gamed the *unchanged* suite. The same rubric the phase guide carries names what the tripwire cannot see:
+
+A green suite proves the tests pass — not that the build EARNED them. Three judgment cheats pass the unchanged suite without earning it: src overfit to the test fixtures (special-cased to the literal inputs, not the general behavior §1 asked for), vacuous asserts (tautological — green even against an empty implementation), and real logic stubbed away (the function returns a constant the tests happen to accept). These cheats are invisible to the mechanical tamper tripwire, which only sees edited files. Score them with an adversarial refute-read: an independent reviewer — a subagent under `autonomy: auto` is recommended, the engine never spawns one — prompted to argue the green was NOT earned from outside the build context. This is the verify-gate, whole-suite specialization of run.md's adversarial verify (see run.md), not a new discipline. A confirmed earned-green failure is HARD-STOP-class: never auto-passed, never RISK-ACCEPTED.
+
 ## Recording the outcome
 
 Every verification ends with exactly one recorded outcome, with an accountable owner — never a silent pass:

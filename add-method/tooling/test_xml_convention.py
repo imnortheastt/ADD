@@ -103,6 +103,7 @@ PHASE_FILES = {
         "narrative": (
             "## Part one — confirm the evidence",
             "## Part two — check what tests miss",
+            "## Part four — was the green earned?",
             "## Record exactly one outcome (no silent pass)",
         )},
     "7-observe.md": {

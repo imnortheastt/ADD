@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "tamper-tripwire",
+  "active_task": "earned-green-rubric",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -486,10 +486,24 @@
         "contract_md5": "786a844ebd439ee5fb2fb5d01dff5596",
         "tests": {}
       }
+    },
+    "earned-green-rubric": {
+      "title": "Earned-green rubric \u2014 judgment cheats (overfit \u00b7 vacuous \u00b7 stub) scored by an adversarial refute-read",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "verify-integrity",
+      "depends_on": [],
+      "created": "2026-06-11T06:51:31+00:00",
+      "updated": "2026-06-11T07:26:41+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "d9ffbb8edf9da10354d22cf729325302",
+        "tests": {}
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T06:44:37+00:00",
+  "updated": "2026-06-11T07:26:41+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
