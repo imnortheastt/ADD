@@ -78,6 +78,10 @@ never drops to zero (`run.md:22`). That floor is correct; do not engineer around
   `HEAD`) and re-echoes `rev-parse HEAD`, which the orchestrator verifies at **merge-time**, before merge-back.
   The pre-spawn check stays the DEFAULT for fresh-`HEAD`-worktree runners; the merge-time path is the additive
   ALTERNATIVE for spawn-time runners — never a replacement of the pre-spawn rule.
+  **The engine executes this gate** (engine-merge-base-enforcement): run
+  `python3 .add/tooling/add.py wave-verify` before the first merge-back — it refuses a mismatched or
+  pending echo (`unverified_fork_base`) and an off-template ledger (`wave_ledger_malformed`, fail-closed);
+  `add.py check` is the standing monitor (red at `status: merging`, `fork_base_pending` WARN at `live`).
 - **Lease + timeout** — record which worker holds which task (in the wave ledger, below);
   if a worker dies, release the claim back to READY (re-spawn, do not assume partial work is sound).
 - **Failure isolates** — a worker that hits a STOP-and-escalate (below) blocks only its

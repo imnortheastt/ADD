@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "engine-argv-portability",
+  "active_task": "engine-merge-base-enforcement",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -498,16 +498,54 @@
     },
     "engine-merge-base-enforcement": {
       "title": "Engine guards the merge-time fork-base echo on merge-back",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": null,
       "depends_on": [],
       "created": "2026-06-11T11:31:40+00:00",
-      "updated": "2026-06-11T11:31:40+00:00"
+      "updated": "2026-06-11T16:57:40+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e9293e39d6f86419b38c093b361c3b10",
+        "tests": {
+          "add-method/tooling/test_merge_base_enforcement.py": "87b49f4a9304c757861b58fd6a8eab28",
+          "add-method/tooling/test_min_pillar.py": "e3d6862576ac3ea0b41e85fabd55b810"
+        }
+      },
+      "heal": {
+        "attempts": 3,
+        "history": [
+          {
+            "at": "2026-06-11T13:57:10+00:00",
+            "reason": "refute-read:adversarial refute-read: green not earned per frozen \u00a73 \u2014 FG-1 any()-over-multi-sha-tokens lets a drift-note cell (mismatch + prefix-of-base token) pass BOTH surfaces; FG-2 unanchored re.search(status) lets body prose rescue a malformed header (check mis-classifies). Honest redo: all()-semantics on cell tokens + header-line-anchored status parse; suite untouched (coverage gap routes as delta).",
+            "source": "refute-read"
+          },
+          {
+            "at": "2026-06-11T14:05:51+00:00",
+            "reason": "refute-read:re-refute FG-3: (?m)^wave:.*?status: matches ANY wave:-prefixed line \u2014 a status-less header + a body line 'wave: ... status: live' rescues the parse; with a clean echo wave-verify exits 0 (true false-green). Honest redo: parse status from the FIRST wave: header line ONLY; suite untouched (vector routes as delta).",
+            "source": "refute-read"
+          },
+          {
+            "at": "2026-06-11T14:17:50+00:00",
+            "reason": "refute-read:3rd refute: P2b first |-row unconditionally consumed as column header \u2014 a headerless roster's mismatch row is SILENTLY skipped (both surfaces exit 0); P1 hardcoded cells[2] \u2014 an extra leading column hides the echo (check@live WARNs instead of FAILs); Pex (?m)^base:\\s*(\\S+) crosses the newline \u2014 an empty base: line parses as filled. Honest redo: first-base-line-only parse + header row MUST name a fork-base column (else malformed) + echo column derived from the header label.",
+            "source": "refute-read"
+          },
+          {
+            "at": "2026-06-11T14:31:45+00:00",
+            "reason": "refute-read:4th refute N1/N10: substring+first-wins echo-column pick ('fork-base' in c.lower(), next()) \u2014 a decoy header label 'fork-base-prev' steals the column; a FILLED MISMATCHED echo in the real fork-base column exits 0 on BOTH surfaces (contract: FILLED echo != base -> FAIL, any status). Heals 1-3 confirmed holding; clean template + short-sha confirmed. Fix shape: ambiguity refusal (>1 matching column -> wave_ledger_malformed) or exact label match.",
+            "source": "refute-read"
+          },
+          {
+            "at": "2026-06-11T15:58:20+00:00",
+            "reason": "refute-read:refute-read: 5th refute FG-STATUS-BOUNDARY: r'status:\\s*(live|merging)\\b' at the wave header parse \u2014 \\b fires at non-word chars (| and -), so the prefix of an invalid status token parses as valid. Instance A (realistic): the EXACT unfilled streams.md template placeholder 'status: live|merging' + matching echo exits 0 on BOTH surfaces; A-harm: same placeholder + PENDING row leaves the standing monitor green (WARN only) \u2014 the merge-time fail-open this task exists to close. Contract: no status live|merging -> wave_ledger_malformed. Heals 1-3 + v2 ambiguity refusal CONFIRMED holding (7 known vectors re-executed, 24 new probes, this is the only failing family). Fix shape: strict status terminator (whitespace/separator/end-of-line only).",
+            "source": "refute-read"
+          }
+        ]
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T13:22:39+00:00",
+  "updated": "2026-06-11T16:57:40+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
