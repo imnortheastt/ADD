@@ -504,7 +504,10 @@ Architecture:
   dogfood `check` count is unmoved; (b) MIRROR the established measure-not-block shape verbatim — a human-readable
   `status` line + a never-red WARN riding the existing `warnings` array, never a new `--json` key (sidesteps the
   `json_surface_unsanctioned_key` landmine and the design churn). Reinforces "a harmless additive `--json` key
-  still stays inside the frozen contract." [ground-bundle-wiring — folded foundation-version 25]
+  still stays inside the frozen contract." [ground-bundle-wiring — folded foundation-version 25] **VALIDATED at the
+  ground-context fold:** the TEMPLATE twin held — an additive `## 0 · GROUND` template LINE inserted BETWEEN existing
+  fields was byte-invisible to the structure/token-pinning template guards (the suite grew with zero scaffold/render
+  test broken), because template tests pin tokens + structure, not exact line-sets. [ground-context-sources — folded foundation-version 26]
 - (TDD) **A prose guard derived from the engine constant self-maintains — a ladder change then satisfies it
   minimally.** Derive the test's expected set from the engine constant (`FLOW_PHASES = [p for p in add.PHASES if
   p != "done"]`) so a ladder change AUTO-propagates the prose requirement — adding `ground` to `PHASES` made
@@ -520,3 +523,29 @@ Architecture:
   new phase — which narrows the residual from "zero lived dogfood" to "zero lived runs STARTING at ground," the
   accepted ceiling recorded for the next milestone, never papered over. Reinforces "a method-defining task
   dogfoods its own rule." [ground-phase-engine + ground-bundle-wiring + ground-prose-align — folded foundation-version 25]
+  **CEILING CLOSED at ground-context:** the FIRST lived ground run (a task created AT `ground`, not retrofitted)
+  reached `grounded ✓` live, closing the "zero lived runs STARTING at ground" residual recorded here as the accepted
+  next-milestone ceiling. [ground-context-sources — folded foundation-version 26]
+- (ADD) **Ground has two axes — completeness (WHAT) and economics (HOW).** The §0 gather names not only WHAT to
+  gather (the working-folder categories: docs/textbase · TODOs · config/manifests · data/fixtures, beyond code) but
+  HOW to gather it — sweep the BROAD pass cheaply (a small-model subagent / fast index / skim, returning a compact
+  map), then DEEPEN task-specifically on what THIS task needs. Naming the economics closes both failure modes at
+  once: skipping context, and indexing the whole repo. A complete §0 is the task-relevant delta gathered
+  cheaply-then-deeply, never a repo-wide scan. [ground-context-sources + ground-gather-hint — folded foundation-version 26]
+- (ADD) **A capability can be ADDED as guide-prose recommendation while the engine stays tool-agnostic — the pin
+  holds across the addition.** The gather-method hint RECOMMENDS a subagent; `add.py` spawns nothing (the
+  orchestrating agent chooses the tool), so the engine stayed byte-identical to `engine_pin` through BOTH
+  ground-context tasks. When a new method capability is advice, not mechanism, it lands entirely in the ×3 guide
+  prose — no engine action, no new measure, no new gate — and the unchanged engine pin is the proof the line was not
+  crossed. [ground-gather-hint — folded foundation-version 26]
+- (ADD) **Dogfooding the shipped technique in-flight validates it.** The build of the sweep-cheap-then-deepen hint
+  USED that very split — a haiku subagent ran the broad working-folder sweep (returning the ×3/×3 sync md5s + the
+  guard list) while the main context deepened on the precise guard assertions, pre-mapping the `Anchors the contract
+  cites:` measure line before the broaden touched it. The method proved itself by being the method that built it;
+  reinforces "a method-defining task dogfoods its own rule." [ground-context-sources + ground-gather-hint — folded foundation-version 26]
+- (TDD) **A prose feature is RED-greenable by token-presence guards; triage the RED split.** A prose/template task's
+  red suite splits into two halves: "the feature is missing" (the NEW behavior — must be red before build) and "the
+  invariants still hold" (must stay green throughout); triaging the split confirms the red is the new behavior, not
+  a broken invariant. Pin the behavior by token presence — assert `"subagent"`+(`"index"`|`"skim"`), `"deepen"`,
+  `"working folder"` — so the phrasing stays free and only the behavior is locked. A prose-economics hint is as
+  pinnable as a structural one. [ground-context-sources + ground-gather-hint — folded foundation-version 26]

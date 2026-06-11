@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-11 · foundation-version: 25
+slug: AIDD-Book · stage: mvp · updated: 2026-06-11 · foundation-version: 26
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
@@ -230,6 +230,13 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   seven steps' numbering + gate are unchanged, ground rides in front. Grounding INFORMS the contract, never
   authors it. Honest ceiling: shipped with ZERO lived runs starting at ground (all 3 tasks grandfathered at
   specify; §0 retrofitted at build) — first lived run is next-milestone. [folded foundation-version 25]
+- **ground-context (Ground gathers the whole working folder, efficiently): SHIPPED 2026-06-11** — the §0 GROUND
+  gather now spans the working folder, not only code: docs/textbase · TODOs · config/manifests · data/fixtures
+  (task-delta only). `0-ground.md` also gained a gather-METHOD hint — sweep the broad pass cheaply (a small-model
+  subagent / fast index / skim) then DEEPEN task-specifically, a recommendation the engine never spawns
+  (tool-agnostic; `add.py` byte-identical to `engine_pin` throughout). Closed the fv25 honest ceiling: the first
+  lived ground run (a task created AT `ground`) reached `grounded ✓`. Additive prose/template only — the §0
+  anchors-keyed grounding measure is unchanged. [folded foundation-version 26]
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -351,3 +358,4 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 | 2026-06-10 | ship flag-first-freeze + fold → foundation-version 23 (4 deltas: 2 new CONVENTIONS bullets — verified-marker-scopes-forward · prose-accord-pins-every-surface+word-ban-blind — · 1 cross-surface-term flip-cite · 1 §Spec ship bullet) | human-gated fold at flag-first-freeze close; the milestone's own theme (a guard with mechanical teeth) caught its own gap — DocsAccordTest pinned 1 of 4 named surfaces, surfaced by human review at the verify gate not CI; MILESTONE.md was a never-authored stub, back-filled at close | +2 CONVENTIONS +1 flip-cite; §Spec flag-first-freeze bullet; 22→23; 4 deltas open→folded; engine c0c9329c ×3 |
 | 2026-06-10 | ship goal-auto-ready + fold → foundation-version 24 (7 deltas: 3 new CONVENTIONS bullets — anchor-declaration-token-reader · live-only-guard-keys-on-terminal-status · lint-forces-a-slot-not-honesty — · 1 frozen-guard→fix-build flip-cite · 1 §Spec ship bullet carrying 2 SDD; the OSError-guard divergence on `_exit_criteria_cited` recorded as an ACCEPTED CEILING, not hardened in isolation — it mirrors the sibling `_exit_criteria` convention) | human-gated fold at goal-auto-ready close (2/2 tasks, 3/3 criteria); the verify adversarial pass caught its own Must #4 gap (the live-only WARN fired on a done-but-not-yet-archived milestone), closed test-first before the gate (close-gap-before-gate); all 7 confirmed (none rejected) | +3 CONVENTIONS +1 flip-cite; §Spec goal-auto-ready bullet (auto default + auto-ready-goal check, --autonomy knob deferred OPEN, spine decision deferred); 23→24; 7 deltas open→folded; engine 70d779c4 ×3 |
 | 2026-06-11 | fold ground-phase learnings → foundation-version 25 (12 open deltas: 5 new CONVENTIONS bullets — ground-before-§3 · ordered-constant-index-hazard · additive-surface-byte-invisible · engine-derived-prose-guard · grandfather-retrofit-ceiling — · 1 flip-cite onto four-mirror-trees · 1 §Spec ground-phase ship bullet) | human-gated fold at ground-phase close (3/3 tasks, 3/3 criteria); the milestone's own theme dogfooded — grounding §3 in the real engine pre-caught 4 defects, and the phase shipped with zero LIVED runs (all 3 tasks grandfathered at specify, §0 retrofitted at build — honest ceiling, not papered) | +5 CONVENTIONS +1 flip-cite; §Spec ground-phase ship bullet + the 7-step frozen-line parenthetical; 24→25; 12 deltas open→folded; engine e6b8c3da ×3 (unchanged this milestone — prose/template only) |
+| 2026-06-11 | fold ground-context learnings → foundation-version 26 (9 open deltas: 4 new CONVENTIONS bullets — ground-two-axes-completeness+economics · capability-as-prose-recommendation-engine-tool-agnostic · dogfood-technique-in-flight · prose-feature-red-greenable-by-token-presence — · 2 flip-cites onto fv25 bullets — additive-byte-invisible template-twin · grandfather-ceiling CLOSED — · 1 §Spec ground-context ship bullet; δ6 self-closed within-milestone, task 2 reworded the intro it flagged) | human-gated fold at ground-context close (2/2 tasks, 2/2 criteria); the milestone dogfooded its own technique in-flight (haiku subagent broad sweep · main-context deepen) and closed the fv25 zero-lived-run ceiling in real time | +4 CONVENTIONS +2 flip-cites; §Spec ground-context bullet; 25→26; 9 deltas open→folded (incl. δ6 self-closed); engine e6b8c3da ×3 unchanged (prose/template only) |

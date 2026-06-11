@@ -30,9 +30,9 @@ Out (deferred — the anti-scope-creep list):
 - **§0 GROUND template shape** — how the broadened context is recorded (a light addition to **Touches** vs a new field set) -> owning task `ground-context-sources`; the second task's hint refers to it. Forward decision resolved at that task's §3 freeze (lean addition preferred; human approves at the freeze).
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] ground-context-sources   depends-on: none                    — broaden the §0 GROUND gather + `0-ground.md` to the working-folder context (code + docs/textbase + todos + config/manifests + data/fixtures); §0 template ×3, guide ×3/×4 synced. First ever task to START at `ground` (closes the zero-lived-run ceiling).
-- [ ] ground-gather-hint       depends-on: ground-context-sources  — the gather-method hint in `0-ground.md`: prefer a small-model subagent / fast index / skim for the broad sweep + deepen task-specifically; guide ×3/×4 synced.
+- [x] ground-context-sources   depends-on: none                    — broaden the §0 GROUND gather + `0-ground.md` to the working-folder context (code + docs/textbase + todos + config/manifests + data/fixtures); §0 template ×3, guide ×3/×4 synced. First ever task to START at `ground` (closes the zero-lived-run ceiling).
+- [x] ground-gather-hint       depends-on: ground-context-sources  — the gather-method hint in `0-ground.md`: prefer a small-model subagent / fast index / skim for the broad sweep + deepen task-specifically; guide ×3/×4 synced.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] the `## 0 · GROUND` template + `0-ground.md` name the working-folder context categories (docs · todos · config · data) beyond code, byte-synced across trees  (verify: test_ground_context.py — §0/guide carry the new categories + ×3/×4 parity)  (← ground-context-sources)
-- [ ] `0-ground.md` instructs the AI to prefer a fast small-model subagent / index / skim for the sweep AND to deepen task-specifically, byte-synced across trees  (verify: test_ground_context.py — guide carries the gather-method hint + ×3/×4 parity)  (← ground-gather-hint)
+- [x] the `## 0 · GROUND` template + `0-ground.md` name the working-folder context categories (docs · todos · config · data) beyond code, byte-synced across trees  (verify: test_ground_context.py — §0/guide carry the new categories + ×3/×4 parity)  (← ground-context-sources)
+- [x] `0-ground.md` instructs the AI to prefer a fast small-model subagent / index / skim for the sweep AND to deepen task-specifically, byte-synced across trees  (verify: test_ground_context.py — guide carries the gather-method hint + ×3/×4 parity)  (← ground-gather-hint)
