@@ -14,6 +14,11 @@ the work — gathering them IS the job, not a detour.
 - **Touches** — the real files · symbols · signatures the task will read or change,
   named from the actual code (use your code-navigation tools — grep / symbol search,
   never memory). Each as `path:symbol — what it is / how it is keyed`.
+- **Context (working folder)** — beyond code, the NON-code artifacts the task touches:
+  docs/textbase (README · `*.md` · design notes) · TODOs (`TODO.md` · `FIXME`/`TODO`/`HACK`
+  comments · task lists) · config/manifests (configs · `.env.example` · `pyproject`/`package`
+  · CI) · data/fixtures (samples · fixtures · schemas). Gather only the TASK-SPECIFIC
+  delta — never index the whole repo.
 - **Honors** — the patterns and conventions the work must respect, cited from
   `PROJECT.md` / `CONVENTIONS.md`. Gather only the TASK-SPECIFIC delta — never
   re-derive the architecture or re-run the setup brownfield scan.

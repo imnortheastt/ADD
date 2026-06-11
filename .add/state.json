@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "ground-context-sources",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,10 +472,20 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
+    },
+    "ground-context-sources": {
+      "title": "Broaden the \u00a70 GROUND gather to the full working-folder context",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "ground-context",
+      "depends_on": [],
+      "created": "2026-06-11T02:22:14+00:00",
+      "updated": "2026-06-11T02:42:58+00:00",
+      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T02:11:36+00:00",
+  "updated": "2026-06-11T02:42:58+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -580,9 +590,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "ground-context": {
+      "title": "Ground Context",
+      "goal": "",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-11T02:21:26+00:00",
+      "updated": "2026-06-11T02:21:26+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "ground-context",
   "archived": [
     {
       "slug": "v5",
