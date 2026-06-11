@@ -272,7 +272,7 @@ Constraints: do NOT change any test or the contract; allow-list packages only (s
 - SEMANTIC — n/a: code task (WIRING/DEAD-CODE path filled)
 
 ### GATE RECORD
-Outcome: HARD-STOP (engine-recorded at the bounded self-heal cap: heal_exhausted after 3 honest re-build attempts + a 4th confirmed finding N1/N10; a gamed green is never auto-passed)
+Recorded (v1, superseded by the human-routed change-request): HARD-STOP — engine-recorded at the bounded self-heal cap (heal_exhausted after 3 honest re-build attempts + a 4th confirmed finding N1/N10; a gamed green is never auto-passed)
 If RISK-ACCEPTED -> owner: <name> · ticket: <link> · expires: <date>   (never for a security gap)
 Reviewed by: the bounded self-heal loop (engine, mechanical cap); human disposition by Tin Dang 2026-06-11 — CHANGE-REQUEST → re-freeze (bundle reopened at specify via `add.py phase specify`; v2 adds the ambiguity-refusal clause + pins the 6 discovered vectors). This v1 gate record stays as history; the v2 run records its own gate below it at re-verify.
 
@@ -287,7 +287,7 @@ Reviewed by: the bounded self-heal loop (engine, mechanical cap); human disposit
 - [ ] a person reviewed and approved the change — `autonomy: conservative`: this gate is the human's
 
 ### GATE RECORD (v2)
-Outcome: HARD-STOP (engine-recorded: heal_exhausted — the bounded cap was spent on heals 1–3; the 5th-pass confirmed finding FG-STATUS-BOUNDARY escalates straight to the human, by design)
+Recorded (v2, superseded by the human-routed change-request): HARD-STOP — engine-recorded (heal_exhausted — the bounded cap was spent on heals 1–3; the 5th-pass confirmed finding FG-STATUS-BOUNDARY escalates straight to the human, by design)
 Reviewed by: refute pass 5 (adversarial audit) + the engine cap; human disposition by Tin Dang 2026-06-11 — CHANGE-REQUEST → re-freeze v3 (strict status terminator via exact token equality; pin the 3 pass-5 fixtures; contracted residues left as accepted tolerances). This v2 gate record stays as history; the v3 run records its own gate below it at re-verify.
 
 ### v3 run (re-freeze 2026-06-11, second change-request)
@@ -300,7 +300,7 @@ Reviewed by: refute pass 5 (adversarial audit) + the engine cap; human dispositi
 - [ ] a person reviewed and approved the change — `autonomy: conservative`: this gate is the human's
 
 ### GATE RECORD (v3)
-Outcome: PENDING — refute pass 6 EARNED; human disposition by Tin Dang 2026-06-11 on the disclosed N12 observation: CLOSE-GAP-BEFORE-GATE — micro change-request → re-freeze v4 (left-anchor the status field label; one fixture; targeted pass 7), THEN the gate is recorded. This v3 record stays as history; the v4 run records the final gate below it.
+Recorded (v3, resolved into the v4 run): refute pass 6 EARNED; human disposition by Tin Dang 2026-06-11 on the disclosed N12 observation: CLOSE-GAP-BEFORE-GATE — micro change-request → re-freeze v4 (left-anchor the status field label; one fixture; targeted pass 7), THEN the gate is recorded. This v3 record stays as history; the v4 run records the final gate below it.
 Reviewed by: <the v4 run carries the final review>
 
 ### v4 run (re-freeze 2026-06-11, close-gap-before-gate micro change-request)
