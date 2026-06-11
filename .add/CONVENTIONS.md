@@ -63,7 +63,9 @@ Architecture:
 - (TDD) **Prose-guide tasks are red→green-testable.** A docs/guideline change is TDD-able by asserting
   content anchors (required section present + ordering) + cross-tree byte-identity (canonical ==
   bundled == dogfood mirror), not behavior. Write the assertion red before the edit; a parity test
-  backstops drift. [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7]
+  backstops drift. Validated again by verify-integrity: a prose/method change is testable by anchor-presence + a
+  one-hash mirror-parity across guide ×3 / book ×4 / template ×3 / glossary, the engine held byte-identical to the pin.
+  [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7 · reinforced verify-integrity fv27]
   Held again v16 across a 7-file batch AND a fenced verbatim doc: every guard authored RED (no blocks yet) →
   green by the doc edit alone, no test weakened — RED-before-build holds even when there is no runtime to
   cover. [phase-guides-xml + xml-convention — folded foundation-version 15]
@@ -406,7 +408,10 @@ Architecture:
   the decision arc · running the reconcile rule · presenting a presentation-contract AT the very gate that ships
   it surfaced gaps every green suite missed: the 5-of-7 gate-coverage gap, the verbatim reconcile-rule
   duplication, the digest-vs-prose mismatch. Practice the rule on its own gate the session it lands — reinforces
-  "a method-defining task dogfoods its own rule". [report-arc + arc-gate-wiring + arc-book-align — folded foundation-version 22]
+  "a method-defining task dogfoods its own rule". Reinforced by verify-integrity: the first NORMAL task through a
+  freshly-shipped guard is its cheapest end-to-end test (task 2 crossed tests→build under task 1's live tripwire,
+  re-checked clean at the gate), and the method audits its OWN builds — dogfooding the earned-green rubric on task 3
+  caught a real nit (a trivially-true assert) before the gate. [report-arc + arc-gate-wiring + arc-book-align — folded foundation-version 22 · reinforced verify-integrity fv27]
 - (ADD) **The change-request is the method working, not a failure.** A frozen-contract gap caught at verify is
   fixed via reopen→contract→re-freeze (the live-run form is `add.py phase contract`; `reopen` is for DONE tasks),
   never a silent build edit; the §3 carries both freeze stamps. Reinforces "a frozen guard is fixed in the BUILD
@@ -441,7 +446,10 @@ Architecture:
   claim 'every X' is true" — the chapter named 5 of 7 wired gates, 690-green); a prose-marker test pins steps NAMED,
   not orchestration DRIVEN; a gather-not-judge invariant is asserted STRUCTURALLY (no verdict field in the schema),
   never via a word denylist that lags the contract. The human SEMANTIC read + the engine seam carry what the test is
-  blind to — recurring face of "words-exist≠method-works". [arc-book-align + graduate-guide + graduation-analytics — folded foundation-version 22]
+  blind to — recurring face of "words-exist≠method-works". A presence test also proves a phrase EXISTS on ONE surface,
+  never that two surfaces AGREE on its qualifier (a template read "for high-risk" while the guide read "recommended
+  under auto"; every anchor test passed) — cross-surface qualifier agreement needs a shared render or an
+  adversarial/human read. [arc-book-align + graduate-guide + graduation-analytics — folded foundation-version 22 · reinforced verify-integrity fv27]
 - (TDD) **A new guard that invalidates an existing test's PREMISE is adapted by SPLITTING, never loosening — and
   disclosed at the gate.** Move the old guarantee to where it still holds (the bare flip → a non-guarded stage), add
   the new guarantee (refuse@0 / succeed@≥1 / --force), surface the touched files as a strictly-strengthening
@@ -549,3 +557,31 @@ Architecture:
   a broken invariant. Pin the behavior by token presence — assert `"subagent"`+(`"index"`|`"skim"`), `"deepen"`,
   `"working folder"` — so the phrasing stays free and only the behavior is locked. A prose-economics hint is as
   pinnable as a structural one. [ground-context-sources + ground-gather-hint — folded foundation-version 26]
+- (ADD) **Build-integrity needs a mechanical floor AND a judgment ceiling — and a confirmed cheat is HARD-STOP-class.**
+  The tamper-tripwire catches the cheats it can SEE (a test or the frozen §3 edited after the red run, by md5); the
+  earned-green refute-read the ones it cannot (src overfit to fixtures · vacuous asserts · stubbed-away logic) — neither
+  layer alone closes the gamed-green gap. The mechanical floor lives in agent-writable state.json, so it is
+  necessary-not-sufficient: a co-witness flag raises the forgery cost (forge two, not one) but a determined agent
+  patching both still slips — the adversarial read + the human gate stay the real backstop. A confirmed cheat is never
+  auto-passed nor RISK-ACCEPTED-waived, exactly like security. [verify-integrity: earned-green-rubric + tamper-tripwire + heal-then-escalate — folded foundation-version 27]
+- (ADD) **A mechanical-HARD-STOP guard = snapshot at a phase seam → re-check at the gate before any completing outcome
+  → fail-closed; and a self-heal cap is real only if it cannot be cleared without a recorded human action.**
+  Generalizable to any "freeze X at phase A, enforce at phase B" (the tamper-tripwire snapshots md5(test paths + §3) at
+  tests→build, re-checks at verify). The bounded loop returns a confirmed cheat to BUILD for an honest redo and counts
+  attempts MONOTONICALLY — never auto-resetting, because the phase verb is unguarded (a tests→build re-cross would
+  otherwise zero the counter with zero human action); after the cap it forces the HARD-STOP. [verify-integrity: tamper-tripwire + heal-then-escalate — folded foundation-version 27]
+- (TDD) **An engine change that legitimately invalidates an EXISTING assertion makes the test edit an EVOLUTION, not a
+  weakening — iff three hold: the real invariant stays guarded, coverage holds-or-rises, and the reason is documented.**
+  The reusable discriminator behind "split, never loosen": when the landed behavior makes an old assertion false (a
+  first tamper now returns-to-build, not dies), move the assertion to the new truth while keeping the real invariant
+  strict (`gate=="none"`) and letting coverage rise (1→3 cheat tokens), then disclose every touched file at the gate.
+  The independent refute-read is the backstop that judges evolution-vs-weakening when no test can. [verify-integrity: heal-then-escalate — folded foundation-version 27]
+- (ADD) **A security-line classification can EMERGE during build, not only at the §3 freeze — surface it for human
+  ratification AT the verify gate, never self-grant.** When a build discovers a property that deserves HARD-STOP weight
+  (md5-as-tamper-evidence), the reasoning holding is not licence to self-check the box: present it as an explicit ask.
+  [verify-integrity: tamper-tripwire — folded foundation-version 27]
+- (SDD) **Two how-we-author sharpenings.** (1) A staged method needs a scope guard that fails if a LATER stage's
+  machinery leaks BACKWARD into an earlier stage's prose — assert the later tokens ABSENT from the earlier guide so each
+  stage describes without pre-empting the next's enforcement. (2) When a new feature needs the exact file set an existing
+  counter resolves, extract a path-returning helper and delegate the counter to it (one resolution source), never
+  re-glob — the snapshot and the engine then agree by construction. [verify-integrity: earned-green-rubric + tamper-tripwire — folded foundation-version 27]

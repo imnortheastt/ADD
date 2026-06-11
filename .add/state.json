@@ -517,7 +517,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T08:32:00+00:00",
+  "updated": "2026-06-11T08:38:47+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -627,9 +627,9 @@
       "title": "Verify integrity \u2014 prove the green was earned, not gamed",
       "goal": "A verify gate can tell whether the build EARNED its green or gamed the TDD signal \u2014 test/contract tampering is caught mechanically, the judgment cheats (overfit \u00b7 vacuous \u00b7 stub) by an independent adversarial refute-read, and a confirmed cheat self-heals for up to 3 honest re-build attempts before it HARD-STOPs to the human; a gamed green is never auto-passed.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-11T05:37:59+00:00",
-      "updated": "2026-06-11T05:37:59+00:00"
+      "updated": "2026-06-11T08:38:47+00:00"
     }
   },
   "active_milestone": "verify-integrity",
