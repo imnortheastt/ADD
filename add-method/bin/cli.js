@@ -32,10 +32,11 @@ function parseArgs(argv) {
   // stage/name stay null unless EXPLICITLY passed — the engine's own `init`
   // defaults the stage and infers the name from the folder, so the manual-init
   // hint only echoes flags the user actually chose (shortest true command).
-  const args = { _: [], force: false, stage: null, name: null };
+  const args = { _: [], force: false, check: false, stage: null, name: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--force") args.force = true;
+    else if (a === "--check") args.check = true;
     else if (a === "--stage" || a === "--name") {
       const v = argv[++i];
       // fail loudly on a trailing/abutting flag — never silently drop a value
@@ -112,6 +113,82 @@ function cmdInit(args) {
       (args.name ? ` --name "${args.name}"` : ""));
 }
 
+// --- update: re-materialize the managed layer without a re-install -----------
+// The managed trees (ship-controlled). `update` clean-replaces each, so a file removed
+// upstream leaves no orphan — and never touches .add/state.json, PROJECT.md, milestones,
+// tasks, or archive (user data). Pure file-copy (npm <-> pip parity with _installer.py).
+const MANAGED = [
+  ["skill/add", [".claude", "skills", "add"], false],
+  ["tooling", [".add", "tooling"], true],
+  ["docs", [".add", "docs"], false],
+];
+const STAMP_FILE = ".add-version";
+
+function pkgVersion() {
+  try { return require(path.join(PKG_ROOT, "package.json")).version; }
+  catch (_e) { return "0.0.0"; }
+}
+
+function readStamp(addDir) {
+  const p = path.join(addDir, STAMP_FILE);
+  if (!fs.existsSync(p)) return null;
+  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch (_e) { return null; }
+}
+
+function writeStamp(addDir, version) {
+  fs.mkdirSync(addDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(addDir, STAMP_FILE),
+    JSON.stringify({ version: version, channel: "npm", installed_at: new Date().toISOString() }, null, 2) + "\n"
+  );
+}
+
+function cleanReplaceTree(src, dest, stripTests) {
+  if (!fs.existsSync(src)) fail("missing packaged source: " + src);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  if (fs.existsSync(dest)) fs.rmSync(dest, { recursive: true, force: true });
+  fs.cpSync(src, dest, { recursive: true });
+  if (stripTests) {
+    fs.rmSync(path.join(dest, "__pycache__"), { recursive: true, force: true });
+    for (const entry of fs.readdirSync(dest)) {
+      if (/^test_.*\.py$/.test(entry)) fs.rmSync(path.join(dest, entry), { force: true });
+    }
+  }
+}
+
+function cmdUpdate(args) {
+  const target = path.resolve(args._[0] || ".");
+  const addDir = path.join(target, ".add");
+  if (!fs.existsSync(path.join(addDir, "tooling")) && !fs.existsSync(path.join(addDir, "state.json"))) {
+    fail("no ADD project at " + target + " (.add/ not found) — run `init` first");
+  }
+  const version = pkgVersion();
+  const stamp = readStamp(addDir);
+  const cur = stamp && stamp.version ? stamp.version : null;
+
+  if (args.check) {
+    if (cur === version) log("ADD is current: project and package both at " + version + ".");
+    else if (cur === null) log("ADD project is unstamped; installed package is " + version + ". Run `update`.");
+    else log("ADD update available: project on " + cur + ", package is " + version + ". Run `update`.");
+    return;
+  }
+  if (cur === version && !args.force) {
+    log("ADD already at " + version + " — nothing to update (use --force to re-materialize).");
+    return;
+  }
+  // design-for-failure: back up state BEFORE touching anything.
+  const stateFile = path.join(addDir, "state.json");
+  if (fs.existsSync(stateFile)) {
+    fs.copyFileSync(stateFile, path.join(addDir, "pre-update-state.bak.json"));
+  }
+  for (const [sub, destParts, stripTests] of MANAGED) {
+    cleanReplaceTree(path.join(PKG_ROOT, sub), path.join(target, ...destParts), stripTests);
+  }
+  writeStamp(addDir, version);
+  log("ADD updated " + (cur || "(unstamped)") + " -> " + version +
+      " · skill · tooling · docs refreshed · your project state untouched.");
+}
+
 function main() {
   const argv = process.argv.slice(2);
   const cmd = argv[0] && !argv[0].startsWith("--") ? argv.shift() : "init";
@@ -120,9 +197,14 @@ function main() {
     case "init":
       cmdInit(args);
       break;
+    case "update":
+      cmdUpdate(args);
+      break;
     case "help":
     case "--help":
-      log("usage: npx @pilotspace/add init [targetDir] [--force] [--stage <s>] [--name <n>]");
+      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check]");
+      log("  init    install the ADD skill + tooling + book into a project");
+      log("  update  re-materialize skill/tooling/docs to this package version (preserves your state)");
       break;
     default:
       fail("unknown command '" + cmd + "'. Try: npx @pilotspace/add init");
