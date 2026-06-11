@@ -148,5 +148,27 @@ class EngineMeasureUntouched(unittest.TestCase):
                          "add.py must match engine_pin.ENGINE_MD5 (no measure edit this task)")
 
 
+class GatherMethodHint(unittest.TestCase):
+    """0-ground.md carries the gather-METHOD hint (subagent/skim sweep + deepen)."""
+
+    def test_guide_recommends_subagent_sweep(self):
+        low = _canonical_guide().lower()
+        self.assertIn("subagent", low,
+                      "the guide must recommend a subagent for the broad sweep")
+        self.assertTrue("index" in low or "skim" in low,
+                        "the guide must offer a fast index / skim sweep")
+
+    def test_guide_says_deepen_task_specifically(self):
+        low = _canonical_guide().lower()
+        self.assertIn("deepen", low,
+                      "the guide must say to deepen on what THIS task needs")
+
+    def test_intro_names_working_folder(self):
+        # task-1 §7 coherence: the intro names the broadened gather, not only "codebase".
+        intro = _canonical_guide().split("## Gather", 1)[0].lower()
+        self.assertIn("working folder", intro,
+                      "the guide intro must name the broadened 'working folder' gather")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

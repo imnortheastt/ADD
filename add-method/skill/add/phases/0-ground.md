@@ -1,7 +1,7 @@
 # Phase 0 — Ground (the real codebase)
 
-Goal: before you specify anything, gather the REAL current codebase the task will
-touch — the actual files, symbols, signatures, patterns, and conventions — so the
+Goal: before you specify anything, gather the REAL current working folder the task will
+touch — the actual files, symbols, signatures, docs, todos, config, data, patterns, and conventions — so the
 contract, tests, and build are grounded in what exists, not in what you assume.
 Fill **§0 GROUND** in TASK.md. Ground is a per-task preamble to the seven steps;
 it is **AI-owned** — no human gate here (the one approval stays at the §3 freeze).
@@ -25,6 +25,11 @@ the work — gathering them IS the job, not a detour.
 - **Anchors the contract cites** — the specific symbols §3 CONTRACT will name. The
   contract may cite only anchors that appear here.
 
+**How — gather efficiently:** for the BROAD sweep, prefer a small-model subagent / fast
+index / skim (offload to a cheap context, return a compact map); then DEEPEN on what THIS
+task specifically needs — never lock a shallow first pass. A recommendation: the engine
+never spawns a subagent (tool-agnostic), so the orchestrating agent chooses.
+
 ## Greenfield / first task
 
 The first task of a project runs ground too. When there is little or no code yet
@@ -40,6 +45,7 @@ Read first: PROJECT.md · CONVENTIONS.md · the actual files the task touches.
 Objective: fill §0 GROUND with the real files/symbols/signatures + the conventions to
 honor + the anchor points the contract will cite — gathered from the codebase, never assumed.
 Steps:
+  0. Sweep broad cheaply first — prefer a small-model subagent / fast index / skim — then deepen task-specifically.
   1. Locate the files and symbols the task reads or changes (code tools, not memory).
   2. Record their signatures / how they are keyed; cite the conventions to honor (task delta only).
   3. Name the anchors §3 will cite.

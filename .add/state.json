@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ground-context-sources",
+  "active_task": "ground-gather-hint",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -482,10 +482,22 @@
       "created": "2026-06-11T02:22:14+00:00",
       "updated": "2026-06-11T02:42:58+00:00",
       "flag_verified": true
+    },
+    "ground-gather-hint": {
+      "title": "Add the gather-method hint \u2014 prefer a subagent/skim sweep + deepen task-specifically",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "ground-context",
+      "depends_on": [
+        "ground-context-sources"
+      ],
+      "created": "2026-06-11T02:44:20+00:00",
+      "updated": "2026-06-11T03:24:21+00:00",
+      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T02:42:58+00:00",
+  "updated": "2026-06-11T03:24:21+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
