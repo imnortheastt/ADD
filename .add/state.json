@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "wave-protocol-runtime",
+  "active_task": "engine-argv-portability",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -482,12 +482,19 @@
     },
     "engine-argv-portability": {
       "title": "CLI accepts flags-before-slug on Python <=3.12 (argparse intermixing)",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": null,
       "depends_on": [],
       "created": "2026-06-11T10:42:52+00:00",
-      "updated": "2026-06-11T10:42:52+00:00"
+      "updated": "2026-06-11T13:22:39+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "c9c3046edcd149baea89b838d6fd1be5",
+        "tests": {
+          "add-method/tooling/test_argv_portability.py": "cab92e3616ec4477debbb254e3893ddf"
+        }
+      }
     },
     "engine-merge-base-enforcement": {
       "title": "Engine guards the merge-time fork-base echo on merge-back",
@@ -500,7 +507,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T11:31:40+00:00",
+  "updated": "2026-06-11T13:22:39+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

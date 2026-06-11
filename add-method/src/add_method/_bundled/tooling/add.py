@@ -3184,11 +3184,11 @@ def build_parser() -> argparse.ArgumentParser:
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
     pp.add_argument("phase", choices=PHASES)
     pp.add_argument("slug", nargs="?", default=None)
-    pp.set_defaults(func=cmd_phase)
+    pp.set_defaults(func=cmd_phase, _opt_positionals=("slug",))
 
     pa = sub.add_parser("advance", help="move a task to the next phase")
     pa.add_argument("slug", nargs="?", default=None)
-    pa.set_defaults(func=cmd_advance)
+    pa.set_defaults(func=cmd_advance, _opt_positionals=("slug",))
 
     pg = sub.add_parser("gate", help="record a verify gate outcome")
     pg.add_argument("outcome", choices=GATES)
@@ -3196,7 +3196,7 @@ def build_parser() -> argparse.ArgumentParser:
     pg.add_argument("--owner", help="RISK-ACCEPTED waiver: accountable owner")
     pg.add_argument("--ticket", help="RISK-ACCEPTED waiver: tracking ticket/link")
     pg.add_argument("--expires", help="RISK-ACCEPTED waiver: expiry date")
-    pg.set_defaults(func=cmd_gate)
+    pg.set_defaults(func=cmd_gate, _opt_positionals=("slug",))
 
     pr = sub.add_parser("reopen", help="return a done task to an earlier phase with a recorded reason")
     pr.add_argument("slug", nargs="?", default=None)
@@ -3204,14 +3204,14 @@ def build_parser() -> argparse.ArgumentParser:
     # codes fire (reopen_target_invalid / reopen_reason_required), not a bare exit-2.
     pr.add_argument("--to", default=None, help="target phase (ground..observe)")
     pr.add_argument("--reason", default="", help="why the task is reopened (required, non-empty)")
-    pr.set_defaults(func=cmd_reopen)
+    pr.set_defaults(func=cmd_reopen, _opt_positionals=("slug",))
 
     ph = sub.add_parser("heal", help="report a confirmed cheat: bounded return-to-build, then escalate")
     ph.add_argument("slug", nargs="?", default=None)
     # --reason validated in-body so the named rejects fire (heal_reason_required /
     # heal_not_at_verify), not a bare argparse usage-2.
     ph.add_argument("--reason", default="", help="the refute-read finding (required, non-empty)")
-    ph.set_defaults(func=cmd_heal)
+    ph.set_defaults(func=cmd_heal, _opt_positionals=("slug",))
 
     ps = sub.add_parser("stage", help="set the project stage")
     ps.add_argument("stage", choices=STAGES)
@@ -3234,7 +3234,7 @@ def build_parser() -> argparse.ArgumentParser:
     pgd = sub.add_parser("guide", help="print the one concrete next step for the active task")
     pgd.add_argument("slug", nargs="?", default=None, help="task slug (default: active task)")
     pgd.add_argument("--json", action="store_true", help="machine-readable JSON output")
-    pgd.set_defaults(func=cmd_guide)
+    pgd.set_defaults(func=cmd_guide, _opt_positionals=("slug",))
 
     prp = sub.add_parser("report",
                          help="capture/render a milestone's what-happened report (read-only)")
@@ -3254,7 +3254,7 @@ def build_parser() -> argparse.ArgumentParser:
                      help="decision-point digest: what needs the human's judgment NOW "
                           "(task -> decision digest; milestone -> DECIDE NEXT only; "
                           "bare -> the active task)")
-    prp.set_defaults(func=cmd_report)
+    prp.set_defaults(func=cmd_report, _opt_positionals=("milestone", "task"))
 
     pdt = sub.add_parser("deltas",
                          help="read-only report: open lessons learned grouped by competency")
@@ -3280,9 +3280,33 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _rebind_optional_positionals(parser: argparse.ArgumentParser,
+                                 args: argparse.Namespace,
+                                 extras: list[str]) -> argparse.Namespace:
+    """argv portability (py<=3.12): argparse cannot bind an optional positional that
+    trails value-taking flags once a REQUIRED positional was consumed in an earlier
+    block — `gate RISK-ACCEPTED --owner X --ticket Y --expires Z <slug>` dies
+    `unrecognized arguments: <slug>` on 3.10/3.11/3.12 (3.13+ parses it natively).
+    Fix at main(): parse_known_args leaves the stranded slug in `extras`; re-bind
+    non-flag extras into UNFILLED (still-default-None) optional positionals, in the
+    order each subparser declared via set_defaults(_opt_positionals=...).
+    Safety rule (frozen §3, engine-argv-portability): ANY flag-like extra refuses the
+    WHOLE re-bind, and leftover extras re-raise the stock exit-2 error — a typo'd
+    flag's value must never be mis-bound as a slug (that would gate the WRONG task)."""
+    slots = [name for name in getattr(args, "_opt_positionals", ())
+             if getattr(args, name, None) is None]
+    if any(tok.startswith("-") for tok in extras) or len(extras) > len(slots):
+        parser.error("unrecognized arguments: " + " ".join(extras))
+    for name, value in zip(slots, extras):
+        setattr(args, name, value)
+    return args
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
-    args = parser.parse_args(argv)
+    args, extras = parser.parse_known_args(argv)
+    if extras:
+        args = _rebind_optional_positionals(parser, args, extras)
     args.func(args)
     return 0
 
