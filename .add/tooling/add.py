@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import getpass
+import hashlib
 import json
 import os
 import re
@@ -553,6 +554,11 @@ def cmd_advance(args: argparse.Namespace) -> None:
                      "+ substantive content; bare 'none' only as 'none material — "
                      "biggest risk: X') before crossing into build")
             state["tasks"][slug]["flag_verified"] = True
+        # tamper tripwire (verify-integrity): snapshot the red test files + the frozen
+        # §3 md5s so the verify gate can prove the green was EARNED, not edited into
+        # place. UNCONDITIONAL overwrite — a legit change-request that re-crosses
+        # tests->build re-snapshots cleanly. Co-witnessed by flag_verified (above).
+        state["tasks"][slug]["tripwire"] = _tripwire_snapshot(root, slug, raw3)
     state["tasks"][slug]["phase"] = nxt
     state["tasks"][slug]["updated"] = _now()
     _sync_task_marker(root, slug, nxt)
@@ -640,6 +646,11 @@ def cmd_gate(args: argparse.Namespace) -> None:
             _die(f"unguarded_high_risk_auto: task '{slug}' declares risk: high "
                  "without a lowered autonomy level — set autonomy: manual or conservative in "
                  "the TASK.md header; a human must own a high-risk gate (run.md guard)")
+        # tamper tripwire (verify-integrity): the method's first mechanical cheat
+        # block. A completing outcome is refused if the red suite or the frozen §3
+        # changed since the tests->build snapshot. Placed BEFORE the waiver write so
+        # a tamper finding is never launderable through RISK-ACCEPTED.
+        _tamper_guard(root, state, slug)
     if args.outcome == "RISK-ACCEPTED":
         # A waiver must be SIGNED: owner, ticket, expiry (glossary). Stored in state
         # so a later `check` can read/expire it. Refuse a partial waiver outright.
@@ -1066,6 +1077,15 @@ def cmd_check(args: argparse.Namespace) -> None:
         if lint_result is not None:
             ok, reason = lint_result
             checks.append((ok, f"task '{slug}' deltas well-formed", reason))
+        # tamper tripwire standing monitor (verify-integrity): a non-done task whose
+        # snapshot has diverged is surfaced EARLY — WARN, never red (the verify GATE
+        # is where it bites, HARD-STOP). Fail-closed via _tripwire_divergence.
+        if not _task_done(t):
+            _tw = t.get("tripwire")
+            if _tw and _tripwire_divergence(root, slug, _tw):
+                warnings.append((f"task '{slug}'", "tampered since its tests->build "
+                                 "snapshot (build_tampered) — a tracked test or the "
+                                 "frozen §3 changed; the verify gate will HARD-STOP it"))
 
     # drift: a done milestone must have no unfinished tasks
     for mslug, m in milestones.items():
@@ -1674,11 +1694,17 @@ def _count_test_defs(f: Path) -> int:
         return 0
 
 
-def _tests_count(root: Path, slug: str) -> int:
+def _primary_test_files(root: Path, slug: str) -> list[Path]:
+    """The PRIMARY test set — *.py directly in the task's tests/ dir (the stable
+    path). A list so the tamper tripwire can hash exactly what the engine counts."""
     d = root / "tasks" / slug / "tests"
     if not d.is_dir():
-        return 0
-    return sum(_count_test_defs(f) for f in d.glob("*.py"))
+        return []
+    return sorted(d.glob("*.py"))
+
+
+def _tests_count(root: Path, slug: str) -> int:
+    return sum(_count_test_defs(f) for f in _primary_test_files(root, slug))
 
 
 def _confined(p: Path, rootp: Path) -> bool:
@@ -1690,18 +1716,18 @@ def _confined(p: Path, rootp: Path) -> bool:
         return False
 
 
-def _declared_tests_count(root: Path, slug: str) -> int:
-    """Count tests at the §4 'Tests live in:' declared path(s). PURE, fail-closed 0.
+def _declared_test_files(root: Path, slug: str) -> list[Path]:
+    """Resolve the §4 'Tests live in:' declared path(s) to a deduped file list. PURE.
     Tokens are the backticked spans on the FIRST declaring line of the raw §4 body.
     Resolution: './…' -> task dir · contains '/' -> project root (parent of .add) ·
     bare name -> sibling of the previous resolved token (else task dir). A directory
-    token counts the *.py files directly inside it; resolved files are deduped.
-    v2 confinement: every file read must resolve inside the project root — '..'
-    traversal, absolute tokens, and symlink escapes all contribute 0, fail-closed."""
+    token yields the *.py files directly inside it; resolved files are deduped.
+    v2 confinement: every path must resolve inside the project root — '..' traversal,
+    absolute tokens, and symlink escapes are all dropped, fail-closed."""
     body = _raw_phase_bodies(root, slug).get(4, "")
     m = re.search(r"^\s*Tests live in:.*$", body, re.M)
     if not m:
-        return 0
+        return []
     tdir = root / "tasks" / slug
     rootp = root.parent.resolve()
     files: list[Path] = []
@@ -1727,7 +1753,12 @@ def _declared_tests_count(root: Path, slug: str) -> int:
         except OSError:
             continue
         files.extend(f for f in cand if f not in files)
-    return sum(_count_test_defs(f) for f in files)
+    return files
+
+
+def _declared_tests_count(root: Path, slug: str) -> int:
+    """Count tests at the §4 'Tests live in:' declared path(s). PURE, fail-closed 0."""
+    return sum(_count_test_defs(f) for f in _declared_test_files(root, slug))
 
 
 def _tests_info(root: Path, slug: str) -> tuple[int, bool]:
@@ -1739,6 +1770,87 @@ def _tests_info(root: Path, slug: str) -> tuple[int, bool]:
         return primary, False
     declared = _declared_tests_count(root, slug)
     return (declared, True) if declared > 0 else (0, False)
+
+
+def _resolved_test_files(root: Path, slug: str) -> list[Path]:
+    """The file set the engine treats as this task's tests — the PRIMARY set wins
+    when it yields any test defs, else the §4-declared set (mirrors _tests_info's
+    selection). The tamper tripwire hashes exactly THIS set, never a fresh glob."""
+    primary = _primary_test_files(root, slug)
+    if sum(_count_test_defs(f) for f in primary) > 0:
+        return primary
+    return _declared_test_files(root, slug)
+
+
+def _md5_text(s: str) -> str:
+    return hashlib.md5(s.encode("utf-8")).hexdigest()
+
+
+def _md5_file(p: Path) -> str | None:
+    """md5 of a file's bytes; None on ANY read error (fail-closed — a tracked file
+    that cannot be read counts as DIVERGED at the gate, never a crash)."""
+    try:
+        return hashlib.md5(p.read_bytes()).hexdigest()
+    except OSError:
+        return None
+
+
+def _tripwire_snapshot(root: Path, slug: str, raw3: str) -> dict:
+    """Freeze the md5 of the resolved red test files + the frozen §3 contract — the
+    tamper baseline (verify-integrity). Keys are project-root-relative paths (stable
+    across the snapshot->gate window). Tool-agnostic: hashes bytes only, never runs
+    tests or measures coverage."""
+    rootp = root.parent.resolve()
+    tests: dict[str, str] = {}
+    for f in _resolved_test_files(root, slug):
+        h = _md5_file(f)
+        if h is None:
+            continue
+        try:
+            rel = str(f.resolve().relative_to(rootp))
+        except (ValueError, OSError):
+            rel = str(f)
+        tests[rel] = h
+    return {"contract_md5": _md5_text(raw3), "tests": tests}
+
+
+def _tripwire_divergence(root: Path, slug: str, tw: dict) -> list[str]:
+    """Tamper codes for a PRESENT snapshot; [] means clean. Re-reads each tracked
+    path directly (never re-globs), so a weakened, deleted, or unreadable test file
+    and an edited frozen §3 all surface. Fail-closed: an unreadable file -> diverged."""
+    diffs: list[str] = []
+    if _md5_text(_raw_phase_bodies(root, slug).get(3, "")) != tw.get("contract_md5"):
+        diffs.append("contract_tampered")
+    rootp = root.parent.resolve()
+    for rel, snap in (tw.get("tests") or {}).items():
+        if _md5_file(rootp / rel) != snap:
+            diffs.append(f"build_tampered:{rel}")
+    return diffs
+
+
+def _tamper_guard(root: Path, state: dict, slug: str) -> None:
+    """HARD-STOP a COMPLETING gate when the tripwire shows tampering — the method's
+    first mechanical cheat block (verify-integrity). Tri-state, co-witnessed by
+    flag_verified: present+diverged -> stop; absent+flag_verified -> suspicious stop
+    (the snapshot was crossed-then-erased); absent+not-verified -> skip (a legacy task
+    or one that never crossed tests->build). A cheat is HARD-STOP-class — this runs
+    for RISK-ACCEPTED too, BEFORE the waiver is recorded, so it is never launderable."""
+    t = state["tasks"][slug]
+    tw = t.get("tripwire")
+    if tw is None:
+        if t.get("flag_verified"):
+            _die(f"tripwire_missing: task '{slug}' crossed tests->build "
+                 "(flag_verified) but carries no tamper snapshot — the evidence "
+                 "baseline was erased. Re-establish it (reopen -> re-advance through "
+                 "tests->build) before completing; a missing baseline is HARD-STOP.")
+        return  # legacy: predates the tripwire, or never crossed tests->build
+    diffs = _tripwire_divergence(root, slug, tw)
+    if diffs:
+        _die(f"tamper_detected ({', '.join(diffs)}): a tracked test file or the "
+             "frozen §3 changed since the tests->build snapshot. A gamed green is a "
+             "HARD-STOP (verify-integrity) — return to build for an HONEST redo, or "
+             "change-request the contract back to SPECIFY. Never weaken a test or "
+             "edit a frozen contract to make a build pass.")
 
 
 def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:

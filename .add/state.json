@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "tamper-tripwire",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,10 +472,24 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
+    },
+    "tamper-tripwire": {
+      "title": "Mechanical tamper tripwire \u2014 freeze test+contract md5 at tests\u2192build, flag any edit at verify",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "verify-integrity",
+      "depends_on": [],
+      "created": "2026-06-11T05:38:48+00:00",
+      "updated": "2026-06-11T06:44:37+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "786a844ebd439ee5fb2fb5d01dff5596",
+        "tests": {}
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T03:47:20+00:00",
+  "updated": "2026-06-11T06:44:37+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -580,9 +594,17 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "verify-integrity": {
+      "title": "Verify integrity \u2014 prove the green was earned, not gamed",
+      "goal": "A verify gate can tell whether the build EARNED its green or gamed the TDD signal \u2014 test/contract tampering is caught mechanically, the judgment cheats (overfit \u00b7 vacuous \u00b7 stub) by an independent adversarial refute-read, and a confirmed cheat self-heals for up to 3 honest re-build attempts before it HARD-STOPs to the human; a gamed green is never auto-passed.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-11T05:37:59+00:00",
+      "updated": "2026-06-11T05:37:59+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "verify-integrity",
   "archived": [
     {
       "slug": "v5",
