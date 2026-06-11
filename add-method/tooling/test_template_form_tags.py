@@ -38,7 +38,7 @@ LABELS = (
 
 # engine-parsed seams that must survive in a scaffold (reject parsed_seam_touched)
 SEAM_PATTERNS = {
-    "phase_marker": re.compile(r"^phase: specify", re.M),
+    "phase_marker": re.compile(r"^phase: ground", re.M),
     "title": re.compile(r"^# TASK: ", re.M),
     "status_draft": re.compile(r"^Status: DRAFT", re.M),
     "outcome": re.compile(r"^Outcome: <PASS \| RISK-ACCEPTED \| HARD-STOP>", re.M),
@@ -185,8 +185,8 @@ class EngineSeamsUnchanged(_ScaffoldBase):
         text = self.task_md.read_text(encoding="utf-8")
         for name, pat in SEAM_PATTERNS.items():
             self.assertTrue(pat.search(text), f"parsed seam survives in scaffold: {name}")
-        add.main(["advance"])  # specify -> scenarios, syncs the marker into TASK.md
-        self.assertRegex(self.task_md.read_text(encoding="utf-8"), r"(?m)^phase: scenarios",
+        add.main(["advance"])  # ground -> specify, syncs the marker into TASK.md
+        self.assertRegex(self.task_md.read_text(encoding="utf-8"), r"(?m)^phase: specify",
                          "the phase: marker sync must keep working on the new template")
 
     def test_freeze_gate_and_declared_count_seams(self):
@@ -258,7 +258,7 @@ class ScopeEdges(unittest.TestCase):
 # ── guard sensitivity: each contracted reject code fires on its fixture ──────────────
 class RejectGuards(unittest.TestCase):
     CLEAN = (
-        "# TASK: t\n\nphase: specify\n\nMust:\n<must>\n  - <required behavior>\n</must>\n"
+        "# TASK: t\n\nphase: ground\n\nMust:\n<must>\n  - <required behavior>\n</must>\n"
         "Reject:\n<reject>\n  - <bad> -> \"<code>\"\n</reject>\n"
         "After:\n<after>\n  - <state>\n</after>\n"
         "Assumptions — lowest-confidence first:\n<assumptions>\n  ⚠ <a>\n</assumptions>\n"

@@ -66,6 +66,11 @@ LIFECYCLE = [
     ["phase", "specify", "t"],
     ["advance", "t"], ["advance", "t"], ["advance", "t"],
     ["advance", "t"], ["advance", "t"],        # specify -> ... -> verify
+    ["heal", "t", "--reason", "lifecycle: a reported earned-green cheat"],  # bounded self-heal:
+                                               # the semantic entry — returns t to build (exit 3,
+                                               # tolerated), exercised under the read-spy (reads
+                                               # state/TASK.md, never docs/)
+    ["advance", "t"],                          # heal returned t to build; advance back to verify
     ["audit"],                                 # read-only seam audit (no recorded seams yet ->
                                                # clean exit 0; reads TASK.md/state, never docs/)
     ["gate", "PASS", "t"],
@@ -90,6 +95,11 @@ LIFECYCLE = [
 # under the docs-absent assertion rather than inside LIFECYCLE.
 _EXERCISED_IN_SETUP = {"init"}
 
+# heal is a loop/refusal verb (heal-then-escalate): a CONFIRMED cheat never completes with
+# exit 0 — it returns to build (exit 3) or escalates (exit 1). The lifecycle exercises it
+# (proving it reads no docs/ chapter) and tolerates its expected non-zero exit.
+_NONZERO_OK = {"heal"}
+
 
 class MinimalPillarTest(unittest.TestCase):
     def setUp(self):
@@ -113,7 +123,7 @@ class MinimalPillarTest(unittest.TestCase):
             try:
                 add.main(argv)
             except SystemExit as e:
-                if e.code:
+                if e.code and argv[0] not in _NONZERO_OK:
                     self.fail(f"command {argv} failed (exit {e.code}) with no Story present")
         # the flow completing never created a Story either
         self.assertEqual(self._docs_dirs(), [], "no command may create a docs/ Story")
@@ -136,7 +146,7 @@ class MinimalPillarTest(unittest.TestCase):
                 try:
                     add.main(argv)
                 except SystemExit as e:
-                    if e.code:
+                    if e.code and argv[0] not in _NONZERO_OK:
                         self.fail(f"command {argv} failed during read-spy (exit {e.code})")
         finally:
             pathlib.Path.read_text = orig

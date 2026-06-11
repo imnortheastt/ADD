@@ -36,7 +36,8 @@ class GuideTest(unittest.TestCase):
         return buf.getvalue()
 
     def test_guide_specify_phase(self):
-        add.main(["new-task", "feat-a", "--title", "Feat A"])   # active, phase=specify
+        add.main(["new-task", "feat-a", "--title", "Feat A"])   # active, phase=ground
+        add.main(["advance", "feat-a"])                          # ground -> specify
         out = self._guide()
         self.assertIn("phase: specify", out)
         self.assertIn("03-step-1-specify.md", out)

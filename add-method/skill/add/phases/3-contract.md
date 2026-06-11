@@ -25,7 +25,7 @@ human sees the goal this freeze serves and the plan beyond it, not just the bund
 
 ## The freeze review checklist
 
-The human's one minute, aimed. Walk these six before saying yes:
+The human's one minute, aimed. Walk these seven before saying yes:
 
 - **⚠ flags first** — read the lowest-confidence flags; accept each knowing its cost if wrong.
   The engine refuses an unflagged freeze before build: a frozen §3 with no well-formed
@@ -34,6 +34,7 @@ The human's one minute, aimed. Walk these six before saying yes:
 - **Intent** — does §1 say what you actually want built (and is anything you expected missing)?
 - **Cases** — does every Must and Reject have an observable §2 scenario you care about?
 - **Shape** — glossary names, error codes, additive vs breaking: is THIS the shape to freeze?
+- **Grounded** — does §3 cite anchors that exist in the §0 GROUND map (real files/symbols), not invented ones? `status`/`check` surface this — measure, never block.
 - **Risk** — is this scope high-risk or method-defining? Then require
   `risk: high · autonomy: conservative` in the TASK.md header — the engine refuses an unguarded completion.
 - **Tests** — will §4 go red for the right reason, asserting behavior rather than internals?

@@ -173,7 +173,7 @@ class TestLiveSurfaceGreen(unittest.TestCase):
         self.assertIn("loop.md", names)
         self.assertIn("graduate.md", names)
         self.assertIn("appendix-b-prompts.md", names)
-        self.assertEqual(len(files), 21, f"expected 20 skill files + appendix-b, got {len(files)}")
+        self.assertEqual(len(files), 22, f"expected 21 skill files + appendix-b, got {len(files)}")
 
 
 if __name__ == "__main__":

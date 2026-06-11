@@ -63,7 +63,9 @@ Architecture:
 - (TDD) **Prose-guide tasks are red→green-testable.** A docs/guideline change is TDD-able by asserting
   content anchors (required section present + ordering) + cross-tree byte-identity (canonical ==
   bundled == dogfood mirror), not behavior. Write the assertion red before the edit; a parity test
-  backstops drift. [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7]
+  backstops drift. Validated again by verify-integrity: a prose/method change is testable by anchor-presence + a
+  one-hash mirror-parity across guide ×3 / book ×4 / template ×3 / glossary, the engine held byte-identical to the pin.
+  [cospecify-lift: test_cospecify_lift red→green + test_bundle_parity — folded foundation-version 7 · reinforced verify-integrity fv27]
   Held again v16 across a 7-file batch AND a fenced verbatim doc: every guard authored RED (no blocks yet) →
   green by the doc edit alone, no test weakened — RED-before-build holds even when there is no runtime to
   cover. [phase-guides-xml + xml-convention — folded foundation-version 15]
@@ -75,6 +77,9 @@ Architecture:
   a frozen matcher inline — even to fix a real false-negative — is self-ratifying a frozen-contract change;
   route it as a human-ratified change-request at test-design time (Rule 3, phase 4), not a silent inline
   edit logged as "no test weakened". [milestone-onboarding-docs — folded foundation-version 8]
+  Re-validated: a bonus `project_autonomy` key added to `status --json` tripped the frozen-surface guard
+  (`json_surface_unsanctioned_key`); the BUILD was fixed (the key removed), the frozen test left intact —
+  even a "harmless additive" key stays inside the frozen contract. [init-auto-default — flip-cite fv24]
 - (TDD) **Assert a message-specific phrase, not an ambient token.** A substring that paths/scaffold/harness
   can also contain false-GREENs (a `/add` match off the tmpdir name); assert a phrase only the real
   behavior emits ("not attached to a milestone"). [orphan-task-guard — folded foundation-version 8]
@@ -394,12 +399,19 @@ Architecture:
   guarded by NO test.** Only CHAPTERS are cross-tree guarded (test_inline_citations + test_flow_diagram span all
   four incl. the repo-root published copy); an appendix's root copy drifts silently. A docs task syncs all four
   by hand and md5-confirms the appendix root leg — bundle-green is false comfort. Extends "Dogfood parity" /
-  the mirror-clause-enumerates-ALL-copies family. [arc-book-align — folded foundation-version 22]
+  the mirror-clause-enumerates-ALL-copies family. [arc-book-align — folded foundation-version 22] **VALIDATED at
+  the ground fold:** a byte-sync test added for a NEW term (`test_book_glossary_synced_x4`) caught the
+  PRE-EXISTING repo-root appendix-c drift this bullet predicted — the root mirror had silently fallen a whole term
+  behind canonical; a "synced ×N" guard pays for itself beyond the change that adds it, and the appendix-root leg
+  is now guarded. [ground-prose-align — folded foundation-version 25]
 - (ADD) **Dogfooding a rule at its own gate is its first live proof — and catches what no test asserts.** Rendering
   the decision arc · running the reconcile rule · presenting a presentation-contract AT the very gate that ships
   it surfaced gaps every green suite missed: the 5-of-7 gate-coverage gap, the verbatim reconcile-rule
   duplication, the digest-vs-prose mismatch. Practice the rule on its own gate the session it lands — reinforces
-  "a method-defining task dogfoods its own rule". [report-arc + arc-gate-wiring + arc-book-align — folded foundation-version 22]
+  "a method-defining task dogfoods its own rule". Reinforced by verify-integrity: the first NORMAL task through a
+  freshly-shipped guard is its cheapest end-to-end test (task 2 crossed tests→build under task 1's live tripwire,
+  re-checked clean at the gate), and the method audits its OWN builds — dogfooding the earned-green rubric on task 3
+  caught a real nit (a trivially-true assert) before the gate. [report-arc + arc-gate-wiring + arc-book-align — folded foundation-version 22 · reinforced verify-integrity fv27]
 - (ADD) **The change-request is the method working, not a failure.** A frozen-contract gap caught at verify is
   fixed via reopen→contract→re-freeze (the live-run form is `add.py phase contract`; `reopen` is for DONE tasks),
   never a silent build edit; the §3 carries both freeze stamps. Reinforces "a frozen guard is fixed in the BUILD
@@ -422,7 +434,10 @@ Architecture:
 - (ADD) **A cross-surface term can carry two axes — disambiguate before unifying, keep both senses + one bridging
   clause.** "scope level" (decision-granularity vs orchestration-loop) and "report" (the chat report at a decision
   point vs the verify gate's three Test/Quality/Risk reports) each carry two senses; never merge the lists.
-  [stage-book-align + arc-book-align "report" polysemy — folded foundation-version 22]
+  [stage-book-align + arc-book-align "report" polysemy — folded foundation-version 22] A lived working LABEL
+  drifts from its canonical glossary TERM the same way — §3's "Least-sure flag surfaced at freeze" vs the
+  glossary's "lowest-confidence flag" shipped bridged-not-migrated; introduce a working label only with a
+  bridge ("formerly …") or migrate it in the same breath, never a silent rename. [unflagged-freeze — folded foundation-version 23]
 - (ADD) **Reinterpreting or closing a contract sweeps the LOADED foundation prose for the stale shape, not just the
   test guard.** A green suite cannot catch prose drift (tests don't exercise docs); add "sweep loaded-layer prose
   for the old shape" to the change-request checklist (close-gap-before-gate). Reinforces stale-guard-sweep. [stage-goal-criteria — folded foundation-version 22]
@@ -431,7 +446,10 @@ Architecture:
   claim 'every X' is true" — the chapter named 5 of 7 wired gates, 690-green); a prose-marker test pins steps NAMED,
   not orchestration DRIVEN; a gather-not-judge invariant is asserted STRUCTURALLY (no verdict field in the schema),
   never via a word denylist that lags the contract. The human SEMANTIC read + the engine seam carry what the test is
-  blind to — recurring face of "words-exist≠method-works". [arc-book-align + graduate-guide + graduation-analytics — folded foundation-version 22]
+  blind to — recurring face of "words-exist≠method-works". A presence test also proves a phrase EXISTS on ONE surface,
+  never that two surfaces AGREE on its qualifier (a template read "for high-risk" while the guide read "recommended
+  under auto"; every anchor test passed) — cross-surface qualifier agreement needs a shared render or an
+  adversarial/human read. [arc-book-align + graduate-guide + graduation-analytics — folded foundation-version 22 · reinforced verify-integrity fv27]
 - (TDD) **A new guard that invalidates an existing test's PREMISE is adapted by SPLITTING, never loosening — and
   disclosed at the gate.** Move the old guarantee to where it still holds (the bare flip → a non-guarded stage), add
   the new guarantee (refuse@0 / succeed@≥1 / --force), surface the touched files as a strictly-strengthening
@@ -444,3 +462,126 @@ Architecture:
   `[x]`/`[ ]`/⚠. (4) A MILESTONE-declared task slug is checked against existing `tasks/` (and archived) dirs before
   create — a collision would overwrite a done task. (5) Contract-freeze greps for the PRIOR contract that froze an
   extended `--json`/state seam and states additive-vs-closed explicitly. [graduate-guide + graduation-analytics + report-arc + stage-book-align + stage-goal-criteria — folded foundation-version 22]
+- (ADD) **A new guard gains teeth without retro-redding its predecessors via a VERIFIED-MARKER.** Stamp the
+  marker on the guarded crossing (the freeze/gate the guard newly governs) and enforce only on MARKED records;
+  pre-marker records pre-date the rule and stay green — no fabricated retro-pass, no silent grandfather.
+  Distinct from "adjudicate epoch debt at the human gate" (which retro-ratifies old records *by choice*; this
+  scopes enforcement forward *by construction*). [unflagged-freeze — folded foundation-version 23]
+- (TDD/ADD) **A prose-accord guard pins EVERY surface the contract names, and a word-ban is blind to a stale
+  multi-VALUED enumeration** — two faces of necessary-not-sufficient on a "prose ≡ enforcement" deliverable.
+  (a) DocsAccordTest pinned 1 of the 4 surfaces frozen §4 named ("GLOSSARY + the autonomy docs ×3"), so 2
+  shipped stale-green — caught by human review at the gate, not CI; enumerate every named surface or the accord
+  is only as wide as the pin (same shape as the census whole-and-closed rule). (b) A word-ban catches a banned
+  WORD, never a stale ENUMERATION — once a 3rd rung landed, "auto | conservative" descriptions read green to the
+  slang fence; widen level-set prose by a structural/test pin or a manual sweep, never the vocab ban.
+  [explicit-autonomy-dial — folded foundation-version 23]
+- (ADD) **Anchor a declaration-token reader to a declaration POSITION — line-start or a `·`-separator,
+  never a bare substring.** A freeform H1 title or quoted prose containing `token: value` must never be
+  read as a declaration; the symmetric hazard is worse — a title faking a *lowered* rung can DEFEAT a
+  guard that trusts the first match. Anchor every header-token reader (autonomy AND risk) to its
+  declaration column. [init-auto-default — fixed @ 55d64d9 — folded foundation-version 24]
+- (TDD/ADD) **A live-only / never-retro guard must key on the milestone's terminal STATUS, not just the
+  active-pointer + dict-membership.** A done-but-not-yet-archived milestone stays the `active_milestone`
+  pointer (and in the dict) until `archive` clears it, so pointer-membership alone briefly flags a CLOSED
+  milestone — the build keyed the `goal_not_auto_ready` WARN on the pointer and fired on a `status=done`
+  milestone; the verify adversarial pass caught the Must #4 violation and closed it test-first
+  (`status != "done"` guard + `test_done_active_milestone_not_flagged`, red→green). Reinforces
+  verified-marker-scopes-forward (enforce live, never retro-red). [goal-auto-ready-gate — folded foundation-version 24]
+- (ADD) **A lint forces a SLOT, never honesty — the irreducible floor.** `(verify: <citation>)` on every
+  exit criterion raises the goal-clarity floor (a citation MUST exist, an empty `(verify:)` does not count)
+  but cannot prove the citation is real — `(verify: it works)` passes the lint (citation-theater). The
+  engine raises the floor; the human still owns whether the citation is honest (autonomy is EARNED, not
+  mechanically proven). Recurring face of necessary-not-sufficient; RESOLVING/running the cited verifier
+  (a test that exists, a command that passes) is the recorded forward upgrade. [goal-auto-ready-gate — folded foundation-version 24]
+- (ADD) **Ground the contract in the real code before §3 — the ground phase's founding proof.** Reading the
+  actual symbols a task touches (`PHASES` + every keyed function) BEFORE drafting the frozen contract pre-caught
+  four shipping defects the spec alone would have missed — a `decide_data` else→`gate` seam mislabel, a
+  `render_decide` seam_label `KeyError`, the `PHASES[:7]` structural-slice shifts (the index-hazard bullet), and
+  header-parsed-vs-positional numbering — each surfaced during §0 grounding / the advisor pass, before build.
+  Grounding INFORMS a human-approved contract, it never authors it; the `## 0 · GROUND` map records the anchors
+  §3 cites. A phase-0 PREAMBLE earns prose in the FLOW chapter, not a dedicated step-chapter — preserving the
+  "seven steps" brand and the lean-over-GSD rule (the engine pointer was already correct).
+  [ground-phase-engine + ground-prose-align — folded foundation-version 25]
+- (TDD/ADD) **Mutating an ordered constant is an absolute-index hazard — grep the absolute forms first.**
+  Inserting at index 0 of an ordered tuple (`PHASES`) silently shifts every ABSOLUTE index/slice (`PHASES[:7]`,
+  `names[n-1]`, `i = p["n"]-1`) while RELATIVE logic (`PHASES.index(...)`) stays correct. Before mutating an
+  ordered constant, grep the absolute forms and prefer relative derivations. [ground-phase-engine — folded foundation-version 25]
+- (ADD) **An additive measure-not-block surface stays byte-invisible to existing tests and copies the proven
+  shape.** Two moves land a new engine surface for free: (a) SUPPRESS the no-op/legacy case so CURRENT output is
+  byte-unchanged — every existing task's status is identical, zero existing output-tests need conforming, the
+  dogfood `check` count is unmoved; (b) MIRROR the established measure-not-block shape verbatim — a human-readable
+  `status` line + a never-red WARN riding the existing `warnings` array, never a new `--json` key (sidesteps the
+  `json_surface_unsanctioned_key` landmine and the design churn). Reinforces "a harmless additive `--json` key
+  still stays inside the frozen contract." [ground-bundle-wiring — folded foundation-version 25] **VALIDATED at the
+  ground-context fold:** the TEMPLATE twin held — an additive `## 0 · GROUND` template LINE inserted BETWEEN existing
+  fields was byte-invisible to the structure/token-pinning template guards (the suite grew with zero scaffold/render
+  test broken), because template tests pin tokens + structure, not exact line-sets. [ground-context-sources — folded foundation-version 26]
+- (TDD) **A prose guard derived from the engine constant self-maintains — a ladder change then satisfies it
+  minimally.** Derive the test's expected set from the engine constant (`FLOW_PHASES = [p for p in add.PHASES if
+  p != "done"]`) so a ladder change AUTO-propagates the prose requirement — adding `ground` to `PHASES` made
+  `test_flow_diagram` REQUIRE ground in the mermaid + CHECKLIST with no test edit. The ladder change must then
+  make the MINIMAL diagram/CHECKLIST edit to keep the suite green, deferring the narrative to the prose task; and
+  guarding a checklist by an exact item-COUNT + a line BUDGET (`==6→7` items, `≤16` lines) makes "gains one line"
+  a precise, self-checking change. The book diagram + CHECKLIST are a ladder-shape reaction class — extends the
+  instrument-reaction guard family. [ground-phase-engine + ground-bundle-wiring + ground-prose-align — folded foundation-version 25]
+- (ADD) **A ladder change grandfathers pre-existing tasks — retrofit to dogfood, never claim the lived run.** A
+  phase inserted into the ladder grandfathers every existing task at its current phase (all three ground-phase
+  tasks were created at `specify`, before `ground` existed). Retrofit the new §0 section onto each so the surface
+  is dogfooded HONESTLY (it records the grounding that informed §3) WITHOUT claiming the task flowed THROUGH the
+  new phase — which narrows the residual from "zero lived dogfood" to "zero lived runs STARTING at ground," the
+  accepted ceiling recorded for the next milestone, never papered over. Reinforces "a method-defining task
+  dogfoods its own rule." [ground-phase-engine + ground-bundle-wiring + ground-prose-align — folded foundation-version 25]
+  **CEILING CLOSED at ground-context:** the FIRST lived ground run (a task created AT `ground`, not retrofitted)
+  reached `grounded ✓` live, closing the "zero lived runs STARTING at ground" residual recorded here as the accepted
+  next-milestone ceiling. [ground-context-sources — folded foundation-version 26]
+- (ADD) **Ground has two axes — completeness (WHAT) and economics (HOW).** The §0 gather names not only WHAT to
+  gather (the working-folder categories: docs/textbase · TODOs · config/manifests · data/fixtures, beyond code) but
+  HOW to gather it — sweep the BROAD pass cheaply (a small-model subagent / fast index / skim, returning a compact
+  map), then DEEPEN task-specifically on what THIS task needs. Naming the economics closes both failure modes at
+  once: skipping context, and indexing the whole repo. A complete §0 is the task-relevant delta gathered
+  cheaply-then-deeply, never a repo-wide scan. [ground-context-sources + ground-gather-hint — folded foundation-version 26]
+- (ADD) **A capability can be ADDED as guide-prose recommendation while the engine stays tool-agnostic — the pin
+  holds across the addition.** The gather-method hint RECOMMENDS a subagent; `add.py` spawns nothing (the
+  orchestrating agent chooses the tool), so the engine stayed byte-identical to `engine_pin` through BOTH
+  ground-context tasks. When a new method capability is advice, not mechanism, it lands entirely in the ×3 guide
+  prose — no engine action, no new measure, no new gate — and the unchanged engine pin is the proof the line was not
+  crossed. [ground-gather-hint — folded foundation-version 26]
+- (ADD) **Dogfooding the shipped technique in-flight validates it.** The build of the sweep-cheap-then-deepen hint
+  USED that very split — a haiku subagent ran the broad working-folder sweep (returning the ×3/×3 sync md5s + the
+  guard list) while the main context deepened on the precise guard assertions, pre-mapping the `Anchors the contract
+  cites:` measure line before the broaden touched it. The method proved itself by being the method that built it;
+  reinforces "a method-defining task dogfoods its own rule." [ground-context-sources + ground-gather-hint — folded foundation-version 26]
+- (TDD) **A prose feature is RED-greenable by token-presence guards; triage the RED split.** A prose/template task's
+  red suite splits into two halves: "the feature is missing" (the NEW behavior — must be red before build) and "the
+  invariants still hold" (must stay green throughout); triaging the split confirms the red is the new behavior, not
+  a broken invariant. Pin the behavior by token presence — assert `"subagent"`+(`"index"`|`"skim"`), `"deepen"`,
+  `"working folder"` — so the phrasing stays free and only the behavior is locked. A prose-economics hint is as
+  pinnable as a structural one. [ground-context-sources + ground-gather-hint — folded foundation-version 26]
+- (ADD) **Build-integrity needs a mechanical floor AND a judgment ceiling — and a confirmed cheat is HARD-STOP-class.**
+  The tamper-tripwire catches the cheats it can SEE (a test or the frozen §3 edited after the red run, by md5); the
+  earned-green refute-read the ones it cannot (src overfit to fixtures · vacuous asserts · stubbed-away logic) — neither
+  layer alone closes the gamed-green gap. The mechanical floor lives in agent-writable state.json, so it is
+  necessary-not-sufficient: a co-witness flag raises the forgery cost (forge two, not one) but a determined agent
+  patching both still slips — the adversarial read + the human gate stay the real backstop. A confirmed cheat is never
+  auto-passed nor RISK-ACCEPTED-waived, exactly like security. [verify-integrity: earned-green-rubric + tamper-tripwire + heal-then-escalate — folded foundation-version 27]
+- (ADD) **A mechanical-HARD-STOP guard = snapshot at a phase seam → re-check at the gate before any completing outcome
+  → fail-closed; and a self-heal cap is real only if it cannot be cleared without a recorded human action.**
+  Generalizable to any "freeze X at phase A, enforce at phase B" (the tamper-tripwire snapshots md5(test paths + §3) at
+  tests→build, re-checks at verify). The bounded loop returns a confirmed cheat to BUILD for an honest redo and counts
+  attempts MONOTONICALLY — never auto-resetting, because the phase verb is unguarded (a tests→build re-cross would
+  otherwise zero the counter with zero human action); after the cap it forces the HARD-STOP. [verify-integrity: tamper-tripwire + heal-then-escalate — folded foundation-version 27]
+- (TDD) **An engine change that legitimately invalidates an EXISTING assertion makes the test edit an EVOLUTION, not a
+  weakening — iff three hold: the real invariant stays guarded, coverage holds-or-rises, and the reason is documented.**
+  The reusable discriminator behind "split, never loosen": when the landed behavior makes an old assertion false (a
+  first tamper now returns-to-build, not dies), move the assertion to the new truth while keeping the real invariant
+  strict (`gate=="none"`) and letting coverage rise (1→3 cheat tokens), then disclose every touched file at the gate.
+  The independent refute-read is the backstop that judges evolution-vs-weakening when no test can. [verify-integrity: heal-then-escalate — folded foundation-version 27]
+- (ADD) **A security-line classification can EMERGE during build, not only at the §3 freeze — surface it for human
+  ratification AT the verify gate, never self-grant.** When a build discovers a property that deserves HARD-STOP weight
+  (md5-as-tamper-evidence), the reasoning holding is not licence to self-check the box: present it as an explicit ask.
+  [verify-integrity: tamper-tripwire — folded foundation-version 27]
+- (SDD) **Two how-we-author sharpenings.** (1) A staged method needs a scope guard that fails if a LATER stage's
+  machinery leaks BACKWARD into an earlier stage's prose — assert the later tokens ABSENT from the earlier guide so each
+  stage describes without pre-empting the next's enforcement. (2) When a new feature needs the exact file set an existing
+  counter resolves, extract a path-returning helper and delegate the counter to it (one resolution source), never
+  re-glob — the snapshot and the engine then agree by construction. [verify-integrity: earned-green-rubric + tamper-tripwire — folded foundation-version 27]

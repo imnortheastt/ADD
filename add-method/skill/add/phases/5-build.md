@@ -46,3 +46,9 @@ Book: `docs/07-step-5-build.md`.
 
 > Under `autonomy: auto` (the default) Build and Verify run together as one dynamic,
 > evidence-auto-gated run — not two manual stops. See `run.md`.
+>
+> **Honest redo.** If the verify gate finds a confirmed cheat (a tamper, or a reported
+> earned-green failure), the task returns HERE for an honest redo — revert the tampered
+> file or de-overfit src, then advance again. This is the bounded self-heal loop (`run.md`),
+> capped: after the cap a confirmed cheat HARD-STOPs to the human. Never weaken a test or
+> edit the frozen contract to pass.

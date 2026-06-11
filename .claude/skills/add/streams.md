@@ -42,9 +42,9 @@ How much concurrency you actually get is set by each task's `autonomy:` header
 
 | `autonomy` (TASK.md) | What serializes on the human | Concurrency |
 |----------------------|------------------------------|-------------|
-| `conservative` | bundle approval **+** every Verify | pure pipelining — builds overlap, both gates queue |
+| `conservative` / `manual` | bundle approval **+** every Verify | pure pipelining — builds overlap, both gates queue (`manual` is the strict floor; same streams behaviour) |
 | `auto` (default) | bundle approval **only**; Verify auto-PASSes on evidence | real concurrency — only the decision point + residue escalations queue |
-| `auto` but **high-risk** | refused → forced `conservative` (`unguarded_high_risk_auto`) | back to pipelining, by design |
+| `auto` but **high-risk** | refused → must lower to `conservative` / `manual` (`unguarded_high_risk_auto`) | back to pipelining, by design |
 
 The irreducible floor is **one human approval per task at the contract decision point** — the decision point
 never drops to zero (`run.md:22`). That floor is correct; do not engineer around it.
@@ -181,7 +181,7 @@ STOP-and-escalate (return your findings; do not decide):
   • a discovered scope/contract gap  → backward-correction, reopen Specify (principle 4)
   • any SECURITY finding              → HARD-STOP, always
   • a concurrency/timing OR architecture/layering risk the tests cannot exercise
-  • [include this bullet ONLY when autonomy=conservative] the verify gate itself — STOP for the human
+  • [include this bullet when autonomy is conservative OR manual — any lowered rung] the verify gate itself — STOP for the human
 Auto-PASS only if autonomy=auto AND: all tests green · coverage not decreased · no test weakened ·
   no contract edited · loops dry · completeness-critic clean · no residue above. Log it as
   auto-resolved, naming this run as owner — never forge a human signature.
@@ -222,7 +222,7 @@ The contract is identical whichever model runs it (the model is disposable, like
 | **top** | complex / ambiguous / cross-cutting / broad scope of impact | `opus` | the runner's strongest reasoning model |
 
 Two rules sit **above** model choice and never bend:
-- **High-risk ⇒ `conservative` autonomy, regardless of model** (`run.md` high-risk guard). A
+- **High-risk ⇒ a lowered rung (`conservative` or `manual`), regardless of model** (`run.md` high-risk guard). A
   stronger model does not buy back the human gate.
 - **Security residue always escalates** — no tier and no model auto-passes it.
 

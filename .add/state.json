@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "unflagged-freeze",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -472,20 +472,10 @@
       "depends_on": [],
       "created": "2026-06-08T01:44:06+00:00",
       "updated": "2026-06-08T01:44:06+00:00"
-    },
-    "unflagged-freeze": {
-      "title": "Flag-first freeze guard (fail-closed unflagged_freeze)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "flag-first-freeze",
-      "depends_on": [],
-      "created": "2026-06-10T07:36:11+00:00",
-      "updated": "2026-06-10T08:03:16+00:00",
-      "flag_verified": true
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-10T08:03:16+00:00",
+  "updated": "2026-06-11T08:48:05+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -590,17 +580,9 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
-    },
-    "flag-first-freeze": {
-      "title": "Flag-first freeze + autonomy dial",
-      "goal": "close the freeze-and-autonomy seam: the lowest-confidence flag is mechanically required at every freeze, and the autonomy level is an explicit 3-mode dial (manual/conservative/auto) the human sets",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-10T07:36:11+00:00",
-      "updated": "2026-06-10T07:36:11+00:00"
     }
   },
-  "active_milestone": "flag-first-freeze",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -776,6 +758,61 @@
       ],
       "archived": "2026-06-09",
       "compacted": "2026-06-09"
+    },
+    {
+      "slug": "flag-first-freeze",
+      "title": "Flag-first freeze + autonomy dial",
+      "tasks": 2,
+      "task_slugs": [
+        "unflagged-freeze",
+        "explicit-autonomy-dial"
+      ],
+      "archived": "2026-06-10"
+    },
+    {
+      "slug": "goal-auto-ready",
+      "title": "Goal-auto-ready \u2014 goal-clarity earns autonomy",
+      "tasks": 2,
+      "task_slugs": [
+        "init-auto-default",
+        "goal-auto-ready-gate"
+      ],
+      "archived": "2026-06-10"
+    },
+    {
+      "slug": "ground-phase",
+      "title": "Ground phase \u2014 build against the real codebase",
+      "tasks": 3,
+      "task_slugs": [
+        "ground-phase-engine",
+        "ground-bundle-wiring",
+        "ground-prose-align"
+      ],
+      "archived": "2026-06-11",
+      "compacted": "2026-06-11"
+    },
+    {
+      "slug": "ground-context",
+      "title": "Ground Context",
+      "tasks": 2,
+      "task_slugs": [
+        "ground-context-sources",
+        "ground-gather-hint"
+      ],
+      "archived": "2026-06-11",
+      "compacted": "2026-06-11"
+    },
+    {
+      "slug": "verify-integrity",
+      "title": "Verify integrity \u2014 prove the green was earned, not gamed",
+      "tasks": 3,
+      "task_slugs": [
+        "tamper-tripwire",
+        "earned-green-rubric",
+        "heal-then-escalate"
+      ],
+      "archived": "2026-06-11",
+      "compacted": "2026-06-11"
     }
   ]
 }
