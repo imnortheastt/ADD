@@ -397,7 +397,11 @@ Architecture:
   guarded by NO test.** Only CHAPTERS are cross-tree guarded (test_inline_citations + test_flow_diagram span all
   four incl. the repo-root published copy); an appendix's root copy drifts silently. A docs task syncs all four
   by hand and md5-confirms the appendix root leg — bundle-green is false comfort. Extends "Dogfood parity" /
-  the mirror-clause-enumerates-ALL-copies family. [arc-book-align — folded foundation-version 22]
+  the mirror-clause-enumerates-ALL-copies family. [arc-book-align — folded foundation-version 22] **VALIDATED at
+  the ground fold:** a byte-sync test added for a NEW term (`test_book_glossary_synced_x4`) caught the
+  PRE-EXISTING repo-root appendix-c drift this bullet predicted — the root mirror had silently fallen a whole term
+  behind canonical; a "synced ×N" guard pays for itself beyond the change that adds it, and the appendix-root leg
+  is now guarded. [ground-prose-align — folded foundation-version 25]
 - (ADD) **Dogfooding a rule at its own gate is its first live proof — and catches what no test asserts.** Rendering
   the decision arc · running the reconcile rule · presenting a presentation-contract AT the very gate that ships
   it surfaced gaps every green suite missed: the 5-of-7 gate-coverage gap, the verbatim reconcile-rule
@@ -481,3 +485,38 @@ Architecture:
   engine raises the floor; the human still owns whether the citation is honest (autonomy is EARNED, not
   mechanically proven). Recurring face of necessary-not-sufficient; RESOLVING/running the cited verifier
   (a test that exists, a command that passes) is the recorded forward upgrade. [goal-auto-ready-gate — folded foundation-version 24]
+- (ADD) **Ground the contract in the real code before §3 — the ground phase's founding proof.** Reading the
+  actual symbols a task touches (`PHASES` + every keyed function) BEFORE drafting the frozen contract pre-caught
+  four shipping defects the spec alone would have missed — a `decide_data` else→`gate` seam mislabel, a
+  `render_decide` seam_label `KeyError`, the `PHASES[:7]` structural-slice shifts (the index-hazard bullet), and
+  header-parsed-vs-positional numbering — each surfaced during §0 grounding / the advisor pass, before build.
+  Grounding INFORMS a human-approved contract, it never authors it; the `## 0 · GROUND` map records the anchors
+  §3 cites. A phase-0 PREAMBLE earns prose in the FLOW chapter, not a dedicated step-chapter — preserving the
+  "seven steps" brand and the lean-over-GSD rule (the engine pointer was already correct).
+  [ground-phase-engine + ground-prose-align — folded foundation-version 25]
+- (TDD/ADD) **Mutating an ordered constant is an absolute-index hazard — grep the absolute forms first.**
+  Inserting at index 0 of an ordered tuple (`PHASES`) silently shifts every ABSOLUTE index/slice (`PHASES[:7]`,
+  `names[n-1]`, `i = p["n"]-1`) while RELATIVE logic (`PHASES.index(...)`) stays correct. Before mutating an
+  ordered constant, grep the absolute forms and prefer relative derivations. [ground-phase-engine — folded foundation-version 25]
+- (ADD) **An additive measure-not-block surface stays byte-invisible to existing tests and copies the proven
+  shape.** Two moves land a new engine surface for free: (a) SUPPRESS the no-op/legacy case so CURRENT output is
+  byte-unchanged — every existing task's status is identical, zero existing output-tests need conforming, the
+  dogfood `check` count is unmoved; (b) MIRROR the established measure-not-block shape verbatim — a human-readable
+  `status` line + a never-red WARN riding the existing `warnings` array, never a new `--json` key (sidesteps the
+  `json_surface_unsanctioned_key` landmine and the design churn). Reinforces "a harmless additive `--json` key
+  still stays inside the frozen contract." [ground-bundle-wiring — folded foundation-version 25]
+- (TDD) **A prose guard derived from the engine constant self-maintains — a ladder change then satisfies it
+  minimally.** Derive the test's expected set from the engine constant (`FLOW_PHASES = [p for p in add.PHASES if
+  p != "done"]`) so a ladder change AUTO-propagates the prose requirement — adding `ground` to `PHASES` made
+  `test_flow_diagram` REQUIRE ground in the mermaid + CHECKLIST with no test edit. The ladder change must then
+  make the MINIMAL diagram/CHECKLIST edit to keep the suite green, deferring the narrative to the prose task; and
+  guarding a checklist by an exact item-COUNT + a line BUDGET (`==6→7` items, `≤16` lines) makes "gains one line"
+  a precise, self-checking change. The book diagram + CHECKLIST are a ladder-shape reaction class — extends the
+  instrument-reaction guard family. [ground-phase-engine + ground-bundle-wiring + ground-prose-align — folded foundation-version 25]
+- (ADD) **A ladder change grandfathers pre-existing tasks — retrofit to dogfood, never claim the lived run.** A
+  phase inserted into the ladder grandfathers every existing task at its current phase (all three ground-phase
+  tasks were created at `specify`, before `ground` existed). Retrofit the new §0 section onto each so the surface
+  is dogfooded HONESTLY (it records the grounding that informed §3) WITHOUT claiming the task flowed THROUGH the
+  new phase — which narrows the residual from "zero lived dogfood" to "zero lived runs STARTING at ground," the
+  accepted ceiling recorded for the next milestone, never papered over. Reinforces "a method-defining task
+  dogfoods its own rule." [ground-phase-engine + ground-bundle-wiring + ground-prose-align — folded foundation-version 25]

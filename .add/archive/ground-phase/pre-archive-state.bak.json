@@ -1,0 +1,46 @@
+{
+  "milestone": {
+    "title": "Ground phase \u2014 build against the real codebase",
+    "goal": "A task's contract, tests and build are grounded in the real current codebase: a new ground phase (a phase-0 preamble before the seven steps) gathers the actual files, symbols, signatures, patterns and conventions the work touches, surfaced as anchors the frozen contract cites \u2014 so the AI builds against reality, not assumption.",
+    "stage": "mvp",
+    "status": "done",
+    "created": "2026-06-10T16:33:16+00:00",
+    "updated": "2026-06-11T01:49:56+00:00"
+  },
+  "tasks": {
+    "ground-phase-engine": {
+      "title": "Insert ground as phase-0 in the engine ladder",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "ground-phase",
+      "depends_on": [],
+      "created": "2026-06-10T16:34:31+00:00",
+      "updated": "2026-06-10T17:44:18+00:00"
+    },
+    "ground-bundle-wiring": {
+      "title": "Wire grounding into the freeze checklist + status/check (measure)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "ground-phase",
+      "depends_on": [
+        "ground-phase-engine"
+      ],
+      "created": "2026-06-10T16:34:31+00:00",
+      "updated": "2026-06-10T18:09:00+00:00",
+      "flag_verified": true
+    },
+    "ground-prose-align": {
+      "title": "Name the ground phase in book + skill + GLOSSARY",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "ground-phase",
+      "depends_on": [
+        "ground-phase-engine"
+      ],
+      "created": "2026-06-10T16:34:31+00:00",
+      "updated": "2026-06-10T18:21:15+00:00",
+      "flag_verified": true
+    }
+  },
+  "archived_at": "2026-06-11T02:11:23+00:00"
+}

@@ -110,6 +110,7 @@ class SetupLockTest(unittest.TestCase):
     def test_front_advances_but_build_blocked(self):
         self._init_await()
         add.main(["new-task", "a"])
+        self.assertEqual(_run(["advance", "a"])[0], 0)   # ground -> specify
         self.assertEqual(_run(["advance", "a"])[0], 0)   # specify -> scenarios
         self.assertEqual(_run(["advance", "a"])[0], 0)   # scenarios -> contract
         self.assertEqual(_run(["advance", "a"])[0], 0)   # contract -> tests

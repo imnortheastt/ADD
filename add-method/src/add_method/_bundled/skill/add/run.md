@@ -28,7 +28,7 @@ What the human is actually approving in that one gate: that the drafted Spec cap
 that the Scenarios cover the cases that matter, and that the Contract shape is the one to freeze. Reject
 any part and the bundle goes back to draft — that is backward-correction (principle 4), not failure.
 Approve, and the run begins. The decision-point guide (`phases/3-contract.md`) carries the
-**freeze review checklist** — six lines that walk the human through exactly this, ⚠-first.
+**freeze review checklist** — seven lines that walk the human through exactly this, ⚠-first.
 
 **The lowest-confidence flag — aiming the one approval.** A single approval over a whole bundle is easy to
 grant without reading. So the AI presents the bundle **lowest-confidence first**: of everything it is asking the human

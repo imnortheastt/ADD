@@ -68,7 +68,7 @@ class _Board(unittest.TestCase):
         head = [f"# TASK: {slug}", "", meta]
         if autonomy is not None:
             head.append(f"autonomy: {autonomy}")
-        head.append("phase: specify")
+        head.append("phase: ground")
         sec3 = GOOD3 if frozen else "Status: DRAFT"
         return "\n".join(head + ["",
             "## 1 · SPECIFY", "Feature: f", "",

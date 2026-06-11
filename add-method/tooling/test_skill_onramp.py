@@ -132,7 +132,7 @@ class ProtocolWalkTest(unittest.TestCase):
             # 5 · first feature, driven to the gate — all agent-issued
             res = _run(tmp, ["new-task", "walk", "--title", "Protocol walk"])
             self.assertEqual(res.returncode, 0, res.stderr)
-            for _ in range(5):                          # specify → verify
+            for _ in range(6):                          # ground → verify
                 res = _run(tmp, ["advance"])
                 self.assertEqual(res.returncode, 0, res.stderr)
             res = _run(tmp, ["gate", "PASS"])

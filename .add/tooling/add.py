@@ -34,7 +34,7 @@ STAGES = ("prototype", "poc", "mvp", "production")
 # v22 stage-graduation: the read-only cue `status` shows when the MVP is covered.
 # Worded as the ACTION (never a file) so it stands before graduate.md exists.
 GRADUATION_CUE = "MVP covered → propose graduation"
-PHASES = ("specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
+PHASES = ("ground", "specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
 
 
@@ -45,6 +45,8 @@ def _phase_index(name: str) -> int:
 # `add.py guide` copy: per-phase (concrete next action, book chapter to read).
 # Keep the action wording aligned with each phase's EXIT line in the TASK template.
 PHASE_GUIDE = {
+    "ground":    ("gather the real codebase the task touches — files, symbols, signatures, conventions, and the anchor points the contract will cite; defer to PROJECT.md/CONVENTIONS.md and gather only the task delta",
+                  "02-the-flow.md"),
     "specify":   ("state every rule — Must / Reject (+ named code) / After; rank assumptions lowest-confidence first and flag the biggest risk",
                   "03-step-1-specify.md"),
     "scenarios": ("write one Given/When/Then per Must AND per Reject; every result observable",
@@ -67,6 +69,7 @@ PHASE_GUIDE = {
 # follows the book's who-does-what table (Verify is "human only"); `tests`/`build`/`observe`
 # are AI-led. A phase missing here is `unmapped_phase` (fail closed) — never defaulted.
 PHASE_OWNER = {
+    "ground": "ai",
     "specify": "human", "scenarios": "human", "contract": "seam",
     "tests": "ai", "build": "ai", "verify": "human", "observe": "ai", "done": "human",
 }
@@ -85,7 +88,12 @@ _FALLBACK_TASK = """# TASK: {title}
 
 slug: {slug} · created: {date} · stage: {stage}
 autonomy: auto
-phase: specify
+phase: ground
+
+## 0 · GROUND
+Touches (files · symbols · signatures):
+Honors (patterns / conventions):
+Anchors the contract cites:
 
 ## 1 · SPECIFY
 Feature:
@@ -445,7 +453,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
 
     state["tasks"][slug] = {
         "title": title,
-        "phase": "specify",
+        "phase": "ground",
         "gate": "none",
         "milestone": milestone,
         "depends_on": depends_on,
@@ -463,7 +471,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         # intake -> milestone flow. Speaks of STRUCTURE (not attached), never the act.
         print(f"note: '{slug}' is not attached to a milestone — size it via /add (intake), "
               "or pass --milestone <id>")
-    print("active task set. phase: specify. Fill section 1 (SPECIFY), then: add.py advance")
+    print("active task set. phase: ground. Gather the real codebase (section 0 GROUND), then: add.py advance")
 
 
 def _parse_deps(raw: str | None) -> list[str]:
@@ -676,8 +684,8 @@ def cmd_reopen(args: argparse.Namespace) -> None:
     if not reason:
         _die("reopen_reason_required: reopen records WHY — supply a non-empty --reason")
     target = args.to
-    if target not in PHASES[:7]:        # specify..observe; never "done", never an unknown name
-        _die(f"reopen_target_invalid: --to must be one of {', '.join(PHASES[:7])} (got {target!r})")
+    if target not in PHASES[:-1]:        # ground..observe; never "done", never an unknown name
+        _die(f"reopen_target_invalid: --to must be one of {', '.join(PHASES[:-1])} (got {target!r})")
     now = _now()
     entry = {"from": "done", "to": target, "reason": reason, "at": now,
              "prior_gate": t.get("gate", "none")}
@@ -845,6 +853,14 @@ def cmd_status(args: argparse.Namespace) -> None:
     # reads the throttle every session; "unset" when no explicit `autonomy:` line is present.
     if active and active in tasks:
         print(f"autonomy: {_autonomy_level(_task_header(root, active)) or 'unset'}")
+        # grounded (task ground-bundle-wiring): does the active task's §0 GROUND map cite the
+        # anchors §3 names? measure-not-block, human-readable only (never the JSON surface). A
+        # pre-ground / legacy task (no §0) -> _task_grounded None -> NO line, so the surface is
+        # purely additive: an existing task's status output is byte-unchanged.
+        _g = _task_grounded(root, active)
+        if _g is not None:
+            print("grounded: " + ("grounded ✓ — §0 cites the anchors §3 names" if _g
+                                  else "not yet — fill the §0 GROUND anchors (add.py guide)"))
     if not tasks:
         # First-run panel: a brand-new project's status is the moment a user is most
         # lost. When the setup is unlocked, the only correct next move is review+lock —
@@ -894,6 +910,7 @@ def cmd_status(args: argparse.Namespace) -> None:
 # routed there through the CLI alone. Never a dead pointer: the path is printed
 # only if the file exists; a missing tree gets an install hint instead.
 _PHASE_GUIDE_FILES = {
+    "ground": "0-ground.md",
     "specify": "1-specify.md", "scenarios": "2-scenarios.md",
     "contract": "3-contract.md", "tests": "4-tests.md",
     "build": "5-build.md", "verify": "6-verify.md", "observe": "7-observe.md",
@@ -1073,6 +1090,20 @@ def cmd_check(args: argparse.Namespace) -> None:
                              f"milestone '{_active_ms}' goal not auto-ready "
                              f"({_cited}/{_total} exit criteria cite a verifier) — add "
                              "(verify: <test|command|metric>) to each bare criterion"))
+
+    # grounded (task ground-bundle-wiring): the freeze review checklist asks the human to
+    # confirm the contract is grounded; this is the standing monitor for the gap. WARN, NEVER
+    # red (measure-not-block, mirrors goal_not_auto_ready) — fires IFF the ACTIVE task's §3 is
+    # FROZEN AND its §0 GROUND map is ungrounded (the precise "froze without grounding" gap, so
+    # no nag during pre-freeze drafting). A pre-ground / legacy task (no §0 -> _grounded_state
+    # None) is EXEMPT, never retro-flagged. Rides the existing `warnings` array — no new key.
+    _at = state.get("active_task")
+    if _at in tasks:
+        _raw = _raw_phase_bodies(root, _at)
+        if _contract_frozen(_raw.get(3, "")) and _grounded_state(_raw) is False:
+            warnings.append(("task_not_grounded",
+                             f"task '{_at}' froze its contract without grounding — fill the "
+                             "§0 GROUND anchors the contract cites (add.py guide)"))
 
     # dependency graph must be acyclic
     cycle = _find_cycle(tasks)
@@ -1450,7 +1481,7 @@ def _bar(num: int, den: int, cells: int, g: dict) -> str:
 
 
 def _phase_track(phase: str, g: dict) -> str:
-    """Compact 8-cell pipeline (no labels — a single legend explains it):
+    """Compact 9-cell pipeline (no labels — a single legend explains it):
     reached · current · pending. A done task -> all reached."""
     try:
         ci = PHASES.index(phase)
@@ -1866,7 +1897,7 @@ def _phase_spans(text: str) -> dict[int, str]:
         m = head.match(ln)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 7 and n not in starts:
+            if 0 <= n <= 7 and n not in starts:
                 starts[n] = idx
     out: dict[int, str] = {}
     for n, idx in starts.items():
@@ -1890,23 +1921,23 @@ def _raw_phase_bodies(root: Path, slug: str) -> dict[int, str]:
 
 
 def task_phases(root: Path, slug: str) -> list[dict]:
-    """The frozen per-task PHASE-DETAIL shape (v9-1): parse TASK.md §1–§7 into seven
-    blocks specify→observe. PURE — NO writes. Each entry is
-    { "phase": <name>, "n": <1..7>, "body": <cleaned text | "(empty)"> }.
+    """The frozen per-task PHASE-DETAIL shape (v9-1): parse TASK.md §0–§7 into eight
+    blocks ground→observe. PURE — NO writes. Each entry is
+    { "phase": <name>, "n": <0..7>, "body": <cleaned text | "(empty)"> }.
 
     The heading scan lives in _phase_spans (shared with the decide digest); this view
     CLEANS each body. Missing file / missing section / placeholder-only body ->
     "(empty)" (fail-closed)."""
-    names = PHASES[:7]  # specify..observe; "done" is a terminal STATE, not a section
+    names = PHASES[:-1]  # ground..observe; "done" is a terminal STATE, not a section
     f = root / "tasks" / slug / "TASK.md"
     try:
         text = f.read_text(encoding="utf-8")
     except OSError:   # missing OR unreadable -> every phase fail-closed to "(empty)"
-        return [{"phase": names[n - 1], "n": n, "body": "(empty)"} for n in range(1, 8)]
+        return [{"phase": names[n], "n": n, "body": "(empty)"} for n in range(0, 8)]
     spans = _phase_spans(text)
-    return [{"phase": names[n - 1], "n": n,
+    return [{"phase": names[n], "n": n,
              "body": _clean_phase_body(spans[n]) if n in spans else "(empty)"}
-            for n in range(1, 8)]
+            for n in range(0, 8)]
 
 
 def _task_title(root: Path, slug: str) -> str:
@@ -1982,7 +2013,7 @@ def render_task_detail(root: Path, state: dict, mslug: str, slug: str, *,
     L.append(f" PHASE {phase}    GATE {gate}")
     L.append(banner)
     for p in task_phases(root, slug):
-        i = p["n"] - 1
+        i = p["n"]   # n IS the PHASES index now (ground=0 .. observe=7)
         mk = (g["reached"] if (phase == "done" or i < ci)
               else g["current"] if i == ci else g["pending"])
         L.append("")
@@ -2117,6 +2148,36 @@ def _contract_frozen(raw3: str) -> bool:
     return any(re.match(r"\s*Status:\s*FROZEN", ln) for ln in raw3.splitlines())
 
 
+def _section0_anchors(raw0: str) -> str | None:
+    """The value of the §0 GROUND "Anchors the contract cites:" line, stripped.
+    None when the §0 body carries no such line (no §0, or a malformed map). PURE."""
+    for ln in raw0.splitlines():
+        m = re.match(r"\s*Anchors the contract cites:\s*(.*)$", ln)
+        if m:
+            return m.group(1).strip()
+    return None
+
+
+def _grounded_state(raw: dict[int, str]) -> bool | None:
+    """Tri-state grounding measure over a task's RAW §bodies (measure-not-block):
+      True  — the §0 "Anchors the contract cites:" line is filled (real content)
+      False — the §0 section exists but its Anchors line is the "<…>" placeholder / empty
+      None  — no §0 section (a pre-ground / legacy task), OR a §0 with no Anchors line
+    PURE; fail-open (an unparseable §0 -> None, never a false False). The freeze review
+    checklist asks the human to confirm True; status/check surface it, never block on it."""
+    if 0 not in raw:
+        return None
+    anchors = _section0_anchors(raw[0])
+    if anchors is None:
+        return None
+    return bool(anchors) and not anchors.startswith("<")
+
+
+def _task_grounded(root: Path, slug: str) -> bool | None:
+    """`_grounded_state` for one task by slug (reads its RAW §bodies). Read-only."""
+    return _grounded_state(_raw_phase_bodies(root, slug))
+
+
 _FLAG_LABEL_RE = re.compile(r"Least-sure flag surfaced at freeze\s*:", re.I)
 _FLAG_PART_RE = re.compile(
     r"\[(?:spec|scenario|contract|test)(?:/(?:spec|scenario|contract|test))*\]")
@@ -2158,6 +2219,8 @@ def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
     gate = t.get("gate", "none")
     if gate != "none" or phase in ("observe", "done"):
         seam = "recorded"
+    elif phase == "ground":
+        seam = "ground"
     elif phase in _FRONT_PHASES:
         seam = "front"
     else:
@@ -2168,6 +2231,8 @@ def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
         judgment = _decision_markers(raw.get(6, ""), 6) + _decision_markers(raw.get(1, ""), 1)
     elif seam == "front" and not frozen:
         judgment = _decision_markers(raw.get(1, ""), 1) + _decision_markers(raw.get(3, ""), 3)
+    elif seam == "ground":
+        judgment = _decision_markers(raw.get(0, ""), 0)
     else:
         judgment = []
 
@@ -2187,6 +2252,9 @@ def decide_data(root: Path, state: dict, mslug: str, slug: str) -> dict:
     elif seam == "front":
         unlocks = "none"
         decide = "no decision pending — frozen; the run owns it. next decision point: verify gate"
+    elif seam == "ground":
+        unlocks = "gather the codebase -> advance to specify"
+        decide = "gather the real codebase (the section 0 GROUND map), then: add.py advance"
     else:
         unlocks = "none"
         decide = f"no decision pending — recorded gate: {gate}"
@@ -2205,7 +2273,7 @@ def render_decide(root: Path, state: dict, mslug: str, slug: str, *,
     g = _ASCII if ascii else _UNICODE
     banner = g["h"] * width
     seam_label = {"gate": "VERIFY GATE", "front": "CONTRACT APPROVAL",
-                  "recorded": "RECORDED"}[d["seam"]]
+                  "recorded": "RECORDED", "ground": "GROUND"}[d["seam"]]
     L = [banner, f" DECIDE · {mslug or '—'} · {slug} · decision point: {seam_label}", banner]
     if d["decide"].startswith("no decision pending"):
         L.append(f" {d['decide']}")
@@ -2953,7 +3021,7 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("slug", nargs="?", default=None)
     # --to / --reason are validated in-body (not argparse choices) so the named reject
     # codes fire (reopen_target_invalid / reopen_reason_required), not a bare exit-2.
-    pr.add_argument("--to", default=None, help="target phase (specify..observe)")
+    pr.add_argument("--to", default=None, help="target phase (ground..observe)")
     pr.add_argument("--reason", default="", help="why the task is reopened (required, non-empty)")
     pr.set_defaults(func=cmd_reopen)
 

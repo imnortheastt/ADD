@@ -104,9 +104,9 @@ class LoopBoard(unittest.TestCase):
         return buf.getvalue(), err.getvalue(), code
 
     def _mk_done(self, slug: str = "t"):
-        """Drive a fresh task specify -> verify -> done (PASS)."""
+        """Drive a fresh task ground -> verify -> done (PASS)."""
         self._run("new-task", slug, "--title", slug)
-        for _ in range(5):                      # specify -> ... -> verify
+        for _ in range(6):                      # ground -> ... -> verify
             self._run("advance", slug)
         self._run("gate", "PASS", slug)
         assert self._milestone()["status"] != "done", "fixture: milestone not pre-closed"

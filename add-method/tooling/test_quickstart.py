@@ -59,7 +59,7 @@ class QuickstartGuideTest(unittest.TestCase):
             os.chdir(tmp)
             add.main(["init", "--name", "demo", "--stage", "mvp"])
             add.main(["new-task", "transfer", "--title", "Transfer money"])
-            for _ in range(5):  # specify -> scenarios -> contract -> tests -> build -> verify
+            for _ in range(6):  # ground -> specify -> scenarios -> contract -> tests -> build -> verify
                 add.main(["advance"])
             add.main(["gate", "PASS"])
             import json

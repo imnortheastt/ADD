@@ -175,8 +175,8 @@ class PhaseDetailTest(unittest.TestCase):
         out, _, code = self._report("vX", "alpha", "--json")
         self.assertEqual(code, 0)
         data = _json.loads(out)
-        self.assertEqual(len(data), 7)
-        self.assertEqual([d["n"] for d in data], [1, 2, 3, 4, 5, 6, 7])
+        self.assertEqual(len(data), 8)
+        self.assertEqual([d["n"] for d in data], [0, 1, 2, 3, 4, 5, 6, 7])
         for d in data:
             self.assertIn("phase", d)
             self.assertIn("body", d)
@@ -188,14 +188,14 @@ class PhaseDetailTest(unittest.TestCase):
         from unittest import mock
         with mock.patch.object(Path, "read_text", side_effect=OSError("boom")):
             phases = add.task_phases(self._root(), "alpha")
-        self.assertEqual(len(phases), 7)
+        self.assertEqual(len(phases), 8)
         self.assertTrue(all(p["body"] == "(empty)" for p in phases))
 
     def test_task_phases_pure_extraction(self):
         phases = add.task_phases(self._root(), "alpha")
-        self.assertEqual(len(phases), 7)
+        self.assertEqual(len(phases), 8)
         self.assertEqual([p["phase"] for p in phases],
-                         ["specify", "scenarios", "contract", "tests",
+                         ["ground", "specify", "scenarios", "contract", "tests",
                           "build", "verify", "observe"])
         bodies = {p["n"]: p["body"] for p in phases}
         self.assertIn("SPEC_MARKER", bodies[1])

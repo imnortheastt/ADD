@@ -51,7 +51,7 @@ class AddToolTest(unittest.TestCase):
         self.assertTrue((tdir / "src").is_dir())
         st = self._state()
         self.assertEqual(st["active_task"], "transfer")
-        self.assertEqual(st["tasks"]["transfer"]["phase"], "specify")
+        self.assertEqual(st["tasks"]["transfer"]["phase"], "ground")
         self.assertIn("Transfer money", (tdir / "TASK.md").read_text())
 
     def test_new_task_rejects_bad_slug(self):
@@ -67,12 +67,12 @@ class AddToolTest(unittest.TestCase):
     def test_advance_moves_phase_and_syncs_marker(self):
         self._run("init")
         self._run("new-task", "t")
-        self._run("advance")  # specify -> scenarios
+        self._run("advance")  # ground -> specify
         st = self._state()
-        self.assertEqual(st["tasks"]["t"]["phase"], "scenarios")
+        self.assertEqual(st["tasks"]["t"]["phase"], "specify")
         marker = [l for l in (Path(self.tmp) / ".add" / "tasks" / "t" / "TASK.md"
                               ).read_text().splitlines() if l.startswith("phase:")][0]
-        self.assertIn("scenarios", marker)
+        self.assertIn("specify", marker)
 
     def test_phase_explicit_set(self):
         self._run("init")
@@ -84,7 +84,7 @@ class AddToolTest(unittest.TestCase):
     def test_gate_pass_marks_done(self):
         self._run("init")
         self._run("new-task", "t")
-        for _ in range(5):  # specify -> ... -> verify: PASS requires verify (no silent skip)
+        for _ in range(6):  # ground -> ... -> verify: PASS requires verify (no silent skip)
             self._run("advance")
         self._run("gate", "PASS")
         st = self._state()

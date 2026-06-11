@@ -188,12 +188,14 @@ class AdvanceGuardTest(_Board):
 
     # -- scope: the guard fires ONLY at the build boundary --
     def test_below_build_boundary_unchecked(self):
-        # a frozen §3 with NO flag, advancing specify->scenarios, is never checked
+        # a frozen §3 with NO flag, advancing ground->specify->scenarios, is never checked
         buf, err = io.StringIO(), io.StringIO()
         with redirect_stdout(buf), redirect_stderr(err):
-            add.main(["new-task", "beta", "--title", "beta"])   # stays at specify
+            add.main(["new-task", "beta", "--title", "beta"])   # stays at ground
         self._task_md("beta").write_text(self._body("beta", flag=""), encoding="utf-8")
-        out, err, code = self._advance("beta")
+        out, err, code = self._advance("beta")                   # ground -> specify
+        self.assertEqual(code, 0, out + err)
+        out, err, code = self._advance("beta")                   # specify -> scenarios
         self.assertEqual(code, 0, out + err)
         self.assertEqual(self._state()["tasks"]["beta"]["phase"], "scenarios")
 

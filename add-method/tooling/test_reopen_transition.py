@@ -95,9 +95,9 @@ class ReopenBoard(unittest.TestCase):
         return buf.getvalue(), err.getvalue(), code
 
     def _mk_done(self, slug: str, risk_accepted: bool = False):
-        """Drive a fresh task specify -> verify -> done (PASS or RISK-ACCEPTED)."""
+        """Drive a fresh task ground -> verify -> done (PASS or RISK-ACCEPTED)."""
         self._run("new-task", slug, "--title", slug)
-        for _ in range(5):                      # specify -> ... -> verify
+        for _ in range(6):                      # ground -> ... -> verify
             self._run("advance", slug)
         if risk_accepted:
             self._run("gate", "RISK-ACCEPTED", slug, *WAIVER)
@@ -119,7 +119,7 @@ class ReopenBoard(unittest.TestCase):
         self.assertEqual(self._task("t")["phase"], "build")
         # PHASES tuple is unchanged: done stays a state, not removed
         self.assertEqual(add.PHASES[-1], "done")
-        self.assertEqual(len(add.PHASES), 8)
+        self.assertEqual(len(add.PHASES), 9)
 
     def test_reopen_resets_gate_to_none(self):
         self._mk_done("t")

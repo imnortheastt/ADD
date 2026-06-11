@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Red/green tests for the freeze review checklist (task review-checklist, v14).
 
-The seam guide (phases/3-contract.md) presents a SIX-item checklist that aims
+The seam guide (phases/3-contract.md) presents a SEVEN-item checklist that aims
 the human's one approval — ⚠-first, with an explicit high-risk declaration
-prompt — without re-adding ceremony: ≤16 lines, never a second gate, engine
-byte-identical. Run:
+prompt and a grounding check — without re-adding ceremony: ≤16 lines, never a
+second gate, engine byte-identical. Run:
     python3 -m unittest test_review_checklist -v
 """
 import hashlib
@@ -36,7 +36,9 @@ class ChecklistTest(unittest.TestCase):
         sec = _section()
         self.assertIsNotNone(sec, f"{HEADING} missing from 3-contract.md")
         items = [ln for ln in sec.splitlines() if ln.lstrip().startswith("- **")]
-        self.assertEqual(len(items), 6, f"exactly six items, got {len(items)}")
+        # v(ground-bundle-wiring): the checklist grew six -> seven — the **Grounded** item
+        # was added after **Shape** (the ⚠-first + exact-count shape is unchanged).
+        self.assertEqual(len(items), 7, f"exactly seven items, got {len(items)}")
         self.assertIn("⚠", items[0], "the least-sure flags must be item ONE")
 
     def test_risk_prompt_names_the_tokens(self):

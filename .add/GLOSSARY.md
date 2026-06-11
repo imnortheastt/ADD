@@ -3,7 +3,9 @@
 ADD: AI-Driven Development — the orchestration engine (the build/verify discipline) and this skill.
 AIDD: the umbrella method and the book that explains the why (the trust layer).
 Task: one feature taken through the flow; lives in `.add/tasks/<slug>/TASK.md`.
-Phase: a step of the flow — specify, scenarios, contract, tests, build, verify, observe, done.
+Phase: a step of the flow — ground, specify, scenarios, contract, tests, build, verify, observe, done.
+ground: the phase-0 preamble before specify — the AI gathers the real current codebase the task touches (files, symbols, signatures, conventions) into a §0 grounding map; AI-owned, adds no gate (the one approval stays at the contract freeze) so the contract/tests/build are grounded in reality, not assumption.
+grounding map / anchors: the §0 GROUND artifact — the real files/symbols/conventions a task touches plus the anchors (the symbols the frozen contract cites); task-specific delta only (defers to PROJECT.md / CONVENTIONS.md), surfaced by `add.py status`/`check` (measure, never block).
 Stage: project depth — prototype, poc, mvp, production (controls how deeply each phase is run).
 Gate: a checkpoint with an explicit outcome: PASS, RISK-ACCEPTED, or HARD-STOP. No silent skips.
 GOAL: the one durable outcome a project (and each milestone) runs toward — the loop's orientation anchor, declared as the lowercase `goal:` line in PROJECT.md / MILESTONE.md and surfaced by status/guide every session; distinct from a task's §1 Must (a single required behavior, not the whole-project outcome).

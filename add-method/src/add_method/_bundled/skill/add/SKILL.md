@@ -20,7 +20,7 @@ You are the orchestrator. ADD keeps the AI fast *and* safe by fixing direction
 the result through passing evidence rather than a plausible-looking diff.
 
 **One file = one task.** Each feature lives in a single `.add/tasks/<slug>/TASK.md`
-with seven sections. You fill them top to bottom; the Python tool tracks where
+with a §0 ground preamble and seven step sections. You fill them top to bottom; the Python tool tracks where
 you are so context never rots across sessions.
 
 ## Always start here (orient — do not skip)
@@ -61,6 +61,7 @@ Load the phase guide **only for the phase you are in** (progressive disclosure):
 | Phase | Guide | Produces (TASK.md section) | Who leads |
 |-------|-------|----------------------------|-----------|
 | setup | `phases/0-setup.md` | `.add/` + living docs + first §1–§3 + `SETUP-REVIEW.md` | AI drafts → **human locks** (the baseline approval) |
+| ground | `phases/0-ground.md` | §0 GROUND map (real files · symbols · the anchors §3 cites) | **AI** (the §0 preamble — no new gate) |
 | specify | `phases/1-specify.md` | §1 rules + ranked lowest-confidence flag | AI drafts (co-specify)† |
 | scenarios | `phases/2-scenarios.md` | §2 Given/When/Then | AI drafts† |
 | contract | `phases/3-contract.md` | §3 frozen shape | AI drafts → **human approves once** (the decision point)† |
