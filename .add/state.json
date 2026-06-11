@@ -545,7 +545,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T16:57:40+00:00",
+  "updated": "2026-06-11T17:21:37+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -650,9 +650,33 @@
       "status": "done",
       "created": "2026-06-04T05:43:06+00:00",
       "updated": "2026-06-04T13:01:20+00:00"
+    },
+    "build-scope-lock": {
+      "title": "Build Scope Lock",
+      "goal": "a build's blast radius is declared before it starts and engine-enforced when it ends \u2014 touched is a subset of declared, so a passing build cannot quietly modify files outside its frozen scope",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-11T17:19:27+00:00",
+      "updated": "2026-06-11T17:19:27+00:00"
+    },
+    "next-step-seams": {
+      "title": "Next Step Seams",
+      "goal": "after every mutating engine verb both the human and the AI see the engine-sourced next step and who drives it \u2014 next: footer plus [you drive] / [human gate] marker",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-11T17:19:27+00:00",
+      "updated": "2026-06-11T17:19:27+00:00"
+    },
+    "udd-design-foundation": {
+      "title": "Udd Design Foundation",
+      "goal": "a UI project gets a render-ready UDD foundation the AI drafts from and into \u2014 DESIGN.md plus a JSON foundation (token layers + component catalog + prototype content trees) that a json-render-style renderer displays as a living design system and clickable prototype, and that add.py check lints",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-11T17:21:37+00:00",
+      "updated": "2026-06-11T17:21:37+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "udd-design-foundation",
   "archived": [
     {
       "slug": "v5",
