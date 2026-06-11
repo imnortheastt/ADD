@@ -199,5 +199,5 @@ Spec delta for the next loop: the refute-read surfaced two suite-hardening candi
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [TDD · open] a refute-read's residue includes COVERAGE GAPS the suite cannot absorb post-snapshot — route them as next-loop deltas instead of post-hoc test edits, or the tripwire reads hardening as tamper (evidence: refute-read on engine-argv-portability named the `--flag=value` shape + a canary-less exit-code assert; suite locked at tests→build)
-- [ADD · open] grounding probes against MUTATING engine verbs must run in a sandbox, never the live project — a `new-task`/`use` probe polluted live state.json during §0 and needed a git restore (evidence: zz-slug probe incident, this task's §0 Honors line)
+- [TDD · folded] a refute-read's residue includes COVERAGE GAPS the suite cannot absorb post-snapshot — route them as next-loop deltas instead of post-hoc test edits, or the tripwire reads hardening as tamper (evidence: refute-read on engine-argv-portability named the `--flag=value` shape + a canary-less exit-code assert; suite locked at tests→build)
+- [ADD · folded] grounding probes against MUTATING engine verbs must run in a sandbox, never the live project — a `new-task`/`use` probe polluted live state.json during §0 and needed a git restore (evidence: zz-slug probe incident, this task's §0 Honors line)
