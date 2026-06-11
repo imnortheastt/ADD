@@ -117,6 +117,34 @@ The auto-gate NEVER writes a human signature it did not get. An auto-PASS is log
 honestly — the line between a pass and a skip is the recorded outcome, not a forged name.
 </constraints>
 
+## The bounded self-heal loop — a confirmed cheat returns to build
+
+The auto-gate trusts evidence; but evidence can be **gamed**. A build can make the unchanged red suite
+pass without EARNING it — a test or the frozen contract edited after the red run, src **overfit** to the
+fixtures, **vacuous** asserts, or real logic **stubbed away**. That is a **confirmed cheat**, and a cheat
+is **HARD-STOP-class**: never auto-passed, never RISK-ACCEPTED-waived (like a security finding). But a
+first cheat is not yet a stop — it is a chance to redo honestly.
+
+So a confirmed cheat enters a **bounded self-heal loop**: the engine returns the task to **build** for an
+honest redo, **counts** the attempt, and **caps** it. After **3** honest re-build attempts a fourth
+confirmed cheat forces a **HARD-STOP that escalates to the human** — never an auto-PASS, never an unbounded
+loop. The engine COUNTS, CAPS, and ESCALATES; the **agent** does the honest re-build (the engine never
+auto-fixes). The counter is **monotonic** — it never auto-resets, so the cap cannot be cleared by
+re-crossing a phase; only an honest build (no cheat) escapes the loop, and an honest build PASSes even at
+the third attempt (the cap bites a *continued* cheat, never a recovery).
+
+Two findings enter the loop:
+- **mechanical** (enforced) — the tamper tripwire (`tamper-tripwire`): at the gate the engine re-hashes the
+  red test files + the frozen §3 against the `tests→build` snapshot; any divergence is a cheat, routed to
+  the loop before any completing outcome is recorded.
+- **semantic** (honor-system, necessary-not-sufficient) — the **adversarial refute-read** (`6-verify.md`):
+  an independent reviewer argues "the green was NOT earned" and, on a confirmed overfit/vacuous/stub, the
+  agent reports it with `add.py heal <slug> --reason "<finding>"`. The engine cannot SEE a judgment cheat,
+  so this entry is the agent's honest report — the human verify gate stays the real backstop.
+
+The mechanical entry returns-to-build automatically at the gate; the `heal` verb is how a *reported* cheat
+enters the same bounded loop. Either way: ≤3 honest redos, then escalate. A gamed green never ships.
+
 ## Emitting deltas — feeding the foundation back
 
 The completeness-critic does not discard what it finds. Every gap, surprise, or convention that helped

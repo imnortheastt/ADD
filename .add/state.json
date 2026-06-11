@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "earned-green-rubric",
+  "active_task": "heal-then-escalate",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -500,10 +500,24 @@
         "contract_md5": "d9ffbb8edf9da10354d22cf729325302",
         "tests": {}
       }
+    },
+    "heal-then-escalate": {
+      "title": "Bounded self-heal then escalate: a confirmed cheat drives \u22643 honest re-build attempts, then HARD-STOPs to the human",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "verify-integrity",
+      "depends_on": [],
+      "created": "2026-06-11T07:47:38+00:00",
+      "updated": "2026-06-11T08:32:00+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "059798c76dea30d938c73c95431461da",
+        "tests": {}
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T07:26:41+00:00",
+  "updated": "2026-06-11T08:32:00+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

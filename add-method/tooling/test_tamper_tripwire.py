@@ -130,11 +130,17 @@ class _Board(unittest.TestCase):
         return self._run("gate", *(gate_args or ("PASS",)), slug)
 
     def _assert_blocked(self, out, err, code, slug, code_token=None):
+        # heal-then-escalate (verify-integrity): a first mechanical tamper now enters the
+        # bounded self-heal loop — it RETURNS TO BUILD (phase=build) rather than dying on
+        # sight; an erased baseline (tripwire_missing) still HARD-STOPs in place at verify.
+        # Either way the gate is REFUSED and records NO completing outcome (the strict
+        # invariant). The return-to-build itself is positively covered by test_heal_then_escalate.
         self.assertNotEqual(code, 0, "a tampered gate must refuse")
         if code_token:
             self.assertIn(code_token, out + err)
         st = self._task_state(slug)
-        self.assertEqual(st["phase"], "verify", "refusal leaves the phase at verify")
+        self.assertIn(st["phase"], ("verify", "build"),
+                      "a refused tamper returns to build (heal) or stays at verify (escalation)")
         self.assertEqual(st["gate"], "none", "refusal records no completing outcome")
 
 

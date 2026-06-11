@@ -37,6 +37,12 @@ STAGES = ("prototype", "poc", "mvp", "production")
 GRADUATION_CUE = "MVP covered → propose graduation"
 PHASES = ("ground", "specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
+# heal-then-escalate (verify-integrity): the bounded self-heal loop cap. A CONFIRMED cheat
+# (mechanical tripwire divergence, or an agent-reported semantic refute-read finding) returns
+# the task to BUILD for an honest redo; after HEAL_CAP such attempts the next confirmed cheat
+# forces a HARD-STOP escalation to the human. MONOTONIC — attempts never auto-resets (a gamed
+# green is never auto-passed; the loop is never unbounded).
+HEAL_CAP = 3
 
 
 def _phase_index(name: str) -> int:
@@ -709,6 +715,31 @@ def cmd_reopen(args: argparse.Namespace) -> None:
     _sync_task_marker(root, slug, target)
     save_state(root, state)
     print(f"task '{slug}' reopened: done -> {target} (reason recorded); gate reset to none")
+
+
+def cmd_heal(args: argparse.Namespace) -> None:
+    """Report a CONFIRMED semantic cheat — an earned-green failure the adversarial refute-read
+    found — and enter the bounded self-heal loop (heal-then-escalate). The judgment rubric (the
+    specific cheats and how to spot them) lives in 6-verify.md, never the engine.
+
+    The engine cannot SEE a judgment cheat — this is the agent's honest report (honor-system,
+    necessary-not-sufficient; the human verify gate stays the real backstop, and the engine
+    never spawns the refute-read). It routes through the SAME _heal_or_escalate as the
+    mechanical tripwire: return-to-build for an honest redo (≤HEAL_CAP), then a HARD-STOP
+    escalation. The refute-read is a verify-gate activity, so the task must be at verify."""
+    root = _require_root()
+    state = load_state(root)
+    slug = _resolve_task(state, args.slug)
+    reason = (args.reason or "").strip()
+    if not reason:
+        _die("heal_reason_required: heal records the refute-read finding — supply a "
+             "non-empty --reason (never a silent loop)")
+    phase = state["tasks"][slug].get("phase")
+    if phase != "verify":
+        _die(f"heal_not_at_verify: task '{slug}' is at '{phase}', not verify — the "
+             "adversarial refute-read is a verify-gate activity; build then advance to "
+             "verify before reporting a cheat")
+    _heal_or_escalate(root, state, slug, reason="refute-read:" + reason, source="refute-read")
 
 
 def cmd_lock(args: argparse.Namespace) -> None:
@@ -1828,6 +1859,43 @@ def _tripwire_divergence(root: Path, slug: str, tw: dict) -> list[str]:
     return diffs
 
 
+def _heal_or_escalate(root: Path, state: dict, slug: str, *, reason: str, source: str) -> None:
+    """The bounded self-heal router (verify-integrity, heal-then-escalate). Called ONLY when
+    a cheat is CONFIRMED at this point — mechanical (tripwire divergence, source "tamper") or
+    semantic (an agent-reported refute-read finding, source "refute-read").
+
+    attempts < HEAL_CAP -> record the attempt, return the task to BUILD for an honest redo,
+    exit 3 (a redo signal, NOT a completing outcome). The phase is set DIRECTLY (never via
+    advance) so the tripwire baseline is not re-snapshotted mid-loop. The increment is saved
+    BEFORE the exit, so a re-run never grants a free attempt (atomic, fail-closed).
+
+    attempts >= HEAL_CAP -> the next confirmed cheat: record gate = HARD-STOP and escalate to
+    the human (_die). A gamed green is NEVER auto-passed; the loop is never unbounded. The
+    counter is MONOTONIC — it never auto-resets (cmd_phase is unguarded, so a reset would be a
+    zero-human cap bypass)."""
+    t = state["tasks"][slug]
+    heal = t.setdefault("heal", {"attempts": 0, "history": []})
+    entry = {"at": _now(), "reason": reason, "source": source}
+    if heal.get("attempts", 0) >= HEAL_CAP:
+        heal.setdefault("history", []).append(entry)
+        t["gate"] = "HARD-STOP"               # never a completing outcome; phase stays put
+        t["updated"] = _now()
+        save_state(root, state)               # the escalation verdict is durable
+        _die(f"heal_exhausted: task '{slug}' — a confirmed cheat ({reason}) persisted past "
+             f"{HEAL_CAP} honest re-build attempts. HARD-STOP escalated to the human: fix the "
+             "spec (change-request -> re-freeze) or abandon. A gamed green is never auto-passed.")
+    heal["attempts"] = heal.get("attempts", 0) + 1
+    heal.setdefault("history", []).append(entry)
+    t["phase"] = "build"                      # DIRECT — never via advance (no re-snapshot)
+    t["updated"] = _now()
+    _sync_task_marker(root, slug, "build")
+    save_state(root, state)                   # the increment is durable BEFORE the exit
+    print(f"return_to_build: task '{slug}' — cheat detected ({reason}); RETURN TO BUILD for an "
+          f"HONEST redo, attempt {heal['attempts']} of {HEAL_CAP}. Revert the tampered file or "
+          "rebuild src honestly, then advance back to verify.")
+    raise SystemExit(3)                       # redo signal (distinct from _die's 1, argparse's 2)
+
+
 def _tamper_guard(root: Path, state: dict, slug: str) -> None:
     """HARD-STOP a COMPLETING gate when the tripwire shows tampering — the method's
     first mechanical cheat block (verify-integrity). Tri-state, co-witnessed by
@@ -1846,11 +1914,12 @@ def _tamper_guard(root: Path, state: dict, slug: str) -> None:
         return  # legacy: predates the tripwire, or never crossed tests->build
     diffs = _tripwire_divergence(root, slug, tw)
     if diffs:
-        _die(f"tamper_detected ({', '.join(diffs)}): a tracked test file or the "
-             "frozen §3 changed since the tests->build snapshot. A gamed green is a "
-             "HARD-STOP (verify-integrity) — return to build for an HONEST redo, or "
-             "change-request the contract back to SPECIFY. Never weaken a test or "
-             "edit a frozen contract to make a build pass.")
+        # heal-then-escalate (verify-integrity): a mechanical cheat no longer dies on sight —
+        # it enters the bounded self-heal loop (≤HEAL_CAP honest re-build attempts, then a
+        # HARD-STOP escalation). Still HARD-STOP-class: never auto-passed, never launderable
+        # (this runs BEFORE the waiver write). The router returns to build or escalates.
+        _heal_or_escalate(root, state, slug,
+                          reason="tamper_detected:" + ",".join(diffs), source="tamper")
 
 
 def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
@@ -3136,6 +3205,13 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--to", default=None, help="target phase (ground..observe)")
     pr.add_argument("--reason", default="", help="why the task is reopened (required, non-empty)")
     pr.set_defaults(func=cmd_reopen)
+
+    ph = sub.add_parser("heal", help="report a confirmed cheat: bounded return-to-build, then escalate")
+    ph.add_argument("slug", nargs="?", default=None)
+    # --reason validated in-body so the named rejects fire (heal_reason_required /
+    # heal_not_at_verify), not a bare argparse usage-2.
+    ph.add_argument("--reason", default="", help="the refute-read finding (required, non-empty)")
+    ph.set_defaults(func=cmd_heal)
 
     ps = sub.add_parser("stage", help="set the project stage")
     ps.add_argument("stage", choices=STAGES)

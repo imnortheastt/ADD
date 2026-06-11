@@ -59,7 +59,9 @@ independent reviewer — a subagent under `autonomy: auto` is recommended, the e
 spawns one — prompted to argue the green was NOT earned from outside the build context. This
 is the verify-gate, whole-suite specialization of run.md's adversarial verify (see run.md), not
 a new discipline. A confirmed earned-green failure is HARD-STOP-class: never auto-passed, never
-RISK-ACCEPTED.
+RISK-ACCEPTED — but a first cheat is a chance to redo: a confirmed cheat (mechanical tamper or a
+reported earned-green failure) enters the bounded self-heal loop — it returns to build for an honest
+redo, and only after the loop's cap does it HARD-STOP to the human (the loop lives in run.md).
 
 ## Record exactly one outcome (no silent pass)
 

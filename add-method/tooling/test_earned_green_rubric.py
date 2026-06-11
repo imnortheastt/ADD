@@ -89,8 +89,11 @@ SIX_EXISTING = [
     "### GATE RECORD",
 ]
 
-# Task-3 loop machinery that must NOT leak into the task-2 rubric (scope guard).
-LOOP_TOKENS = ["self-heal", "re-build loop", "3 attempts", "three attempts"]
+# heal-then-escalate (task 3) LANDED the bounded self-heal loop. Its home is run.md (the
+# build->verify run guide); the verify guide POINTS to it. The earlier "these tokens must NOT
+# leak into the task-2 rubric" absence-list is superseded by the presence guard below — once
+# task 3 exists, the loop is documented reality, not a future-task token to keep out.
+LOOP_ANCHORS_RUN_MD = ["self-heal", "escalat"]
 
 
 def _md5(p: Path) -> str:
@@ -175,23 +178,40 @@ class EarnedGreenRubricTest(unittest.TestCase):
                           f"{path.name}: the refute-read must POINT to run.md's adversarial verify")
         self.assertGreater(checked, 0, "no glossary present to check")
 
-    # ── the principle without task-3 forward-reference (scope guard) ──────────
-    def test_principle_no_loop_forward_ref(self):
+    # ── the loop is homed in run.md; the verify guide points (separation guard) ──
+    def test_loop_homed_in_run_md_verify_guide_points(self):
+        """heal-then-escalate LANDED the bounded self-heal loop — this supersedes the task-2
+        forward-reference absence-check (whose premise, 'task 2 must not pre-empt task 3', is
+        now FULFILLED). Separation guard: the loop's machinery lives in run.md (its home, the
+        build->verify run); the verify guide STATES the HARD-STOP principle and POINTS to
+        run.md. Coverage goes UP — this now guards run.md's loop presence, which the
+        absence-check never did."""
+        run_low = _norm(RUN_MD.read_text(encoding="utf-8")).lower()
+        for anchor in LOOP_ANCHORS_RUN_MD:
+            self.assertIn(anchor, run_low,
+                          f"the bounded self-heal loop must be documented in run.md: {anchor!r}")
         guide = GUIDE.read_text(encoding="utf-8")
-        self.assertIn("HARD-STOP", guide, "the rubric must state the HARD-STOP principle")
-        low = guide.lower()
-        for tok in LOOP_TOKENS:
-            self.assertNotIn(tok.lower(), low,
-                             f"task-3 loop machinery leaked into the task-2 guide: {tok!r}")
+        self.assertIn("HARD-STOP", guide, "the verify guide still states the HARD-STOP principle")
+        self.assertIn("run.md", guide, "the verify guide POINTS to run.md for the loop")
 
-    # ── lean scope: the engine is byte-unchanged ──────────────────────────────
+    # ── the rubric stays out of the engine (the engine names the channel, not the cheats) ──
     def test_engine_unchanged(self):
+        # The engine is byte-pinned. The pin moved at heal-then-escalate (task 3 added the
+        # `heal` channel + the bounded loop — see engine_pin's note), so this is no longer a
+        # "prose-only" claim. What stays invariant for earned-green: the JUDGMENT RUBRIC — the
+        # specific cheats and how to spot them — never lives in the engine; it lives in
+        # 6-verify.md. The `heal` channel may carry its source LABEL ("refute-read"), but the
+        # engine never re-teaches the cheats. (Strengthened: 3 cheat tokens + the refute-read
+        # prompt, vs the prior single token — coverage up, the now-legitimate label allowed.)
         self.assertEqual(
             _md5(ADD_PY), engine_pin.ENGINE_MD5,
-            "earned-green-rubric is prose+template only — add.py must stay byte-identical to the pin")
+            "the engine must stay byte-identical to the single-source pin")
         src = ADD_PY.read_text(encoding="utf-8")
-        self.assertNotIn("refute-read", src, "no earned-green prose belongs in the engine")
-        self.assertNotIn("overfit", src, "no earned-green token belongs in the engine")
+        for cheat in ("overfit", "vacuous", "stubbed-away"):
+            self.assertNotIn(cheat, src,
+                             f"the earned-green rubric vocab must stay out of the engine: {cheat!r}")
+        self.assertNotIn("the green was NOT earned", src,
+                         "the refute-read PROMPT is a guide artifact, never the engine")
 
     # ── the guide adds no off-vocabulary XML tag (vocab_offmidiom) ────────────
     def test_guide_vocab_subset(self):
