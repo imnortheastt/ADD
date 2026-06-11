@@ -135,7 +135,8 @@ class _Board(unittest.TestCase):
         self._silent("advance", slug)            # build -> verify (no re-snapshot)
 
     def _gate(self, slug, *gate_args):
-        return self._run("gate", *(gate_args or ("PASS",)), slug)
+        outcome, *flags = gate_args or ("PASS",)   # house order: gate <outcome> <slug> [--flags]
+        return self._run("gate", outcome, slug, *flags)   # slug-after-flags breaks argparse <=3.12
 
     def _drive_returns(self, slug, n):
         """Drive n cheat-arrivals that each RETURN to build (cheat persists). Asserts

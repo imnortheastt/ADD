@@ -127,7 +127,8 @@ class _Board(unittest.TestCase):
 
     def _to_verify_and_gate(self, slug, *gate_args):
         self._silent("advance", slug)            # build -> verify
-        return self._run("gate", *(gate_args or ("PASS",)), slug)
+        outcome, *flags = gate_args or ("PASS",)   # house order: gate <outcome> <slug> [--flags]
+        return self._run("gate", outcome, slug, *flags)   # slug-after-flags breaks argparse <=3.12
 
     def _assert_blocked(self, out, err, code, slug, code_token=None):
         # heal-then-escalate (verify-integrity): a first mechanical tamper now enters the
