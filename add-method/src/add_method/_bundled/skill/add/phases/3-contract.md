@@ -22,6 +22,7 @@ whole bundle (§1–§4). Before asking for it, present the bundle **lowest-conf
 most likely wrong (`⚠ [spec|scenario|contract|test] … — because …; if wrong: …`) — aim the human's
 eye before they freeze. Open that report with the ARC (goal · done · plan) per `report-template.md` so the
 human sees the goal this freeze serves and the plan beyond it, not just the bundle. See `run.md`.
+The approval also freezes the §5 Scope (may touch) + Strategy declarations — the bundle covers them.
 
 ## The freeze review checklist
 

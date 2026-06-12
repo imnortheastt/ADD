@@ -106,11 +106,19 @@ Tests live in: `./tests/` · MUST run red (missing implementation) before Build.
 
 ## 5 · BUILD — AI writes code ▸ docs/07-step-5-build.md
 
+Scope (may touch): `./src/`   <fill before the §3 freeze — every file the build may write>
+Strategy (ordered batches): <1. … 2. … — the planned build order; guidance, not enforced>
 Safety rule (feature-specific): <e.g. debit+credit in one atomic transaction>
 Code lives in: `./src/`
 Constraints: do NOT change any test or the contract; allow-list packages only; ask if unclear.
 
-<!-- EXIT: all green; coverage held; no test/contract touched; no unlisted dependency. -->
+<!-- Scope tokens, backticked, FIRST declaring line: `./…` = this task dir · a token
+     with "/" = project root · a bare name = sibling of the previous token's dir ·
+     outside-root resolutions are dropped fail-closed · a DIRECTORY token covers its
+     whole subtree (containment — diverges from §4's non-recursive counting) ·
+     absent line = UNDECLARED (pre-existing tasks grandfathered, never retro-red) ·
+     engine enforcement (touched ⊆ declared) lands in scope-gate-enforce.
+     EXIT: all green; coverage held; no test/contract touched; no unlisted dependency. -->
 
 ---
 

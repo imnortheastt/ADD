@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "engine-merge-base-enforcement",
+  "active_task": "scope-decl-template",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -542,10 +542,26 @@
           }
         ]
       }
+    },
+    "scope-decl-template": {
+      "title": "\u00a75 BUILD declares its blast radius \u2014 Scope allowlist + Strategy batches, frozen with the bundle",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "build-scope-lock",
+      "depends_on": [],
+      "created": "2026-06-11T17:29:45+00:00",
+      "updated": "2026-06-12T02:14:18+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "06b2cea801ce3317797e829d9fc65b2f",
+        "tests": {
+          "add-method/tooling/test_scope_decl_template.py": "d0f2b02a8402d0338fc66e55f6a3fefc"
+        }
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T17:21:37+00:00",
+  "updated": "2026-06-12T02:14:18+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
