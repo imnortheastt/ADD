@@ -19,6 +19,7 @@ Every exit check in the book, collected for quick use. Print this page.
 - [ ] Every rejection has a named error code.
 - [ ] Success state-change described.
 - [ ] Assumptions ranked lowest-confidence first; the 1–2 most-likely-wrong ⚠-flagged with why + cost (or an honest "none material" that still names the single biggest risk).
+- [ ] "Existing behavior" assumptions carry grep/line citations; wiring claims name the production caller chain.
 
 ## Step 2 — Scenarios
 
@@ -40,7 +41,7 @@ Every exit check in the book, collected for quick use. Print this page.
 - [ ] Suite runs in the pipeline and is red for the right reason.
 - [ ] Tests assert behavior, not internals.
 - [ ] Coverage target recorded.
-- [ ] No `should_panic` lying reds — unimplemented seams use `todo!()` so they fail.
+- [ ] No `should_panic` lying reds — unimplemented paths use `todo!()` so they fail.
 - [ ] Collateral tests for globally-enumerated things listed by exact name.
 - [ ] Arithmetic checked: fixtures can reach green against frozen constants.
 
@@ -77,7 +78,7 @@ Every exit check in the book, collected for quick use. Print this page.
 A feature is shippable only when all are true:
 
 - [ ] Spec complete: behavior stated, rejections named, assumptions ranked lowest-confidence first with the biggest risk flagged.
-- [ ] Seam and "existing behavior" assumptions carry grep/line citations; seam claims name the production caller chain.
+- [ ] Wiring and "existing behavior" assumptions carry grep/line citations; wiring claims name the production caller chain.
 - [ ] Every rule has a scenario.
 - [ ] Contract frozen; contract tests green.
 - [ ] A test per scenario; suite was red before the build (no `should_panic` lying reds).
