@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "scope-violation-heal",
+  "active_task": "next-footer-engine",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -610,10 +610,37 @@
         ],
         "snapshot_md5": "0db872f82f891a77e0fbd171890df3a7"
       }
+    },
+    "next-footer-engine": {
+      "title": "mutating verbs print an engine-sourced next: footer \u2014 one resolver, no double-printing",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "next-step-seams",
+      "depends_on": [],
+      "created": "2026-06-12T07:52:56+00:00",
+      "updated": "2026-06-12T14:43:14+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "c1927ffcc3680dd82b2a816ba4afb6bd",
+        "tests": {
+          "add-method/tooling/test_next_footer_engine.py": "a7452ae1b1b9a5b48e6532e594d9ba9b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_next_footer_engine.py",
+          "add-method/tooling/test_setup_lock.py"
+        ],
+        "snapshot_md5": "5381f08e2783bd134917ff6c607b2e23"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T07:23:44+00:00",
+  "updated": "2026-06-12T14:43:14+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

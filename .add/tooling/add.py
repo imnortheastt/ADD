@@ -478,7 +478,8 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         # intake -> milestone flow. Speaks of STRUCTURE (not attached), never the act.
         print(f"note: '{slug}' is not attached to a milestone — size it via /add (intake), "
               "or pass --milestone <id>")
-    print("active task set. phase: ground. Gather the real codebase (section 0 GROUND), then: add.py advance")
+    print("active task set. phase: ground. Gather the real codebase (section 0 GROUND).")
+    print(_next_footer(root, state))   # converges the old "then: add.py advance" hint
 
 
 def _parse_deps(raw: str | None) -> list[str]:
@@ -531,6 +532,7 @@ def cmd_phase(args: argparse.Namespace) -> None:
     _sync_task_marker(root, slug, args.phase)
     save_state(root, state)
     print(f"task '{slug}' phase -> {args.phase}")
+    print(_next_footer(root, state))
 
 
 def cmd_advance(args: argparse.Namespace) -> None:
@@ -592,6 +594,7 @@ def cmd_advance(args: argparse.Namespace) -> None:
     _sync_task_marker(root, slug, nxt)
     save_state(root, state)
     print(f"task '{slug}' phase {cur} -> {nxt}")
+    print(_next_footer(root, state))
 
 
 # The mechanized high-risk guard (run.md, v14; widened by explicit-autonomy-dial):
@@ -699,8 +702,9 @@ def cmd_gate(args: argparse.Namespace) -> None:
     state["tasks"][slug]["updated"] = _now()
     save_state(root, state)
     print(f"task '{slug}' gate -> {args.outcome}")
-    if args.outcome == "HARD-STOP":
-        print("HARD-STOP recorded: return to BUILD; nothing ships on a failing/security gate.")
+    # the engine-sourced next step (next-footer-engine): a completing gate hands off to the
+    # state arm; HARD-STOP routes to "resolve HARD-STOP …" — converging the old bespoke line.
+    print(_next_footer(root, state))
 
 
 def cmd_reopen(args: argparse.Namespace) -> None:
@@ -740,6 +744,7 @@ def cmd_reopen(args: argparse.Namespace) -> None:
     _sync_task_marker(root, slug, target)
     save_state(root, state)
     print(f"task '{slug}' reopened: done -> {target} (reason recorded); gate reset to none")
+    print(_next_footer(root, state))
 
 
 def cmd_heal(args: argparse.Namespace) -> None:
@@ -795,6 +800,7 @@ def cmd_lock(args: argparse.Namespace) -> None:
             separators=(",", ":")))
     else:
         print(f"locked setup ({','.join(layers)}) by {who} @ {when}")
+        print(_next_footer(root, state))
 
 
 def _has_production_roadmap(state: dict) -> bool:
@@ -828,6 +834,7 @@ def cmd_stage(args: argparse.Namespace) -> None:
     print(f"project stage -> {args.stage}")
     if bypassing:
         print("(--force: bypassed roadmap check — no production milestone drafted)")
+    print(_next_footer(root, state))
 
 
 def cmd_status(args: argparse.Namespace) -> None:
@@ -1409,7 +1416,8 @@ def cmd_new_milestone(args: argparse.Namespace) -> None:
     state["active_milestone"] = slug
     save_state(root, state)
     print(f"created milestone '{slug}' -> {mfile}")
-    print(f"active milestone set. Decompose it into tasks: add.py new-task <slug> --depends-on ...")
+    print("active milestone set.")
+    print(_next_footer(root, state))   # converges the old "Decompose it into tasks: …" hint
 
 
 def cmd_ready(args: argparse.Namespace) -> None:
@@ -1498,13 +1506,14 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     tail = f" ({len(waived)} via a signed RISK-ACCEPTED waiver)" if waived else ""
     print(f"milestone '{slug}' -> done ({len(members)} tasks complete{tail}).")
     print(f"wrote {retro_path.relative_to(root.parent)}  (milestone exit report)")
-    print("Confirm the MILESTONE.md exit criteria are checked, then archive/start the next.")
     # fold-pressure nudge: milestone close is the natural fold point for open deltas (v11)
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
         noun = "delta" if open_deltas == 1 else "deltas"
         print(f"note: {open_deltas} open {noun} to consolidate into the foundation "
               f"— review with: add.py deltas")
+    # the engine-sourced next step (converges the old "Confirm … archive/start the next" hint)
+    print(_next_footer(root, state))
 
 
 def cmd_archive_milestone(args: argparse.Namespace) -> None:
@@ -1557,6 +1566,7 @@ def cmd_archive_milestone(args: argparse.Namespace) -> None:
     save_state(root, state)
     print(f"archived milestone '{slug}' ({len(members)} tasks) — removed from active state.")
     print("files on disk are untouched; see `add.py status` for the archived rollup.")
+    print(_next_footer(root, state))
 
 
 def cmd_compact(args: argparse.Namespace) -> None:
@@ -1621,6 +1631,7 @@ def cmd_compact(args: argparse.Namespace) -> None:
     for path, n in moved:
         print(f"  moved {path} ({n} files)")
     print("recovery: reverse the moves (mv the bundle's parts back) — state needs no edit.")
+    print(_next_footer(root, state))
 
 
 def cmd_set_milestone(args: argparse.Namespace) -> None:
@@ -1639,6 +1650,7 @@ def cmd_set_milestone(args: argparse.Namespace) -> None:
     state["tasks"][task]["updated"] = _now()
     save_state(root, state)
     print(f"task '{task}' -> milestone '{new}'" if new else f"task '{task}' -> milestone (none)")
+    print(_next_footer(root, state))
 
 
 def cmd_use(args: argparse.Namespace) -> None:
@@ -1653,6 +1665,7 @@ def cmd_use(args: argparse.Namespace) -> None:
     state["active_task"] = slug
     save_state(root, state)
     print(f"active task -> '{slug}' (phase={state['tasks'][slug]['phase']})")
+    print(_next_footer(root, state))
 
 
 def _find_cycle(tasks: dict) -> list[str] | None:
@@ -2879,7 +2892,9 @@ def _decide_next_base(state: dict, d: dict) -> str:
     ms = d["milestone"]["slug"]
     rows = d["tasks"]
     if not rows:
-        return "none — no tasks yet"
+        # command-first (next-footer-engine): an empty milestone's next step is to
+        # decompose it — name the command, not the dead-end "none — no tasks yet".
+        return f"decompose into tasks — add.py new-task {ms}"
     stopped = [r for r in rows if r["gate"] == "HARD-STOP"]
     if stopped:
         return f"resolve HARD-STOP on {stopped[0]['slug']}"
@@ -2906,6 +2921,44 @@ def _decide_next_base(state: dict, d: dict) -> str:
             return f"gate {r['slug']} — add.py report {ms} {r['slug']} --decide"
     r = next(x for x in order if not x["done"])
     return f"none — run in progress ({r['slug']} at {r['phase']})"
+
+
+def _next_footer(root: Path, state: dict) -> str:
+    """The single engine-sourced `next:` line a COMPLETING (exit-0) mutating verb prints
+    as its last stdout (task next-footer-engine). ONE resolver, two arms — reusing the
+    guide path, never a parallel next-step source:
+
+      Arm A — an active IN-FLIGHT task (gate == "none" AND phase != "done"): the phase's
+              own command (advance, or the gate verbs at verify) + its PHASE_GUIDE why.
+              The gate=="none" guard is precise — a HARD-STOPped task keeps gate=="HARD-STOP"
+              (never done) so it falls to Arm B and is never told to re-gate itself.
+      Arm B — otherwise: `_decide_next_base` over the active milestone's rollup — the SAME
+              precedence the report dashboard renders (HARD-STOP -> "resolve HARD-STOP …",
+              empty milestone -> "decompose … add.py new-task <ms>").
+
+    Fail-soft (design-for-failure): the footer is computed AFTER save_state, so a
+    resolution error — no active milestone, an unreadable doc, a corrupt rollup — must
+    NEVER turn a saved mutation into a crash; it degrades to one generic re-orient line.
+    Pure render: it writes nothing. The trailing MARKER slot is reserved for the sibling
+    gate-owner-marker (` [you drive]`/` [human gate]`) — empty this task.
+    """
+    marker = ""   # reserved trailing slot — gate-owner-marker fills it from autonomy × phase
+    try:
+        slug = state.get("active_task")
+        t = (state.get("tasks") or {}).get(slug) if slug else None
+        if t and t.get("gate", "none") == "none" and t.get("phase") != "done":
+            phase = t.get("phase")
+            why = PHASE_GUIDE[phase][0].split(" — ")[0].strip()   # the short phase clause
+            command = ("add.py gate PASS | RISK-ACCEPTED | HARD-STOP"
+                       if phase == "verify" else "add.py advance")
+            return f"next: {command} — {why}{marker}"
+        mslug = state.get("active_milestone")
+        if mslug:
+            d = report_data(root, state, mslug)
+            return "next: " + _decide_next_base(state, d) + marker
+    except Exception:
+        pass   # a footer never aborts the verb that already saved its state
+    return f"next: add.py status — re-orient{marker}"
 
 
 def render_decide_next(root: Path, state: dict, mslug: str, *,

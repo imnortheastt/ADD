@@ -65,9 +65,12 @@ class SetupLockTest(unittest.TestCase):
         self.assertEqual(s["locked_by"], "Tin")
         self.assertTrue(s["locked_at"])
         self.assertEqual(s["layers"], ["foundation", "scope", "contract"])
-        # guard the FROZEN text format, not just that the path executed
+        # guard the FROZEN text format, not just that the path executed — AND the
+        # engine-sourced next: footer (next-footer-engine): at lock-time there is no
+        # active milestone, so the resolver yields the deterministic fail-soft line.
         self.assertEqual(out.strip(),
-                         f"locked setup (foundation,scope,contract) by Tin @ {s['locked_at']}")
+                         f"locked setup (foundation,scope,contract) by Tin @ {s['locked_at']}\n"
+                         "next: add.py status — re-orient")
 
     def test_lock_json_prints_exactly_one_object(self):
         self._init_await()
