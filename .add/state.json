@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "engine-merge-base-enforcement",
+  "active_task": "scope-violation-heal",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -542,10 +542,78 @@
           }
         ]
       }
+    },
+    "scope-decl-template": {
+      "title": "\u00a75 BUILD declares its blast radius \u2014 Scope allowlist + Strategy batches, frozen with the bundle",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "build-scope-lock",
+      "depends_on": [],
+      "created": "2026-06-11T17:29:45+00:00",
+      "updated": "2026-06-12T02:14:18+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "06b2cea801ce3317797e829d9fc65b2f",
+        "tests": {
+          "add-method/tooling/test_scope_decl_template.py": "d0f2b02a8402d0338fc66e55f6a3fefc"
+        }
+      }
+    },
+    "scope-gate-enforce": {
+      "title": "the verify gate refuses a build that touched outside its declared \u00a75 Scope",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "build-scope-lock",
+      "depends_on": [],
+      "created": "2026-06-12T02:17:25+00:00",
+      "updated": "2026-06-12T03:24:42+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "2db8b314f7ee07ca4f61dbb9dfb9ee73",
+        "tests": {
+          "add-method/tooling/test_scope_gate_enforce.py": "37f81ac0274a4100d44edde24af7816f"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/test_scope_gate_enforce.py"
+        ],
+        "snapshot_md5": "8ec71d90993f3bf6e25b5887aa6877b5"
+      }
+    },
+    "scope-violation-heal": {
+      "title": "a scope violation enters the bounded self-heal loop \u2014 honest redo, never a silent pass",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "build-scope-lock",
+      "depends_on": [],
+      "created": "2026-06-12T03:29:45+00:00",
+      "updated": "2026-06-12T07:23:08+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "5b8189d9218dc2e694da95e773b8359d",
+        "tests": {
+          "add-method/tooling/test_scope_violation_heal.py": "962e96200a01090dadd864444caca246"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_scope_violation_heal.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py"
+        ],
+        "snapshot_md5": "0db872f82f891a77e0fbd171890df3a7"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-11T17:21:37+00:00",
+  "updated": "2026-06-12T07:23:44+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -655,9 +723,9 @@
       "title": "Build Scope Lock",
       "goal": "a build's blast radius is declared before it starts and engine-enforced when it ends \u2014 touched is a subset of declared, so a passing build cannot quietly modify files outside its frozen scope",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
-      "updated": "2026-06-11T17:19:27+00:00"
+      "updated": "2026-06-12T07:23:44+00:00"
     },
     "next-step-seams": {
       "title": "Next Step Seams",

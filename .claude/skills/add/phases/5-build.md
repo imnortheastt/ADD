@@ -10,6 +10,21 @@ Pick ONE task-sized slice, restate the tests it must satisfy, implement, run
 tests, iterate to green. Keep each batch small enough to review in full — you
 cannot move faster than you can verify.
 
+## Declaring the scope of impact (Scope + Strategy)
+
+§5 of TASK.md opens with two declarations, drafted WITH the specification bundle
+and frozen by the one §3 approval — never invented mid-build:
+
+- **Scope (may touch)** — the allowlist of every file the build may write
+  (backticked tokens; grammar in the template comment). During build, needing a
+  file outside the declared Scope is a **STOP → change request** back to Specify,
+  never improvisation.
+- **Strategy (ordered batches)** — the planned build order. Guidance, not
+  enforced: it aims the small-batches loop, it does not gate it.
+
+Deferral, named: the engine gate (touched ⊆ declared) lands in the
+`scope-gate-enforce` task — until it ships this section is prose discipline.
+
 ## The cardinal rule
 
 **Never weaken or delete a test to make it pass, and never edit the frozen
@@ -36,6 +51,7 @@ Never: change a test or the contract; use a package off the allow-list; or push 
 - [ ] Coverage did not decrease.
 - [ ] No test and no contract modified by the AI.
 - [ ] No dependency outside the allow-list.
+- [ ] No file outside the declared §5 Scope was touched.
 - [ ] Change small enough to review in full.
 </exit_gate>
 
