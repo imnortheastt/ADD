@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "next-footer-engine",
+  "active_task": "gate-owner-marker",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -637,10 +637,39 @@
         ],
         "snapshot_md5": "5381f08e2783bd134917ff6c607b2e23"
       }
+    },
+    "gate-owner-marker": {
+      "title": "footer + guide name the driver \u2014 [you drive] vs [human gate] from autonomy \u00d7 phase",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "next-step-seams",
+      "depends_on": [
+        "next-footer-engine"
+      ],
+      "created": "2026-06-12T14:58:08+00:00",
+      "updated": "2026-06-12T16:25:02+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e23bbdcdfedaf69d57ced967c843b147",
+        "tests": {
+          "add-method/tooling/test_gate_owner_marker.py": "d1d707fbfafd5ca90c166d23f28efc96"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_gate_owner_marker.py",
+          "add-method/tooling/test_next_footer_engine.py"
+        ],
+        "snapshot_md5": "23ac426a7d3577fa76f31ccc56076fdf"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T14:43:14+00:00",
+  "updated": "2026-06-12T16:25:02+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

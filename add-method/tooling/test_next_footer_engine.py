@@ -215,8 +215,8 @@ class FooterArmBTest(_Board):
         out, _, _ = self._gate("alpha", "HARD-STOP")     # gate=HARD-STOP, phase=verify, not done
         nxt = self._next_lines(out)
         self.assertEqual(len(nxt), 1, f"exactly one next: line, got {nxt!r}")
-        self.assertEqual(nxt[0], "next: resolve HARD-STOP on alpha",
-                         "a HARD-STOPped task falls to Arm B, not the verify gate command")
+        self.assertEqual(nxt[0], "next: resolve HARD-STOP on alpha [human gate]",
+                         "Arm B HARD-STOP is a human decision point (gate-owner-marker fills the slot: [human gate])")
         self.assertNotIn("HARD-STOP recorded", out,
                          "the bespoke return-to-BUILD hint converges, never double-prints")
 
@@ -245,15 +245,16 @@ class FooterFailSoftTest(_Board):
                          "no active milestone degrades to the generic re-orient line")
 
 
-# ── the reserved driver-marker slot stays empty this task ────────────────────
+# ── the reserved driver-marker slot is now FILLED by the sibling gate-owner-marker ──
 class FooterMarkerTest(_Board):
 
-    def test_marker_slot_reserved(self):
+    def test_marker_slot_filled(self):
+        # gate-owner-marker filled the slot next-footer-engine reserved: `new-task foo`
+        # lands at ground (owner ai) under the default `auto` rung -> the AI drives.
         out, _, _ = self._run("new-task", "foo")
         footer = self._footer(out)
-        self.assertNotIn("you drive", footer,
-                         "the driver word is the sibling gate-owner-marker's, not this task's")
-        self.assertNotIn("human gate", footer)
+        self.assertTrue(footer.endswith(" [you drive]"),
+                        f"the reserved slot now names the driver, got: {footer!r}")
 
 
 # ── the exit-criterion sweep: every completing verb ends in one next: line ───

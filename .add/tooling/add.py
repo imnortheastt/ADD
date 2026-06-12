@@ -648,6 +648,37 @@ def _task_header(root: Path, slug: str) -> str:
     return re.sub(r"<!--.*?-->", "", text.split("\n## ", 1)[0], flags=re.S)
 
 
+def _effective_autonomy(root: Path, state: dict, slug: str) -> str:
+    """The autonomy rung that governs `slug` right now: the task's own declared rung,
+    falling back to the project default when the task line is UNSET (None) or an
+    unrecognized token ("?") — the same fail-safe chain cmd_new_task seeds from
+    (_project_autonomy: absent -> auto, garbled -> conservative). PURE. `state` is unused
+    today; it is kept in the signature beside _driver_stop for symmetry."""
+    lvl = _autonomy_level(_task_header(root, slug))
+    return lvl if lvl in _AUTONOMY_LEVELS else _project_autonomy(root)
+
+
+def _driver_stop(root: Path, state: dict, slug: str, phase: str) -> bool:
+    """True iff a HUMAN owns the next step for `phase` under the effective autonomy — the
+    SINGLE source the footer marker and the guide TEXT marker both render (task
+    gate-owner-marker). Refines _phase_owner with the autonomy level at exactly ONE phase,
+    verify:
+        verify -> the human gates UNLESS the run may auto-gate (effective autonomy == auto)
+        else   -> the structural owner stops (owner != "ai"), independent of the level
+    The frozen machine-state-json JSON `stop` keeps its own structural value (Option F);
+    this resolver feeds ONLY the human-facing footer + guide TEXT. _phase_owner still
+    _die("unmapped_phase") on a bad phase — the marker invents no default."""
+    if phase == "verify":
+        return _effective_autonomy(root, state, slug) != "auto"
+    return _phase_owner(phase) != "ai"
+
+
+def _driver_marker(stop: bool) -> str:
+    """Render _driver_stop as the reserved-slot word (one leading space each) — the exact
+    strings next-footer-engine reserved: ` [human gate]` (a human owns it) / ` [you drive]`."""
+    return " [human gate]" if stop else " [you drive]"
+
+
 def cmd_gate(args: argparse.Namespace) -> None:
     root = _require_root()
     state = load_state(root)
@@ -1042,9 +1073,13 @@ def cmd_guide(args: argparse.Namespace) -> None:
     if entry is None:           # corrupted/hand-edited state.json — fail clean, not KeyError
         _die(f"task '{slug}' has unknown phase '{phase}' (state.json corrupted?)")
     action, chapter = entry
+    # the guide names the driver too (task gate-owner-marker) — the SAME _driver_stop the
+    # footer renders, on the next-step line. Computed AFTER the unknown-phase guard above,
+    # so a bad phase fails clean and never reaches the marker (it invents no default).
+    marker = _driver_marker(_driver_stop(root, state, slug, phase))
     print(f"active : {slug}  (phase: {phase})")
     print(f"goal   : {_project_goal(root)}")   # v20 — the next-step surface still shows what the work is FOR
-    print(f"next   : {action}")
+    print(f"next   : {action}{marker}")
     print(f"read   : .add/docs/{chapter}")
     gp = _phase_guide_path(root.parent, phase)
     if gp is not None:
@@ -2888,16 +2923,22 @@ def _planned_hint(d: dict) -> str:
     return f" — {len(planned)} planned not yet scaffolded: " + " · ".join(planned)
 
 
-def _decide_next_base(state: dict, d: dict) -> str:
+def _decide_next_pair(state: dict, d: dict) -> tuple[str, bool]:
+    """(next-step text, human_stop) over the active-milestone rollup. `human_stop` is the
+    driver behind the step (task gate-owner-marker): True for every DECISION point a human
+    owns — decompose · resolve HARD-STOP · goal-not-met · consolidate/archive · approve
+    contract · gate — and False ONLY for the run-in-progress fallthrough, the one branch
+    where the AI just continues an in-flight run. Derived from the rollup `d`, never from
+    the rendered prose (the §5 safety rule). The bare string is `_decide_next_base` below."""
     ms = d["milestone"]["slug"]
     rows = d["tasks"]
     if not rows:
         # command-first (next-footer-engine): an empty milestone's next step is to
         # decompose it — name the command, not the dead-end "none — no tasks yet".
-        return f"decompose into tasks — add.py new-task {ms}"
+        return f"decompose into tasks — add.py new-task {ms}", True
     stopped = [r for r in rows if r["gate"] == "HARD-STOP"]
     if stopped:
-        return f"resolve HARD-STOP on {stopped[0]['slug']}"
+        return f"resolve HARD-STOP on {stopped[0]['slug']}", True
     s = d["summary"]
     if s["tasks_done"] == s["tasks_total"]:
         # tasks complete — but the milestone holds while the goal (exit criteria) is
@@ -2907,8 +2948,8 @@ def _decide_next_base(state: dict, d: dict) -> str:
         met, total = ec.get("met", 0), ec.get("total", 0)
         if total > 0 and met < total:
             return (f"goal not met ({met}/{total} exit criteria) — propose next tasks "
-                    f"from open deltas / the unscaffolded plan (add.py deltas)")
-        return f"consolidate learnings + archive-milestone {ms}"
+                    f"from open deltas / the unscaffolded plan (add.py deltas)"), True
+        return f"consolidate learnings + archive-milestone {ms}", True
     active = state.get("active_task")
     order = sorted(rows, key=lambda r: 0 if r["slug"] == active else 1)  # stable
     for r in order:
@@ -2916,11 +2957,17 @@ def _decide_next_base(state: dict, d: dict) -> str:
             continue
         if r["phase"] in _FRONT_PHASES:
             return (f"approve the contract of {r['slug']} — "
-                    f"add.py report {ms} {r['slug']} --decide")
+                    f"add.py report {ms} {r['slug']} --decide"), True
         if r["phase"] == "verify" and r["gate"] == "none":
-            return f"gate {r['slug']} — add.py report {ms} {r['slug']} --decide"
+            return f"gate {r['slug']} — add.py report {ms} {r['slug']} --decide", True
     r = next(x for x in order if not x["done"])
-    return f"none — run in progress ({r['slug']} at {r['phase']})"
+    return f"none — run in progress ({r['slug']} at {r['phase']})", False
+
+
+def _decide_next_base(state: dict, d: dict) -> str:
+    """The next-step TEXT only — the thin str wrapper the report rollup/digest callers use.
+    The driver behind it (human_stop) is in _decide_next_pair, read by the footer Arm B."""
+    return _decide_next_pair(state, d)[0]
 
 
 def _next_footer(root: Path, state: dict) -> str:
@@ -2939,10 +2986,11 @@ def _next_footer(root: Path, state: dict) -> str:
     Fail-soft (design-for-failure): the footer is computed AFTER save_state, so a
     resolution error — no active milestone, an unreadable doc, a corrupt rollup — must
     NEVER turn a saved mutation into a crash; it degrades to one generic re-orient line.
-    Pure render: it writes nothing. The trailing MARKER slot is reserved for the sibling
-    gate-owner-marker (` [you drive]`/` [human gate]`) — empty this task.
+    Pure render: it writes nothing. The trailing MARKER slot (task gate-owner-marker) names
+    the driver — ` [you drive]` (the AI proceeds) / ` [human gate]` (a human owns it) — from
+    `_driver_stop`: Arm A by phase×autonomy, Arm B by the rollup's own decision (human_stop).
+    The fail-soft line carries NO marker — never assert a driver that could not be computed.
     """
-    marker = ""   # reserved trailing slot — gate-owner-marker fills it from autonomy × phase
     try:
         slug = state.get("active_task")
         t = (state.get("tasks") or {}).get(slug) if slug else None
@@ -2951,14 +2999,16 @@ def _next_footer(root: Path, state: dict) -> str:
             why = PHASE_GUIDE[phase][0].split(" — ")[0].strip()   # the short phase clause
             command = ("add.py gate PASS | RISK-ACCEPTED | HARD-STOP"
                        if phase == "verify" else "add.py advance")
+            marker = _driver_marker(_driver_stop(root, state, slug, phase))
             return f"next: {command} — {why}{marker}"
         mslug = state.get("active_milestone")
         if mslug:
             d = report_data(root, state, mslug)
-            return "next: " + _decide_next_base(state, d) + marker
+            text, human_stop = _decide_next_pair(state, d)
+            return "next: " + text + _driver_marker(human_stop)
     except Exception:
         pass   # a footer never aborts the verb that already saved its state
-    return f"next: add.py status — re-orient{marker}"
+    return "next: add.py status — re-orient"
 
 
 def render_decide_next(root: Path, state: dict, mslug: str, *,
