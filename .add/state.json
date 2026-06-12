@@ -695,7 +695,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T17:15:27+00:00",
+  "updated": "2026-06-12T17:19:38+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -813,9 +813,9 @@
       "title": "Next Step Seams",
       "goal": "after every mutating engine verb both the human and the AI see the engine-sourced next step and who drives it \u2014 next: footer plus [you drive] / [human gate] marker",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
-      "updated": "2026-06-11T17:19:27+00:00"
+      "updated": "2026-06-12T17:19:38+00:00"
     },
     "udd-design-foundation": {
       "title": "Udd Design Foundation",

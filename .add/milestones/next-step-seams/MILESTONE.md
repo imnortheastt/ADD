@@ -21,11 +21,11 @@ Out: interactive `guide` · colorized/rich output · notification hooks · foote
 - the footer line grammar (`next: <command> — <why> [you drive|human gate]`, render-blind testable) -> owning task next-footer-engine
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] next-footer-engine     depends-on: none                — mutating verbs print an engine-sourced `next:` footer; one resolver, no duplicated logic
-- [ ] gate-owner-marker      depends-on: next-footer-engine  — the footer + guide name the driver: [you drive] vs [human gate] from autonomy × phase
-- [ ] ux-stale-followups     depends-on: none                — fold the v20 leftovers: milestone-done hint line + placeholder goal on fresh init
+- [x] next-footer-engine     depends-on: none                — mutating verbs print an engine-sourced `next:` footer; one resolver, no duplicated logic
+- [x] gate-owner-marker      depends-on: next-footer-engine  — the footer + guide name the driver: [you drive] vs [human gate] from autonomy × phase
+- [x] ux-stale-followups     depends-on: none                — fold the v20 leftovers: milestone-done hint line + placeholder goal on fresh init
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] Every mutating verb ends with exactly one engine-sourced `next:` line               (← next-footer-engine)
-- [ ] Under conservative/manual the footer names the human; under auto it names the AI    (← gate-owner-marker)
-- [ ] The two v20 UX follow-ups are closed and their stale notes removed                  (← ux-stale-followups)
+- [x] Every mutating verb ends with exactly one engine-sourced `next:` line               (← next-footer-engine)
+- [x] Under conservative/manual the footer names the human; under auto it names the AI    (← gate-owner-marker)
+- [x] The two v20 UX follow-ups are closed and their stale notes removed                  (← ux-stale-followups)
