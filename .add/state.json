@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "scope-decl-template",
+  "active_task": "scope-gate-enforce",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -558,10 +558,36 @@
           "add-method/tooling/test_scope_decl_template.py": "d0f2b02a8402d0338fc66e55f6a3fefc"
         }
       }
+    },
+    "scope-gate-enforce": {
+      "title": "the verify gate refuses a build that touched outside its declared \u00a75 Scope",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "build-scope-lock",
+      "depends_on": [],
+      "created": "2026-06-12T02:17:25+00:00",
+      "updated": "2026-06-12T03:24:42+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "2db8b314f7ee07ca4f61dbb9dfb9ee73",
+        "tests": {
+          "add-method/tooling/test_scope_gate_enforce.py": "37f81ac0274a4100d44edde24af7816f"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/test_scope_gate_enforce.py"
+        ],
+        "snapshot_md5": "8ec71d90993f3bf6e25b5887aa6877b5"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T02:14:18+00:00",
+  "updated": "2026-06-12T03:24:42+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

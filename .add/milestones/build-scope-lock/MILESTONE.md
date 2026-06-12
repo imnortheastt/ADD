@@ -23,10 +23,10 @@ Out: per-batch progress tracking · IDE integration · auto-generated scope from
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [x] scope-decl-template     depends-on: none                 — §5 gains Scope/Strategy template lines; phase guides teach declare-at-bundle, freeze-at-contract   (done 2026-06-12, gate=PASS)
-- [ ] scope-gate-enforce      depends-on: scope-decl-template  — engine snapshots declared scope at tests→build, verifies touched ⊆ declared at the gate (named refusal)
+- [x] scope-gate-enforce      depends-on: scope-decl-template  — engine snapshots declared scope at tests→build, verifies touched ⊆ declared at the gate (named refusal)   (done 2026-06-12, gate=PASS human-held; 3 contract versions, 2 refute passes)
 - [ ] scope-violation-heal    depends-on: scope-gate-enforce   — a violation routes into the bounded self-heal loop — honest redo, never a silent pass
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] A fresh TASK.md §5 carries Scope/Strategy lines that freeze with the bundle        (← scope-decl-template · verify: test_scope_decl_template.test_scaffold_carries_scope_of_impact_lines)
-- [ ] The verify gate refuses a build that touched an undeclared file, with a named code (← scope-gate-enforce)
+- [x] The verify gate refuses a build that touched an undeclared file, with a named code (← scope-gate-enforce · verify: test_scope_gate_enforce.GateTest.test_gate_out_of_scope_modify_refused)
 - [ ] A scope violation lands in the self-heal loop and counts against the shared cap    (← scope-violation-heal)

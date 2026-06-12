@@ -565,6 +565,28 @@ def cmd_advance(args: argparse.Namespace) -> None:
         # place. UNCONDITIONAL overwrite — a legit change-request that re-crosses
         # tests->build re-snapshots cleanly. Co-witnessed by flag_verified (above).
         state["tasks"][slug]["tripwire"] = _tripwire_snapshot(root, slug, raw3)
+        # §5 scope gate (build-scope-lock): when the task declares its Scope, freeze
+        # the project tree into a sidecar (payload) + a state.json anchor (md5 of the
+        # sidecar bytes). Same UNCONDITIONAL-overwrite semantics as the tripwire.
+        # UNDECLARED (no Scope line) takes no snapshot — grandfathered, never retro-red
+        # — and CLEANS UP a previous declaration's leftovers (v3): a declared->
+        # undeclared re-cross pops the stale anchor + unlinks the stale sidecar, so
+        # "UNDECLARED is never refused" holds on every path.
+        declared = _declared_scope(root, slug)
+        side = root / "tasks" / slug / "scope-snapshot.json"
+        if declared is not None:
+            payload = json.dumps({"version": 1,
+                                  "files": _scope_walk(root.parent.resolve())},
+                                 sort_keys=True)
+            side.write_text(payload, encoding="utf-8")
+            state["tasks"][slug]["scope"] = {"declared": declared,
+                                             "snapshot_md5": _md5_text(payload)}
+        else:
+            state["tasks"][slug].pop("scope", None)
+            try:
+                side.unlink()
+            except OSError:
+                pass
     state["tasks"][slug]["phase"] = nxt
     state["tasks"][slug]["updated"] = _now()
     _sync_task_marker(root, slug, nxt)
@@ -657,6 +679,9 @@ def cmd_gate(args: argparse.Namespace) -> None:
         # changed since the tests->build snapshot. Placed BEFORE the waiver write so
         # a tamper finding is never launderable through RISK-ACCEPTED.
         _tamper_guard(root, state, slug)
+        # §5 scope gate (build-scope-lock): touched ⊆ declared, or a named refusal —
+        # same placement discipline as the tripwire (before the waiver, never on HARD-STOP).
+        _scope_guard(root, state, slug)
     if args.outcome == "RISK-ACCEPTED":
         # A waiver must be SIGNED: owner, ticket, expiry (glossary). Stored in state
         # so a later `check` can read/expire it. Refuse a partial waiver outright.
@@ -1117,6 +1142,22 @@ def cmd_check(args: argparse.Namespace) -> None:
                 warnings.append((f"task '{slug}'", "tampered since its tests->build "
                                  "snapshot (build_tampered) — a tracked test or the "
                                  "frozen §3 changed; the verify gate will HARD-STOP it"))
+            # §5 scope standing monitor (build-scope-lock): a pending out-of-scope
+            # touch (or a tampered baseline) surfaces EARLY — WARN, never red; the
+            # verify gate is where it bites.
+            _sc = t.get("scope")
+            if isinstance(_sc, dict):
+                _tamper, _out = _scope_findings(root, slug, _sc)
+                if _tamper:
+                    warnings.append((f"task '{slug}'", "scope-snapshot.json is "
+                                     f"{_tamper} against its anchor "
+                                     "(scope_snapshot_tampered pending) — the verify "
+                                     "gate will refuse it"))
+                elif _out:
+                    warnings.append((f"task '{slug}'", "touched outside its declared "
+                                     f"§5 Scope: {' · '.join(_out[:3])} "
+                                     "(scope_violation pending) — the verify gate "
+                                     "will refuse it"))
 
     # drift: a done milestone must have no unfinished tasks
     for mslug, m in milestones.items():
@@ -2018,6 +2059,145 @@ def _tripwire_divergence(root: Path, slug: str, tw: dict) -> list[str]:
         if _md5_file(rootp / rel) != snap:
             diffs.append(f"build_tampered:{rel}")
     return diffs
+
+
+# ── §5 scope gate (build-scope-lock): touched ⊆ declared, from bytes alone ──────────
+# The walk's NAMED exclusion set — ONE constant; widening it is an additive
+# change-request, never silent. `.add` is engine domain (tripwire + audit guard it);
+# the rest is VCS/bytecode/OS junk with no build signal.
+_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules")
+_SCOPE_EXCLUDE_FILES = (".DS_Store",)          # plus *.pyc by suffix
+
+
+def _declared_scope(root: Path, slug: str) -> list[str] | None:
+    """Resolve the §5 'Scope (may touch):' declaration to project-root-relative
+    strings (directory tokens keep a trailing '/'). The frozen scope-decl-template
+    grammar: the §4 token rules — backticked spans on the FIRST declaring line ·
+    './…' -> task dir · contains '/' -> project root · bare -> sibling of the
+    previous token's dir · v2 confinement drops everything outside the project
+    root, fail-closed — with ONE divergence: a directory token covers its WHOLE
+    subtree (containment, judged by _in_scope). None = no Scope line (UNDECLARED,
+    grandfathered — never retro-red); [] = a line whose every token was dropped
+    (a garbage declaration grants NO cover)."""
+    body = _raw_phase_bodies(root, slug).get(5, "")
+    m = re.search(r"^\s*Scope \(may touch\):.*$", body, re.M)
+    if not m:
+        return None
+    tdir = root / "tasks" / slug
+    rootp = root.parent.resolve()
+    out: list[str] = []
+    prev_dir = None
+    for tok in re.findall(r"`([^`]+)`", m.group(0)):
+        tok = tok.strip()
+        if tok.startswith("./"):
+            p = tdir / tok[2:]
+        elif "/" in tok:
+            p = root.parent / tok
+        else:
+            p = (prev_dir or tdir) / tok
+        try:
+            if not _confined(p, rootp):
+                continue
+            rp = p.resolve()
+            rel = str(rp.relative_to(rootp))
+            if tok.endswith("/") or rp.is_dir():
+                prev_dir, rel = p, rel.rstrip("/") + "/"
+            else:
+                prev_dir = p.parent
+        except OSError:
+            continue
+        if rel not in out:
+            out.append(rel)
+    return out
+
+
+def _in_scope(rel: str, declared: list[str]) -> bool:
+    """True when rel falls under any declared token — exact match for a file
+    token, whole-subtree prefix containment for a directory token ('…/')."""
+    for tok in declared:
+        if tok.endswith("/"):
+            if rel.startswith(tok) or rel == tok.rstrip("/"):
+                return True
+        elif rel == tok:
+            return True
+    return False
+
+
+def _scope_walk(rootp: Path) -> dict[str, str]:
+    """{project-root-relative path: md5} over the project tree, pruning
+    _SCOPE_EXCLUDE_DIRS at any depth and skipping bytecode/OS junk. A file
+    unreadable at SNAPSHOT time is skipped; at the GATE the resulting absence
+    reads as a touch (fail-closed at the biting end). Bytes only — no git."""
+    files: dict[str, str] = {}
+    for dirpath, dirnames, filenames in os.walk(rootp):
+        dirnames[:] = [d for d in dirnames if d not in _SCOPE_EXCLUDE_DIRS]
+        for name in filenames:
+            if name in _SCOPE_EXCLUDE_FILES or name.endswith(".pyc"):
+                continue
+            p = Path(dirpath) / name
+            h = _md5_file(p)
+            if h is None:
+                continue
+            try:
+                files[str(p.relative_to(rootp))] = h
+            except ValueError:
+                continue
+    return files
+
+
+def _scope_findings(root: Path, slug: str, anchor: dict) -> tuple[str | None, list[str]]:
+    """(tamper_reason, out_of_scope_touches) for a scope-anchored task. PURE read.
+    The sidecar is integrity-checked against the state.json anchor BEFORE it is
+    trusted; touched = modified ∪ added ∪ deleted vs the snapshot."""
+    side = root / "tasks" / slug / "scope-snapshot.json"
+    try:
+        raw = side.read_text(encoding="utf-8")
+    except OSError:
+        return "missing", []
+    if _md5_text(raw) != anchor.get("snapshot_md5"):
+        return "diverged", []
+    try:
+        snap = json.loads(raw).get("files", {})
+    except (ValueError, AttributeError):
+        return "unparseable", []
+    if not isinstance(snap, dict):
+        return "unparseable", []
+    now = _scope_walk(root.parent.resolve())
+    touched = sorted({k for k, v in snap.items() if now.get(k) != v}
+                     | {k for k in now if k not in snap})
+    declared = anchor.get("declared") or []
+    return None, [p for p in touched if not _in_scope(p, declared)]
+
+
+def _scope_guard(root: Path, state: dict, slug: str) -> None:
+    """Refuse a COMPLETING gate when the build touched outside its declared §5
+    Scope (build-scope-lock). The anchor (state.json) and the sidecar co-witness
+    each other — born in the same tests->build crossing, so EITHER single-file
+    erase is caught (v2, refute-driven): an anchor-less task whose sidecar still
+    EXISTS is scope_anchor_missing, never a silent skip. Both absent -> UNDECLARED
+    or legacy: silent, the grandfather rule (the simultaneous two-file erase is
+    the explicitly accepted floor — the tripwire shares it). Sits directly after
+    _tamper_guard, BEFORE the waiver write, so a violation is never launderable
+    through RISK-ACCEPTED; HARD-STOP never calls it (stopping is always allowed).
+    The heal routing of a violation is the scope-violation-heal task — this guard
+    refuses in place."""
+    anchor = state["tasks"][slug].get("scope")
+    if not isinstance(anchor, dict):
+        if (root / "tasks" / slug / "scope-snapshot.json").exists():
+            _die(f"scope_anchor_missing: task '{slug}' carries a scope-snapshot.json "
+                 "but no state.json anchor — the touch baseline was erased from "
+                 "state; re-establish it (re-advance through tests->build) before "
+                 "completing")
+        return
+    tamper, out = _scope_findings(root, slug, anchor)
+    if tamper:
+        _die(f"scope_snapshot_tampered: task '{slug}' — scope-snapshot.json is "
+             f"{tamper} against its state.json anchor; the touch baseline is "
+             "evidence and must survive the build untouched")
+    if out:
+        shown = " · ".join(out[:5])
+        _die(f"scope_violation: task '{slug}' touched outside its declared §5 "
+             f"Scope — {shown} ({len(out)} total)")
 
 
 def _heal_or_escalate(root: Path, state: dict, slug: str, *, reason: str, source: str) -> None:
