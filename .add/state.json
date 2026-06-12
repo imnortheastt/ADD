@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "scope-violation-heal",
+  "active_task": "ux-stale-followups",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -610,10 +610,92 @@
         ],
         "snapshot_md5": "0db872f82f891a77e0fbd171890df3a7"
       }
+    },
+    "next-footer-engine": {
+      "title": "mutating verbs print an engine-sourced next: footer \u2014 one resolver, no double-printing",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "next-step-seams",
+      "depends_on": [],
+      "created": "2026-06-12T07:52:56+00:00",
+      "updated": "2026-06-12T14:43:14+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "c1927ffcc3680dd82b2a816ba4afb6bd",
+        "tests": {
+          "add-method/tooling/test_next_footer_engine.py": "a7452ae1b1b9a5b48e6532e594d9ba9b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_next_footer_engine.py",
+          "add-method/tooling/test_setup_lock.py"
+        ],
+        "snapshot_md5": "5381f08e2783bd134917ff6c607b2e23"
+      }
+    },
+    "gate-owner-marker": {
+      "title": "footer + guide name the driver \u2014 [you drive] vs [human gate] from autonomy \u00d7 phase",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "next-step-seams",
+      "depends_on": [
+        "next-footer-engine"
+      ],
+      "created": "2026-06-12T14:58:08+00:00",
+      "updated": "2026-06-12T16:25:02+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e23bbdcdfedaf69d57ced967c843b147",
+        "tests": {
+          "add-method/tooling/test_gate_owner_marker.py": "d1d707fbfafd5ca90c166d23f28efc96"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_gate_owner_marker.py",
+          "add-method/tooling/test_next_footer_engine.py"
+        ],
+        "snapshot_md5": "23ac426a7d3577fa76f31ccc56076fdf"
+      }
+    },
+    "ux-stale-followups": {
+      "title": "fold the v20 leftovers \u2014 soften the fresh-init placeholder goal + retire the stale milestone-done note",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "next-step-seams",
+      "depends_on": [],
+      "created": "2026-06-12T16:35:47+00:00",
+      "updated": "2026-06-12T17:15:27+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "3d986ce969f7963cca22c85d5b2d9c70",
+        "tests": {
+          "add-method/tooling/test_ux_stale_followups.py": "0d19900cc3df51bef1748aed1c03b6bf"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/templates/PROJECT.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/PROJECT.md.tmpl",
+          ".add/tooling/templates/PROJECT.md.tmpl",
+          ".add/PROJECT.md",
+          "add-method/tooling/test_ux_stale_followups.py"
+        ],
+        "snapshot_md5": "328d75f0810c0b6ba148be603a42e117"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T07:23:44+00:00",
+  "updated": "2026-06-12T17:19:38+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -731,9 +813,9 @@
       "title": "Next Step Seams",
       "goal": "after every mutating engine verb both the human and the AI see the engine-sourced next step and who drives it \u2014 next: footer plus [you drive] / [human gate] marker",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
-      "updated": "2026-06-11T17:19:27+00:00"
+      "updated": "2026-06-12T17:19:38+00:00"
     },
     "udd-design-foundation": {
       "title": "Udd Design Foundation",

@@ -303,10 +303,7 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   a box checked without a real goal behind it is goal-met theater — the same failure mode the method warns about
   for an unearned `gate=PASS`. The engine reads the [x]/[ ] tally; it cannot judge whether the box was earned, so
   the trust model is human discipline (surfaced in `loop.md`). v20's own close dogfooded it: each of the 4 exit
-  criteria mapped to a done+PASS task with observable proof BEFORE the boxes were checked. Two UX follow-ups for
-  v21: the `milestone-done` success line (add.py:1088) still asks the human to "confirm the boxes" the gate now
-  ENFORCES (stale prose); and a fresh `init`'s `status` prints the PROJECT.md template placeholder `goal: <…>`
-  verbatim at the most-lost moment (soften the template, or teach `_project_goal` a placeholder sentinel).
+  criteria mapped to a done+PASS task with observable proof BEFORE the boxes were checked.
 - **The dogfood book copy `.add/docs/` can drift silently — it is gitignored and outside `test_bundle_parity`
   (v21 · UDD):** parity guards canonical↔`_bundled` only, so the dogfood install tree is unprotected; its README
   carried pre-existing drift (a missing ch.14 line) found only while wiring ch.15. Accept it as a known-throwaway
