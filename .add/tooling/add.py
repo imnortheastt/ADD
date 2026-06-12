@@ -2179,8 +2179,15 @@ def _scope_guard(root: Path, state: dict, slug: str) -> None:
     the explicitly accepted floor — the tripwire shares it). Sits directly after
     _tamper_guard, BEFORE the waiver write, so a violation is never launderable
     through RISK-ACCEPTED; HARD-STOP never calls it (stopping is always allowed).
-    The heal routing of a violation is the scope-violation-heal task — this guard
-    refuses in place."""
+
+    Routing (scope-violation-heal, build-scope-lock 3/3) — tripwire-parity: the
+    RECOVERABLE findings (an out-of-scope touch, a present-but-wrong sidecar) are
+    fixable from BUILD, so they enter the SAME bounded self-heal loop the tamper
+    tripwire uses (_heal_or_escalate, shared HEAL_CAP) — return to build for an
+    honest redo (exit 3), then HARD-STOP at the cap. The ERASED baselines stay
+    die-in-place (exit 1, no heal): a redo cannot recreate an erased anchor or a
+    deleted sidecar — that is tripwire_missing parity. Every heal reason CARRIES
+    its named code, so the existing refusal-token assertions still match."""
     anchor = state["tasks"][slug].get("scope")
     if not isinstance(anchor, dict):
         if (root / "tasks" / slug / "scope-snapshot.json").exists():
@@ -2190,14 +2197,22 @@ def _scope_guard(root: Path, state: dict, slug: str) -> None:
                  "completing")
         return
     tamper, out = _scope_findings(root, slug, anchor)
-    if tamper:
+    if tamper == "missing":
+        # erased baseline — a redo cannot recreate the evidence (tripwire_missing parity)
         _die(f"scope_snapshot_tampered: task '{slug}' — scope-snapshot.json is "
-             f"{tamper} against its state.json anchor; the touch baseline is "
+             "missing against its state.json anchor; the touch baseline is "
              "evidence and must survive the build untouched")
+    if tamper:
+        # diverged | unparseable — present-but-wrong bytes are revertable from build
+        _heal_or_escalate(root, state, slug, source="scope-tamper",
+                          reason=(f"scope_snapshot_tampered: task '{slug}' — "
+                                  f"scope-snapshot.json is {tamper} against its "
+                                  "state.json anchor; revert it to the snapshot bytes"))
     if out:
         shown = " · ".join(out[:5])
-        _die(f"scope_violation: task '{slug}' touched outside its declared §5 "
-             f"Scope — {shown} ({len(out)} total)")
+        _heal_or_escalate(root, state, slug, source="scope",
+                          reason=(f"scope_violation: task '{slug}' touched outside its "
+                                  f"declared §5 Scope — {shown} ({len(out)} total)"))
 
 
 def _heal_or_escalate(root: Path, state: dict, slug: str, *, reason: str, source: str) -> None:
