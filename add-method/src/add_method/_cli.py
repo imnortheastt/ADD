@@ -21,8 +21,25 @@ def main(argv: list[str] | None = None) -> int:
         cmd, rest = "init", raw
 
     if cmd in ("help", "--help", "-h"):
-        print("usage: pilotspace-add init [targetDir] [--force] [--stage STAGE] [--name NAME]")
+        print("usage: pilotspace-add <init|update> [targetDir] [--force] [--check]")
+        print("  init    install the ADD skill + tooling + book into a project")
+        print("  update  re-materialize skill/tooling/docs to this package version "
+              "(preserves your state)")
         return 0
+
+    if cmd == "update":
+        parser = argparse.ArgumentParser(prog="pilotspace-add update")
+        parser.add_argument("target", nargs="?", default=".",
+                            help="Target project directory (default: cwd)")
+        parser.add_argument("--force", action="store_true",
+                            help="re-materialize even when already current")
+        parser.add_argument("--check", action="store_true",
+                            help="report version drift without writing anything")
+        args = parser.parse_args(rest)
+        from add_method._installer import update, update_check
+        if args.check:
+            return update_check(target=args.target)
+        return update(target=args.target, force=args.force, channel="pip")
 
     if cmd != "init":
         print(f"pilotspace-add: error: unknown command '{cmd}'. Try: pilotspace-add init",

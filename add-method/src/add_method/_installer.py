@@ -14,9 +14,24 @@ Designed for failure:
 from __future__ import annotations
 
 import importlib.resources
+import json
 import shutil
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
+
+# The managed layer — ship-controlled trees `update` re-materializes from the package.
+# (bundled subpath, dest relative to target, strip dev-only test_*.py after copy)
+MANAGED = (
+    ("skill/add", ".claude/skills/add", False),
+    ("tooling", ".add/tooling", True),
+    ("docs", ".add/docs", False),
+)
+STAMP_FILE = ".add-version"          # records the materialized version, under .add/
+# Forward-only, idempotent state migrations keyed by the version that introduces them.
+# Empty today — the framework exists so the NEXT schema change is an in-place update,
+# never a re-install. Each value is callable(state: dict) -> dict.
+MIGRATIONS: dict = {}
 
 
 def _log(msg: str) -> None:
@@ -133,4 +148,151 @@ def install(
     if name:
         manual_init += f' --name "{name}"'
     _log(manual_init)
+    return 0
+
+
+# --- update: re-materialize the managed layer without a re-install -----------
+
+def _pkg_version() -> str:
+    try:
+        from add_method import __version__
+        return __version__
+    except Exception:
+        return "0.0.0"
+
+
+def _stamp_path(add_dir: Path) -> Path:
+    return add_dir / STAMP_FILE
+
+
+def _read_stamp(add_dir: Path) -> dict | None:
+    p = _stamp_path(add_dir)
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _write_stamp(add_dir: Path, version: str, channel: str = "pip") -> None:
+    add_dir.mkdir(parents=True, exist_ok=True)
+    _stamp_path(add_dir).write_text(
+        json.dumps(
+            {
+                "version": version,
+                "channel": channel,
+                "installed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def _clean_replace(src: Path, dest: Path, *, strip_tests: bool = False) -> None:
+    """Wipe dest, then copy src -> dest — so a file REMOVED upstream leaves no orphan
+    behind (the bug a merge-copy `init --force` had). The managed trees hold no user
+    data, so wipe-and-copy is safe."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(str(src), str(dest))
+    if strip_tests:
+        pyc = dest / "__pycache__"
+        if pyc.exists():
+            shutil.rmtree(pyc)
+        for child in dest.iterdir():
+            if child.name.startswith("test_") and child.name.endswith(".py"):
+                child.unlink()
+
+
+def _run_migrations(state_file: Path, from_version: str | None, to_version: str) -> None:
+    """Apply forward-only, idempotent state migrations. No-op while MIGRATIONS is empty."""
+    if not MIGRATIONS or not state_file.exists():
+        return
+    try:
+        state = json.loads(state_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return
+    changed = False
+    for ver, migrate in sorted(MIGRATIONS.items(), key=lambda kv: _vkey(kv[0])):
+        if from_version is None or _vkey(from_version) < _vkey(ver) <= _vkey(to_version):
+            state = migrate(state)
+            changed = True
+    if changed:
+        state_file.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
+def _vkey(v: str) -> list:
+    """A sortable key for dotted versions (numeric parts compared as ints)."""
+    return [(0, int(p)) if p.isdigit() else (1, p) for p in (v or "0").split(".")]
+
+
+def _add_dir(target_path: Path) -> Path:
+    return target_path / ".add"
+
+
+def update(
+    target: str = ".",
+    force: bool = False,
+    bundled: str | None = None,
+    version: str | None = None,
+    channel: str = "pip",
+) -> int:
+    """Re-materialize the managed layer (skill · tooling · docs) from the installed
+    package into an EXISTING .add/ project, preserving ALL user data. Idempotent;
+    clean-replaces so no orphan files survive a version bump. 0 on success/no-op, 1 on error."""
+    target_path = Path(target).resolve()
+    add_dir = _add_dir(target_path)
+    if not (add_dir / "tooling").exists() and not (add_dir / "state.json").exists():
+        return _fail(f"no ADD project at {target_path} (.add/ not found) — run `init` first")
+
+    try:
+        bundled_root = Path(bundled) if bundled else _bundled_root()
+    except RuntimeError as exc:
+        return _fail(str(exc))
+    for sub, _dest, _strip in MANAGED:
+        if not (bundled_root / sub).exists():
+            return _fail(f"missing bundled source: {bundled_root / sub}")
+
+    new_version = version or _pkg_version()
+    stamp = _read_stamp(add_dir)
+    cur_version = stamp.get("version") if stamp else None
+    if cur_version == new_version and not force:
+        _log(f"ADD already at {new_version} — nothing to update (use --force to re-materialize).")
+        return 0
+
+    # design-for-failure: back up state BEFORE touching anything.
+    state_file = add_dir / "state.json"
+    if state_file.exists():
+        shutil.copyfile(str(state_file), str(add_dir / "pre-update-state.bak.json"))
+
+    for sub, dest_rel, strip in MANAGED:
+        _clean_replace(bundled_root / sub, target_path / dest_rel, strip_tests=strip)
+    _run_migrations(state_file, cur_version, new_version)
+    _write_stamp(add_dir, new_version, channel=channel)
+
+    _log(
+        f"ADD updated {cur_version or '(unstamped)'} -> {new_version} · "
+        "skill · tooling · docs refreshed · your project state untouched."
+    )
+    return 0
+
+
+def update_check(target: str = ".", version: str | None = None) -> int:
+    """Read-only: compare the project's stamp to the installed package version. No writes."""
+    add_dir = _add_dir(Path(target).resolve())
+    if not add_dir.exists():
+        return _fail("no ADD project here (.add/ not found) — run `init` first")
+    new_version = version or _pkg_version()
+    stamp = _read_stamp(add_dir)
+    cur = stamp.get("version") if stamp else None
+    if cur == new_version:
+        _log(f"ADD is current: project and package both at {new_version}.")
+    elif cur is None:
+        _log(f"ADD project is unstamped; installed package is {new_version}. Run `update`.")
+    else:
+        _log(f"ADD update available: project on {cur}, package is {new_version}. Run `update`.")
     return 0
