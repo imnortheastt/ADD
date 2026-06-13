@@ -80,7 +80,7 @@ PHASE_OWNER = {
     "specify": "human", "scenarios": "human", "contract": "seam",
     "tests": "ai", "build": "ai", "verify": "human", "observe": "ai", "done": "human",
 }
-SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist")
+SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist", "DESIGN.md")
 
 # Guideline-injection targets + version-stable markers. NEVER change these marker
 # strings: a re-run finds the old block by exact match, so changing them would

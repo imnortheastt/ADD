@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "udd-catalog-content-schema",
+  "active_task": "udd-design-template",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -759,10 +759,42 @@
         ],
         "snapshot_md5": "45e84c585afc2b489b1a1021dac7b5ea"
       }
+    },
+    "udd-design-template": {
+      "title": "DESIGN.md template binding prose + tokens + catalog + prototypes into 0-setup, with the render recipe",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-13T08:35:52+00:00",
+      "updated": "2026-06-13T09:39:54+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9cf7bcfce9a93023d0880bf2ab82f308",
+        "tests": {
+          "add-method/tooling/test_udd_design_template.py": "8cce610338c2215bb819aab5f1845097"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/DESIGN.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/DESIGN.md.tmpl",
+          ".add/tooling/templates/DESIGN.md.tmpl",
+          "add-method/skill/add/phases/0-setup.md",
+          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md",
+          ".claude/skills/add/phases/0-setup.md",
+          "add-method/tooling/test_udd_design_template.py"
+        ],
+        "snapshot_md5": "8ef81e0b19e2f59099abc123db5338e3"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-13T08:32:12+00:00",
+  "updated": "2026-06-13T09:39:54+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
