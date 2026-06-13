@@ -9,9 +9,9 @@ are a worked pair that validates clean against each other.
 ## The foundation is a NAMED SET (Fork A)
 
 ```
-tokens.json            the task-1 dialect (primitive · semantic · component)
-catalog.json           the component catalog (this doc)
-prototypes/<name>.json one flat content tree per prototype screen/flow
+.add/design/tokens.json            the task-1 dialect (primitive · semantic · component)
+.add/design/catalog.json           the component catalog (this doc)
+.add/design/prototypes/<name>.json one flat content tree per prototype screen/flow
 ```
 
 Each file lints independently — the token validator never sees the catalog, the

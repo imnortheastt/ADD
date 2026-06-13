@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "udd-design-template",
+  "active_task": "udd-check-lint",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -791,10 +791,42 @@
         ],
         "snapshot_md5": "8ef81e0b19e2f59099abc123db5338e3"
       }
+    },
+    "udd-check-lint": {
+      "title": "Wire both validators into add.py check + cross-file token resolution \u2014 named reds on layer/catalog/tree violations",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-13T09:42:24+00:00",
+      "updated": "2026-06-13T11:23:11+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "56ba4068e0152f72a8c544348eac4746",
+        "tests": {
+          "add-method/tooling/test_udd_check_lint.py": "79fdf363f4d7c01fc480d9df700f71c5"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_udd_check_lint.py",
+          "add-method/tooling/templates/DESIGN.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/DESIGN.md.tmpl",
+          ".add/tooling/templates/DESIGN.md.tmpl",
+          "add-method/tooling/templates/udd-catalog.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-catalog.md",
+          ".add/tooling/templates/udd-catalog.md"
+        ],
+        "snapshot_md5": "d0f9cfd738db1c92e515a6548d32943d"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-13T09:39:54+00:00",
+  "updated": "2026-06-13T11:23:11+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

@@ -1357,6 +1357,153 @@ def _catalog_tree_violations(catalog: dict, tree: dict) -> list[tuple[str, str, 
     return out
 
 
+# ---- udd-check-lint (task 4/4): the composer + cross-file token resolution ----
+# The single holder of tokens + catalog + tree. _catalog_tree_violations checks a
+# token-prop alias LAYER-only (it must target `semantic`); here we close the deferral
+# task 2 left — resolve that alias against tokens.json for EXISTENCE + $type-match.
+
+def _semantic_token_index(tokens: dict) -> dict[str, "str | None"]:
+    """Map each semantic token's dotted path -> its effective $type.
+
+    A token is a node bearing $value; its $type is the nearest $type on its path
+    (DTCG group inheritance — $type sits on the GROUP, the leaf carries only $value).
+    Keys carry the layer prefix ("semantic.color.accent"), matching the alias body.
+    """
+    out: dict[str, "str | None"] = {}
+    sem = tokens.get("semantic") if isinstance(tokens, dict) else None
+    if not isinstance(sem, dict):
+        return out
+
+    def _walk(node: object, path: list[str], inherited: "str | None") -> None:
+        if not isinstance(node, dict):
+            return
+        ttype = node.get("$type", inherited)
+        if "$value" in node:                       # a token (a leaf bearing $value)
+            out[".".join(path)] = ttype
+        for key, child in node.items():            # descend even past a token — never skip a subtree
+            if not key.startswith("$"):
+                _walk(child, path + [key], ttype)
+
+    _walk(sem, ["semantic"], None)
+    return out
+
+
+def _prop_token_resolution_violations(tokens: dict, catalog: dict, tree: dict) -> list[tuple[str, str, str]]:
+    """Resolve a tree's semantic token-prop aliases against tokens.json.
+
+    Pure + TOTAL (never mutates inputs; stdlib only; never raises on dict inputs).
+    Deterministic document order; [] == every token-prop alias resolves to an
+    existing semantic token of the right $type. Acts ONLY on a prop that is BOTH a
+    catalog PropSpec {type:token, token:<$type>} AND a tree {semantic.*} alias (the
+    props _catalog_tree_violations passed LAYER-only); everything else is task 1/2's.
+    Two codes: unresolved_prop_token · prop_token_type_mismatch.
+    """
+    out: list[tuple[str, str, str]] = []
+    sem_index = _semantic_token_index(tokens)
+    components = catalog.get("components") if isinstance(catalog, dict) else None
+    components = components if isinstance(components, dict) else {}
+    elements = tree.get("elements") if isinstance(tree, dict) else None
+    elements = elements if isinstance(elements, dict) else {}
+
+    for eid, el in elements.items():
+        if not isinstance(el, dict):
+            continue                                    # malformed_element — _catalog_tree_violations' job
+        etype = el.get("type")
+        comp = components.get(etype) if isinstance(etype, str) else None
+        if not isinstance(comp, dict):
+            continue                                    # uncataloged / malformed — already flagged there
+        cprops = comp.get("props")
+        cprops = cprops if isinstance(cprops, dict) else {}
+        props = el.get("props")
+        if not isinstance(props, dict):
+            continue
+        for pname, value in props.items():
+            spec = cprops.get(pname)
+            if not isinstance(spec, dict) or spec.get("type") != "token":
+                continue                                # only catalog token-props
+            if not (isinstance(value, str) and value.startswith("{") and value.endswith("}")):
+                continue                                # non-alias literal → task-2's prop_type_mismatch
+            target = value[1:-1]
+            if target.split(".", 1)[0] != "semantic":
+                continue                                # non-semantic alias → task-2's non_semantic_prop_token
+            want = spec.get("token")                    # the declared $type
+            if want not in _TOKEN_TYPES:
+                continue                                # malformed token PropSpec → task-2's malformed_catalog owns it
+            path = f"elements.{eid}.props.{pname}"
+            if target not in sem_index:
+                out.append(("unresolved_prop_token", path, f"{value} resolves to no semantic token"))
+                continue
+            got = sem_index[target]                     # the resolved token's inherited $type
+            if got not in _TOKEN_TYPES:
+                continue                                # resolved token's $type malformed → task-1's unknown_type owns it
+            if got != want:
+                out.append(("prop_token_type_mismatch", path,
+                            f"{value} is {got!r}, but prop wants {want!r}"))
+    return out
+
+
+def _udd_named_set_checks(root: Path) -> list[tuple[bool, str, str]]:
+    """Lint a project's UDD named set under `.add/design/` (silent when absent).
+
+    Composes _token_layer_violations + _catalog_tree_violations +
+    _prop_token_resolution_violations into cmd_check's (ok, desc, reason) checks.
+    READ-ONLY; FAIL-CLOSED on malformed JSON (a named code, never a crash). Returns
+    [] when no named set exists — so a clean / non-UI project stays untouched.
+    """
+    design = root / "design"
+    tok_path, cat_path = design / "tokens.json", design / "catalog.json"
+    proto_dir = design / "prototypes"
+    trees = sorted(p for p in proto_dir.glob("*.json") if p.is_file()) if proto_dir.is_dir() else []
+    if not (tok_path.exists() or cat_path.exists() or trees):
+        return []                                       # silent-when-absent
+
+    def _load(p: Path) -> "tuple[object, str | None]":
+        try:
+            return json.loads(p.read_text(encoding="utf-8")), None
+        except (json.JSONDecodeError, OSError) as e:
+            return None, str(e)
+
+    out: list[tuple[bool, str, str]] = []
+
+    tokens = None
+    if tok_path.exists():
+        tokens, err = _load(tok_path)
+        if err is not None:
+            out.append((False, "tokens.json parses", f"malformed_tokens_json: {err}"))
+            tokens = None
+        else:
+            v = _token_layer_violations(tokens)
+            if not v:
+                out.append((True, "tokens.json layer-valid", ""))
+            else:
+                out += [(False, "tokens.json layer-valid", f"{c}: {p} — {d}") for c, p, d in v]
+
+    catalog = None
+    if cat_path.exists():
+        catalog, err = _load(cat_path)
+        if err is not None:
+            out.append((False, "catalog.json parses", f"malformed_catalog_json: {err}"))
+            catalog = None
+
+    for tp in trees:
+        name = tp.stem
+        tree, err = _load(tp)
+        if err is not None:
+            out.append((False, f"prototype '{name}' parses", f"malformed_prototype_json: {err}"))
+            continue
+        if catalog is None:
+            continue                                    # no catalog to validate a tree against — skip quietly
+        v = list(_catalog_tree_violations(catalog, tree))
+        if tokens is not None:
+            v += _prop_token_resolution_violations(tokens, catalog, tree)
+        if not v:
+            out.append((True, f"prototype '{name}' valid", ""))
+        else:
+            out += [(False, f"prototype '{name}' valid", f"{c}: {p} — {d}") for c, p, d in v]
+
+    return out
+
+
 def cmd_check(args: argparse.Namespace) -> None:
     """Read-only integrity check of the .add project. Exit 1 if anything fails."""
     as_json = getattr(args, "json", False)
@@ -1517,6 +1664,11 @@ def cmd_check(args: argparse.Namespace) -> None:
     cycle = _find_cycle(tasks)
     checks.append((cycle is None, "task dependencies are acyclic",
                    f"cycle: {' -> '.join(cycle)}" if cycle else ""))
+
+    # UDD foundation (udd-check-lint): lint a project's named set under .add/design/ —
+    # composes the token + catalog/tree validators + the cross-file prop-token resolution.
+    # Silent when absent; read-only; fail-closed on malformed JSON.
+    checks.extend(_udd_named_set_checks(root))
 
     passed = sum(1 for ok, _, _ in checks if ok)
     failed = len(checks) - passed
