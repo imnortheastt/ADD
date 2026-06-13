@@ -444,17 +444,17 @@ prop's declared `$type` (needs tokens.json). udd-design-template binds DESIGN.md
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-  - [TDD · open] a traversal/validator task needs a TOTAL-FUNCTION (never-raises) probe + a wrong-JSON-type
+  - [TDD · folded] a traversal/validator task needs a TOTAL-FUNCTION (never-raises) probe + a wrong-JSON-type
     probe from ground — the 13 scenarios all used well-formed dicts, so the adversarial refute, not the suite,
     caught the crash (evidence: refute Finding 1 — non-object component + children → AttributeError).
-  - [SDD · open] freeze-time check: every Reject must be SATISFIABLE by the frozen signature — non_semantic_
+  - [SDD · folded] freeze-time check: every Reject must be SATISFIABLE by the frozen signature — non_semantic_
     prop_token's $type-match needed tokens.json the `(catalog, tree)` signature never receives (evidence: v2
     change-request raised while writing the red test for that scenario).
-  - [SDD · open] "lint shape only" left tree-element STRUCTURE (props is an object, children is an array)
+  - [SDD · folded] "lint shape only" left tree-element STRUCTURE (props is an object, children is an array)
     implied, not stated — the 9th code malformed_element had to be added at verify (evidence: v3 refute
     Finding 2 — props:[…]/children:"x" silently passed).
-  - [UDD · open] identity VALUES are human-owned — surface design tokens (brand color, palette, type) at
+  - [UDD · folded] identity VALUES are human-owned — surface design tokens (brand color, palette, type) at
     specify, never auto-pick from a menu (evidence: the "add branding color token" request → the
     identity-values guideline, committed 560442a; udd-tokens.md + phases/1-specify.md).
-  - [ADD · open] a same-task verify re-cross updates ENGINE_MD5 (774e025 → 3cdfaab) WITHOUT changing the
+  - [ADD · folded] a same-task verify re-cross updates ENGINE_MD5 (774e025 → 3cdfaab) WITHOUT changing the
     `re-aimed @ <slug>` annotation — the slug names the TASK, the md5 names the build (evidence: v3 re-pin).

@@ -370,14 +370,14 @@ Spec delta for the next loop: udd-check-lint (task 4) lints the JSON named set (
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-  - [UDD · open] DESIGN.md is the prose FRONT-DOOR that binds the named-set JSON (tokens·catalog·prototypes) the AI
+  - [UDD · folded] DESIGN.md is the prose FRONT-DOOR that binds the named-set JSON (tokens·catalog·prototypes) the AI
     drafts UI from; design identity stays human-owned — the doc PROMPTS for brand/palette/type, never pre-fills (evidence:
     the shipped DESIGN.md.tmpl identity section is HTML-comment prompts + the identity_prefilled guard, both halves).
-  - [UDD · open] the human added a SCREENS section at the freeze ("Freeze + Screens section") — DESIGN.md doubles as the
+  - [UDD · folded] the human added a SCREENS section at the freeze ("Freeze + Screens section") — DESIGN.md doubles as the
     per-screen prototypes/<name>.json index, a shape worth defaulting into the template (evidence: the v1 §3 amendment).
-  - [TDD · open] string-PRESENCE asserts under-enforce a STRUCTURED-PROSE contract — `assertIn(anchor)` misses order, table
+  - [TDD · folded] string-PRESENCE asserts under-enforce a STRUCTURED-PROSE contract — `assertIn(anchor)` misses order, table
     form, and the OR-half of identity_prefilled (a non-hex literal); a prose contract needs STRUCTURE asserts (evidence: the
     verify refute found 4 such gaps a presence check passed; the 4 strengthened asserts each catch their counterexample).
-  - [ADD · open] strengthening a test at VERIFY (close-gap-before-gate) trips build_tampered — the honest path is reopen
+  - [ADD · folded] strengthening a test at VERIFY (close-gap-before-gate) trips build_tampered — the honest path is reopen
     → tests → re-advance (re-snapshot), NEVER force the gate past the tripwire (evidence: build_tampered fired on the first
     `gate PASS` attempt; cleared by `phase tests` + re-advance, not by overriding — the §3 contract stayed untouched).
