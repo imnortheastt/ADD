@@ -323,10 +323,10 @@ Spec delta for the next loop: scope-violation-heal routes the `scope_violation` 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [TDD · open] a co-witness pair must be born ATOMICALLY in the same crossing or single-file erasure splits them — the tripwire got this right by accident of history (flag_verified born with it); new snapshot seams must design the witness in (evidence: refute pass 1 reproduced the anchor-erase bypass scope_anchor_missing now blocks)
-- [ADD · open] every state-creating seam needs its state-REMOVING transition specified in the same contract — declared->undeclared had no cleanup path until a refute pass disclosed it (evidence: v3 change-request; test_undeclared_recross_cleans_up)
-- [SDD · open] "same trust boundary as X" is a testable parity CLAIM, not a rhetorical flag — the refuter falsified it empirically and the contract had to be re-frozen (evidence: v1 flag #2 vs the one-key erase repro)
-- [TDD · open] declare green pins by NAME in §4 (not "one pin") — this task declared 4 and the refute pass audited each against its claim (evidence: §4 coverage line; refute pass green-pin honesty check)
+- [TDD · folded] a co-witness pair must be born ATOMICALLY in the same crossing or single-file erasure splits them — the tripwire got this right by accident of history (flag_verified born with it); new snapshot seams must design the witness in (evidence: refute pass 1 reproduced the anchor-erase bypass scope_anchor_missing now blocks)
+- [ADD · folded] every state-creating seam needs its state-REMOVING transition specified in the same contract — declared->undeclared had no cleanup path until a refute pass disclosed it (evidence: v3 change-request; test_undeclared_recross_cleans_up)
+- [SDD · folded] "same trust boundary as X" is a testable parity CLAIM, not a rhetorical flag — the refuter falsified it empirically and the contract had to be re-frozen (evidence: v1 flag #2 vs the one-key erase repro)
+- [TDD · folded] declare green pins by NAME in §4 (not "one pin") — this task declared 4 and the refute pass audited each against its claim (evidence: §4 coverage line; refute pass green-pin honesty check)
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency

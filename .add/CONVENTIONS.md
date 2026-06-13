@@ -619,3 +619,53 @@ Architecture:
 - (ADD) **Design-for-failure on a concurrency invariant: the check SHIFTS, never SKIPS, when its evidence cell is
   unsatisfiable.** Relocate the guarantee (pre-spawn rev-parse → worker step-0 echo + merge-time verify), never drop
   it — an unsatisfiable check that silently lifts un-guards the invariant it existed for. [wave-protocol-runtime — folded foundation-version 28]
+- (SDD) **Contract completeness has three mechanical checks at freeze: (1) every Reject code is SATISFIABLE by the
+  frozen signature — a reject needing a parameter the signature never receives ships dead; (2) every Reject code has
+  a matching §4 test line — an asymmetry here shipped 2 untested codes past a green build; (3) structural/containment
+  rules must be STATED, not implied — "a token is a leaf (no child tokens)" and "props is an object, children is an
+  array" each existed only in the validator, never in the frozen §1, so a verify refute found both gaps after green.**
+  Apply all three as a freeze-time self-lint over the Reject table before the human approves.
+  [udd-catalog-content-schema + udd-check-lint + udd-token-schema — folded foundation-version 29]
+- (SDD) **A contract that broadens an engine verb-set must (a) NAME the verb CLASS, not "every verb", and (b) map
+  which frozen tests lock the old shape before freezing.** "Every mutating verb" swept setup/lifecycle verbs whose
+  bespoke output must NOT converge; the collision with test_brownfield_scan surfaced only at a 909-test full-suite
+  run, forcing a post-build change-request. Naming the class (workflow vs setup vs control) at the freeze makes the
+  scope precise; mapping the frozen test surface makes the collision a freeze-blocker, not a build surprise.
+  [next-footer-engine + gate-owner-marker — folded foundation-version 29]
+- (TDD) **The verify-gate adversarial refute earns its keep even on an honest, green build: conformant fixtures test
+  the happy grammar, not the fail-closed promise.** Three traversal/validator tasks confirmed this in one milestone:
+  (a) a total-function (never-raises) probe + a wrong-JSON-type input must be in the red suite FROM GROUND — 13
+  conformant scenarios all passed yet missed an AttributeError on non-object input; (b) a COMPOSING validator needs
+  first-class "no-double-flag" boundary tests — the build green missed 3 double-flag shapes; (c) a recursive
+  validator needs a "never-skip-a-subtree / no phantom children" probe — 10 behavior scenarios passed while a
+  `$value` node with non-`$` children skipped its whole subtree. In each case the verify refute, not the build,
+  found the gap. Author these adversarial fixtures at red-suite time, not as verify residue.
+  [udd-catalog-content-schema + udd-check-lint + udd-token-schema — folded foundation-version 29]
+- (TDD) **String-PRESENCE asserts under-enforce a structured-prose contract — add STRUCTURE asserts.**
+  `assertIn(anchor)` misses ordering, table form, and OR-halves (a non-hex literal passed presence); a prose
+  contract with layout/order obligations needs asserts that enforce those dimensions. Reinforces
+  words-exist≠method-works applied to prose tests specifically. [udd-design-template — folded foundation-version 29]
+- (ADD) **The engine-pin idiom has three mandatory parts: re-aim the slug annotation AND bump the md5 AND carry the
+  PRIOR task's "re-aimed @ <slug>" marker.** (1) The self-test (`test_pin_annotation_names_this_task`) is part of
+  the idiom, not optional — omitting it from the red suite means a stale annotation only surfaces at verify. (2) A
+  same-task verify re-cross updates ENGINE_MD5 WITHOUT changing the `re-aimed @` slug — the slug names the TASK,
+  the md5 names the build. (3) The prior task's annotation test asserts its marker survives; if the re-aim
+  overwrites it, that sibling test goes red.
+  [gate-owner-marker + udd-catalog-content-schema + next-footer-engine — folded foundation-version 29]
+- (ADD) **A human-approved mid-build change-request trips the tamper tripwire — the honest re-arm is
+  `phase tests → advance`, never a gate override.** The tripwire snapshots the red test paths + §3 at tests→build;
+  any edit (even a legitimate, human-approved bundle change) re-fires it. The path: reopen → contract → tests →
+  build → re-advance (re-snapshot). Worth one line in run.md so agents do not read `build_tampered` as a cheat
+  signal. Distinct from strengthening a test at VERIFY (close-gap-before-gate), which ALSO trips build_tampered
+  and follows the same honest path. [scope-decl-template + udd-design-template — folded foundation-version 29]
+- (ADD) **The §5 scope declaration is FROZEN into `state.json`'s anchor at tests→build — editing §5 prose alone
+  cannot clear a scope violation.** Only a full tests→build re-cross (reopen → contract → tests → advance)
+  re-baselines the anchor. Sibling caveat: sibling-session commits landing on the shared branch mid-task can redden
+  unrelated guards; the full-suite-before-gate rule catches and routes them rather than letting the gate record
+  over them. [next-footer-engine + scope-decl-template — folded foundation-version 29]
+- (ADD) **Every state-CREATING seam needs its state-REMOVING transition specified in the SAME contract — and a
+  shared-cap cross-source escalation test, not a same-source one.** Declared→undeclared had no cleanup path
+  until a verify refute disclosed it (v3 change-request). Proving a SHARED violation cap is distinct: seeding the
+  counter from one source (tamper) then triggering a different source (scope) is the only assertion that
+  distinguishes a shared cap from parallel independent caps.
+  [scope-gate-enforce + scope-violation-heal — folded foundation-version 29]

@@ -1,0 +1,144 @@
+{
+  "milestone": {
+    "title": "Udd Design Foundation",
+    "goal": "a UI project gets a render-ready UDD foundation the AI drafts from and into \u2014 DESIGN.md plus a JSON foundation (token layers + component catalog + prototype content trees) that a json-render-style renderer displays as a living design system and clickable prototype, and that add.py check lints",
+    "stage": "mvp",
+    "status": "done",
+    "created": "2026-06-11T17:21:37+00:00",
+    "updated": "2026-06-13T11:29:50+00:00"
+  },
+  "tasks": {
+    "udd-token-schema": {
+      "title": "UDD token layers \u2014 DTCG-aligned compact dialect, 3 layers, the citation rule",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-12T17:40:12+00:00",
+      "updated": "2026-06-13T06:53:25+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "7edc485ae116c2cfe189e196dd4307d4",
+        "tests": {
+          "add-method/tooling/test_udd_token_schema.py": "0c0814ead68f730f95abc75bf324290d"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/tokens.sample.json",
+          "add-method/src/add_method/_bundled/tooling/templates/tokens.sample.json",
+          ".add/tooling/templates/tokens.sample.json",
+          "add-method/tooling/templates/udd-tokens.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-tokens.md",
+          ".add/tooling/templates/udd-tokens.md",
+          "add-method/tooling/test_udd_token_schema.py"
+        ],
+        "snapshot_md5": "f10a3cd6d3f8a5c9a95dc3bbd45ee2ed"
+      }
+    },
+    "udd-catalog-content-schema": {
+      "title": "UDD catalog + content trees \u2014 component catalog (typed props \u00b7 semantic-token refs) + flat json-render-aligned prototype trees",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-13T06:57:29+00:00",
+      "updated": "2026-06-13T08:32:12+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "69f1c889aa3a5899fe6680b7e6fe1103",
+        "tests": {
+          "add-method/tooling/test_udd_catalog_content_schema.py": "afefa7b362b96bd34b832eef2df08d25"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/catalog.sample.json",
+          "add-method/src/add_method/_bundled/tooling/templates/catalog.sample.json",
+          ".add/tooling/templates/catalog.sample.json",
+          "add-method/tooling/templates/prototype.sample.json",
+          "add-method/src/add_method/_bundled/tooling/templates/prototype.sample.json",
+          ".add/tooling/templates/prototype.sample.json",
+          "add-method/tooling/templates/udd-catalog.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-catalog.md",
+          ".add/tooling/templates/udd-catalog.md",
+          "add-method/tooling/test_udd_catalog_content_schema.py"
+        ],
+        "snapshot_md5": "45e84c585afc2b489b1a1021dac7b5ea"
+      }
+    },
+    "udd-design-template": {
+      "title": "DESIGN.md template binding prose + tokens + catalog + prototypes into 0-setup, with the render recipe",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-13T08:35:52+00:00",
+      "updated": "2026-06-13T09:39:54+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9cf7bcfce9a93023d0880bf2ab82f308",
+        "tests": {
+          "add-method/tooling/test_udd_design_template.py": "8cce610338c2215bb819aab5f1845097"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/DESIGN.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/DESIGN.md.tmpl",
+          ".add/tooling/templates/DESIGN.md.tmpl",
+          "add-method/skill/add/phases/0-setup.md",
+          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md",
+          ".claude/skills/add/phases/0-setup.md",
+          "add-method/tooling/test_udd_design_template.py"
+        ],
+        "snapshot_md5": "8ef81e0b19e2f59099abc123db5338e3"
+      }
+    },
+    "udd-check-lint": {
+      "title": "Wire both validators into add.py check + cross-file token resolution \u2014 named reds on layer/catalog/tree violations",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-13T09:42:24+00:00",
+      "updated": "2026-06-13T11:23:11+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "56ba4068e0152f72a8c544348eac4746",
+        "tests": {
+          "add-method/tooling/test_udd_check_lint.py": "79fdf363f4d7c01fc480d9df700f71c5"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_udd_check_lint.py",
+          "add-method/tooling/templates/DESIGN.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/DESIGN.md.tmpl",
+          ".add/tooling/templates/DESIGN.md.tmpl",
+          "add-method/tooling/templates/udd-catalog.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-catalog.md",
+          ".add/tooling/templates/udd-catalog.md"
+        ],
+        "snapshot_md5": "d0f9cfd738db1c92e515a6548d32943d"
+      }
+    }
+  },
+  "archived_at": "2026-06-13T11:41:57+00:00"
+}

@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ux-stale-followups",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -695,7 +695,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T17:19:38+00:00",
+  "updated": "2026-06-13T11:41:57+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -816,17 +816,9 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
-    },
-    "udd-design-foundation": {
-      "title": "Udd Design Foundation",
-      "goal": "a UI project gets a render-ready UDD foundation the AI drafts from and into \u2014 DESIGN.md plus a JSON foundation (token layers + component catalog + prototype content trees) that a json-render-style renderer displays as a living design system and clickable prototype, and that add.py check lints",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-11T17:21:37+00:00",
-      "updated": "2026-06-11T17:21:37+00:00"
     }
   },
-  "active_milestone": "udd-design-foundation",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1057,6 +1049,18 @@
       ],
       "archived": "2026-06-11",
       "compacted": "2026-06-11"
+    },
+    {
+      "slug": "udd-design-foundation",
+      "title": "Udd Design Foundation",
+      "tasks": 4,
+      "task_slugs": [
+        "udd-token-schema",
+        "udd-catalog-content-schema",
+        "udd-design-template",
+        "udd-check-lint"
+      ],
+      "archived": "2026-06-13"
     }
   ]
 }

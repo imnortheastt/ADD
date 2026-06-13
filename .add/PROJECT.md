@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-12 · foundation-version: 28
+slug: AIDD-Book · stage: mvp · updated: 2026-06-13 · foundation-version: 29
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
@@ -248,6 +248,16 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   auto-resolved · task 3 human-gated — the autonomy ladder discriminates by risk, not ceremony) and exercised the
   live-dogfood re-anchor path (a task that crossed tests→build under the OLD engine re-snapshots under the NEW via
   `phase tests`+`advance`; `reopen` works only on done tasks). [folded foundation-version 27]
+- **next-step-seams (Engine next-step footer + driver marker): SHIPPED 2026-06-12** — every COMPLETING mutating
+  verb now prints one engine-sourced `next:` footer (Arm A: in-flight task → phase command; Arm B: state-arm decide)
+  from a SINGLE resolver `_next_footer`; bespoke ad-hoc tails converged (no double-print). The driver marker
+  `[you drive]` / `[human gate]` fills the reserved trailing slot from a single `_driver_stop` resolver (autonomy
+  × phase, one refinement: verify reads the dial; every other phase reads `_phase_owner` structurally). The frozen
+  machine-state-json `stop` (cmd_guide JSON) is UNTOUCHED — the marker lives on the footer + guide TEXT only
+  (Option F; residue: guide-TEXT vs JSON diverge at verify-auto, deferred as a deliberate change-request for the
+  machine-state-json contract). SDD learning: a verb-set contract must name the verb CLASS (workflow vs setup vs
+  control) and pre-map frozen tests before broadening — "every mutating verb" over-reached init, surfacing only at
+  full-suite run. [folded foundation-version 29]
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -309,6 +319,22 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   carried pre-existing drift (a missing ch.14 line) found only while wiring ch.15. Accept it as a known-throwaway
   install artifact (regenerated on install) OR extend a parity check to the dogfood README — for now named as a
   known gap, not silently trusted. [folded foundation-version 21]
+- **Identity values are human-owned — SETTLED (udd-design-foundation · UDD):** design tokens (brand color,
+  palette, type) are surfaced AT specify for the human to fill; the AI never auto-picks from a menu. DESIGN.md is
+  the prose FRONT-DOOR that binds the named-set JSON (tokens · catalog · prototypes) the AI drafts UI from; its
+  identity section ships as HTML-comment PROMPTS, never pre-filled values (`identity_prefilled` guard enforces
+  both halves). The human adding a SCREENS section at the freeze confirmed DESIGN.md also doubles as the
+  per-screen `prototypes/<name>.json` index — a shape worth defaulting into the template. [folded foundation-version 29]
+- **UDD forward gaps (udd-design-foundation · UDD):** (a) DTCG `$type`-inheritance: a cross-file resolver
+  must treat "resolved `$type` ∉ valid set" as the upstream token-schema validator's concern, never re-flag it —
+  the `got ∉ _TOKEN_TYPES` skip-guard is the settled boundary. (b) Compact-dialect value-form STRICTNESS has
+  three under-pinned spots (`fontWeight` any string · weight floats like `700.0` rejected · negative dimensions
+  like `"-16px"` pass) — defensible for MVP but a real renderer would reject some; tighten in a follow-up task
+  when real token files hit them. (c) The `GOAL_UNSET` sentinel text is slightly stale: an empty `goal:` line
+  now EXISTS post-init, so the text should say "fill in the goal: value" not "add a goal: line" — a deferred
+  wording-only fix. (d) `_section0_anchors` registers grounding only from INLINE content on the Anchors line,
+  not a bulleted list below it — either teach the parser the list form or make the inline-only shape explicit in
+  the guide; this is a RECORDED KNOWN GAP, deferred to a future engine task. [folded foundation-version 29]
 
 ## Key Decisions (append-only)
 | date | decision | why | outcome |
@@ -369,3 +395,4 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 | 2026-06-11 | fold ground-context learnings → foundation-version 26 (9 open deltas: 4 new CONVENTIONS bullets — ground-two-axes-completeness+economics · capability-as-prose-recommendation-engine-tool-agnostic · dogfood-technique-in-flight · prose-feature-red-greenable-by-token-presence — · 2 flip-cites onto fv25 bullets — additive-byte-invisible template-twin · grandfather-ceiling CLOSED — · 1 §Spec ground-context ship bullet; δ6 self-closed within-milestone, task 2 reworded the intro it flagged) | human-gated fold at ground-context close (2/2 tasks, 2/2 criteria); the milestone dogfooded its own technique in-flight (haiku subagent broad sweep · main-context deepen) and closed the fv25 zero-lived-run ceiling in real time | +4 CONVENTIONS +2 flip-cites; §Spec ground-context bullet; 25→26; 9 deltas open→folded (incl. δ6 self-closed); engine e6b8c3da ×3 unchanged (prose/template only) |
 | 2026-06-11 | ship verify-integrity + fold → foundation-version 27 (16 open deltas: 5 new CONVENTIONS bullets — floor+ceiling+HARD-STOP-class · mechanical-HARD-STOP-pattern+monotonic-cap · evolution-not-weakening-discriminator · security-line-emerges-at-build · two-how-we-author — · 3 flip-cites onto dogfood-at-own-gate / presence-necessary-not-sufficient / prose-guide-red→green · 1 §Spec verify-integrity ship bullet carrying both-gate-paths + live-re-snapshot) | human-gated fold at verify-integrity close (3/3 tasks, 3/3 criteria); the method's FIRST mechanically-enforced HARD-STOP shipped and dogfooded its own earned-green rubric on its own build (independent refute-read returned EARNED, one nit fixed pre-gate); all 16 confirmed (none rejected) | +5 CONVENTIONS +3 flip-cites; §Spec verify-integrity bullet; 26→27; 16 deltas open→folded; engine 7b05eaf9 ×3 |
 | 2026-06-12 | fold engine-hardening + wave learnings → foundation-version 28 (11 open deltas: 9 new CONVENTIONS bullets — hand-written-input-parsing-discipline (2 SDD merged: exactly-one-match + terminator-explicit) · name-enforcement-deferral-at-freeze · coverage-gaps-route-as-deltas · grammar-drift-fixtures · token-presence+mirror-parity · sandbox-only-mutating-probes · close-gap-before-gate · mirror-folded-exceptions · shifts-never-skips — · 1 flip-cite onto mechanical-HARD-STOP+monotonic-cap) | human-gated fold after the engine-hardening ground tasks (argv-portability PASS auto-resolved · merge-base-enforcement PASS human-gated after 7 refute passes, 4 human-approved contract versions, 2 heal_exhausted HARD-STOPs — the fv27 mechanical guard's first live fire, held both times); all 11 confirmed (none rejected) | +9 CONVENTIONS +1 flip-cite; 27→28; 11 deltas open→folded; engine b441421c ×3; PR #8 |
+| 2026-06-13 | fold udd-design-foundation learnings → foundation-version 29 (41 open deltas from 10 tasks: SDD 9 · UDD 6 · TDD 12 · ADD 14; merged into ~14 foundation additions — 8 new CONVENTIONS bullets · 1 §Spec next-step-seams ship bullet · 2 §Users bullets (identity-settled + UDD-forward-gaps) · 1 CARRY-FORWARD known-gap recorded in §Users) | human-confirmed fold of the udd-design-foundation milestone's full OBSERVE backlog; aggressively merged (41→14) to keep the foundation lean; one ADD carry-forward (active_milestone re-aim) recorded as a known-gap engine task, still flipped folded | 8 new CONVENTIONS bullets (contract-completeness-3-checks · verb-set-broadening-names-class · adversarial-refute-conformant-happy-path · string-presence-under-enforces · engine-pin-3-mandatory-parts · mid-build-CR-trips-tamper · §5-scope-frozen-at-tests-build · state-create-needs-remove+shared-cap); §Spec next-step-seams bullet; §Users identity-settled + UDD-forward-gaps; 28→29; all 41 deltas open→folded |

@@ -80,7 +80,7 @@ PHASE_OWNER = {
     "specify": "human", "scenarios": "human", "contract": "seam",
     "tests": "ai", "build": "ai", "verify": "human", "observe": "ai", "done": "human",
 }
-SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist")
+SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist", "DESIGN.md")
 
 # Guideline-injection targets + version-stable markers. NEVER change these marker
 # strings: a re-run finds the old block by exact match, so changing them would
@@ -1106,6 +1106,404 @@ def _read_task_phase(root: Path, slug: str) -> str | None:
     return None
 
 
+# --- UDD token-layer validator (udd-token-schema) -----------------------------
+# A pure, stdlib checker for the compact-DTCG 3-layer token dialect. Returns a
+# list of (code, path, detail) violations — [] means valid. NOT wired into
+# cmd_check here: udd-check-lint surfaces these as named reds + adds the catalog/
+# tree rules (the Fork-A boundary frozen in udd-token-schema §3). The dialect and
+# its NAMED divergences from DTCG 2025.10 live in templates/udd-tokens.md.
+_TOKEN_LAYERS = ("primitive", "semantic", "component")
+_TOKEN_LAYER_CITES = {"semantic": "primitive", "component": "semantic"}
+_TOKEN_TYPES = ("color", "dimension", "number", "fontFamily", "fontWeight", "duration")
+_TOKEN_HEX_RE = re.compile(r"^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
+_TOKEN_DIM_RE = re.compile(r"^-?\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw)$")
+_TOKEN_DUR_RE = re.compile(r"^\d+(?:\.\d+)?(?:ms|s)$")
+
+
+def _token_value_form_ok(ttype: str, value: object) -> bool:
+    """True if a LITERAL value matches the compact form for its $type."""
+    if ttype == "color":
+        return isinstance(value, str) and bool(_TOKEN_HEX_RE.match(value))
+    if ttype == "dimension":
+        return isinstance(value, str) and bool(_TOKEN_DIM_RE.match(value))
+    if ttype == "number":
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    if ttype == "fontWeight":
+        return isinstance(value, str) or (
+            isinstance(value, int) and not isinstance(value, bool) and 100 <= value <= 900)
+    if ttype == "duration":
+        return isinstance(value, str) and bool(_TOKEN_DUR_RE.match(value))
+    if ttype == "fontFamily":
+        return isinstance(value, str) or (
+            isinstance(value, list) and bool(value) and all(isinstance(x, str) for x in value))
+    return False
+
+
+def _token_layer_violations(tokens: dict) -> list[tuple[str, str, str]]:
+    """Validate a compact-DTCG token dict against the 3-layer citation rules.
+
+    Pure (never mutates `tokens`), stdlib-only, deterministic document order.
+    Returns [] when valid, else one (code, path, detail) per violation. The six
+    codes are the token-layer named reds udd-check-lint surfaces. A token's LAYER
+    is its top-level group name; value forms diverge from DTCG 2025.10 to compact
+    scalars (color "#hex", dimension "<n><unit>") — see templates/udd-tokens.md.
+    """
+    if not isinstance(tokens, dict):
+        return [("malformed_value", "", "root is not a JSON object")]
+
+    # index every token (object bearing $value) by dotted path — for alias resolution
+    index: dict[str, dict] = {}
+
+    def _index(node: object, path: list[str]) -> None:
+        if not isinstance(node, dict):
+            return
+        if "$value" in node:
+            index[".".join(path)] = node
+        for key, child in node.items():            # descend even past a token — never skip a subtree
+            if not key.startswith("$"):
+                _index(child, path + [key])
+
+    for top, node in tokens.items():
+        if top in _TOKEN_LAYERS:
+            _index(node, [top])
+
+    out: list[tuple[str, str, str]] = []
+
+    def _walk(node: object, path: list[str], layer: str, inherited: "str | None") -> None:
+        if not isinstance(node, dict):
+            return
+        if "$value" in node:                                       # a token
+            pathstr = ".".join(path)
+            ttype = node.get("$type", inherited)
+            value = node.get("$value")
+            if ttype not in _TOKEN_TYPES:
+                out.append(("unknown_type", pathstr, f"$type {ttype!r} not in {list(_TOKEN_TYPES)}"))
+            elif isinstance(value, str) and value.startswith("{") and value.endswith("}"):
+                target = value[1:-1]                               # an alias
+                if layer == "primitive":
+                    out.append(("primitive_has_alias", pathstr,
+                                f"a primitive token must hold a literal, not alias {value}"))
+                elif target not in index:
+                    out.append(("unresolved_alias", pathstr, f"{value} resolves to no token"))
+                else:
+                    target_layer = target.split(".", 1)[0]
+                    if target_layer != _TOKEN_LAYER_CITES[layer]:
+                        out.append(("cross_layer_citation", pathstr,
+                                    f"{layer} may alias only {_TOKEN_LAYER_CITES[layer]}, not {target_layer}"))
+            elif not _token_value_form_ok(ttype, value):           # a literal
+                out.append(("malformed_value", pathstr, f"{value!r} is not a valid {ttype}"))
+            # a token should be a leaf; if it carries non-$ children, validate them too rather
+            # than letting them pass silently (fail-closed — never skip a subtree).
+            for key, child in node.items():
+                if not key.startswith("$"):
+                    _walk(child, path + [key], layer, ttype)
+            return
+        gtype = node.get("$type", inherited)                       # a group
+        for key, child in node.items():
+            if not key.startswith("$"):
+                _walk(child, path + [key], layer, gtype)
+
+    for top, node in tokens.items():
+        if top not in _TOKEN_LAYERS:
+            out.append(("unknown_layer", top, f"top-level group {top!r} is not a layer"))
+            continue
+        _walk(node, [top], top, None)
+
+    return out
+
+
+# ---- udd-catalog-content-schema (task 2/4): component catalog + content-tree validator ----
+_PROPSPEC_LITERALS = ("string", "number", "boolean")
+
+
+def _propspec_malformed(spec: object) -> "str | None":
+    """Return a reason if a catalog PropSpec is malformed, else None.
+
+    A PropSpec is exactly one of: {type: string|number|boolean} ·
+    {type: enum, values: [str,…]} · {type: token, token: <$type>} (a task-1 $type).
+    """
+    if not isinstance(spec, dict):
+        return "PropSpec is not an object"
+    ptype = spec.get("type")
+    if ptype in _PROPSPEC_LITERALS:
+        return None
+    if ptype == "enum":
+        values = spec.get("values")
+        if not isinstance(values, list) or not values or not all(isinstance(x, str) for x in values):
+            return "enum PropSpec needs a non-empty list of string values"
+        return None
+    if ptype == "token":
+        ttype = spec.get("token")
+        if ttype not in _TOKEN_TYPES:
+            return f"token PropSpec names unknown $type {ttype!r}"
+        return None
+    return f"unknown PropSpec type {ptype!r}"
+
+
+def _prop_value_code(spec: dict, value: object) -> "str | None":
+    """Return a violation CODE if a tree prop value mismatches its well-formed PropSpec, else None.
+
+    token props are LAYER-only here (frozen §3 @ v2): the value must be a
+    `{semantic.*}` alias. A non-alias literal → prop_type_mismatch; a wrong-layer
+    alias → non_semantic_prop_token. Target existence + $type-match defer to
+    udd-check-lint (the composer that holds tokens.json).
+    """
+    ptype = spec.get("type")
+    if ptype == "string":
+        return None if isinstance(value, str) else "prop_type_mismatch"
+    if ptype == "number":
+        ok = isinstance(value, (int, float)) and not isinstance(value, bool)
+        return None if ok else "prop_type_mismatch"
+    if ptype == "boolean":
+        return None if isinstance(value, bool) else "prop_type_mismatch"
+    if ptype == "enum":
+        return None if value in spec.get("values", []) else "prop_type_mismatch"
+    if ptype == "token":
+        if not (isinstance(value, str) and value.startswith("{") and value.endswith("}")):
+            return "prop_type_mismatch"                 # a token prop must be an alias, not a literal
+        if value[1:-1].split(".", 1)[0] != "semantic":
+            return "non_semantic_prop_token"            # v2: the alias must target the semantic layer
+        return None
+    return None                                         # unreachable for well-formed specs
+
+
+def _catalog_tree_violations(catalog: dict, tree: dict) -> list[tuple[str, str, str]]:
+    """Validate a json-render content TREE against OUR component CATALOG.
+
+    Pure (never mutates `catalog`/`tree`), stdlib-only, deterministic order. Returns
+    [] when valid, else one (code, path, detail) per violation. The eight named reds:
+    tree_cites_uncataloged_component · unknown_prop · prop_type_mismatch ·
+    non_semantic_prop_token · dangling_child · children_not_allowed · missing_root ·
+    malformed_catalog. SEPARATE from _token_layer_violations; udd-check-lint composes
+    both. non_semantic_prop_token is LAYER-only (§3 @ v2) — token existence/$type-match
+    are udd-check-lint's job (it holds tokens.json). See templates/udd-catalog.md.
+    """
+    out: list[tuple[str, str, str]] = []
+
+    # 1. catalog PropSpecs (malformed_catalog) — and collect the well-formed specs
+    components = catalog.get("components") if isinstance(catalog, dict) else None
+    if not isinstance(components, dict):
+        out.append(("malformed_catalog", "components", "catalog has no 'components' object"))
+        components = {}
+    specs: dict[str, dict[str, dict]] = {}              # component -> {prop: well-formed spec}
+    declared_names: dict[str, set] = {}                 # component -> all declared prop names
+    for cname, comp in components.items():
+        if not isinstance(comp, dict):                  # v3: a component entry must be an object
+            out.append(("malformed_catalog", f"components.{cname}", "component entry is not an object"))
+            declared_names[cname] = set()
+            specs[cname] = {}
+            continue
+        cprops = comp.get("props", {})
+        cprops = cprops if isinstance(cprops, dict) else {}
+        declared_names[cname] = set(cprops.keys())
+        ok: dict[str, dict] = {}
+        for pname, spec in cprops.items():
+            reason = _propspec_malformed(spec)
+            if reason is not None:
+                out.append(("malformed_catalog", f"components.{cname}.props.{pname}", reason))
+            else:
+                ok[pname] = spec
+        specs[cname] = ok
+
+    # 2. root (missing_root) — checked before the elements walk
+    elements = tree.get("elements") if isinstance(tree, dict) else None
+    elements = elements if isinstance(elements, dict) else {}
+    root = tree.get("root") if isinstance(tree, dict) else None
+    if not isinstance(root, str) or root not in elements:
+        out.append(("missing_root", "root", f"root {root!r} is absent from elements"))
+
+    # 3. elements (document key order)
+    for eid, el in elements.items():
+        if not isinstance(el, dict):                    # v3: an element must be an object
+            out.append(("malformed_element", f"elements.{eid}", "element is not an object"))
+            continue
+        etype = el.get("type")
+        cataloged = isinstance(etype, str) and etype in components
+        if not cataloged:
+            out.append(("tree_cites_uncataloged_component", f"elements.{eid}.type",
+                        f"type {etype!r} not in catalog"))
+
+        props = el.get("props")
+        if "props" in el and not isinstance(props, dict):   # v3: props must be an object
+            out.append(("malformed_element", f"elements.{eid}.props", "props is not an object"))
+        elif cataloged and isinstance(props, dict):
+            for pname, value in props.items():
+                if pname not in declared_names.get(etype, set()):
+                    out.append(("unknown_prop", f"elements.{eid}.props.{pname}",
+                                f"{pname!r} not declared on {etype}"))
+                elif pname in specs.get(etype, {}):     # declared + well-formed spec → value-check
+                    code = _prop_value_code(specs[etype][pname], value)
+                    if code is not None:
+                        out.append((code, f"elements.{eid}.props.{pname}",
+                                    f"{value!r} does not satisfy {specs[etype][pname]}"))
+                # declared-but-malformed-spec prop: the catalog error is already logged; skip value-check
+
+        children = el.get("children")
+        if "children" in el and not isinstance(children, list):   # v3: children must be an array
+            out.append(("malformed_element", f"elements.{eid}.children", "children is not an array"))
+        elif isinstance(children, list) and children:             # empty list == absent (no violation)
+            comp_entry = components.get(etype)
+            has_children = (bool(comp_entry.get("hasChildren", False))
+                            if cataloged and isinstance(comp_entry, dict) else False)
+            if cataloged and not has_children:
+                out.append(("children_not_allowed", f"elements.{eid}.children",
+                            f"{etype} does not declare hasChildren"))
+            else:
+                for cid in children:
+                    if cid not in elements:
+                        out.append(("dangling_child", f"elements.{eid}.children.{cid}",
+                                    f"child id {cid!r} absent from elements"))
+
+    return out
+
+
+# ---- udd-check-lint (task 4/4): the composer + cross-file token resolution ----
+# The single holder of tokens + catalog + tree. _catalog_tree_violations checks a
+# token-prop alias LAYER-only (it must target `semantic`); here we close the deferral
+# task 2 left — resolve that alias against tokens.json for EXISTENCE + $type-match.
+
+def _semantic_token_index(tokens: dict) -> dict[str, "str | None"]:
+    """Map each semantic token's dotted path -> its effective $type.
+
+    A token is a node bearing $value; its $type is the nearest $type on its path
+    (DTCG group inheritance — $type sits on the GROUP, the leaf carries only $value).
+    Keys carry the layer prefix ("semantic.color.accent"), matching the alias body.
+    """
+    out: dict[str, "str | None"] = {}
+    sem = tokens.get("semantic") if isinstance(tokens, dict) else None
+    if not isinstance(sem, dict):
+        return out
+
+    def _walk(node: object, path: list[str], inherited: "str | None") -> None:
+        if not isinstance(node, dict):
+            return
+        ttype = node.get("$type", inherited)
+        if "$value" in node:                       # a token (a leaf bearing $value)
+            out[".".join(path)] = ttype
+        for key, child in node.items():            # descend even past a token — never skip a subtree
+            if not key.startswith("$"):
+                _walk(child, path + [key], ttype)
+
+    _walk(sem, ["semantic"], None)
+    return out
+
+
+def _prop_token_resolution_violations(tokens: dict, catalog: dict, tree: dict) -> list[tuple[str, str, str]]:
+    """Resolve a tree's semantic token-prop aliases against tokens.json.
+
+    Pure + TOTAL (never mutates inputs; stdlib only; never raises on dict inputs).
+    Deterministic document order; [] == every token-prop alias resolves to an
+    existing semantic token of the right $type. Acts ONLY on a prop that is BOTH a
+    catalog PropSpec {type:token, token:<$type>} AND a tree {semantic.*} alias (the
+    props _catalog_tree_violations passed LAYER-only); everything else is task 1/2's.
+    Two codes: unresolved_prop_token · prop_token_type_mismatch.
+    """
+    out: list[tuple[str, str, str]] = []
+    sem_index = _semantic_token_index(tokens)
+    components = catalog.get("components") if isinstance(catalog, dict) else None
+    components = components if isinstance(components, dict) else {}
+    elements = tree.get("elements") if isinstance(tree, dict) else None
+    elements = elements if isinstance(elements, dict) else {}
+
+    for eid, el in elements.items():
+        if not isinstance(el, dict):
+            continue                                    # malformed_element — _catalog_tree_violations' job
+        etype = el.get("type")
+        comp = components.get(etype) if isinstance(etype, str) else None
+        if not isinstance(comp, dict):
+            continue                                    # uncataloged / malformed — already flagged there
+        cprops = comp.get("props")
+        cprops = cprops if isinstance(cprops, dict) else {}
+        props = el.get("props")
+        if not isinstance(props, dict):
+            continue
+        for pname, value in props.items():
+            spec = cprops.get(pname)
+            if not isinstance(spec, dict) or spec.get("type") != "token":
+                continue                                # only catalog token-props
+            if not (isinstance(value, str) and value.startswith("{") and value.endswith("}")):
+                continue                                # non-alias literal → task-2's prop_type_mismatch
+            target = value[1:-1]
+            if target.split(".", 1)[0] != "semantic":
+                continue                                # non-semantic alias → task-2's non_semantic_prop_token
+            want = spec.get("token")                    # the declared $type
+            if want not in _TOKEN_TYPES:
+                continue                                # malformed token PropSpec → task-2's malformed_catalog owns it
+            path = f"elements.{eid}.props.{pname}"
+            if target not in sem_index:
+                out.append(("unresolved_prop_token", path, f"{value} resolves to no semantic token"))
+                continue
+            got = sem_index[target]                     # the resolved token's inherited $type
+            if got not in _TOKEN_TYPES:
+                continue                                # resolved token's $type malformed → task-1's unknown_type owns it
+            if got != want:
+                out.append(("prop_token_type_mismatch", path,
+                            f"{value} is {got!r}, but prop wants {want!r}"))
+    return out
+
+
+def _udd_named_set_checks(root: Path) -> list[tuple[bool, str, str]]:
+    """Lint a project's UDD named set under `.add/design/` (silent when absent).
+
+    Composes _token_layer_violations + _catalog_tree_violations +
+    _prop_token_resolution_violations into cmd_check's (ok, desc, reason) checks.
+    READ-ONLY; FAIL-CLOSED on malformed JSON (a named code, never a crash). Returns
+    [] when no named set exists — so a clean / non-UI project stays untouched.
+    """
+    design = root / "design"
+    tok_path, cat_path = design / "tokens.json", design / "catalog.json"
+    proto_dir = design / "prototypes"
+    trees = sorted(p for p in proto_dir.glob("*.json") if p.is_file()) if proto_dir.is_dir() else []
+    if not (tok_path.exists() or cat_path.exists() or trees):
+        return []                                       # silent-when-absent
+
+    def _load(p: Path) -> "tuple[object, str | None]":
+        try:
+            return json.loads(p.read_text(encoding="utf-8")), None
+        except (json.JSONDecodeError, OSError) as e:
+            return None, str(e)
+
+    out: list[tuple[bool, str, str]] = []
+
+    tokens = None
+    if tok_path.exists():
+        tokens, err = _load(tok_path)
+        if err is not None:
+            out.append((False, "tokens.json parses", f"malformed_tokens_json: {err}"))
+            tokens = None
+        else:
+            v = _token_layer_violations(tokens)
+            if not v:
+                out.append((True, "tokens.json layer-valid", ""))
+            else:
+                out += [(False, "tokens.json layer-valid", f"{c}: {p} — {d}") for c, p, d in v]
+
+    catalog = None
+    if cat_path.exists():
+        catalog, err = _load(cat_path)
+        if err is not None:
+            out.append((False, "catalog.json parses", f"malformed_catalog_json: {err}"))
+            catalog = None
+
+    for tp in trees:
+        name = tp.stem
+        tree, err = _load(tp)
+        if err is not None:
+            out.append((False, f"prototype '{name}' parses", f"malformed_prototype_json: {err}"))
+            continue
+        if catalog is None:
+            continue                                    # no catalog to validate a tree against — skip quietly
+        v = list(_catalog_tree_violations(catalog, tree))
+        if tokens is not None:
+            v += _prop_token_resolution_violations(tokens, catalog, tree)
+        if not v:
+            out.append((True, f"prototype '{name}' valid", ""))
+        else:
+            out += [(False, f"prototype '{name}' valid", f"{c}: {p} — {d}") for c, p, d in v]
+
+    return out
+
+
 def cmd_check(args: argparse.Namespace) -> None:
     """Read-only integrity check of the .add project. Exit 1 if anything fails."""
     as_json = getattr(args, "json", False)
@@ -1266,6 +1664,11 @@ def cmd_check(args: argparse.Namespace) -> None:
     cycle = _find_cycle(tasks)
     checks.append((cycle is None, "task dependencies are acyclic",
                    f"cycle: {' -> '.join(cycle)}" if cycle else ""))
+
+    # UDD foundation (udd-check-lint): lint a project's named set under .add/design/ —
+    # composes the token + catalog/tree validators + the cross-file prop-token resolution.
+    # Silent when absent; read-only; fail-closed on malformed JSON.
+    checks.extend(_udd_named_set_checks(root))
 
     passed = sum(1 for ok, _, _ in checks if ok)
     failed = len(checks) - passed

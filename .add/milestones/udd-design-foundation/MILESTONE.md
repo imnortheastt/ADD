@@ -29,7 +29,7 @@ Out: building/bundling the renderer itself · fixture app · Figma/tooling sync 
 - [ ] udd-check-lint              depends-on: udd-catalog-content-schema — check: unresolved alias · component-cites-primitive · tree-cites-uncataloged-component · unknown $type → named reds
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] A sample tokens file validates the 3-layer citation rules                                        (← udd-token-schema)
-- [ ] A sample prototype tree validates catalog-constrained and renders via the documented recipe      (← udd-catalog-content-schema)
-- [ ] 0-setup on a UI project drafts DESIGN.md from the template                                       (← udd-design-template)
-- [ ] `add.py check` goes red, with a named code, on a layer or catalog violation                      (← udd-check-lint)
+- [x] A sample tokens file validates the 3-layer citation rules (← udd-token-schema) (verify: test_udd_token_schema.py::test_sample_validates_clean)
+- [x] A sample prototype tree validates catalog-constrained and renders via the documented recipe (← udd-catalog-content-schema) (verify: test_udd_catalog_content_schema.py::test_sample_validates_clean + udd-catalog.md "## Render recipe")
+- [x] 0-setup on a UI project drafts DESIGN.md from the template (← udd-design-template) (verify: test_udd_design_template.py::test_init_drafts_nonblank_design)
+- [x] `add.py check` goes red, with a named code, on a layer or catalog violation (← udd-check-lint) (verify: test_udd_check_lint.py::test_token_layer_violation_red + test_catalog_tree_violation_red)
