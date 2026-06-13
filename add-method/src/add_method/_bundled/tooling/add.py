@@ -1212,6 +1212,151 @@ def _token_layer_violations(tokens: dict) -> list[tuple[str, str, str]]:
     return out
 
 
+# ---- udd-catalog-content-schema (task 2/4): component catalog + content-tree validator ----
+_PROPSPEC_LITERALS = ("string", "number", "boolean")
+
+
+def _propspec_malformed(spec: object) -> "str | None":
+    """Return a reason if a catalog PropSpec is malformed, else None.
+
+    A PropSpec is exactly one of: {type: string|number|boolean} ·
+    {type: enum, values: [str,…]} · {type: token, token: <$type>} (a task-1 $type).
+    """
+    if not isinstance(spec, dict):
+        return "PropSpec is not an object"
+    ptype = spec.get("type")
+    if ptype in _PROPSPEC_LITERALS:
+        return None
+    if ptype == "enum":
+        values = spec.get("values")
+        if not isinstance(values, list) or not values or not all(isinstance(x, str) for x in values):
+            return "enum PropSpec needs a non-empty list of string values"
+        return None
+    if ptype == "token":
+        ttype = spec.get("token")
+        if ttype not in _TOKEN_TYPES:
+            return f"token PropSpec names unknown $type {ttype!r}"
+        return None
+    return f"unknown PropSpec type {ptype!r}"
+
+
+def _prop_value_code(spec: dict, value: object) -> "str | None":
+    """Return a violation CODE if a tree prop value mismatches its well-formed PropSpec, else None.
+
+    token props are LAYER-only here (frozen §3 @ v2): the value must be a
+    `{semantic.*}` alias. A non-alias literal → prop_type_mismatch; a wrong-layer
+    alias → non_semantic_prop_token. Target existence + $type-match defer to
+    udd-check-lint (the composer that holds tokens.json).
+    """
+    ptype = spec.get("type")
+    if ptype == "string":
+        return None if isinstance(value, str) else "prop_type_mismatch"
+    if ptype == "number":
+        ok = isinstance(value, (int, float)) and not isinstance(value, bool)
+        return None if ok else "prop_type_mismatch"
+    if ptype == "boolean":
+        return None if isinstance(value, bool) else "prop_type_mismatch"
+    if ptype == "enum":
+        return None if value in spec.get("values", []) else "prop_type_mismatch"
+    if ptype == "token":
+        if not (isinstance(value, str) and value.startswith("{") and value.endswith("}")):
+            return "prop_type_mismatch"                 # a token prop must be an alias, not a literal
+        if value[1:-1].split(".", 1)[0] != "semantic":
+            return "non_semantic_prop_token"            # v2: the alias must target the semantic layer
+        return None
+    return None                                         # unreachable for well-formed specs
+
+
+def _catalog_tree_violations(catalog: dict, tree: dict) -> list[tuple[str, str, str]]:
+    """Validate a json-render content TREE against OUR component CATALOG.
+
+    Pure (never mutates `catalog`/`tree`), stdlib-only, deterministic order. Returns
+    [] when valid, else one (code, path, detail) per violation. The eight named reds:
+    tree_cites_uncataloged_component · unknown_prop · prop_type_mismatch ·
+    non_semantic_prop_token · dangling_child · children_not_allowed · missing_root ·
+    malformed_catalog. SEPARATE from _token_layer_violations; udd-check-lint composes
+    both. non_semantic_prop_token is LAYER-only (§3 @ v2) — token existence/$type-match
+    are udd-check-lint's job (it holds tokens.json). See templates/udd-catalog.md.
+    """
+    out: list[tuple[str, str, str]] = []
+
+    # 1. catalog PropSpecs (malformed_catalog) — and collect the well-formed specs
+    components = catalog.get("components") if isinstance(catalog, dict) else None
+    if not isinstance(components, dict):
+        out.append(("malformed_catalog", "components", "catalog has no 'components' object"))
+        components = {}
+    specs: dict[str, dict[str, dict]] = {}              # component -> {prop: well-formed spec}
+    declared_names: dict[str, set] = {}                 # component -> all declared prop names
+    for cname, comp in components.items():
+        if not isinstance(comp, dict):                  # v3: a component entry must be an object
+            out.append(("malformed_catalog", f"components.{cname}", "component entry is not an object"))
+            declared_names[cname] = set()
+            specs[cname] = {}
+            continue
+        cprops = comp.get("props", {})
+        cprops = cprops if isinstance(cprops, dict) else {}
+        declared_names[cname] = set(cprops.keys())
+        ok: dict[str, dict] = {}
+        for pname, spec in cprops.items():
+            reason = _propspec_malformed(spec)
+            if reason is not None:
+                out.append(("malformed_catalog", f"components.{cname}.props.{pname}", reason))
+            else:
+                ok[pname] = spec
+        specs[cname] = ok
+
+    # 2. root (missing_root) — checked before the elements walk
+    elements = tree.get("elements") if isinstance(tree, dict) else None
+    elements = elements if isinstance(elements, dict) else {}
+    root = tree.get("root") if isinstance(tree, dict) else None
+    if not isinstance(root, str) or root not in elements:
+        out.append(("missing_root", "root", f"root {root!r} is absent from elements"))
+
+    # 3. elements (document key order)
+    for eid, el in elements.items():
+        if not isinstance(el, dict):                    # v3: an element must be an object
+            out.append(("malformed_element", f"elements.{eid}", "element is not an object"))
+            continue
+        etype = el.get("type")
+        cataloged = isinstance(etype, str) and etype in components
+        if not cataloged:
+            out.append(("tree_cites_uncataloged_component", f"elements.{eid}.type",
+                        f"type {etype!r} not in catalog"))
+
+        props = el.get("props")
+        if "props" in el and not isinstance(props, dict):   # v3: props must be an object
+            out.append(("malformed_element", f"elements.{eid}.props", "props is not an object"))
+        elif cataloged and isinstance(props, dict):
+            for pname, value in props.items():
+                if pname not in declared_names.get(etype, set()):
+                    out.append(("unknown_prop", f"elements.{eid}.props.{pname}",
+                                f"{pname!r} not declared on {etype}"))
+                elif pname in specs.get(etype, {}):     # declared + well-formed spec → value-check
+                    code = _prop_value_code(specs[etype][pname], value)
+                    if code is not None:
+                        out.append((code, f"elements.{eid}.props.{pname}",
+                                    f"{value!r} does not satisfy {specs[etype][pname]}"))
+                # declared-but-malformed-spec prop: the catalog error is already logged; skip value-check
+
+        children = el.get("children")
+        if "children" in el and not isinstance(children, list):   # v3: children must be an array
+            out.append(("malformed_element", f"elements.{eid}.children", "children is not an array"))
+        elif isinstance(children, list) and children:             # empty list == absent (no violation)
+            comp_entry = components.get(etype)
+            has_children = (bool(comp_entry.get("hasChildren", False))
+                            if cataloged and isinstance(comp_entry, dict) else False)
+            if cataloged and not has_children:
+                out.append(("children_not_allowed", f"elements.{eid}.children",
+                            f"{etype} does not declare hasChildren"))
+            else:
+                for cid in children:
+                    if cid not in elements:
+                        out.append(("dangling_child", f"elements.{eid}.children.{cid}",
+                                    f"child id {cid!r} absent from elements"))
+
+    return out
+
+
 def cmd_check(args: argparse.Namespace) -> None:
     """Read-only integrity check of the .add project. Exit 1 if anything fails."""
     as_json = getattr(args, "json", False)

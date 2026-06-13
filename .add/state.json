@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "udd-token-schema",
+  "active_task": "udd-catalog-content-schema",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -724,10 +724,45 @@
         ],
         "snapshot_md5": "f10a3cd6d3f8a5c9a95dc3bbd45ee2ed"
       }
+    },
+    "udd-catalog-content-schema": {
+      "title": "UDD catalog + content trees \u2014 component catalog (typed props \u00b7 semantic-token refs) + flat json-render-aligned prototype trees",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-13T06:57:29+00:00",
+      "updated": "2026-06-13T08:32:12+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "69f1c889aa3a5899fe6680b7e6fe1103",
+        "tests": {
+          "add-method/tooling/test_udd_catalog_content_schema.py": "afefa7b362b96bd34b832eef2df08d25"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/catalog.sample.json",
+          "add-method/src/add_method/_bundled/tooling/templates/catalog.sample.json",
+          ".add/tooling/templates/catalog.sample.json",
+          "add-method/tooling/templates/prototype.sample.json",
+          "add-method/src/add_method/_bundled/tooling/templates/prototype.sample.json",
+          ".add/tooling/templates/prototype.sample.json",
+          "add-method/tooling/templates/udd-catalog.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-catalog.md",
+          ".add/tooling/templates/udd-catalog.md",
+          "add-method/tooling/test_udd_catalog_content_schema.py"
+        ],
+        "snapshot_md5": "45e84c585afc2b489b1a1021dac7b5ea"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-13T06:53:25+00:00",
+  "updated": "2026-06-13T08:32:12+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
