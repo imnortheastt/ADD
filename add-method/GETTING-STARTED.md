@@ -343,6 +343,10 @@ You just ran the method; now read *why* it's shaped this way:
 - Each step in depth — `.add/docs/03-step-1-specify.md` through `.add/docs/09-the-loop.md`
 - Operating it on a team — `.add/docs/11-governance.md`, `.add/docs/12-roles.md`
 - A fully worked example — `.add/docs/appendix-d-worked-example.md`
+- Building UI? The render-ready UDD foundation — `.add/DESIGN.md` is the prose
+  front-door to a lintable design system (`.add/design/` tokens · catalog ·
+  prototypes) the AI drafts from; `add.py check` lints it (delete `DESIGN.md` if
+  your project has no UI)
 
 The rule to remember: **build the right thing (direction), prove it's right
 (verification), and let the AI do the building in between.**
