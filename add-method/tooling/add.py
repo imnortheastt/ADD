@@ -1106,6 +1106,112 @@ def _read_task_phase(root: Path, slug: str) -> str | None:
     return None
 
 
+# --- UDD token-layer validator (udd-token-schema) -----------------------------
+# A pure, stdlib checker for the compact-DTCG 3-layer token dialect. Returns a
+# list of (code, path, detail) violations — [] means valid. NOT wired into
+# cmd_check here: udd-check-lint surfaces these as named reds + adds the catalog/
+# tree rules (the Fork-A boundary frozen in udd-token-schema §3). The dialect and
+# its NAMED divergences from DTCG 2025.10 live in templates/udd-tokens.md.
+_TOKEN_LAYERS = ("primitive", "semantic", "component")
+_TOKEN_LAYER_CITES = {"semantic": "primitive", "component": "semantic"}
+_TOKEN_TYPES = ("color", "dimension", "number", "fontFamily", "fontWeight", "duration")
+_TOKEN_HEX_RE = re.compile(r"^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
+_TOKEN_DIM_RE = re.compile(r"^-?\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw)$")
+_TOKEN_DUR_RE = re.compile(r"^\d+(?:\.\d+)?(?:ms|s)$")
+
+
+def _token_value_form_ok(ttype: str, value: object) -> bool:
+    """True if a LITERAL value matches the compact form for its $type."""
+    if ttype == "color":
+        return isinstance(value, str) and bool(_TOKEN_HEX_RE.match(value))
+    if ttype == "dimension":
+        return isinstance(value, str) and bool(_TOKEN_DIM_RE.match(value))
+    if ttype == "number":
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    if ttype == "fontWeight":
+        return isinstance(value, str) or (
+            isinstance(value, int) and not isinstance(value, bool) and 100 <= value <= 900)
+    if ttype == "duration":
+        return isinstance(value, str) and bool(_TOKEN_DUR_RE.match(value))
+    if ttype == "fontFamily":
+        return isinstance(value, str) or (
+            isinstance(value, list) and bool(value) and all(isinstance(x, str) for x in value))
+    return False
+
+
+def _token_layer_violations(tokens: dict) -> list[tuple[str, str, str]]:
+    """Validate a compact-DTCG token dict against the 3-layer citation rules.
+
+    Pure (never mutates `tokens`), stdlib-only, deterministic document order.
+    Returns [] when valid, else one (code, path, detail) per violation. The six
+    codes are the token-layer named reds udd-check-lint surfaces. A token's LAYER
+    is its top-level group name; value forms diverge from DTCG 2025.10 to compact
+    scalars (color "#hex", dimension "<n><unit>") — see templates/udd-tokens.md.
+    """
+    if not isinstance(tokens, dict):
+        return [("malformed_value", "", "root is not a JSON object")]
+
+    # index every token (object bearing $value) by dotted path — for alias resolution
+    index: dict[str, dict] = {}
+
+    def _index(node: object, path: list[str]) -> None:
+        if not isinstance(node, dict):
+            return
+        if "$value" in node:
+            index[".".join(path)] = node
+        for key, child in node.items():            # descend even past a token — never skip a subtree
+            if not key.startswith("$"):
+                _index(child, path + [key])
+
+    for top, node in tokens.items():
+        if top in _TOKEN_LAYERS:
+            _index(node, [top])
+
+    out: list[tuple[str, str, str]] = []
+
+    def _walk(node: object, path: list[str], layer: str, inherited: "str | None") -> None:
+        if not isinstance(node, dict):
+            return
+        if "$value" in node:                                       # a token
+            pathstr = ".".join(path)
+            ttype = node.get("$type", inherited)
+            value = node.get("$value")
+            if ttype not in _TOKEN_TYPES:
+                out.append(("unknown_type", pathstr, f"$type {ttype!r} not in {list(_TOKEN_TYPES)}"))
+            elif isinstance(value, str) and value.startswith("{") and value.endswith("}"):
+                target = value[1:-1]                               # an alias
+                if layer == "primitive":
+                    out.append(("primitive_has_alias", pathstr,
+                                f"a primitive token must hold a literal, not alias {value}"))
+                elif target not in index:
+                    out.append(("unresolved_alias", pathstr, f"{value} resolves to no token"))
+                else:
+                    target_layer = target.split(".", 1)[0]
+                    if target_layer != _TOKEN_LAYER_CITES[layer]:
+                        out.append(("cross_layer_citation", pathstr,
+                                    f"{layer} may alias only {_TOKEN_LAYER_CITES[layer]}, not {target_layer}"))
+            elif not _token_value_form_ok(ttype, value):           # a literal
+                out.append(("malformed_value", pathstr, f"{value!r} is not a valid {ttype}"))
+            # a token should be a leaf; if it carries non-$ children, validate them too rather
+            # than letting them pass silently (fail-closed — never skip a subtree).
+            for key, child in node.items():
+                if not key.startswith("$"):
+                    _walk(child, path + [key], layer, ttype)
+            return
+        gtype = node.get("$type", inherited)                       # a group
+        for key, child in node.items():
+            if not key.startswith("$"):
+                _walk(child, path + [key], layer, gtype)
+
+    for top, node in tokens.items():
+        if top not in _TOKEN_LAYERS:
+            out.append(("unknown_layer", top, f"top-level group {top!r} is not a layer"))
+            continue
+        _walk(node, [top], top, None)
+
+    return out
+
+
 def cmd_check(args: argparse.Namespace) -> None:
     """Read-only integrity check of the .add project. Exit 1 if anything fails."""
     as_json = getattr(args, "json", False)

@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ux-stale-followups",
+  "active_task": "udd-token-schema",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -692,10 +692,42 @@
         ],
         "snapshot_md5": "328d75f0810c0b6ba148be603a42e117"
       }
+    },
+    "udd-token-schema": {
+      "title": "UDD token layers \u2014 DTCG-aligned compact dialect, 3 layers, the citation rule",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-foundation",
+      "depends_on": [],
+      "created": "2026-06-12T17:40:12+00:00",
+      "updated": "2026-06-13T06:53:25+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "7edc485ae116c2cfe189e196dd4307d4",
+        "tests": {
+          "add-method/tooling/test_udd_token_schema.py": "0c0814ead68f730f95abc75bf324290d"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/tokens.sample.json",
+          "add-method/src/add_method/_bundled/tooling/templates/tokens.sample.json",
+          ".add/tooling/templates/tokens.sample.json",
+          "add-method/tooling/templates/udd-tokens.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-tokens.md",
+          ".add/tooling/templates/udd-tokens.md",
+          "add-method/tooling/test_udd_token_schema.py"
+        ],
+        "snapshot_md5": "f10a3cd6d3f8a5c9a95dc3bbd45ee2ed"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-12T17:19:38+00:00",
+  "updated": "2026-06-13T06:53:25+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
