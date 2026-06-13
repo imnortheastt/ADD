@@ -4,6 +4,47 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.3.0] — 2026-06-13
+
+The render-ready-foundation release: a UI project now gets a lintable design
+foundation the AI drafts from, a build's declared scope is enforced as a gate,
+every command names who drives the next step, and the new update command
+refreshes an installed project in place. All additive; no breaking changes
+(SemVer MINOR).
+
+### Added
+- **Render-ready UDD foundation** — a `DESIGN.md` prose front-door plus a JSON
+  foundation (3-layer design tokens · a component catalog · flat prototype
+  content trees) the AI drafts UI from, wired into 0-setup. `add.py check` now
+  lints the named set under `.add/design/`, going red with a named code on any
+  layer, catalog, tree, or cross-file token-resolution violation — and staying
+  silent when a project has no design set, so non-UI projects are unaffected.
+  A `udd-tokens.md` + `udd-catalog.md` pair documents the compact-DTCG dialect
+  and the json-render render recipe.
+- **The scope gate** — a task's `§5 Scope (may touch)` declaration is frozen
+  into a snapshot at tests→build and enforced at the gate: an out-of-scope touch
+  heals the task back to BUILD for an honest redo (counting against a per-task
+  cap), while erased gate evidence fails closed. Scope creep can no longer ride a
+  green suite into a merge.
+- **Engine next-step footer + the driver marker** — every completing command now
+  prints exactly one engine-sourced `next:` line, and names who owns it:
+  `[you drive]` when the AI proceeds, `[human gate]` at a decision point. The
+  driver marker resolves from one place (autonomy × phase), so the next step and
+  its owner are never ambiguous across a session.
+- **The `update` command** — `npx @pilotspace/add update` (and the
+  `pilotspace-add update` command on PyPI) re-materializes the managed layer
+  (skill · tooling · docs) to the installed package version without a re-install.
+  It never touches your work — `state.json`, `PROJECT.md`, milestones, tasks, and
+  archive are preserved (state is backed up first regardless) — is idempotent via
+  a `.add-version` stamp, and offers `--check` to report version drift without
+  writing.
+
+### Changed
+- The foundation self-improved across these milestones: closing
+  `udd-design-foundation` folded its OBSERVE backlog into the versioned
+  CONVENTIONS/PROJECT foundation (foundation-version 29), sharpening the
+  contract-completeness, adversarial-refute, and engine-pin conventions.
+
 ## [1.2.0] — 2026-06-10
 
 The decision-arc release: the method now narrates the build as one continuous

@@ -28,7 +28,7 @@ ENGINE_PATHS = (
 IMPORTERS = (
     "test_getting_started_spine.py",
     "test_installer_handoff.py",
-    "test_release_1_2_0.py",
+    "test_release_1_3_0.py",
     "test_review_checklist.py",
     "test_skill_onramp.py",
 )

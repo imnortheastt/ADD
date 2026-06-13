@@ -5,7 +5,7 @@ The doc is the artifact under test: the spine (everything before the
 escape-hatch heading) asks the reader to type ONLY the install command; the
 by-hand seven-phase walk lives in a self-contained escape-hatch appendix.
 These tests pin the v15 restructure; the shipped guards (test_quickstart,
-test_v8_docs, test_onboarding_align, test_release_1_2_0) pin what must
+test_v8_docs, test_onboarding_align, test_release_1_3_0) pin what must
 survive it — together they are the union the rewrite designs to.
 Run: python3 -m unittest test_getting_started_spine -v
 """
