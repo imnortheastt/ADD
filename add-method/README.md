@@ -46,6 +46,12 @@ pilotspace-add init
 No flags needed — the project name is inferred from your folder and the stage
 defaults to `prototype` (pass `--name "My App" --stage mvp` to choose up front).
 
+**Already installed?** Refresh to the latest without a re-install —
+`npx @pilotspace/add@latest update` (or `pipx run pilotspace-add update`)
+re-materializes the skill, tooling, and book while leaving your project work
+(`.add/state.json`, `PROJECT.md`, milestones, tasks) untouched; add `--check` to
+see whether a project is behind the installed package.
+
 **New here?** Follow the [10-minute Quickstart](./GETTING-STARTED.md) — it walks
 your first feature end to end.
 
@@ -56,6 +62,13 @@ This installs:
 | `.claude/skills/add/` | the `add` skill Claude loads (thin router + per-phase guides) |
 | `.add/tooling/add.py` | scaffolder + state tracker (Python, stdlib only) |
 | `.add/docs/` | the AIDD book — the method rationale |
+| `.add/DESIGN.md` | (UI projects) the prose front-door to the **render-ready UDD foundation** — delete it if your project has no UI |
+
+On a UI project, UDD gives the AI a frozen design ground to draft from: `DESIGN.md`
+plus a lintable JSON foundation under `.add/design/` (design tokens · component
+catalog · prototype trees). `add.py check` lints that foundation, going red with a
+named code on any layer, catalog, tree, or cross-file violation — and staying
+silent when a project has no design set.
 
 Project state (`.add/state.json`) and the living-documentation files (`CONVENTIONS.md`,
 `GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`) are *not* created
