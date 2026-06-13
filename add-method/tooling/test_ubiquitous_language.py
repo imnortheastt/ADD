@@ -33,7 +33,7 @@ TERMS = [
     dict(slug="one-approval-front", ban=r"\b(one[- ]approval|approval|the|whole|task's) front\b",
          old_keep="one-approval front", idiom="one-approval front", keep="specification bundle", token=None),
     # (?!-audit): `seam-audit` is a Group C machine token — CI job/workflow name,
-    # pinned by test_audit_ci + test_release_1_2_0 (contract machine-layer rule).
+    # pinned by test_audit_ci + test_release_1_3_0 (contract machine-layer rule).
     dict(slug="seam", ban=r"\bseams?\b(?!-audit)",
          old_keep="seam", idiom="seam", keep="decision point", token=None),
     dict(slug="fold", ban=r"\bfold(s|ed|ing)?\b",
