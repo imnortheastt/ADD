@@ -6,6 +6,14 @@ citation rule, and value forms compacted for the AI economy. Aligned with the
 — <https://www.designtokens.org/tr/2025.10/format/>); every divergence is NAMED
 below. `tokens.sample.json` is a worked example that validates clean.
 
+## Identity values are human-owned — discuss at specify
+
+The dialect checks a token's **shape**; its identity **value** — the brand
+color, the palette seed, the typeface — is design *direction*, not an AI
+default. During **specify**, surface identity tokens for discussion with the
+user; never invent a brand value. Shape is verifiable; identity is a human
+decision.
+
 ## The three layers (a convention, not a DTCG feature)
 
 A token's **layer is its top-level group name** — `primitive`, `semantic`, or
