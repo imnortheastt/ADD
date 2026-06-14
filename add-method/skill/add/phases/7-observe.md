@@ -34,6 +34,8 @@ Never: auto-roll-back — recommend; a human owns the production decision.
 - [ ] A reviewed spec delta captured (becomes the next `new-task`).
 </exit_gate>
 
+> **Advisor · Confidence** — spawn a reviewer to mine the run for lessons (advisor.md); score Self-evaluation — did this loop teach the foundation? (confidence.md).
+
 ## Next
 
 Loop. The artifacts you built are living documents the next cycle refines.

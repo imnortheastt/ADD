@@ -695,7 +695,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-13T11:41:57+00:00",
+  "updated": "2026-06-14T16:40:19+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1061,6 +1061,17 @@
         "udd-check-lint"
       ],
       "archived": "2026-06-13"
+    },
+    {
+      "slug": "advisor-context",
+      "title": "Advisor Context",
+      "tasks": 3,
+      "task_slugs": [
+        "confidence-rubric",
+        "advisor-strategy",
+        "per-step-hooks"
+      ],
+      "archived": "2026-06-14"
     }
   ]
 }

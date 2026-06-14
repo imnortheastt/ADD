@@ -92,7 +92,11 @@ gathers confirmed deltas into a versioned foundation — read `fold.md`.
 
 Once **§3 CONTRACT is FROZEN**, the build→verify half is a dynamic, auto-gated run
 (`autonomy: auto` default, lowered to `conservative` or `manual` for a human gate) — read `run.md`. To
-pipeline several ready tasks behind their own frozen contracts, read `streams.md`.
+pipeline several ready tasks behind their own frozen contracts, read `streams.md`. To delegate
+one piece of your plan to a subagent that follows it — when to spawn, the plan-following prompt
+template, the tier pick — read `advisor.md`; and at any decision point self-score your draft
+(0–1 across six dimensions, refine if any < 0.9) with `confidence.md`. Both are advisory: the
+engine never spawns, and the self-score is never a gate.
 
 When a milestone's tasks are all done but its **goal** (the `MILESTONE.md` exit criteria) is not
 yet met, `milestone-done` holds the milestone open — read `loop.md` for the dynamic loop that turns

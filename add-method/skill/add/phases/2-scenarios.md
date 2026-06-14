@@ -40,6 +40,8 @@ Never: settle for a vague result ("then it works") — results must be specific 
 - [ ] Every rejection asserts what stays unchanged.
 </exit_gate>
 
+> **Advisor · Confidence** — delegate a wide scenario sweep when the surface is large (advisor.md); score Edge cases honestly — a missing case surfaces there first (confidence.md).
+
 ## Next
 
 `python3 .add/tooling/add.py advance` → read `phases/3-contract.md`.

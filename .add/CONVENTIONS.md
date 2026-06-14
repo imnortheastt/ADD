@@ -669,3 +669,21 @@ Architecture:
   counter from one source (tamper) then triggering a different source (scope) is the only assertion that
   distinguishes a shared cap from parallel independent caps.
   [scope-gate-enforce + scope-violation-heal — folded foundation-version 29]
+- (SDD) **A new skill-engine doc silently trips two surface-inventory guards — register AND declare it
+  before tests→build.** Adding `confidence.md` / `advisor.md` reddened `test_xml_convention.ENGINE_FILES`
+  (registration) and the `test_wording_lint` surface COUNT at the same time; both must be named in §5 Scope
+  before the tests→build cross, or the frozen anchor records an undeclared touch. Sharpens
+  §5-scope-frozen-at-tests-build for the new-engine-doc case: the inventory guards, not just the prose,
+  define the scope a method-surface task must declare. [advisor-strategy — folded foundation-version 30]
+- (TDD) **A content guard that enumerates the FULL set it covers + asserts mutual distinctness defeats both
+  the missing-item cheat and the boilerplate cheat.** `test_per_step_hooks` lists all 8 phase guides and
+  asserts each Advisor·Confidence hook is present AND distinct from its siblings — a count/membership pair
+  plus distinctness is the test-pattern for any "every X carries a non-boilerplate Y" doc requirement.
+  [per-step-hooks — folded foundation-version 30]
+- (ADD) **Two authoring rules for method-surface milestones: build in the build phase, and deliver per-step
+  context as thin pointers.** (a) Authoring the implementation during SPECIFY makes the tests→build snapshot
+  capture an already-built tree, so the scope-gate becomes a no-op — write code IN build so the gate
+  meaningfully checks touched ⊆ declared. (b) Richer per-step AI context belongs in ONE shared doc
+  (`advisor.md` / `confidence.md`) reached by a thin per-guide pointer, never inline prose — progressive
+  disclosure kept the 8 guides minimal (applies single-source-point-not-restate to per-step hooks).
+  [advisor-strategy + per-step-hooks — folded foundation-version 30]
