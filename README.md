@@ -78,7 +78,7 @@ tells you exactly where you left off. No context rot.
 
 **Go deeper:** the [2-minute Getting Started](./GETTING-STARTED.md) · the
 [full hands-on walkthrough](./add-method/GETTING-STARTED.md) (one real feature, end to
-end) · [package source](./add-method/README.md) · [`CHANGELOG`](./CHANGELOG.md).
+end) · [package source](./add-method/README.md) · [`CHANGELOG`](./add-method/CHANGELOG.md).
 Releases: `@pilotspace/add` (npm) · `pilotspace-add` (PyPI) — one tag publishes both
 (see [`.github/workflows/publish.yml`](./.github/workflows/publish.yml)).
 
