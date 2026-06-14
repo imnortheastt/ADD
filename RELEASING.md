@@ -45,7 +45,9 @@ PyPI ▸ your account ▸ **Publishing** ▸ **Add a pending publisher** (use th
    - `add-method/package.json` → `version`
    - `add-method/pyproject.toml` → `version`
    - `add-method/src/add_method/__init__.py` → `__version__`
-2. **Update `CHANGELOG.md`** — add the new version section and date.
+2. **Update `add-method/CHANGELOG.md`** — add the new version section and date.
+   (The root `CHANGELOG.md` is a pointer to this file, so it needs no per-release
+   edit; same for the root `GETTING-STARTED.md` pointer.)
 3. **Open a PR**, let CI go green, **merge to `main`**.
 4. **Tag from `main`** and push:
    ```bash
