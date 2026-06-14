@@ -133,21 +133,10 @@ def install(
     # `add.py init` would grandfather-lock the v12 lock-down gate before `/add` runs (see
     # the module header). So we do NOT exec add.py here.
     _log("\nDone. The `add` skill + tooling are installed (no project state yet — that's intentional).")
-    _log("Next:  open Claude Code, run `/add`, and say what you want to build — the agent")
+    _log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent")
     _log("       sets up the foundation, sizes it into a milestone, and drives the build with you;")
     _log("       you sign off once, at the lock-down.")
     _log("")
-    _log("Prefer the CLI / not using Claude Code? Initialise it yourself (this arms the lock-down):")
-    # Echo only flags the user actually chose — the engine's own `init`
-    # defaults the stage and infers the name, so the flagless hint is the
-    # shortest TRUE command (npm <-> pip parity with bin/cli.js).
-    launcher = "py" if sys.platform == "win32" else "python3"  # parity with cli.js
-    manual_init = f"  {launcher} .add/tooling/add.py init --await-lock"
-    if stage:
-        manual_init += f" --stage {stage}"
-    if name:
-        manual_init += f' --name "{name}"'
-    _log(manual_init)
     return 0
 
 

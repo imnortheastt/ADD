@@ -102,15 +102,10 @@ function cmdInit(args) {
   // (via `/add`) or a CLI user — a pre-run plain `add.py init` would grandfather-lock
   // the v12 lock-down gate before `/add` runs (see file header). So no Python is run here.
   log("\nDone. The `add` skill + tooling are installed (no project state yet — that's intentional).");
-  log("Next:  open Claude Code, run `/add`, and say what you want to build — the agent");
+  log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent");
   log("       sets up the foundation, sizes it into a milestone, and drives the build with you;");
   log("       you sign off once, at the lock-down.");
   log("");
-  log("Prefer the CLI / not using Claude Code? Initialise it yourself (this arms the lock-down):");
-  const launcher = process.platform === "win32" ? "py" : "python3";
-  log(`  ${launcher} .add/tooling/add.py init --await-lock` +
-      (args.stage ? ` --stage ${args.stage}` : "") +
-      (args.name ? ` --name "${args.name}"` : ""));
 }
 
 // --- update: re-materialize the managed layer without a re-install -----------
