@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "gitignore-scaffold",
+  "active_task": "compact-book-align",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -717,10 +717,170 @@
         ],
         "snapshot_md5": "af6f24002b8d49c183a877bdbf4cf8e8"
       }
+    },
+    "compact-contract": {
+      "title": "Compaction contract \u2014 shared eligibility + 4 per-spec rolled-line shapes + convention-vs-engine seam",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "foundation-compaction",
+      "depends_on": [],
+      "created": "2026-06-15T04:26:06+00:00",
+      "updated": "2026-06-15T04:57:19+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "00b955a757a6a9459d53e9141f5adf2c",
+        "tests": {
+          ".add/tasks/compact-contract/tests/test_compaction_contract.py": "17e7827c2a6bae246dff005af26974ee"
+        }
+      },
+      "scope": {
+        "declared": [
+          ".add/tasks/compact-contract/compaction-contract.md",
+          ".add/tasks/compact-contract/tests/",
+          ".add/tasks/compact-contract/tests/add.py"
+        ],
+        "snapshot_md5": "3ff5aeb3be4be4e52321ff70680e2721"
+      }
+    },
+    "invariant-amend": {
+      "title": "Re-freeze append-only with the recorded compaction door + reject codes",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "foundation-compaction",
+      "depends_on": [
+        "compact-contract"
+      ],
+      "created": "2026-06-15T04:26:06+00:00",
+      "updated": "2026-06-15T06:29:35+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "f26cd0ccbc89cc082aa8efbd1d45d358",
+        "tests": {
+          ".add/tasks/invariant-amend/tests/test_invariant_amend.py": "a7bd1ce2342b6ef960e28c2d71b8cf2f"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/fold.md",
+          "add-method/src/add_method/_bundled/skill/add/fold.md",
+          ".claude/skills/add/fold.md",
+          ".add/PROJECT.md",
+          ".add/CONVENTIONS.md",
+          ".add/tasks/invariant-amend/tests/",
+          ".add/tasks/invariant-amend/tests/add.py"
+        ],
+        "snapshot_md5": "3ff5aeb3be4be4e52321ff70680e2721"
+      }
+    },
+    "compact-guide": {
+      "title": "compact-foundation.md ritual (per-spec sections) + SKILL milestone-close cue",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "foundation-compaction",
+      "depends_on": [
+        "compact-contract"
+      ],
+      "created": "2026-06-15T04:26:06+00:00",
+      "updated": "2026-06-15T06:59:57+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "a14c2503bd3f51fd833707ed84134898",
+        "tests": {
+          ".add/tasks/compact-guide/tests/test_compact_guide.py": "c52a730e346f4e11248025ec4ab27ad2"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/compact-foundation.md",
+          "add-method/src/add_method/_bundled/skill/add/compact-foundation.md",
+          ".claude/skills/add/compact-foundation.md",
+          "add-method/skill/add/SKILL.md",
+          "add-method/src/add_method/_bundled/skill/add/SKILL.md",
+          ".claude/skills/add/SKILL.md",
+          "add-method/tooling/test_per_step_hooks.py",
+          "add-method/tooling/test_wording_lint.py",
+          ".add/tasks/compact-guide/tests/",
+          ".add/tasks/compact-guide/tests/add.py"
+        ],
+        "snapshot_md5": "d190e38e54e0d4c8a0a5d8b7f772a55d"
+      }
+    },
+    "apply-compaction": {
+      "title": "Dogfood: compact live PROJECT.md + CONVENTIONS.md; tests guard no-residue-lost",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "foundation-compaction",
+      "depends_on": [
+        "invariant-amend",
+        "compact-guide"
+      ],
+      "created": "2026-06-15T04:26:06+00:00",
+      "updated": "2026-06-15T07:56:55+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e1a61119f5389a9d7b74e5a5d8a7f313",
+        "tests": {
+          ".add/tasks/apply-compaction/tests/test_apply_compaction.py": "db2afc5c2f064cb431a9b5ddeee7e685"
+        }
+      },
+      "scope": {
+        "declared": [
+          ".add/PROJECT.md",
+          ".add/CONVENTIONS.md",
+          ".add/tasks/apply-compaction/tests/",
+          ".add/tasks/apply-compaction/compaction_lib.py",
+          ".add/tasks/apply-compaction/apply_compaction.py",
+          ".add/tasks/apply-compaction/snapshot_before.json",
+          ".add/",
+          ".add/tasks/apply-compaction/tests/add.py"
+        ],
+        "snapshot_md5": "50e97cd04be2712d1f97411e06f12d8f"
+      }
+    },
+    "compact-book-align": {
+      "title": "Book + GLOSSARY describe foundation compaction + the 4 per-spec shapes",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "foundation-compaction",
+      "depends_on": [
+        "compact-contract"
+      ],
+      "created": "2026-06-15T04:26:06+00:00",
+      "updated": "2026-06-15T08:39:46+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "d142b5f3f288a204d14ef36de631df42",
+        "tests": {
+          ".add/tasks/compact-book-align/tests/test_compact_book_align.py": "0696a3aad7f5741a8ced39a1a07bc800"
+        }
+      },
+      "scope": {
+        "declared": [
+          "09-the-loop.md",
+          "add-method/docs/09-the-loop.md",
+          "add-method/src/add_method/_bundled/docs/09-the-loop.md",
+          ".add/docs/09-the-loop.md",
+          "appendix-c-glossary.md",
+          "add-method/docs/appendix-c-glossary.md",
+          "add-method/src/add_method/_bundled/docs/appendix-c-glossary.md",
+          ".add/docs/appendix-c-glossary.md",
+          "add-method/tooling/templates/GLOSSARY.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/GLOSSARY.md.tmpl",
+          ".add/GLOSSARY.md",
+          ".add/tasks/compact-book-align/tests/",
+          ".add/tasks/compact-book-align/tests/test_ground_prose._doc_trees",
+          "<name>",
+          "add.py",
+          ".add/\u2026",
+          ".add/",
+          "add-method/\u2026"
+        ],
+        "snapshot_md5": "20fa96ca24590884f8d3f30526db496a"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T02:09:01+00:00",
+  "updated": "2026-06-15T08:39:46+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -841,9 +1001,17 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
+    },
+    "foundation-compaction": {
+      "title": "Foundation compaction \u2014 every survivor spec shrinks too",
+      "goal": "A maintainer can compact any of the four foundation specs at milestone close \u2014 collapsing shipped-and-stable entries into a per-spec rolled-up settled line while every OPEN residue and the audit trail stay live \u2014 so the survivor layer keeps to one screen each as the project grows past v50.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-15T04:25:22+00:00",
+      "updated": "2026-06-15T04:25:22+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "foundation-compaction",
   "archived": [
     {
       "slug": "v5",

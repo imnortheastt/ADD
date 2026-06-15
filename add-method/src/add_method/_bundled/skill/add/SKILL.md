@@ -86,7 +86,7 @@ In **observe**, also emit **lessons learned** — learnings tagged by which of t
 (`DDD · SDD · UDD · TDD · ADD`) they improve — so the foundation self-improves across loops.
 You write them as `open`; the human consolidates them into `PROJECT.md`. Read `deltas.md` for the
 grammar and the status lifecycle. At milestone close (or on demand), run the retrospective consolidation that
-gathers confirmed deltas into a versioned foundation — read `fold.md`.
+gathers confirmed deltas into a versioned foundation — read `fold.md`. Then (or on demand) compact the stable tail of each foundation spec into a rolled-up settled line — read `compact-foundation.md` (a SEPARATE step, run after `fold.md`).
 
 ## Beyond the bundle — load on demand
 

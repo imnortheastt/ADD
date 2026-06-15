@@ -35,179 +35,43 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   not (v22 · DDD; same archive seam as graduation-analytics' traversal-basis convention).
 
 ## Spec / Living Document (SDD) — what we are building, now
-- Latest shipped → `.add/milestones/v9-1/MILESTONE.md` (phase-detail drill-down). See
-  `add.py status` for live rollup. (earlier v1.1 polish tasks remain open.)
-- SDD is elicitation-driven, not template-driven: co-specify (Diverge→Converge→Validate
-  + ranked least-sure flag) drives drafting at EVERY altitude — foundation (0-setup),
-  milestone (scope.md), task (§1); named diverge seeds + foundation lenses make
-  "ask before draft" checkable (cospecify-lift v5).
-- Frozen contracts (survivor): `set-milestone`, `milestone-done`, `check` exit
-  codes; the 7-phase task flow (re-frozen v20: `done` is terminal EXCEPT via the recorded
-  `reopen` back-edge — `add.py reopen <task> --to <phase> --reason "…"` resets the gate and
-  records why; never a silent un-done; ground-phase added a phase-0 `ground` preamble IN FRONT — AI-owned, no new
-  gate, the seven steps' numbering + gate unchanged, additive); the milestone tier (`MILESTONE.md` + `depends_on`);
-  `report` / `report --json` (read-only awareness) + `report_data` facts seam;
-  `report <task>` / `report <m> <task>` (read-only phase drill-down) + `task_phases` extraction
-  seam (per-phase fields + `(empty)` fail-closed; smart milestone-first-else-task resolution).
-- Surfaces evolve **additively**: a new output tier or field (a WARN level; `warnings`/`warned` in
-  `--json`) leaves existing semantics + exit codes unchanged, so no existing consumer breaks — additive
-  is the backward-safe way to extend a frozen seam (orphan-task-guard v8-1).
-- v19 (guard hygiene) SHIPPED as ADD's first real parallel wave: single-source ENGINE_MD5
-  (`engine_pin.py`, five importers) + a fence-aware prose slicer (`md_section.py`, four importers). The wave
-  tooling itself shipped earlier in this loop — the `WAVE.md` ledger convention (streams.md) and a live
-  `add.py status` wave hint (engine surface, precedent cmd_status-hint v9); a runtime gap in the wave
-  protocol (spawn-time-worktree fork-base check) is tracked as the `wave-protocol-runtime` task.
-- Settled vs open: SETTLED — minimal engine, one TASK.md/feature, npm `@pilotspace/add`,
-  PROJECT.md foundation, dynamic-by-reference guideline injection; **per-phase report
-  drill-down** (SHIPPED v9-1: `report <task>` renders each phase's RESULT). OPEN — interactive
-  `add.py guide`, Vietnamese quickstart, milestone archive/rotation; cross-task / cross-milestone
-  phase DIFF (explicitly out of v9-1 — the next awareness slice if wanted); **deferred enforcement/UX
-  from the v6–v8 fold** — `add.py activate <slug>` (re-point the active task among siblings), a
-  high-risk-auto friction signal at the dial, a surfaced one-approval review checklist, an automated
-  fold-nudge (emission outpaces human fold capacity).
-- v6 (The Self-Driving Run): DESIGNED + dogfood-tested, **NOT human-validated** — the
-  dynamic run / evidence auto-gate is safe only with a human gate or a CI enforcer separate
-  from the agent (a self-asserted gate is circular); the fold is the new human bottleneck.
-  The principle 6/7 reframe (automated verification) needs human review before it is trusted.
-- v7 (Auto by default — the one-approval flow): **SHIPPED 2026-06-02** — both gates PASS
-  (human diff review; conservative scope), milestone done. Human-directed REVERSAL of v6's
-  `conservative` default → `auto` is the default; the human-led front is ONE approval at the
-  contract-freeze seam. Two safeties kept: the seam stays human (so "never self-gate a human-led
-  gate" holds) and high-risk / method-defining scope is guarded (`unguarded_high_risk_auto`) —
-  security is always HARD-STOP. **Onboarding aligned** (onboarding-align, PASS): the surfaces
-  describe this single flow; the v6/v7 doc drift is resolved.
-  Enforcement is still PROSE, not engine (DEFERRED, tracked in v7 MILESTONE: a CI enforcer + tests
-  that a high-risk scope actually lowers and the one-approval seam is honored).
-- v9 (Awareness surface): **SHIPPED 2026-06-02** — `add.py report [milestone]` rolls per-task
-  phase results up under a milestone retrospective (verdict-first label grid · phase track ·
-  exit-criteria · waivers · carried learnings); `--json` is the stable facts seam (tool captures
-  data, agent formats); `milestone-done` persists the canonical render to `RETRO.md` fail-closed
-  (doc written BEFORE the status commit). 208 tests, dual-tree byte-identical, stdlib-only. Proved
-  by dogfood: v9's own close generated its RETRO.md byte-identical to the canonical render.
-- v9-1 (Phase-detail drill-down): **SHIPPED 2026-06-02** — `add.py report <task>` (and explicit
-  `report <m> <task>`) renders a single task's SEVEN phase blocks (specify→observe): each phase's
-  captured §N body + reached/current marker, the verify block's GATE sourced from state.json (never
-  prose), missing/placeholder → `(empty)`. Two pure seams (`task_phases` + `render_task_detail`),
-  smart single-arg CLI (milestone-first-else-task), read-only + fail-closed (utf-8 + OSError guard
-  on the read). Purely additive — the v9 rollup is byte-for-byte unchanged. 219 tests, dual-tree
-  byte-identical. Dogfood-proved: v9-1's own close reported on itself via the v9 surface.
-- v13 (Decision-seam reports): **SHIPPED 2026-06-05** — decide digest (DECIDE NEXT + frozen
-  facts seam) · §4-declared tests fallback (`†` footnote) · fence-safe drill-down (fenced
-  blocks render byte-verbatim). Two SDD residues OPEN: (a) the `Tests live in:` declaration
-  grammar (backticked tokens · `./` task-relative · root-relative with `/` · bare sibling
-  shorthand · directory → non-recursive `*.py`) is engine-parsed but stated nowhere — write
-  it into the §4 template/guide; (b) declared tokens may name paths outside the project root
-  (read-only; leaks only an integer def-count — reviewed at §6, human-confirmed) — a
-  confinement Reject rule is a candidate for a future contract version.
-- v13-1 (Report hardening): **SHIPPED 2026-06-05** — all three v13 residues closed: the
-  `Tests live in:` grammar STATED (template comment + guide section, prose ≡ engine) ·
-  declared paths CONFINED to the project root (contract v2: resolve-then-check per file
-  read; `..`/absolute/symlink escapes count 0 — the pathlib absolute-join hole
-  `root / "/abs"` IS `/abs` was live in v1; future path-resolving contracts must name
-  absolute tokens explicitly) · DECIDE NEXT plan-aware (`planned_unscaffolded` additive
-  key + footer hint; the foundation-v11 manual cross-check retired by its own sunset).
-- v14 (Production-ready ADD): **SHIPPED 2026-06-05** — `add.py audit` (judgment-free seam
-  re-verification) · blocking seam-audit CI job + consumer workflow · `risk: high` grammar +
-  `unguarded_high_risk_auto` engine guard · `guide  :` phase-playbook line + agent-agnostic
-  AGENTS.md block (any agent, CLI alone) · the freeze review checklist · **1.1.0 live on npm
-  + PyPI** (tag-driven, guard-gated; npm auth = granular 2FA-bypass token after OIDC would
-  not engage — rotation ~90d watched). SDD learnings carried: (a) prose artifacts accrete
-  PROPERTY guards across milestones — grep the guards and design to the UNION before any
-  rewrite (VALIDATED v15: the union rule's first PREMEDITATED application — a 16-guard
-  GETTING-STARTED rewrite landed green first pass); (b) strip comments before machine-token
-  matching, or every documentation form of the token self-triggers; (c) a CI job that runs
-  another ecosystem's tests must provision THAT ecosystem's declared floor itself (build
-  isolation honors it everywhere else).
-- v15 (Zero-command on-ramp): **SHIPPED 2026-06-06** — after one install command a newcomer
-  reaches their first verified feature purely by talking to the AI: GETTING-STARTED restructured
-  around the conversational spine (the 7-phases-by-hand became an escape-hatch appendix), both
-  installers end with an AI handoff + inferred `--name/--stage`, and a protocol-walk test drives a
-  fresh install → init → lock → first gated task issuing every `add.py` call ITSELF against the
-  INSTALLED tree (criterion 3). SDD learning carried: a behavioral JOURNEY test (the protocol walk)
-  and a PROSE-coherence test are different guarantees — the walk proved the machinery works at v1
-  while the guide still told the human to TYPE the lock; words-exist≠method-works cuts both ways, so
-  a green journey is not evidence the guide is coherent. Engine feature-frozen all milestone
-  (add.py md5 pinned ×3); the lock moved from human-typed to AGENT-run on the human's explicit
-  confirmation, consent prose-guarded — the machine-readable confirm protocol (gap 5) stays OPEN.
-- v16 (XML prompt structure): **APPLIED 2026-06-06, release version bump DEFERRED** — the agent-executable
-  prompt surface now carries a frozen 5-tag XML convention (`<prompt>` · `<exit_gate>` · `<output_format>` ·
-  `<constraints>` · `<reject_codes>`): the 1-specify pilot + 7 phase guides (prompt/output_format/exit_gate),
-  the 10 engine docs (constraints/reject_codes — first use), and appendix-b's prompt library (each prompt a
-  `<prompt>`-wrapped INTACT fence). 3 mirrors byte-identical; 474 tests; vocabulary whole + closed (5-tag
-  census). SDD learning carried: a CLOSED tag notation needs a DISAMBIGUATION rule when it collides with
-  notation already in the prose — the convention's `<x>…</x>` collided with existing `<name>`/`<why>`/`<cost>`
-  prose placeholders, resolved by the PAIRED-tag rule (a convention tag = the intersection open∩close; a lone
-  `<x>` is prose, ignored). Templates (`*.tmpl`) assessed: pure fill-in forms, nothing executable to tag. The
-  release/version bump for the convention is OUT of v16 — a future milestone when the team ships it.
-- v17 (prompt-clarity): **APPLIED 2026-06-07** — the agent-facing prompt surface (SKILL.md + 9 engine
-  docs + 8 phase guides + appendix-b) rewritten literal/direct/positively-framed behind TWO frozen
-  deterministic gates (wording-lint F1–F4 · semantic-inventory S1–S3), with "semantics provably
-  preserved" recorded against a THREE-LEG definition: deterministic gate (necessary) + human review of
-  the ceded classes at two conservative verify gates (CR-2 ratified needle · CR-3 reverted the one
-  obligation-moving positivization) + an indicative behavioral spot-check (9/9 blind cold passes met
-  the hard-stops — steering-evidence, never preservation-proof). All 5 idiom_map idioms retired in
-  BOTH written forms surface-wide and [enforced] (named-set pinned); 180 W of always-loaded summary
-  trimmed (the criterion's ~290 W recorded met-WITH-deviation — the figure was an estimate, the stop
-  kept load-bearing prose); run.md auto-gate/high-risk rules moved into `<constraints>` (ratified
-  ENGINE_FILES CR-1); emphasis reserved for the true hard-stops. 517 tests. Deferred OUT: the rigorous
-  N-sampled behavioral harness · few-shot `<example>` blocks · harness-ENFORCED hard-stops · release bump.
-- v18 (Prompt structure & file hygiene): **SHIPPED 2026-06-07** — templates gain the FORM-TAG class
-  (`<must>` · `<reject>` · `<after>` · `<assumptions>` · `<scenarios>` · `<test_plan>`: a closed fill-region
-  vocabulary, paired · own-line · multi-line, a SEPARATE class from v16 instruction tags — neither side
-  borrows), engine parse seams proven byte-compatible on new scaffolds; and the archive lifecycle gains
-  step two — `add.py compact <slug>` moves a light-archived milestone's files into `.add/archive/<slug>/`
-  (validate-all-then-move · six named reject codes · deltas-consolidated-first hard reject · reverse-move
-  recovery, state needs no edit; the `compacted:` rollup stamp survives a reverse move — recovery restores
-  files, not the stamp). 562 tests. OPEN: engine parsing of form-tag content (`<must>`/`<reject>`
-  rule-level reporting) — form tags made fill regions machine-delimited so that lands without touching
-  templates again.
-- v20 (Goal-Driven Dynamic Loop): **SHIPPED 2026-06-08** — a milestone self-drives toward its GOAL.
-  `milestone-done <slug>` REFUSES to close while the milestone has exit criteria and not all are met
-  (`milestone_goal_unmet`, fires only when total>0 — criteria-less milestones close as before); the exit-criteria
-  checkbox IS the human's goal-met affirmation (the engine reads the [x]/[ ] tally, never judges); decide-next
-  names the feed-forward inventory instead of "archive" while the goal is unmet; a guide (`loop.md`) + the book's
-  loop chapter document the propose→confirm cycle. 626 tests; engine md5 ×3. Mirror counts a contract must name:
-  add.py ×3 (canonical · _bundled · dogfood) · book ×4 · engine_pin ×1 · test_min_pillar ×1 (engine_pin is
-  single-source, not "copies"). The milestone-reactivation residual is resolved-by-deferral — the gate holds the
-  milestone `active`, so in-loop reopens happen while it is still active; the only cross-milestone residual (reopen
-  in an already-closed milestone) is surfaced by `check`. OPEN: the total==0 dodge — a milestone created with zero
-  exit-criteria boxes is never held; a stricter `milestone_no_criteria` reject is a clean v21 follow-up (its own
-  bundle — it would trip the WIDE reaction across the 14 pre-v20 milestones).
-- v21 (Foundations & Lineage / grounding): **SHIPPED 2026-06-08** — the book gains a references appendix (27
-  grouped, verified sources, a "how ADD relates" line each + a spec-kit↔ADD phase table), a "Foundations &
-  Lineage" chapter, and inline citations woven into 02/03/09, all ×4 byte-identical. Three SDD learnings: a
-  survey/lineage chapter's natural citation density is NEAR-COMPLETE (26/27, each load-bearing), not the sparse
-  "subset" a spec instinctively pictures — spec a survey as near-full coverage; and the cross-task-finding path
-  is the recorded `reopen` — a defect found while working task N in an already-done task M is fixed by `reopen M`
-  (recorded, gate reset), never a silent out-of-scope edit (validated: inline-citations → reopen foundations-chapter
-  to reframe the [Yuan et al. 2024] framing). OPEN: the cite-key suffix-assignment order (2025a/b/c) is
-  deterministic-by-appendix-reading-order but undocumented in appendix-g "How to cite" — a one-line note hardens
-  it (deferred, a doc touch for a future appendix milestone). [folded foundation-version 21]
-- v22 (Stage graduation — the 4th scope level): **SHIPPED** — `mvp→production` becomes an analytics-driven,
-  interview-led, human-confirmed roadmap, never a label flip: `graduation-report` clusters five MVP record-sets
-  (gather-not-judge) · `graduate.md` orchestrates cue→interview→draft≥1 production milestone→confirm→flip ·
-  `stage production` is guarded (`stage_no_roadmap`, a tally not a readiness verdict; `--force` + `init --stage`
-  are the named at-creation doors) · `stage-goal-criteria` (the human's `[x]` "mvp covered" checklist). SDD
-  learnings carried to CONVENTIONS (how-we-author): guarded-transition-names-its-door · data-shape-bounded-clause-
-  names-its-trigger · contract-freeze-cross-checks-the-prior-frozen-seam. [folded foundation-version 22]
-- v23 (Decision-point transparency — the decision arc): **SHIPPED 2026-06-09** — every human decision gate now
-  opens its synthesized report with the **decision arc**: `goal:` (the milestone goal) · `done:` (achievement —
-  the proven progress) · `plan:` (what's next), rendered first above the five report blocks, engine-sourced,
-  presentation-only (never a new gate / never changes a PASS·RISK-ACCEPTED·HARD-STOP). Wired into all seven gate
-  guides (lock·freeze·verify·intake·scope·close·graduation) + the reconcile rule (FLAGS must match `report --decide`'s
-  count); the book + GLOSSARY describe it. 691 tests; book ×4 byte-identical. **OPEN (SDD forward-question):** the
-  seven gates may be incomplete — `fold.md`'s consolidation-confirm (the human approves a fold, the AI never
-  self-approves) is a candidate 8th human decision point the arc could serve; weigh in a future milestone.
-  [folded foundation-version 22]
-- flag-first-freeze (Flag-first freeze + explicit autonomy level): **SHIPPED 2026-06-10** — two fail-closed
-  guards on the freeze/autonomy seam: (1) the lowest-confidence flag is MECHANICALLY required at every freeze
-  (`unflagged_freeze`, fail-closed — advance refuses + audit verifies via a verified-marker on the guarded
-  crossing); (2) the per-task autonomy header is an explicit ordered 3-mode LEVEL — `autonomy: manual |
-  conservative | auto`, the high-risk guard widened to refuse any UN-lowered rung, `cmd_status` surfaces the
-  active level, `cmd_check` reds `unknown_autonomy_level` + WARNs live-only `implicit_autonomy`, seed default
-  `auto`. add.py ×3 byte-identical (re-pinned c0c9329c); prose ≡ enforcement pinned across GLOSSARY + book
-  (appendix-c · 10-setup · 11-governance) + skill (run.md · streams.md · SKILL.md). 717 tests.
-  [folded foundation-version 23]
+- **next-step-seams (Engine next-step footer + driver marker): SHIPPED 2026-06-12** — every COMPLETING mutating
+  verb now prints one engine-sourced `next:` footer (Arm A: in-flight task → phase command; Arm B: state-arm decide)
+  from a SINGLE resolver `_next_footer`; bespoke ad-hoc tails converged (no double-print). The driver marker
+  `[you drive]` / `[human gate]` fills the reserved trailing slot from a single `_driver_stop` resolver (autonomy
+  × phase, one refinement: verify reads the dial; every other phase reads `_phase_owner` structurally). The frozen
+  machine-state-json `stop` (cmd_guide JSON) is UNTOUCHED — the marker lives on the footer + guide TEXT only
+  (Option F; residue: guide-TEXT vs JSON diverge at verify-auto, deferred as a deliberate change-request for the
+  machine-state-json contract). SDD learning: a verb-set contract must name the verb CLASS (workflow vs setup vs
+  control) and pre-map frozen tests before broadening — "every mutating verb" over-reached init, surfacing only at
+  full-suite run. [folded foundation-version 29]
+- **verify-integrity (Prove the green was EARNED, not gamed): SHIPPED 2026-06-11** — the verify gate now carries a
+  two-layer anti-cheat + a bounded self-heal. Layer 1: a MECHANICAL tamper-tripwire snapshots md5(red test paths + §3
+  contract) at tests→build and re-checks at the verify gate — any edit since the red run blocks an auto-PASS. Layer 2:
+  the earned-green rubric scores the judgment cheats (overfit · vacuous · stubbed-away) by an INDEPENDENT adversarial
+  refute-read (a subagent recommended under `auto`; the engine never spawns it — tool-agnostic). A confirmed cheat
+  (either layer) returns to BUILD for ≤3 honest re-builds, monotonically, then HARD-STOPs to the human; a gamed green is
+  never auto-passed and never RISK-ACCEPTED-waived (HARD-STOP-class, like security). Engine pin bumped
+  a6eed5e0→7b05eaf9 ×3 trees. The milestone validated BOTH gate paths in one run (task 1 human-gated · task 2
+  auto-resolved · task 3 human-gated — the autonomy ladder discriminates by risk, not ceremony) and exercised the
+  live-dogfood re-anchor path (a task that crossed tests→build under the OLD engine re-snapshots under the NEW via
+  `phase tests`+`advance`; `reopen` works only on done tasks). [folded foundation-version 27]
+- **ground-context (Ground gathers the whole working folder, efficiently): SHIPPED 2026-06-11** — the §0 GROUND
+  gather now spans the working folder, not only code: docs/textbase · TODOs · config/manifests · data/fixtures
+  (task-delta only). `0-ground.md` also gained a gather-METHOD hint — sweep the broad pass cheaply (a small-model
+  subagent / fast index / skim) then DEEPEN task-specifically, a recommendation the engine never spawns
+  (tool-agnostic; `add.py` byte-identical to `engine_pin` throughout). Closed the fv25 honest ceiling: the first
+  lived ground run (a task created AT `ground`) reached `grounded ✓`. Additive prose/template only — the §0
+  anchors-keyed grounding measure is unchanged. [folded foundation-version 26]
+- **ground-phase (Ground phase — build against the real codebase): SHIPPED 2026-06-11** — the task ladder gained
+  a **phase-0 `ground` preamble** before specify (`PHASES` now 9: ground→…→done; the seven steps specify→observe
+  keep their §1–§7 brand). `ground` is **AI-owned, NO new human gate** (the one approval stays at the §3 freeze);
+  `new-task` starts at `ground`, `advance` hops ground→specify. Each task carries a `## 0 · GROUND` map (real
+  files/symbols/conventions + the anchors §3 cites); `add.py status`/`check` SURFACE the grounding state (a
+  human-readable line + a never-red WARN — measure, never block). Additive to the frozen 7-step task flow: the
+  seven steps' numbering + gate are unchanged, ground rides in front. Grounding INFORMS the contract, never
+  authors it. Honest ceiling: shipped with ZERO lived runs starting at ground (all 3 tasks grandfathered at
+  specify; §0 retrofitted at build) — first lived run is next-milestone. [folded foundation-version 25]
 - goal-auto-ready (autonomy earned by goal-clarity): **SHIPPED 2026-06-10** — two halves of one lever.
   (1) A project-level `autonomy: auto` default written to PROJECT.md at init, inherited by `new-task`,
   fail-SAFE (`_project_autonomy`: absent→auto, garbled→conservative), surfaced in `status`. (2) The
@@ -221,43 +85,42 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   need is not re-discovered from scratch. The deferred SPINE decision (can an auto-ready goal RELAX the
   freeze gate / wire not-auto-ready → lowered autonomy) is its own later milestone, not this one's deliverable.
   [folded foundation-version 24]
-- **ground-phase (Ground phase — build against the real codebase): SHIPPED 2026-06-11** — the task ladder gained
-  a **phase-0 `ground` preamble** before specify (`PHASES` now 9: ground→…→done; the seven steps specify→observe
-  keep their §1–§7 brand). `ground` is **AI-owned, NO new human gate** (the one approval stays at the §3 freeze);
-  `new-task` starts at `ground`, `advance` hops ground→specify. Each task carries a `## 0 · GROUND` map (real
-  files/symbols/conventions + the anchors §3 cites); `add.py status`/`check` SURFACE the grounding state (a
-  human-readable line + a never-red WARN — measure, never block). Additive to the frozen 7-step task flow: the
-  seven steps' numbering + gate are unchanged, ground rides in front. Grounding INFORMS the contract, never
-  authors it. Honest ceiling: shipped with ZERO lived runs starting at ground (all 3 tasks grandfathered at
-  specify; §0 retrofitted at build) — first lived run is next-milestone. [folded foundation-version 25]
-- **ground-context (Ground gathers the whole working folder, efficiently): SHIPPED 2026-06-11** — the §0 GROUND
-  gather now spans the working folder, not only code: docs/textbase · TODOs · config/manifests · data/fixtures
-  (task-delta only). `0-ground.md` also gained a gather-METHOD hint — sweep the broad pass cheaply (a small-model
-  subagent / fast index / skim) then DEEPEN task-specifically, a recommendation the engine never spawns
-  (tool-agnostic; `add.py` byte-identical to `engine_pin` throughout). Closed the fv25 honest ceiling: the first
-  lived ground run (a task created AT `ground`) reached `grounded ✓`. Additive prose/template only — the §0
-  anchors-keyed grounding measure is unchanged. [folded foundation-version 26]
-- **verify-integrity (Prove the green was EARNED, not gamed): SHIPPED 2026-06-11** — the verify gate now carries a
-  two-layer anti-cheat + a bounded self-heal. Layer 1: a MECHANICAL tamper-tripwire snapshots md5(red test paths + §3
-  contract) at tests→build and re-checks at the verify gate — any edit since the red run blocks an auto-PASS. Layer 2:
-  the earned-green rubric scores the judgment cheats (overfit · vacuous · stubbed-away) by an INDEPENDENT adversarial
-  refute-read (a subagent recommended under `auto`; the engine never spawns it — tool-agnostic). A confirmed cheat
-  (either layer) returns to BUILD for ≤3 honest re-builds, monotonically, then HARD-STOPs to the human; a gamed green is
-  never auto-passed and never RISK-ACCEPTED-waived (HARD-STOP-class, like security). Engine pin bumped
-  a6eed5e0→7b05eaf9 ×3 trees. The milestone validated BOTH gate paths in one run (task 1 human-gated · task 2
-  auto-resolved · task 3 human-gated — the autonomy ladder discriminates by risk, not ceremony) and exercised the
-  live-dogfood re-anchor path (a task that crossed tests→build under the OLD engine re-snapshots under the NEW via
-  `phase tests`+`advance`; `reopen` works only on done tasks). [folded foundation-version 27]
-- **next-step-seams (Engine next-step footer + driver marker): SHIPPED 2026-06-12** — every COMPLETING mutating
-  verb now prints one engine-sourced `next:` footer (Arm A: in-flight task → phase command; Arm B: state-arm decide)
-  from a SINGLE resolver `_next_footer`; bespoke ad-hoc tails converged (no double-print). The driver marker
-  `[you drive]` / `[human gate]` fills the reserved trailing slot from a single `_driver_stop` resolver (autonomy
-  × phase, one refinement: verify reads the dial; every other phase reads `_phase_owner` structurally). The frozen
-  machine-state-json `stop` (cmd_guide JSON) is UNTOUCHED — the marker lives on the footer + guide TEXT only
-  (Option F; residue: guide-TEXT vs JSON diverge at verify-auto, deferred as a deliberate change-request for the
-  machine-state-json contract). SDD learning: a verb-set contract must name the verb CLASS (workflow vs setup vs
-  control) and pre-map frozen tests before broadening — "every mutating verb" over-reached init, surfacing only at
-  full-suite run. [folded foundation-version 29]
+- flag-first-freeze (Flag-first freeze + explicit autonomy level): **SHIPPED 2026-06-10** — two fail-closed
+  guards on the freeze/autonomy seam: (1) the lowest-confidence flag is MECHANICALLY required at every freeze
+  (`unflagged_freeze`, fail-closed — advance refuses + audit verifies via a verified-marker on the guarded
+  crossing); (2) the per-task autonomy header is an explicit ordered 3-mode LEVEL — `autonomy: manual |
+  conservative | auto`, the high-risk guard widened to refuse any UN-lowered rung, `cmd_status` surfaces the
+  active level, `cmd_check` reds `unknown_autonomy_level` + WARNs live-only `implicit_autonomy`, seed default
+  `auto`. add.py ×3 byte-identical (re-pinned c0c9329c); prose ≡ enforcement pinned across GLOSSARY + book
+  (appendix-c · 10-setup · 11-governance) + skill (run.md · streams.md · SKILL.md). 717 tests.
+  [folded foundation-version 23]
+- v23 (Decision-point transparency — the decision arc): **SHIPPED 2026-06-09** — every human decision gate now
+  opens its synthesized report with the **decision arc**: `goal:` (the milestone goal) · `done:` (achievement —
+  the proven progress) · `plan:` (what's next), rendered first above the five report blocks, engine-sourced,
+  presentation-only (never a new gate / never changes a PASS·RISK-ACCEPTED·HARD-STOP). Wired into all seven gate
+  guides (lock·freeze·verify·intake·scope·close·graduation) + the reconcile rule (FLAGS must match `report --decide`'s
+  count); the book + GLOSSARY describe it. 691 tests; book ×4 byte-identical. **OPEN (SDD forward-question):** the
+  seven gates may be incomplete — `fold.md`'s consolidation-confirm (the human approves a fold, the AI never
+  self-approves) is a candidate 8th human decision point the arc could serve; weigh in a future milestone.
+  [folded foundation-version 22]
+- v22 (Stage graduation — the 4th scope level): **SHIPPED** — `mvp→production` becomes an analytics-driven,
+  interview-led, human-confirmed roadmap, never a label flip: `graduation-report` clusters five MVP record-sets
+  (gather-not-judge) · `graduate.md` orchestrates cue→interview→draft≥1 production milestone→confirm→flip ·
+  `stage production` is guarded (`stage_no_roadmap`, a tally not a readiness verdict; `--force` + `init --stage`
+  are the named at-creation doors) · `stage-goal-criteria` (the human's `[x]` "mvp covered" checklist). SDD
+  learnings carried to CONVENTIONS (how-we-author): guarded-transition-names-its-door · data-shape-bounded-clause-
+  names-its-trigger · contract-freeze-cross-checks-the-prior-frozen-seam. [folded foundation-version 22]
+- v21 (Foundations & Lineage / grounding): **SHIPPED 2026-06-08** — the book gains a references appendix (27
+  grouped, verified sources, a "how ADD relates" line each + a spec-kit↔ADD phase table), a "Foundations &
+  Lineage" chapter, and inline citations woven into 02/03/09, all ×4 byte-identical. Three SDD learnings: a
+  survey/lineage chapter's natural citation density is NEAR-COMPLETE (26/27, each load-bearing), not the sparse
+  "subset" a spec instinctively pictures — spec a survey as near-full coverage; and the cross-task-finding path
+  is the recorded `reopen` — a defect found while working task N in an already-done task M is fixed by `reopen M`
+  (recorded, gate reset), never a silent out-of-scope edit (validated: inline-citations → reopen foundations-chapter
+  to reframe the [Yuan et al. 2024] framing). OPEN: the cite-key suffix-assignment order (2025a/b/c) is
+  deterministic-by-appendix-reading-order but undocumented in appendix-g "How to cite" — a one-line note hardens
+  it (deferred, a doc touch for a future appendix milestone). [folded foundation-version 21]
+- settled fv1–fv20 — ADD bootstrapping → production-ready: SDD foundation · self-driving run · one-approval auto · awareness surface · decision-point reports · zero-command on-ramp · prompt & file hygiene · dynamic loop (see git)
 
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
@@ -336,64 +199,17 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   not a bulleted list below it — either teach the parser the list form or make the inline-only shape explicit in
   the guide; this is a RECORDED KNOWN GAP, deferred to a future engine task. [folded foundation-version 29]
 
-## Key Decisions (append-only)
+## Key Decisions (append-only — newest-first; compaction door per compact-foundation.md)
 | date | decision | why | outcome |
 |------|----------|-----|---------|
-| 2026-05-28 | scope npm name `@mrq/add` | community brand | published name fixed |
-| 2026-05-28 | milestone (SDD) tier = thin MILESTONE.md + deps | scale without bloat | shipped v1.0 |
-| 2026-05-29 | foundation = one PROJECT.md (not 3 files) | minimal, GSD-proven | this doc |
-| 2026-05-29 | guideline injection dynamic-by-reference | avoids context-rot (ETH) | v1-2 |
-| 2026-05-29 | UDD = UI/UX-Driven, lives foundation-only | most tasks have no UI; no dead-weight step | this section is UDD's home |
-| 2026-05-29 | docs English-only; drop the Vietnamese translation + non-English branding | single-language product surface, simpler to maintain | vi-quickstart descoped; `guide` covered in the EN Quickstart |
-| 2026-06-01 | v6 "Self-Driving Run" scoped + dogfooded full-auto (AI self-gated contracts+verify) | stress-test the auto-gate by running it on the method itself | shipped; 17 open deltas; 14 folded (v2); v6 NOT human-validated |
-| 2026-06-01 | fold v6 learnings → foundation-version 2: never self-gate a human-led gate · dogfood md5 parity · words-exist≠method-works · residue includes method-edits | human-gated fold of v6 dogfood evidence | CONVENTIONS.md + §Domain + §Spec updated; deltas folded |
-| 2026-06-01 | v7: flip the autonomy default `conservative` → `auto` (reverses v6/foundation-v2 + retires reject code `auto_by_default`) | user-directed: low-friction default for ordinary scope; chosen with the contradiction visible | run.md dial + book principle 5 reframed; foundation-version 3 |
-| 2026-06-01 | v7: compress the human-led front to ONE approval at the contract-freeze seam (AI drafts Spec+Scenarios+Contract+Tests bundle) | reduce human-led front to "approve the spec/contract once" per user | run.md "one-approval front"; seam stays human |
-| 2026-06-01 | v7: keep the seam human + guard high-risk scope (`unguarded_high_risk_auto`); security stays HARD-STOP | preserve the v6 learning under an auto default — autonomy ∝ low risk (principle 5 substance) | high-risk guard in run.md; deferred: a CI enforcer (prose≠enforcement) |
-| 2026-06-02 | ship v7: both gates driven to PASS (human diff review, conservative scope), milestone done; then align onboarding to the one shipped flow | earn the gate before the docs claim it — the v6/v7 doc drift existed because docs outran their verify gate | v7 SHIPPED; onboarding-align PASS; drift resolved; foundation-version 4 |
-| 2026-06-02 | ship v9: `report` + `RETRO.md` awareness surface (per-task phase rollup under a milestone retro; `--json` facts seam; close writes the retro fail-closed) | a human should see "what happened / what it cost / what we learned" without reading four files by hand | v9 SHIPPED 2/2, 4/4 criteria; 208 tests; dogfood-proved (own RETRO.md == canonical) |
-| 2026-06-02 | freeze the DATA seam, not the presentation | the report layout re-skinned v2→v3→v4 (visual → terminal-correct → human-review) with ZERO data-seam change — pixels iterate, facts are the contract | foundation invariant updated; report-render status = "data seam frozen @ v1 · presentation iterate-freely" |
-| 2026-06-02 | verify must re-check the milestone's frozen exit criteria after a task changes shape | a task-contract drift (v3 made `report` stdout multi-valued) silently falsified a v9 exit criterion — caught by the advisor, not a gate | new SDD invariant in §Domain; the criterion was re-pinned to the canonical render |
-| 2026-06-02 | TDD house patterns: test pure renderers at canonical args (not via tier-sensitive CLI capture); prove "abort-before-mutate" by monkeypatch-raise + assert-no-commit | StringIO capture auto-selected the ASCII tier; the fail-closed retro write needed its rollback proven, not just read | folded from v9 `[TDD]` deltas; applied in test_report.py + test_retro.py |
-| 2026-06-02 | fold v9 learnings → foundation-version 5 (freeze-data-not-presentation · verify-rechecks-criteria · no-wcwidth TUI rule · per-phase drill-down OPEN) | human-gated fold of v9 dogfood evidence | §Domain + §Spec + §UDD updated; 7 deltas folded |
-| 2026-06-02 | rule: a surface may not describe a flow whose verify gate is not yet recorded (SDD) | docs outran their gate = the original onboarding drift; honesty = claim only what passed | folded → §Spec; enforced by onboarding-align guards |
-| 2026-06-02 | convention: stale-guard sweep at milestone close (ADD) | shipping a milestone can falsify a sibling task's frozen test (v7 ship broke test_v8_docs) | folded → CONVENTIONS.md |
-| 2026-06-02 | ship v9-1: `report <task>` phase-detail drill-down (7 phase blocks · gate-from-state · `(empty)` fail-closed · smart milestone-first-else-task CLI) | the v9 rollup shows WHICH phase, not WHAT each phase decided — drill answers the other half, read-only + additive | v9-1 SHIPPED 1/1, 2/2 criteria; 219 tests; dogfood-proved (own RETRO via the v9 surface) |
-| 2026-06-02 | trace argparse positional BINDING when a contract adds an optional positional (SDD) | the drafted two-arg `report [m] [task]` made drill-down UNREACHABLE (a lone arg always binds to the 1st positional) — advisor caught it before freeze; chose smart single-arg instead | folded → §Spec CLI seam; the obvious contract shape can silently strand a code path |
-| 2026-06-02 | two render idioms by purpose: rollup collapses prose+columns, drill preserves line-structure (UDD) | a drill-down is a READ surface (scenarios/code shape matters), not a scannable digest — `_detail_body` vs `_wrap` diverge deliberately | folded → §UDD; shared frozen thing is the DATA seam, not the layout |
-| 2026-06-02 | fold v9-1 learnings → foundation-version 6 (argparse-binding-trace · freeze-data-paid-off · utf-8+OSError-on-read · two-render-idioms) | human-gated fold of v9-1 dogfood evidence | §Spec + §UDD updated; 4 deltas folded; `[ADD] freeze-data-not-presentation` proven (ragged wrap shipped as disclosed debt, no re-freeze) |
-| 2026-06-02 | reframe Specify as **co-specification** (brainstorm by both → AI drafts → human validates with AI advice); the advice is a ranked **least-sure flag**, bundle-wide at the freeze seam | the one-approval front risked rubber-stamping a flat all-`[x]` assumptions wall (the open §UDD risk); rank the uncertainty + name the 1–2 most-likely-wrong so the single approval is *aimed*, without adding GSD-style ceremony — it reshapes the assumptions list ADD already had | book 03 + appendices A/B/C/D + skill `phases/1-specify` · `run.md` · `phases/3-contract` · `SKILL.md`, all trees byte-identical; 219 tests green; `Framings weighed:` persists the brainstorm; "none material" must still name the biggest risk; **honest limit:** the flag aims the review but cannot *force* engagement (a self-asserted "human engaged" is barred; true enforcement deferred to a CI checker) |
-| 2026-06-02 | publish npm under `@pilotspace/add` (was `@mrq/add`); PyPI ships as `add-method` | the only npm credential is the `pilotspace` account, which has no access to the `@mrq` scope (npm 404'd the publish — `@mrq` was aspirational brand, never registered); `add-method` is taken on npm, `@pilotspace/add` is free and matches the `pilotspace` GitHub org | renamed across package.json · README · GETTING-STARTED · cli.js · skill `phases/0-setup` (+ both mirrors) · 4 tests; 231 tests green; npm = @pilotspace/add@1.0.0, PyPI = add-method 1.0.0 |
-| 2026-06-03 | sync names: rename PyPI dist + console script `add-method` → `pilotspace-add` (npm `@pilotspace/add` unchanged); publish jobs made idempotent, version held at 1.0.0 | user asked to align the two install names; PyPI has no scopes so exact parity is impossible — `pilotspace-add` mirrors the npm scope and (unlike npm `@pilotspace/add@1.0.0`, already live) PyPI was unpublished so the rename costs nothing; idempotent npm/pypi publish lets a single `v1.0.0` tag debut PyPI at 1.0.0 while npm safely skips, keeping both registries at 1.0.0 | import pkg `add_method` kept (src/installer/_bundled untouched); renamed pyproject name+script · `_cli`/`__init__`/`__main__`/`_installer` · root+pkg README · root GETTING-STARTED · CHANGELOG · publish.yml; 234 tests green; `npx @pilotspace/add` + `pip install pilotspace-add` |
-| 2026-06-03 | fold v5 learnings → foundation-version 7 (co-specify-at-every-altitude · prose-guides-are-TDD-able · elicitation-driven-SDD) | human-gated fold of cospecify-lift dogfood evidence | §Spec + CONVENTIONS updated; 3 deltas folded (ADD/TDD → CONVENTIONS, SDD → §Spec) |
-| 2026-06-03 | fold v6–v8 learnings → foundation-version 8 (18 open deltas: 4 new conventions · 9 reinforce existing via flip-cite · 4 deferred to §Spec OPEN) | human-gated bulk fold of the v6/v7/v8/v8-1 open-delta backlog; consolidate not append-18-bullets (lean foundation, one screen) | +3 CONVENTIONS bullets (verify-shipped-path · frozen-guard→fix-build-not-matcher · message-specific-assert) + 1 §Spec bullet (additive-evolution); reinforcements flip-cited append-only (no dup text); backlog → §Spec OPEN; onboarding-align [TDD] left open (human-deferred 2026-06-02) |
-| 2026-06-04 | ship v12 Autonomous Onboarding: installer drops files only → `/add` finds an un-inited repo → AI runs `init --await-lock`, drafts the foundation (brownfield silent / greenfield 4-lens) + SETUP-REVIEW.md, build-boundary gate holds pre-lock; one human lock-down freezes foundation+first-scope+first-contract | the human's only setup act becomes one signature; the AI owns init+drafting end-to-end | v12 SHIPPED 6/6, 8/8 criteria; 322 tests; add.py engine unchanged this session (book/installer tail); RETRO.md written |
-| 2026-06-04 | validated: the conservative autonomy dial's escalation path works under real concurrency — worker B returned ESCALATE (not auto-PASS) and a human recorded the verify gate | the dial's "stop for the human" row had never been exercised in a real parallel run until v10's deltas-lint/deltas-report | confirms run.md's conservative row; no code change — folded foundation-version 9 |
-| 2026-06-04 | fold v10+v12 learnings → foundation-version 9 (9 open deltas: 4 new conventions · 1 dial-validated note · 3 → v12-1 follow-up tasks · 1 onboarding-words closed via flip-cite) | human-gated fold clearing the v10/v12 open-delta backlog at v12 close; consolidate not append-9-bullets (lean foundation) | +4 CONVENTIONS bullets (publish-hook-subprocess · two-regex-grammar-lint · worktree-from-HEAD · scope-audit-unscaffolded-close); cmd_status-hint + multiline-delta-render + _DELTA_RE-dedup → v12-1 tasks; onboarding-align [TDD] folded (reinforces existing Words-exist≠method-works); deltas flipped open→folded |
-| 2026-06-04 | fold v12-1 learnings → foundation-version 10 (5 open deltas: 3 new conventions · 1 worktree-from-HEAD reinforcement flip-cite · 1 UDD one-next-step bullet) | human-gated fold at v12-1 close; all 5 confirmed (none rejected) | +3 CONVENTIONS bullets (comment-literal-phantom-dup · dedup-absorbs-deleted-form · reverify-routed-delta-gap); worktree-from-HEAD flip-cited (the check must EXECUTE pre-spawn); §UDD one-next-step; deltas flipped open→folded |
-| 2026-06-05 | fold v13 learnings → foundation-version 11 (6 open deltas: 4 new conventions · 1 §Spec v13-shipped bullet carrying 2 SDD residues) | human-gated fold at v13 close; all 6 confirmed (none rejected); the 3 actionable residues (Tests-live-in grammar doc · confinement Reject rule · DECIDE-NEXT planned-task hint) stay visible as §Spec OPEN pending a next-milestone intake | +4 CONVENTIONS bullets (diff-§4-target-nouns · red-fixture-exceeds-hidden-threshold · decide-next-is-state-only · security-line-always-escalates); §Spec v13 bullet; deltas flipped open→folded |
-| 2026-06-05 | fold v13-1 learnings → foundation-version 12 (5 open deltas: 2 new TDD conventions · 1 security-line flip-cite validation · 1 convention RETIRED by its own sunset clause — a first · 1 SDD absolute-join rule into §Spec) | human-gated fold at v13-1 close; all 5 confirmed (none rejected) | +2 CONVENTIONS bullets (behavioral-scaffold-test · template-fixture-inherits-examples); decide-next cross-check retired (engine hint shipped); security-line rule validated cheap in practice; §Spec v13-1 bullet; deltas flipped open→folded |
-| 2026-06-05 | npm publish auth = granular 2FA-bypass token (NPM_TOKEN secret); PyPI stays OIDC; OIDC trusted publishing for npm ATTEMPTED and parked (mint never engaged from the workflow: 404 then ENEEDAUTH with form byte-exact, npm ≥11.5, id-token: write, no token config) | the 1.1.0 release act hit four auth-layer failures, each failing closed; Tin pivoted the mechanism after OIDC proved opaque — a working release now beats a perfect auth story | v1.1.0 live on BOTH registries (run 27009563639); rotation ~90d watched in §7 + publish.yml header; OIDC revisit-later note kept in the workflow header |
-| 2026-06-05 | fold v14 learnings → foundation-version 13 (14 open deltas: 9 new conventions · 1 publish-hook flip-cite validation · 1 §Spec v14 bullet carrying 3 SDD learnings · 1 §UDD seam-sized-review bullet) | human-gated fold at v14 close; all 14 confirmed (none rejected) | +9 CONVENTIONS bullets (protocol-walk · refuse-on-drift · arrange-through-CLI-contracts · strengthen-never-silent · epoch-debt-at-the-gate · contradicting-subset · dogfood-own-rule · dial-absorbs-change-requests · pivot-mechanism-on-human-word); §Spec v14 bullet; §UDD seam bullet; deltas flipped open→folded |
-| 2026-06-06 | ship v15 Zero-command on-ramp: after one install command a newcomer reaches their first verified feature by talking to the AI — GETTING-STARTED conversational spine (7-phases-by-hand → escape-hatch appendix); both installers print an AI handoff + infer `--name/--stage`; protocol-walk test drives fresh-install→gated-task issuing every add.py call itself; the lock moves human-typed → AGENT-run on the human's explicit confirmation (consent prose-guarded) | the human's only post-install act is conversation; the CLI becomes the agent's hands + the human's override, never a required keystroke | v15 SHIPPED 3/3, 3/3 criteria; 457 tests; engine feature-frozen (md5 pinned ×3); a CR v2 closed a cross-surface gap (same human-types instruction in 2 unswept guides) found by the adversarial lens, not the suite |
-| 2026-06-06 | fold v15 learnings → foundation-version 14 (9 open deltas: 4 new conventions · 1 §Spec v15 bullet · 1 §UDD precise-promises bullet · 2 flip-cite reinforcements) | human-gated fold at v15 close; all 9 confirmed (none rejected) | +4 CONVENTIONS bullets (pin-behavior-at-edges · multi-surface-parity-hunter · cross-cutting-reword-enumerates-every-surface · move-who-executes-needs-tight-trigger); §Spec v15 bullet (behavioral-journey≠prose-coherence); §UDD precise-promises bullet; UNION-rule + reverify-routed-gap flip-cited as validated; deltas flipped open→folded |
-| 2026-06-06 | fold v16 learnings → foundation-version 15 (15 open deltas: 5 new conventions · 2 flip-cite reinforcements · 1 §Spec v16 bullet carrying the paired-tag SDD rule · 1 §UDD leanness bullet) | human-gated fold at v16 close (the standing autonomous run STOPPED here — fold.md mandates confirmation; presented + confirmed via AskUserQuestion); all 15 confirmed (none rejected); per the human's call #8+#9 merged (RED-before-build-no-runtime) and #1+#15 merged (per-file-narrative + census) into single CONVENTIONS homes | +5 CONVENTIONS bullets (tag-by-audience · vocab-test-blind-to-render · content-guard-both-halves+triage-RED · census-guard-whole-and-closed · verbatim-transform-is-a-script); green-state-sweep + RED-before-build-no-runtime flip-cited onto existing bullets; dial-gradient (applying a frozen contract < authoring it) validated; §Spec v16 + §UDD v16 bullets; deltas flipped open→folded |
-| 2026-06-07 | fold v17 learnings → foundation-version 16 (13 open deltas: 11 new CONVENTIONS bullets — the 4-delta gate-blindness cluster merged into 2 per the human's call — + 1 §Spec v17 bullet) | human-gated fold at v17 close; the ONE-SEAM close (gate + fold + push ruled together via AskUserQuestion, deltas rendered in full first); all 13 confirmed (none rejected) | +11 CONVENTIONS bullets (necessary-not-sufficient-pair-with-human-verify · empty-diff-as-evidence · needle-grep-guard-dense · F3-total-not-partial · numeric-figure-is-estimate · positivization-boundary · binding-properties-order · legitimate-no-op-recorded · contract-code-table-self-lint · close-needs-criteria-rollup · spot-check-is-steering-evidence); §Spec v17 bullet; criterion 3 ruled met-WITH-deviation (~290→180 W); deltas flipped open→folded |
-| 2026-06-07 | fold question-summary-layer learnings → foundation-version 17 (2 open deltas: 1 SDD shape-line-figure refinement + 1 ADD dogfood-at-own-seams reinforcement, both appended onto existing CONVENTIONS bullets) | on-demand fold before opening new scope (intake-interview); human-gated per fold.md, both confirmed via AskUserQuestion (none rejected) | numeric-figure-is-estimate bullet gains the shape-line-≈ rule; dogfood-own-rule bullet gains the approval-seams clause; deltas flipped open→folded |
-| 2026-06-07 | ship v18 Prompt structure & file hygiene: form-tag template amendment (closed 6-tag fill-region class + parse-seam suite) + `compact` heavy archive (recovery bundle · 6 reject codes · deltas-consolidated-first) | XML-structure the fill surfaces for AI effectiveness; done work compacts out of the active tree | v18 SHIPPED 2/2 tasks, 2/2 criteria; 562 tests; engine md5 ×3 trees; two instrument residues disclosed + human-accepted at the gate |
-| 2026-06-07 | fold v18 learnings → foundation-version 18 (14 open deltas: 8 new CONVENTIONS bullets · 3 appends onto existing (mirror-clause-all-copies · census-grow-on-new-section · numeric-pin-count-first) · 4 GLOSSARY terms (heavy archive/compact · recovery bundle · instruction tags · form tags) · 1 §Spec v18 bullet) | human-gated fold at v18 close; all 14 confirmed (none rejected); DDD routed to GLOSSARY — the deltas' own named home; fold.md/nudge edits deferred as method-surface tasks | GLOSSARY +4 terms; CONVENTIONS +8 new +3 appends; §Spec v18 bullet; deltas flipped open→folded |
-| 2026-06-08 | ship v19 Guard hygiene as ADD's FIRST real parallel wave (2 workers · isolated worktrees · serial cherry-pick merge · integration Verify per merge): single-source ENGINE_MD5 (engine_pin.py, 5 importers) + fence-aware md_section slicer (4 importers); the WAVE.md ledger ran open→consume→digest→delete end-to-end | exercise the wave protocol in anger + close two [TDD] deltas from the wave-ledger / status-hint loop | v19 SHIPPED 2/2 tasks, 3/3 criteria; 586 tests; both gates auto-resolved PASS (human approval = the two freezes); D1 sync gate FIRED 2/2 on a stale worktree pool; declared overlap test_review_checklist.py 3-way auto-merged both lanes intact (conflict-RESOLUTION path therefore untested — recorded in the Wave log) |
-| 2026-06-08 | fold v19 learnings → foundation-version 19 (10 open deltas: 4 new CONVENTIONS bullets · 1 new SDD import-idiom bullet · 3 flip-cite reinforcements · 1 §Spec v19 bullet · 1 auto-dial validation note; the streams.md merge-time fork-base + worker-commits-SUMMARY CR routed to a tracked task) | human-gated fold at v19 close; all 10 confirmed (none rejected); THREE deltas were self-closing loops — this wave shipped exactly what v18's deltas named (shared-pin · status-hint · fence hazard); the auto dial's first ENGINE-scope-era run validated (disclosed judgment call logged, not escalated) | +5 CONVENTIONS bullets (fence-aware-slicing · contract-expected-harmless · fix-a-flag-first-at-freeze · worker-commits-summary · import-by-reference); worktree-from-HEAD amended with the spawn-time runtime exception (check shifts to merge-time, never skips); duplicate-tripwire-pins SHIPPED-cite + ubiquitous-language-reaches-verbs flip-cited; §Spec v19 bullet; deltas flipped open→folded; streams.md text edit → wave-protocol-runtime task |
-| 2026-06-08 | fold v20 learnings → foundation-version 20 (13 open deltas: 4 new CONVENTIONS bullets · 1 §Spec v20 SHIPPED bullet carrying 2 SDD learnings + the reactivation-resolved note · 1 §Users goal-met-theater bullet carrying 2 UX follow-ups) | human-gated fold at v20 close — the FIRST dogfood of v20's own goal-gate: it held v20 at 0/4 exit criteria until the 4 were affirmed, then released at 4/4 | +4 CONVENTIONS bullets (instrument-reaction-by-artifact · lifecycle-precondition-ripples-wide · whitespace-normalized-drift-sentinel · deep-checks-block-has-teeth); §Spec v20 bullet (mirror-counts + total==0 OPEN → v21 milestone_no_criteria); §UDD bullet (real-criteria-not-theater + stale-success-msg + template-placeholder-goal → v21); 3 forward candidates seed v21 intake; all 13 confirmed (none rejected); deltas flipped open→folded |
-| 2026-06-08 | fold v21 learnings → foundation-version 21 (12 open deltas: 1 NEW headline TDD bullet merging 5 — aptness/consistency/figure-spot-check the resolver is blind to · 2 new TDD bullets — `;`-aware resolver + latent-uniqueness-guard · 1 ADD flip-cite onto instrument-reaction naming the EXTENDED surface · 1 §Spec v21 bullet carrying 3 SDD learnings · 1 §Users dogfood-parity-gap bullet) | human-gated fold at v21 (grounding/lineage) close; the milestone's headline learning recurred 3× (a structural/resolution test is necessary-not-sufficient → the human SEMANTIC check must carry aptness · internal consistency · figure spot-checks) | the cross-task Yuan defect was already FIXED in be382b9 via recorded `reopen` (not deferred); +3 CONVENTIONS bullets + 1 flip-cite; §Spec v21 + §Users v21 bullets; all 12 confirmed (none rejected); deltas flipped open→folded |
-| 2026-06-08 | REVERT the v21 inline-citation weave (EC3): remove the 7 inline [Author Year] cites from body chapters 02/03/09, restoring them to pre-weave prose; keep the references appendix (task 1) and Foundations & Lineage ch.15 (task 2) — grounding now lives in ONE place, the appendix, not interrupting the body | human direction AFTER v21 close — the inline markers cluttered the prose; recorded here (not a silent edit) since EC3 was a goal-gated exit criterion. The fold LESSONS stay valid (the weave shipped, taught the aptness/`;`-resolver lessons, then was reverted) — only the artifact is removed, foundation-version 21 unchanged | chapters restored exactly from a85b81a^ (sole editor) ×4 byte-identical; 4 weave-resolution tests pruned from test_inline_citations.py, its 3 non-weave guards KEPT (appendix-g frozen@27 — the only exact-27 guard · 02/03/09 ×4 parity — the only root↔canonical guard for these chapters · ban-surface tripwire); suite 645/645 OK (649−4); add.py check 200/0 |
-| 2026-06-09 | ship v23 the decision arc: every human decision gate opens its report with goal·done·plan (rendered first, engine-sourced, presentation-only) — report-arc (the block + reconcile rule) · arc-gate-wiring (all 7 gate guides cue it) · arc-book-align (book + GLOSSARY describe it) | the user asked to make the synthesized report transparent — tie each gate's ask to the goal it serves, what's achieved, and the plan ahead, so the human confirms with the whole arc in sight, not a local snapshot | v23 SHIPPED 3/3, 3/3 criteria; 691 tests; book ×4 byte-identical; arc-book-align hit a v1→v2 change-request at verify (chapter named 5 of 7 wired gates — baseline-approval+scope undocumented; reopened→contract→re-froze→widened to 7 + a gate-coverage fence), the milestone's own theme catching its own gap |
-| 2026-06-09 | fold v22+v23 learnings → foundation-version 22 (24 open deltas: 12 new CONVENTIONS bullets covering ADD 12 + TDD 4 + SDD-how-we-author 6, several as explicit reinforcements · 1 §Spec v22 ship bullet · 1 §Spec v23 ship bullet carrying the 8th-gate SDD forward-question · 1 §Domain all-archived done-tally blind-spot) | human-gated bulk fold at v23 close clearing the unfolded v22 (stage-graduation) backlog + the v23 deltas; consolidate not append-24-bullets (lean foundation); all 24 confirmed (none rejected) | +12 CONVENTIONS bullets (four-book-trees+unguarded-appendix-root · dogfood-at-own-gate-proof · change-request-is-the-method · single-source-point-not-restate · enumerate-every-writer-of-S · one-traversal-basis-per-tier · reconcile-flags-with-digest · cross-surface-term-two-axes · sweep-loaded-prose · presence≠coverage-fence · split-don't-loosen · five-how-we-author-sharpenings); §Spec v22+v23 bullets; §Domain done-tally bullet; deltas flipped open→folded |
-| 2026-06-10 | ship flag-first-freeze + fold → foundation-version 23 (4 deltas: 2 new CONVENTIONS bullets — verified-marker-scopes-forward · prose-accord-pins-every-surface+word-ban-blind — · 1 cross-surface-term flip-cite · 1 §Spec ship bullet) | human-gated fold at flag-first-freeze close; the milestone's own theme (a guard with mechanical teeth) caught its own gap — DocsAccordTest pinned 1 of 4 named surfaces, surfaced by human review at the verify gate not CI; MILESTONE.md was a never-authored stub, back-filled at close | +2 CONVENTIONS +1 flip-cite; §Spec flag-first-freeze bullet; 22→23; 4 deltas open→folded; engine c0c9329c ×3 |
-| 2026-06-10 | ship goal-auto-ready + fold → foundation-version 24 (7 deltas: 3 new CONVENTIONS bullets — anchor-declaration-token-reader · live-only-guard-keys-on-terminal-status · lint-forces-a-slot-not-honesty — · 1 frozen-guard→fix-build flip-cite · 1 §Spec ship bullet carrying 2 SDD; the OSError-guard divergence on `_exit_criteria_cited` recorded as an ACCEPTED CEILING, not hardened in isolation — it mirrors the sibling `_exit_criteria` convention) | human-gated fold at goal-auto-ready close (2/2 tasks, 3/3 criteria); the verify adversarial pass caught its own Must #4 gap (the live-only WARN fired on a done-but-not-yet-archived milestone), closed test-first before the gate (close-gap-before-gate); all 7 confirmed (none rejected) | +3 CONVENTIONS +1 flip-cite; §Spec goal-auto-ready bullet (auto default + auto-ready-goal check, --autonomy knob deferred OPEN, spine decision deferred); 23→24; 7 deltas open→folded; engine 70d779c4 ×3 |
-| 2026-06-11 | fold ground-phase learnings → foundation-version 25 (12 open deltas: 5 new CONVENTIONS bullets — ground-before-§3 · ordered-constant-index-hazard · additive-surface-byte-invisible · engine-derived-prose-guard · grandfather-retrofit-ceiling — · 1 flip-cite onto four-mirror-trees · 1 §Spec ground-phase ship bullet) | human-gated fold at ground-phase close (3/3 tasks, 3/3 criteria); the milestone's own theme dogfooded — grounding §3 in the real engine pre-caught 4 defects, and the phase shipped with zero LIVED runs (all 3 tasks grandfathered at specify, §0 retrofitted at build — honest ceiling, not papered) | +5 CONVENTIONS +1 flip-cite; §Spec ground-phase ship bullet + the 7-step frozen-line parenthetical; 24→25; 12 deltas open→folded; engine e6b8c3da ×3 (unchanged this milestone — prose/template only) |
-| 2026-06-11 | fold ground-context learnings → foundation-version 26 (9 open deltas: 4 new CONVENTIONS bullets — ground-two-axes-completeness+economics · capability-as-prose-recommendation-engine-tool-agnostic · dogfood-technique-in-flight · prose-feature-red-greenable-by-token-presence — · 2 flip-cites onto fv25 bullets — additive-byte-invisible template-twin · grandfather-ceiling CLOSED — · 1 §Spec ground-context ship bullet; δ6 self-closed within-milestone, task 2 reworded the intro it flagged) | human-gated fold at ground-context close (2/2 tasks, 2/2 criteria); the milestone dogfooded its own technique in-flight (haiku subagent broad sweep · main-context deepen) and closed the fv25 zero-lived-run ceiling in real time | +4 CONVENTIONS +2 flip-cites; §Spec ground-context bullet; 25→26; 9 deltas open→folded (incl. δ6 self-closed); engine e6b8c3da ×3 unchanged (prose/template only) |
-| 2026-06-11 | ship verify-integrity + fold → foundation-version 27 (16 open deltas: 5 new CONVENTIONS bullets — floor+ceiling+HARD-STOP-class · mechanical-HARD-STOP-pattern+monotonic-cap · evolution-not-weakening-discriminator · security-line-emerges-at-build · two-how-we-author — · 3 flip-cites onto dogfood-at-own-gate / presence-necessary-not-sufficient / prose-guide-red→green · 1 §Spec verify-integrity ship bullet carrying both-gate-paths + live-re-snapshot) | human-gated fold at verify-integrity close (3/3 tasks, 3/3 criteria); the method's FIRST mechanically-enforced HARD-STOP shipped and dogfooded its own earned-green rubric on its own build (independent refute-read returned EARNED, one nit fixed pre-gate); all 16 confirmed (none rejected) | +5 CONVENTIONS +3 flip-cites; §Spec verify-integrity bullet; 26→27; 16 deltas open→folded; engine 7b05eaf9 ×3 |
-| 2026-06-12 | fold engine-hardening + wave learnings → foundation-version 28 (11 open deltas: 9 new CONVENTIONS bullets — hand-written-input-parsing-discipline (2 SDD merged: exactly-one-match + terminator-explicit) · name-enforcement-deferral-at-freeze · coverage-gaps-route-as-deltas · grammar-drift-fixtures · token-presence+mirror-parity · sandbox-only-mutating-probes · close-gap-before-gate · mirror-folded-exceptions · shifts-never-skips — · 1 flip-cite onto mechanical-HARD-STOP+monotonic-cap) | human-gated fold after the engine-hardening ground tasks (argv-portability PASS auto-resolved · merge-base-enforcement PASS human-gated after 7 refute passes, 4 human-approved contract versions, 2 heal_exhausted HARD-STOPs — the fv27 mechanical guard's first live fire, held both times); all 11 confirmed (none rejected) | +9 CONVENTIONS +1 flip-cite; 27→28; 11 deltas open→folded; engine b441421c ×3; PR #8 |
-| 2026-06-13 | fold udd-design-foundation learnings → foundation-version 29 (41 open deltas from 10 tasks: SDD 9 · UDD 6 · TDD 12 · ADD 14; merged into ~14 foundation additions — 8 new CONVENTIONS bullets · 1 §Spec next-step-seams ship bullet · 2 §Users bullets (identity-settled + UDD-forward-gaps) · 1 CARRY-FORWARD known-gap recorded in §Users) | human-confirmed fold of the udd-design-foundation milestone's full OBSERVE backlog; aggressively merged (41→14) to keep the foundation lean; one ADD carry-forward (active_milestone re-aim) recorded as a known-gap engine task, still flipped folded | 8 new CONVENTIONS bullets (contract-completeness-3-checks · verb-set-broadening-names-class · adversarial-refute-conformant-happy-path · string-presence-under-enforces · engine-pin-3-mandatory-parts · mid-build-CR-trips-tamper · §5-scope-frozen-at-tests-build · state-create-needs-remove+shared-cap); §Spec next-step-seams bullet; §Users identity-settled + UDD-forward-gaps; 28→29; all 41 deltas open→folded |
 | 2026-06-14 | ship advisor-context + fold → foundation-version 30 (4 open deltas from 2 tasks: SDD 1 · TDD 1 · ADD 2; merged into 3 CONVENTIONS bullets) — every ADD step now carries a THIN Advisor·Confidence hook pointing to two new shared engine docs: `advisor.md` (when/how to spawn one plan-following subagent, vendor-neutral) + `confidence.md` (advisory 0–1 six-dimension self-score, refine-if-<0.9, never a gate) | the subagent-spawn pattern was scattered (ground sweep · verify refuter · streams adapter) and the self-score lived only in the streams worker prompt; promote both into first-class per-step guidance so any agent driving the loop knows when to delegate and how to self-assess — engine still never spawns, score never gates | advisor-context SHIPPED 3/3 tasks, 5/5 criteria; 3 new guards (test_confidence_rubric · test_advisor_strategy · test_per_step_hooks) + xml_convention ENGINE_FILES & wording_lint COUNT 22→24; +3 CONVENTIONS bullets (new-engine-doc-trips-inventory-guards · enumerate-full-set+distinctness · build-in-build+thin-pointer); 29→30; all 4 deltas open→folded |
+| 2026-06-13 | fold udd-design-foundation learnings → foundation-version 29 (41 open deltas from 10 tasks: SDD 9 · UDD 6 · TDD 12 · ADD 14; merged into ~14 foundation additions — 8 new CONVENTIONS bullets · 1 §Spec next-step-seams ship bullet · 2 §Users bullets (identity-settled + UDD-forward-gaps) · 1 CARRY-FORWARD known-gap recorded in §Users) | human-confirmed fold of the udd-design-foundation milestone's full OBSERVE backlog; aggressively merged (41→14) to keep the foundation lean; one ADD carry-forward (active_milestone re-aim) recorded as a known-gap engine task, still flipped folded | 8 new CONVENTIONS bullets (contract-completeness-3-checks · verb-set-broadening-names-class · adversarial-refute-conformant-happy-path · string-presence-under-enforces · engine-pin-3-mandatory-parts · mid-build-CR-trips-tamper · §5-scope-frozen-at-tests-build · state-create-needs-remove+shared-cap); §Spec next-step-seams bullet; §Users identity-settled + UDD-forward-gaps; 28→29; all 41 deltas open→folded |
+| 2026-06-12 | fold engine-hardening + wave learnings → foundation-version 28 (11 open deltas: 9 new CONVENTIONS bullets — hand-written-input-parsing-discipline (2 SDD merged: exactly-one-match + terminator-explicit) · name-enforcement-deferral-at-freeze · coverage-gaps-route-as-deltas · grammar-drift-fixtures · token-presence+mirror-parity · sandbox-only-mutating-probes · close-gap-before-gate · mirror-folded-exceptions · shifts-never-skips — · 1 flip-cite onto mechanical-HARD-STOP+monotonic-cap) | human-gated fold after the engine-hardening ground tasks (argv-portability PASS auto-resolved · merge-base-enforcement PASS human-gated after 7 refute passes, 4 human-approved contract versions, 2 heal_exhausted HARD-STOPs — the fv27 mechanical guard's first live fire, held both times); all 11 confirmed (none rejected) | +9 CONVENTIONS +1 flip-cite; 27→28; 11 deltas open→folded; engine b441421c ×3; PR #8 |
+| 2026-06-11 | ship verify-integrity + fold → foundation-version 27 (16 open deltas: 5 new CONVENTIONS bullets — floor+ceiling+HARD-STOP-class · mechanical-HARD-STOP-pattern+monotonic-cap · evolution-not-weakening-discriminator · security-line-emerges-at-build · two-how-we-author — · 3 flip-cites onto dogfood-at-own-gate / presence-necessary-not-sufficient / prose-guide-red→green · 1 §Spec verify-integrity ship bullet carrying both-gate-paths + live-re-snapshot) | human-gated fold at verify-integrity close (3/3 tasks, 3/3 criteria); the method's FIRST mechanically-enforced HARD-STOP shipped and dogfooded its own earned-green rubric on its own build (independent refute-read returned EARNED, one nit fixed pre-gate); all 16 confirmed (none rejected) | +5 CONVENTIONS +3 flip-cites; §Spec verify-integrity bullet; 26→27; 16 deltas open→folded; engine 7b05eaf9 ×3 |
+| 2026-06-11 | fold ground-context learnings → foundation-version 26 (9 open deltas: 4 new CONVENTIONS bullets — ground-two-axes-completeness+economics · capability-as-prose-recommendation-engine-tool-agnostic · dogfood-technique-in-flight · prose-feature-red-greenable-by-token-presence — · 2 flip-cites onto fv25 bullets — additive-byte-invisible template-twin · grandfather-ceiling CLOSED — · 1 §Spec ground-context ship bullet; δ6 self-closed within-milestone, task 2 reworded the intro it flagged) | human-gated fold at ground-context close (2/2 tasks, 2/2 criteria); the milestone dogfooded its own technique in-flight (haiku subagent broad sweep · main-context deepen) and closed the fv25 zero-lived-run ceiling in real time | +4 CONVENTIONS +2 flip-cites; §Spec ground-context bullet; 25→26; 9 deltas open→folded (incl. δ6 self-closed); engine e6b8c3da ×3 unchanged (prose/template only) |
+| 2026-06-11 | fold ground-phase learnings → foundation-version 25 (12 open deltas: 5 new CONVENTIONS bullets — ground-before-§3 · ordered-constant-index-hazard · additive-surface-byte-invisible · engine-derived-prose-guard · grandfather-retrofit-ceiling — · 1 flip-cite onto four-mirror-trees · 1 §Spec ground-phase ship bullet) | human-gated fold at ground-phase close (3/3 tasks, 3/3 criteria); the milestone's own theme dogfooded — grounding §3 in the real engine pre-caught 4 defects, and the phase shipped with zero LIVED runs (all 3 tasks grandfathered at specify, §0 retrofitted at build — honest ceiling, not papered) | +5 CONVENTIONS +1 flip-cite; §Spec ground-phase ship bullet + the 7-step frozen-line parenthetical; 24→25; 12 deltas open→folded; engine e6b8c3da ×3 (unchanged this milestone — prose/template only) |
+| 2026-06-10 | ship goal-auto-ready + fold → foundation-version 24 (7 deltas: 3 new CONVENTIONS bullets — anchor-declaration-token-reader · live-only-guard-keys-on-terminal-status · lint-forces-a-slot-not-honesty — · 1 frozen-guard→fix-build flip-cite · 1 §Spec ship bullet carrying 2 SDD; the OSError-guard divergence on `_exit_criteria_cited` recorded as an ACCEPTED CEILING, not hardened in isolation — it mirrors the sibling `_exit_criteria` convention) | human-gated fold at goal-auto-ready close (2/2 tasks, 3/3 criteria); the verify adversarial pass caught its own Must #4 gap (the live-only WARN fired on a done-but-not-yet-archived milestone), closed test-first before the gate (close-gap-before-gate); all 7 confirmed (none rejected) | +3 CONVENTIONS +1 flip-cite; §Spec goal-auto-ready bullet (auto default + auto-ready-goal check, --autonomy knob deferred OPEN, spine decision deferred); 23→24; 7 deltas open→folded; engine 70d779c4 ×3 |
+| 2026-06-10 | ship flag-first-freeze + fold → foundation-version 23 (4 deltas: 2 new CONVENTIONS bullets — verified-marker-scopes-forward · prose-accord-pins-every-surface+word-ban-blind — · 1 cross-surface-term flip-cite · 1 §Spec ship bullet) | human-gated fold at flag-first-freeze close; the milestone's own theme (a guard with mechanical teeth) caught its own gap — DocsAccordTest pinned 1 of 4 named surfaces, surfaced by human review at the verify gate not CI; MILESTONE.md was a never-authored stub, back-filled at close | +2 CONVENTIONS +1 flip-cite; §Spec flag-first-freeze bullet; 22→23; 4 deltas open→folded; engine c0c9329c ×3 |
+| 2026-06-09 | fold v22+v23 learnings → foundation-version 22 (24 open deltas: 12 new CONVENTIONS bullets covering ADD 12 + TDD 4 + SDD-how-we-author 6, several as explicit reinforcements · 1 §Spec v22 ship bullet · 1 §Spec v23 ship bullet carrying the 8th-gate SDD forward-question · 1 §Domain all-archived done-tally blind-spot) | human-gated bulk fold at v23 close clearing the unfolded v22 (stage-graduation) backlog + the v23 deltas; consolidate not append-24-bullets (lean foundation); all 24 confirmed (none rejected) | +12 CONVENTIONS bullets (four-book-trees+unguarded-appendix-root · dogfood-at-own-gate-proof · change-request-is-the-method · single-source-point-not-restate · enumerate-every-writer-of-S · one-traversal-basis-per-tier · reconcile-flags-with-digest · cross-surface-term-two-axes · sweep-loaded-prose · presence≠coverage-fence · split-don't-loosen · five-how-we-author-sharpenings); §Spec v22+v23 bullets; §Domain done-tally bullet; deltas flipped open→folded |
+| 2026-06-09 | ship v23 the decision arc: every human decision gate opens its report with goal·done·plan (rendered first, engine-sourced, presentation-only) — report-arc (the block + reconcile rule) · arc-gate-wiring (all 7 gate guides cue it) · arc-book-align (book + GLOSSARY describe it) | the user asked to make the synthesized report transparent — tie each gate's ask to the goal it serves, what's achieved, and the plan ahead, so the human confirms with the whole arc in sight, not a local snapshot | v23 SHIPPED 3/3, 3/3 criteria; 691 tests; book ×4 byte-identical; arc-book-align hit a v1→v2 change-request at verify (chapter named 5 of 7 wired gates — baseline-approval+scope undocumented; reopened→contract→re-froze→widened to 7 + a gate-coverage fence), the milestone's own theme catching its own gap |
+| settled 2026-05-28–2026-06-08 | 48 foundational decisions rolled (v1.0 npm scope → v20 dynamic loop) | bootstrapping through production-ready ADD | see git |
