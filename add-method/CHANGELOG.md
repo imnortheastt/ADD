@@ -4,6 +4,41 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [Unreleased]
+
+Work merged to `main` since 1.3.0, not yet tagged or published. All additive; no
+breaking changes.
+
+### Added
+- **Foundation compaction across all four specs** — the living foundation now
+  stays relevant-first and short as a project grows. Every append-only sequence
+  (`PROJECT.md` §Spec · §Key-Decisions · `CONVENTIONS.md` learnings) reads
+  **newest-first**, and at milestone close the AI proposes collapsing each spec's
+  shipped, zero-open-residue tail into one per-spec **rolled-up settled line** —
+  the human confirms one line at a time; it summarizes and points to git, never
+  deletes, and every open residue stays expanded. A new `compact-foundation.md`
+  skill guide drives the ritual — convention-guided, with no new engine command,
+  and distinct from `add.py compact` (which archives finished-milestone files).
+  The loop chapter and glossary document it.
+- **Per-step Advisor + Confidence context** — every ADD step now carries a thin
+  pointer to two new shared skill guides: `advisor.md` (when and how to delegate
+  one plan-following subagent — vendor-neutral; the engine never spawns) and
+  `confidence.md` (an advisory 0–1 self-score across six dimensions, refine if any
+  dimension scores below 0.9). Both are advisory by construction — the self-score
+  is never a gate — making delegate-and-self-assess first-class guidance for any
+  agent driving the loop.
+- **`.add/.gitignore` scaffolded at init** — `init` now writes a co-located
+  `.add/.gitignore` so the engine's transient local artifacts (scope snapshots,
+  pre-archive backups) never reach git. It is additive and never clobbers an
+  existing copy; edit it freely.
+
+### Changed
+- **Conversational-only install hand-off** — after `init`, the closing hint points
+  only at the conversational entry point: open your AI agent CLI, run `/add`, and
+  say what you want to build. The hand-off is tool-agnostic (Claude Code, Codex,
+  …) and no longer advertises a manual `add.py new-task` / `--await-lock` escape
+  as the primary path (the flag still exists; `/add` runs it internally).
+
 ## [1.3.0] — 2026-06-13
 
 The render-ready-foundation release: a UI project now gets a lintable design
