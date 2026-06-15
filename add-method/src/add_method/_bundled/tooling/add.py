@@ -477,7 +477,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     if _project_autonomy_token(root) == "?":
         print("warning: garbled_project_autonomy — PROJECT.md declares an unrecognized "
               f"autonomy token; new task seeded fail-safe '{autonomy}' "
-              "(set autonomy: manual|conservative|auto in PROJECT.md)", file=sys.stderr)
+              "(fix it with `add.py autonomy set <level> --project`)", file=sys.stderr)
 
     state["tasks"][slug] = {
         "title": title,
@@ -727,8 +727,8 @@ def cmd_gate(args: argparse.Namespace) -> None:
         hdr = _task_header(root, slug)
         if _RISK_HIGH_RE.search(hdr) and not _autonomy_lowered(hdr):
             _die(f"unguarded_high_risk_auto: task '{slug}' declares risk: high "
-                 "without a lowered autonomy level — set autonomy: manual or conservative in "
-                 "the TASK.md header; a human must own a high-risk gate (run.md guard)")
+                 "without a lowered autonomy level — run `add.py autonomy set conservative` "
+                 "(or manual); a human must own a high-risk gate (run.md guard)")
         # tamper tripwire (verify-integrity): the method's first mechanical cheat
         # block. A completing outcome is refused if the red suite or the frozen §3
         # changed since the tests->build snapshot. Placed BEFORE the waiver write so
@@ -757,6 +757,80 @@ def cmd_gate(args: argparse.Namespace) -> None:
     # the engine-sourced next step (next-footer-engine): a completing gate hands off to the
     # state arm; HARD-STOP routes to "resolve HARD-STOP …" — converging the old bespoke line.
     print(_next_footer(root, state))
+
+
+# the autonomy level as a first-class verb (task autonomy-command): autonomy was the ONLY mutable,
+# security-relevant task/project token WITHOUT a CLI verb — so an agent under `auto`, applying the
+# correct "first-class state has a command" model, hallucinated `add.py autonomy` and derailed.
+# `show` reads the resolved level; `set` is the FIRST writer of the header token — idempotent (one
+# declaration line, trailing comment preserved, NEVER appended), with the raise + risk:high guards
+# enforced BEFORE the write. state.json is untouched — autonomy stays a header token.
+_AUTONOMY_ORDER = {lvl: i for i, lvl in enumerate(_AUTONOMY_LEVELS)}   # manual(0) < conservative(1) < auto(2)
+
+
+def _autonomy_decl_line(text: str, level: str) -> str:
+    """Rewrite the SINGLE `autonomy:` declaration line to `level`, PRESERVING its trailing comment,
+    idempotently (replace in place, count=1 — never a second line). If absent, insert it: after the
+    `slug:` line for a task header, else after a leading `#` heading (PROJECT.md), else prepend. PURE
+    on the text; the caller does the atomic write."""
+    pat = re.compile(r"(?m)^(autonomy:[ \t]*)[^\s<#|]+(.*)$")
+    if pat.search(text):
+        return pat.sub(lambda m: f"{m.group(1)}{level}{m.group(2)}", text, count=1)
+    if re.search(r"(?m)^slug:", text):
+        return re.sub(r"(?m)^(slug:.*)$", r"\1\nautonomy: " + level, text, count=1)
+    lines = text.splitlines(keepends=True)
+    if lines and lines[0].lstrip().startswith("#"):
+        return lines[0] + f"autonomy: {level}\n" + "".join(lines[1:])
+    return f"autonomy: {level}\n" + text
+
+
+def _guard_autonomy_raise(current: str, target: str, yes: bool) -> None:
+    """RAISING the level toward `auto` is a human-owned trust escalation (run.md: the AI may LOWER
+    freely — RECOMMEND-only — but RAISING needs a human). Refuse a raise unless --yes confirms it."""
+    if _AUTONOMY_ORDER.get(target, -1) > _AUTONOMY_ORDER.get(current, -1) and not yes:
+        _die(f"autonomy_raise_unconfirmed: raising autonomy {current} -> {target} is a human-owned "
+             "trust escalation (the AI may LOWER freely; RAISING needs a human) — pass --yes to confirm")
+
+
+def _print_autonomy(root: Path, state: dict, slug: str) -> None:
+    """The read-only level view: declared · effective (fallback-resolved) · project default · the
+    verify-gate owner under it (the SAME _driver_stop the footer/guide render). Writes nothing."""
+    declared = _autonomy_level(_task_header(root, slug))
+    stop = _driver_stop(root, state, slug, "verify")
+    print(f"task        : {slug}")
+    print(f"declared    : {declared if declared in _AUTONOMY_LEVELS else 'unset'}")
+    print(f"effective   : {_effective_autonomy(root, state, slug)}")
+    print(f"project     : {_project_autonomy(root)}")
+    print(f"verify gate : {'human gate' if stop else 'you drive'}")
+
+
+def cmd_autonomy(args: argparse.Namespace) -> None:
+    """show / set the autonomy level — the verify-gate owner (task autonomy-command)."""
+    root = _require_root()                                   # reused -> "no .add/ project found …"
+    state = load_state(root)
+    if (getattr(args, "action", None) or "show") == "show":
+        _print_autonomy(root, state, _resolve_task(state, args.a1))   # reused -> "unknown task '<slug>'"
+        return
+    # action == "set"
+    level = args.a1
+    if level not in _AUTONOMY_LEVELS:
+        _die("autonomy_level_invalid: level must be one of "
+             f"{', '.join(_AUTONOMY_LEVELS)} (got {level!r})")
+    if getattr(args, "project", False):
+        target = root / "PROJECT.md"
+        _guard_autonomy_raise(_project_autonomy(root), level, getattr(args, "yes", False))
+        _atomic_write(target, _autonomy_decl_line(target.read_text(encoding="utf-8"), level))
+        print(f"project autonomy -> {level}")
+        return
+    slug = _resolve_task(state, args.a2)                     # reused -> "unknown task '<slug>'"
+    task_md = root / "tasks" / slug / "TASK.md"
+    if _RISK_HIGH_RE.search(_task_header(root, slug)) and level not in ("manual", "conservative"):
+        _die(f"unguarded_high_risk_auto: task '{slug}' declares risk: high — autonomy must stay "
+             f"lowered (manual|conservative); refusing '{level}' (a human must own a high-risk gate)")
+    _guard_autonomy_raise(_effective_autonomy(root, state, slug), level, getattr(args, "yes", False))
+    _atomic_write(task_md, _autonomy_decl_line(task_md.read_text(encoding="utf-8"), level))
+    print(f"task '{slug}' autonomy -> {level}")
+    _print_autonomy(root, state, slug)
 
 
 def cmd_reopen(args: argparse.Namespace) -> None:
@@ -1572,7 +1646,7 @@ def cmd_check(args: argparse.Namespace) -> None:
                        "unknown_autonomy_level (token outside manual|conservative|auto)"))
         if _alvl is None and t.get("phase") not in ("done", "observe"):
             warnings.append((f"task '{slug}'", "has no explicit autonomy level (implicit_autonomy) "
-                             "— set `autonomy: manual|conservative|auto` in the header"))
+                             "— run `add.py autonomy set <level>` to set it"))
         for dep in t.get("depends_on") or []:
             checks.append((dep in tasks or dep in archived_slugs,
                            f"task '{slug}' dep '{dep}' resolves", "unknown task"))
@@ -4080,6 +4154,16 @@ def build_parser() -> argparse.ArgumentParser:
     pg.add_argument("--ticket", help="RISK-ACCEPTED waiver: tracking ticket/link")
     pg.add_argument("--expires", help="RISK-ACCEPTED waiver: expiry date")
     pg.set_defaults(func=cmd_gate, _opt_positionals=("slug",))
+
+    pan = sub.add_parser("autonomy", help="show or set the autonomy level (the verify-gate owner)")
+    pan.add_argument("action", nargs="?", choices=("show", "set"), default="show")
+    pan.add_argument("a1", nargs="?", default=None, help="set: <level>; show: [slug]")
+    pan.add_argument("a2", nargs="?", default=None, help="set: [slug]")
+    pan.add_argument("--project", action="store_true",
+                     help="set the PROJECT.md default instead of a task header")
+    pan.add_argument("--yes", action="store_true",
+                     help="confirm a RAISE toward auto (a human-owned trust escalation)")
+    pan.set_defaults(func=cmd_autonomy, _opt_positionals=("a1", "a2"))
 
     pr = sub.add_parser("reopen", help="return a done task to an earlier phase with a recorded reason")
     pr.add_argument("slug", nargs="?", default=None)

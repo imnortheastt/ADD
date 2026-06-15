@@ -96,13 +96,17 @@ class TestIdiomRetirement(unittest.TestCase):
     # grows ONLY with that task's frozen §3 map — one enumerated addition per landed term commit.
     UBIQUITOUS_IDIOMS = {"on-ramp", "forward spine", "the spine", "state surface", "story surface", "trust layer", "safety net", "blind-spot", "blind spot", "touch-boundary", "touch boundary", "evidence auto-gate", "autonomy dial", "the dial", "lower the dial", "survivor layer", "the survivors", "survivor file", "intake altitude", "milestone altitude", "setup-altitude", "setup altitude", "foundation altitude", "every altitude", "lock-down", "lock down", "competency delta", "least-sure", "least sure", "the seam", "a seam", "decision seam", "freeze seam", "human seam", "seam template", "the fold", "fold ritual", "self-fold", "one-approval front", "the front", "whole front"}
 
+    # autonomy-command wave (ratified by Tin Dang 2026-06-15 at the §3 freeze decision point): the
+    # command-shaped "set autonomy:" idiom is retired in favour of the add.py autonomy set verb.
+    AUTONOMY_COMMAND_IDIOMS = {"set autonomy:"}
+
     def test_idiom_map_fully_enforced(self) -> None:
         rubric = load_rubric()
         self.assertEqual(rubric.mapped_idioms, [],
                          f"idiom_map entries still [mapped]: {[i for i, _ in rubric.mapped_idioms]}")
         # named-set equality (additive tightening, clarity-greenstate frozen contract 2026-06-07):
         # count alone passes a delete-one-add-another swap in the map; identity does not.
-        expected = self.V17_IDIOMS | self.UBIQUITOUS_IDIOMS
+        expected = self.V17_IDIOMS | self.UBIQUITOUS_IDIOMS | self.AUTONOMY_COMMAND_IDIOMS
         self.assertEqual(set(rubric.enforced_banned), expected,
                          f"enforced_banned must be EXACTLY the ratified idiom set "
                          f"({len(expected)} names), got {sorted(rubric.enforced_banned)}")
