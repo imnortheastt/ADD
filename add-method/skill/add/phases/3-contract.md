@@ -66,6 +66,8 @@ Never: change a frozen contract — a change reopens Specify.
 - [ ] Every spec rejection has a contracted response.
 </exit_gate>
 
+> **Advisor · Confidence** — a second opinion on a risky shape is worth a spawn (advisor.md); a low self-score is your cue to lower autonomy before you freeze (confidence.md).
+
 ## Next
 
 `python3 .add/tooling/add.py advance` → read `phases/4-tests.md`.

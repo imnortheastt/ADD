@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "gitignore-scaffold",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -692,10 +692,35 @@
         ],
         "snapshot_md5": "328d75f0810c0b6ba148be603a42e117"
       }
+    },
+    "gitignore-scaffold": {
+      "title": "Scaffold .add/.gitignore at init to keep transient engine artifacts out of git",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": null,
+      "depends_on": [],
+      "created": "2026-06-15T01:52:43+00:00",
+      "updated": "2026-06-15T02:09:01+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "cadec171611a58e4af0d0c74fb007401",
+        "tests": {
+          "add-method/tooling/test_add.py": "2904589b917e1e07b75a254f3840e00b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py"
+        ],
+        "snapshot_md5": "af6f24002b8d49c183a877bdbf4cf8e8"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-13T11:41:57+00:00",
+  "updated": "2026-06-15T02:09:01+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1061,6 +1086,17 @@
         "udd-check-lint"
       ],
       "archived": "2026-06-13"
+    },
+    {
+      "slug": "advisor-context",
+      "title": "Advisor Context",
+      "tasks": 3,
+      "task_slugs": [
+        "confidence-rubric",
+        "advisor-strategy",
+        "per-step-hooks"
+      ],
+      "archived": "2026-06-14"
     }
   ]
 }

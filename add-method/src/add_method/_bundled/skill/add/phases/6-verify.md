@@ -82,6 +82,8 @@ before the ask — per that file's reconcile rule (verify is where a flag-vs-dig
   (under `autonomy: auto` with no residue) the run auto-resolved as the accountable owner.
 </exit_gate>
 
+> **Advisor · Confidence** — the earned-green refute-read is the canonical adversarial spawn (advisor.md); score the verdict before you record the gate (confidence.md).
+
 ```bash
 python3 .add/tooling/add.py gate PASS          # marks the task done
 # or: add.py gate RISK-ACCEPTED   |   add.py gate HARD-STOP (return to Build)

@@ -98,15 +98,24 @@ class V8InstallTest(unittest.TestCase):
         self.assertNotIn("init_argv", src,
                          "_installer.py still builds an `init` argv — it must not run add.py init")
 
-    def test_cli_hint_offers_manual_init(self):
+    # 9d020e0 ("update CLI instructions for user clarity") simplified the closing
+    # hint to a SINGLE conversational handoff and removed the manual-init CLI escape.
+    # The `init --await-lock` flag still exists (the install header still notes /add
+    # runs it internally to arm the lock-down) — it is just no longer ADVERTISED in
+    # the user-facing closing hint. These guards pin that conversational-only contract.
+    def test_cli_hint_is_conversational_only(self):
         hint = _closing_hint(_cli())
-        self.assertIn("--await-lock", hint,
-                      "cli.js closing hint must offer the manual `add.py init --await-lock` fallback")
+        self.assertNotIn("--await-lock", hint,
+                         "cli.js closing hint is conversational-only — the manual "
+                         "`init --await-lock` escape was removed for clarity (9d020e0)")
+        self.assertIn("/add", hint, "the closing hint points at the `/add` entry")
 
-    def test_installer_py_hint_offers_manual_init(self):
+    def test_installer_py_hint_is_conversational_only(self):
         hint = _closing_hint(_installer_py())
-        self.assertIn("--await-lock", hint,
-                      "_installer.py closing hint must offer the manual `add.py init --await-lock` fallback")
+        self.assertNotIn("--await-lock", hint,
+                         "_installer.py closing hint is conversational-only — the manual "
+                         "`init --await-lock` escape was removed for clarity (9d020e0)")
+        self.assertIn("/add", hint, "the closing hint points at the `/add` entry")
 
 
 if __name__ == "__main__":

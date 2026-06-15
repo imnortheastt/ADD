@@ -191,6 +191,19 @@ WORKER_CONTRACT_TAGS = {
     "objective", "persona", "touch_boundary", "context_files", "expertise", "tools", "return",
 }
 ENGINE_FILES = {
+    "confidence.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## The six dimensions",
+            "## Where it plugs in",
+        )},
+    "advisor.md": {
+        "tags": {"constraints"},
+        "narrative": (
+            "## When to spawn — and when not",
+            "## The plan-following prompt template",   # holds the ```xml template fence
+            "## Choosing the model — vendor-neutral tiers",
+        )},
     "SKILL.md": {
         "tags": {"constraints"},
         "narrative": (

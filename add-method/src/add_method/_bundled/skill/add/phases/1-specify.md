@@ -63,6 +63,8 @@ Never: resolve an ambiguity by guessing.
       "none material" that still names the single biggest risk (never a blank "none").
 </exit_gate>
 
+> **Advisor · Confidence** — for an unfamiliar domain, spawn a researcher (advisor.md); self-score the spec and let the lowest dimension aim your ⚠ flag (confidence.md).
+
 ## Next
 
 `python3 .add/tooling/add.py advance` → read `phases/2-scenarios.md`.

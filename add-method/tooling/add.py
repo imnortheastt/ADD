@@ -82,6 +82,20 @@ PHASE_OWNER = {
 }
 SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist", "DESIGN.md")
 
+# Scaffolded into .add/.gitignore at init so the engine's transient LOCAL artifacts
+# never reach git. Bare-filename patterns match at any depth under .add/ (tasks/,
+# milestones/, archive/). These are working state, not records: scope-snapshot.json
+# is the tests->build touch baseline the verify scope-gate reads from disk (the
+# durable scope declaration is the state.json anchor); pre-archive-state.bak.json is
+# archive-milestone's pre-delete recovery net — needed on disk, never in history.
+# Both stay on disk; git-ignoring them is hygiene, never deletion.
+_GITIGNORE_BODY = """\
+# ADD engine transient artifacts — local working state, never committed.
+# (Scaffolded by `add.py init`; edit freely — init never clobbers an existing copy.)
+scope-snapshot.json
+pre-archive-state.bak.json
+"""
+
 # Guideline-injection targets + version-stable markers. NEVER change these marker
 # strings: a re-run finds the old block by exact match, so changing them would
 # orphan every block written by a prior version (see TASK guideline-inject).
@@ -370,6 +384,13 @@ def cmd_init(args: argparse.Namespace) -> None:
         _die(f"already initialised at {root} (use --force to reset state)")
 
     (root / "tasks").mkdir(parents=True, exist_ok=True)
+    # Keep the engine's transient local artifacts out of git. Never-clobber: a
+    # human may have customised .add/.gitignore, so an existing one is left as-is
+    # (mirrors the SETUP_FILES skip-not-clobber idiom). Writes ONLY this file — no
+    # scope-snapshot.json or .bak is created, deleted, or modified.
+    gitignore = root / ".gitignore"
+    if not gitignore.exists():
+        _atomic_write(gitignore, _GITIGNORE_BODY)
     today = date.today().isoformat()
     proj_name = args.name or base.name
 

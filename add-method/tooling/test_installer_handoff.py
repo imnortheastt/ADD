@@ -2,9 +2,12 @@
 """Tests for the flagless installer handoff (v15 installer-handoff).
 
 Behavioral pins for what v12 shipped as words (a flagless install that lands
-the brain and hands off to /add) plus the v15 delta: the manual-init escape
-hint drops the flags the user never typed — the engine already infers the
-name and defaults the stage, so the hint shows the shortest TRUE command.
+the brain and hands off to /add). The handoff is CONVERSATIONAL-ONLY: 9d020e0
+("update CLI instructions for user clarity") reworded it to the tool-agnostic
+"open your AI Agent CLI (like Claude Code, Codex, etc.)" and REMOVED the manual
+`init --await-lock` CLI-escape hint — so the closing output points only at /add
+(the `--await-lock` flag itself still exists; /add runs it internally to arm the
+v12 lock-down — only the user-facing fallback hint was dropped).
 The npx-side tests skip honestly when `node` is absent (the npm-gated
 precedent in test_packaging).
 Run: python3 -m unittest test_installer_handoff -v
@@ -61,18 +64,12 @@ def _assert_brain_landed(tc, root: Path, out: str):
     tc.assertFalse((root / ".add" / "state.json").exists(),
                    "installer must NEVER run init — no state.json")
     low = out.lower()
-    tc.assertIn("open claude code", low,
-                "the final output must hand off to the conversation")
+    tc.assertIn("open your ai agent cli", low,
+                "the final output hands off to the conversational, tool-agnostic entry")
     tc.assertIn("/add", out, "the handoff names /add")
-
-
-def _hint_line(out: str) -> str:
-    """The manual-init escape-hint line (must exist — a shipped guard pins
-    --await-lock in the closing hint)."""
-    for ln in out.splitlines():
-        if "init --await-lock" in ln:
-            return ln
-    raise AssertionError("no manual-init hint line containing 'init --await-lock'")
+    tc.assertNotIn("--await-lock", out,
+                   "the handoff is conversational-only — the manual `init --await-lock` "
+                   "CLI-escape hint was removed for clarity (9d020e0); never re-advertise it")
 
 
 @unittest.skipUnless(NODE, "node not on PATH — npx-side install check skipped (honest skip)")
@@ -83,28 +80,6 @@ class NpxFlaglessTest(unittest.TestCase):
             self.assertEqual(res.returncode, 0,
                              f"flagless npx init failed:\n{res.stderr}")
             _assert_brain_landed(self, Path(tmp), res.stdout)
-
-    def test_npx_flagless_hint_drops_flags(self):
-        with tempfile.TemporaryDirectory(prefix="add-npx-") as tmp:
-            res = _run_node_init(cwd=tmp)
-            self.assertEqual(res.returncode, 0, res.stderr)
-            hint = _hint_line(res.stdout)
-            self.assertNotIn("--stage", hint,
-                             "flagless install must not echo a --stage the "
-                             "user never typed (the engine defaults it)")
-            self.assertNotIn("--name", hint,
-                             "flagless install must not echo a --name the "
-                             "user never typed (the engine infers it)")
-
-    def test_explicit_flags_echo_into_hint(self):
-        with tempfile.TemporaryDirectory(prefix="add-npx-") as tmp:
-            res = _run_node_init(("--name", "Acme", "--stage", "mvp"), cwd=tmp)
-            self.assertEqual(res.returncode, 0, res.stderr)
-            hint = _hint_line(res.stdout)
-            self.assertIn("--stage mvp", hint,
-                          "an explicitly chosen stage still echoes into the hint")
-            self.assertIn('--name "Acme"', hint,
-                          "an explicitly chosen name still echoes into the hint")
 
     def test_missing_flag_value_fails(self):
         # in-build STRENGTHENING amendment (disclosed at the gate): a trailing
@@ -124,16 +99,6 @@ class PipFlaglessTest(unittest.TestCase):
             self.assertEqual(res.returncode, 0,
                              f"flagless pip init failed:\n{res.stderr}")
             _assert_brain_landed(self, Path(tmp), res.stdout)
-
-    def test_pip_flagless_hint_drops_flags(self):
-        with tempfile.TemporaryDirectory(prefix="add-pip-") as tmp:
-            res = _run_pip_init(cwd=tmp)
-            self.assertEqual(res.returncode, 0, res.stderr)
-            hint = _hint_line(res.stdout)
-            self.assertNotIn("--stage", hint,
-                             "flagless pip install must not echo --stage")
-            self.assertNotIn("--name", hint,
-                             "flagless pip install must not echo --name")
 
     def test_missing_flag_value_fails(self):
         # twin of the npx-side strengthening amendment: argparse already
