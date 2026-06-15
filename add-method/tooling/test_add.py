@@ -50,6 +50,7 @@ class AddToolTest(unittest.TestCase):
         body = gi.read_text()
         self.assertIn("scope-snapshot.json", body)
         self.assertIn("pre-archive-state.bak.json", body)
+        self.assertIn(".update-cache.json", body)
 
     def test_gitignore_ignores_transient_artifacts(self):
         # RED pre-build: with no scaffolded rules, git ignores neither artifact.
@@ -63,10 +64,12 @@ class AddToolTest(unittest.TestCase):
         root = Path(self.tmp) / ".add"
         snap = root / "tasks" / "demo" / "scope-snapshot.json"
         bak = root / "milestones" / "demo" / "pre-archive-state.bak.json"
+        cache = root / ".update-cache.json"
         snap.parent.mkdir(parents=True, exist_ok=True)
         bak.parent.mkdir(parents=True, exist_ok=True)
         snap.write_text("{}")
         bak.write_text("{}")
+        cache.write_text("{}")
 
         def ignored(rel):
             return subprocess.run(
@@ -75,6 +78,7 @@ class AddToolTest(unittest.TestCase):
 
         self.assertTrue(ignored(".add/tasks/demo/scope-snapshot.json"))
         self.assertTrue(ignored(".add/milestones/demo/pre-archive-state.bak.json"))
+        self.assertTrue(ignored(".add/.update-cache.json"))
         # artifact-specific, never a blanket .add/ ignore
         self.assertFalse(ignored(".add/state.json"))
 

@@ -71,9 +71,9 @@ named code on any layer, catalog, tree, or cross-file violation — and staying
 silent when a project has no design set.
 
 Project state (`.add/state.json`) and the living-documentation files (`CONVENTIONS.md`,
-`GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`) are *not* created
-here — the installer drops files only; initialisation is the agent's first move
-when you run `/add`.
+`GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`, `SOUL.md` — the AI's
+human-owned voice) are *not* created here — the installer drops files only;
+initialisation is the agent's first move when you run `/add`.
 
 ## Use it
 
