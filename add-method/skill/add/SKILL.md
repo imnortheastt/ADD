@@ -93,6 +93,9 @@ You write them as `open`; the human consolidates them into `PROJECT.md`. Read `d
 grammar and the status lifecycle. At milestone close (or on demand), run the retrospective consolidation that
 gathers confirmed deltas into a versioned foundation — read `fold.md`. Then (or on demand) compact the stable tail of each foundation spec into a rolled-up settled line — read `compact-foundation.md` (a SEPARATE step, run after `fold.md`).
 
+Observe also tunes your **voice**: propose a confirmable **voice delta** from the human's wordings +
+flow that, once they confirm, rewrites `SOUL.md` (the human is the only writer) — read `soul.md`.
+
 ## Beyond the bundle — load on demand
 
 Once **§3 CONTRACT is FROZEN**, the build→verify half is a dynamic, auto-gated run

@@ -37,7 +37,7 @@ Out: a TUI/visual DAG render; auto-spawning workers without human confirm; readi
 - [ ] setup-suggest-milestone depends-on: none           — after brownfield scan / greenfield interview, setup proposes the first milestone with goal + flow + scenarios
 - [x] setup-domain-deepdive   depends-on: none           — multi-turn per-drive (DDD·SDD·UDD·TDD) domain deepening that captures ADRs; auto mode auto-completes all four with full context
 - [x] soul-artifact           depends-on: none           — SOUL.md living doc: schema, scaffolded at setup, shipped in the installer, read each session; voice content human-owned
-- [ ] soul-self-improve       depends-on: soul-artifact  — observe phase emits a confirmable "voice delta" from wordings+flow; confirm rewrites SOUL.md (deltas.md lifecycle + fold path)
+- [x] soul-self-improve       depends-on: soul-artifact  — observe phase emits a confirmable "voice delta" from wordings+flow; confirm rewrites SOUL.md (deltas.md lifecycle + fold path)
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] `add.py waves` emits topological waves + critical path + a per-tier hint, tested render-blind   (← dag-scheduler)
@@ -46,4 +46,4 @@ Out: a TUI/visual DAG render; auto-spawning workers without human confirm; readi
 - [x] after the scan/interview, setup proposes a concrete first milestone with flow + scenarios         (← setup-suggest-milestone)
 - [x] setup runs a multi-turn per-drive domain deep-dive capturing ADRs; auto mode auto-completes 4     (← setup-domain-deepdive)
 - [x] SOUL.md exists, is scaffolded at setup, shipped by the installer, and read each session           (← soul-artifact)
-- [ ] the observe phase emits a confirmable voice delta that, once confirmed, rewrites SOUL.md          (← soul-self-improve)
+- [x] the observe phase emits a confirmable voice delta that, once confirmed, rewrites SOUL.md          (← soul-self-improve)
