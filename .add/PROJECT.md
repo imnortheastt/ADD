@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-14 · foundation-version: 30
+slug: AIDD-Book · stage: mvp · updated: 2026-06-15 · foundation-version: 31
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
@@ -35,6 +35,16 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   not (v22 · DDD; same archive seam as graduation-analytics' traversal-basis convention).
 
 ## Spec / Living Document (SDD) — what we are building, now
+- **foundation-compaction (all 4 foundation specs shrink — newest-first + per-spec settled lines): SHIPPED 2026-06-15** —
+  every append-only foundation sequence now reads NEWEST-FIRST (newest record on top) and, at milestone close, collapses its
+  stable shipped zero-residue tail into ONE per-spec **rolled-up settled line** at the bottom (summarize + a `see git` pointer,
+  NEVER delete; every OPEN residue stays live). One shared eligibility rule (shipped + zero open residues) drives a PER-SEQUENCE
+  predicate, not a single global cutoff (§Spec keys on un-fv-stamped prose · §Key-Decisions on date · learnings on max-foundation-version)
+  and a PER-SPEC rolled-line dialect, not one generalized shape; newest-first ordering + compaction are ONE invariant amendment
+  (newest on top, settled tail at the bottom — collapse upward), not two themes. Reject codes open-residue-version · trail-loss ·
+  wrong-order. Dogfooded on the LIVE specs with ZERO data loss, refute-verified against git: PROJECT.md 399→215, CONVENTIONS.md
+  689→360 (foundation 1088→575, −47%). Convention-guided — there is deliberately no `add.py` command for the ritual (read
+  `compact-foundation.md`); distinct from the engine `add.py compact <slug>` (the archive recovery-bundle move). [folded foundation-version 31]
 - **next-step-seams (Engine next-step footer + driver marker): SHIPPED 2026-06-12** — every COMPLETING mutating
   verb now prints one engine-sourced `next:` footer (Arm A: in-flight task → phase command; Arm B: state-arm decide)
   from a SINGLE resolver `_next_footer`; bespoke ad-hoc tails converged (no double-print). The driver marker
@@ -198,10 +208,15 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   wording-only fix. (d) `_section0_anchors` registers grounding only from INLINE content on the Anchors line,
   not a bulleted list below it — either teach the parser the list form or make the inline-only shape explicit in
   the guide; this is a RECORDED KNOWN GAP, deferred to a future engine task. [folded foundation-version 29]
+- **The ubiquitous-language ban is PROSE-ONLY (foundation-compaction · UDD):** a banned term survives inside a `code span`
+  or a fenced block — so a user-facing guide references doc/machine names as code-spans (`fold.md`, `folded`) and uses the
+  domain terms in prose ("retrospective consolidation", "foundation spec"), never the bare slang. The readable surface stays
+  on-vocabulary without losing the precise file/machine names. [folded foundation-version 31]
 
 ## Key Decisions (append-only — newest-first; compaction door per compact-foundation.md)
 | date | decision | why | outcome |
 |------|----------|-----|---------|
+| 2026-06-15 | ship foundation-compaction + fold → foundation-version 31 (19 open deltas from 6 tasks — SDD 4 · UDD 1 · TDD 6 · ADD 8, incl. 2 carried from gitignore-scaffold; aggressively merged into 1 §Spec ship bullet + 1 §Users prose-only-ban line + 6 new CONVENTIONS bullets + 3 flip-cites) — all four foundation specs now read NEWEST-FIRST and collapse their stable shipped zero-residue tail into a per-spec rolled-up settled line (summarize + `see git`, never delete; OPEN residue stays live); convention-guided (no `add.py` command) | the foundation grows past v30 and must stay relevant-first + one-screen — this milestone re-ordered every append-only sequence newest-first, added the compaction door, and dogfooded it on the LIVE specs with zero loss | foundation-compaction SHIPPED 5/5 tasks, 6/6 exit criteria; +6 CONVENTIONS +3 flip-cites; §Spec ship bullet; §Users prose-only-ban line; 30→31; all 19 deltas open→folded; build committed c93e41e |
 | 2026-06-14 | ship advisor-context + fold → foundation-version 30 (4 open deltas from 2 tasks: SDD 1 · TDD 1 · ADD 2; merged into 3 CONVENTIONS bullets) — every ADD step now carries a THIN Advisor·Confidence hook pointing to two new shared engine docs: `advisor.md` (when/how to spawn one plan-following subagent, vendor-neutral) + `confidence.md` (advisory 0–1 six-dimension self-score, refine-if-<0.9, never a gate) | the subagent-spawn pattern was scattered (ground sweep · verify refuter · streams adapter) and the self-score lived only in the streams worker prompt; promote both into first-class per-step guidance so any agent driving the loop knows when to delegate and how to self-assess — engine still never spawns, score never gates | advisor-context SHIPPED 3/3 tasks, 5/5 criteria; 3 new guards (test_confidence_rubric · test_advisor_strategy · test_per_step_hooks) + xml_convention ENGINE_FILES & wording_lint COUNT 22→24; +3 CONVENTIONS bullets (new-engine-doc-trips-inventory-guards · enumerate-full-set+distinctness · build-in-build+thin-pointer); 29→30; all 4 deltas open→folded |
 | 2026-06-13 | fold udd-design-foundation learnings → foundation-version 29 (41 open deltas from 10 tasks: SDD 9 · UDD 6 · TDD 12 · ADD 14; merged into ~14 foundation additions — 8 new CONVENTIONS bullets · 1 §Spec next-step-seams ship bullet · 2 §Users bullets (identity-settled + UDD-forward-gaps) · 1 CARRY-FORWARD known-gap recorded in §Users) | human-confirmed fold of the udd-design-foundation milestone's full OBSERVE backlog; aggressively merged (41→14) to keep the foundation lean; one ADD carry-forward (active_milestone re-aim) recorded as a known-gap engine task, still flipped folded | 8 new CONVENTIONS bullets (contract-completeness-3-checks · verb-set-broadening-names-class · adversarial-refute-conformant-happy-path · string-presence-under-enforces · engine-pin-3-mandatory-parts · mid-build-CR-trips-tamper · §5-scope-frozen-at-tests-build · state-create-needs-remove+shared-cap); §Spec next-step-seams bullet; §Users identity-settled + UDD-forward-gaps; 28→29; all 41 deltas open→folded |
 | 2026-06-12 | fold engine-hardening + wave learnings → foundation-version 28 (11 open deltas: 9 new CONVENTIONS bullets — hand-written-input-parsing-discipline (2 SDD merged: exactly-one-match + terminator-explicit) · name-enforcement-deferral-at-freeze · coverage-gaps-route-as-deltas · grammar-drift-fixtures · token-presence+mirror-parity · sandbox-only-mutating-probes · close-gap-before-gate · mirror-folded-exceptions · shifts-never-skips — · 1 flip-cite onto mechanical-HARD-STOP+monotonic-cap) | human-gated fold after the engine-hardening ground tasks (argv-portability PASS auto-resolved · merge-base-enforcement PASS human-gated after 7 refute passes, 4 human-approved contract versions, 2 heal_exhausted HARD-STOPs — the fv27 mechanical guard's first live fire, held both times); all 11 confirmed (none rejected) | +9 CONVENTIONS +1 flip-cite; 27→28; 11 deltas open→folded; engine b441421c ×3; PR #8 |

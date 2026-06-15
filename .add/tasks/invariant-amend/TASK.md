@@ -216,6 +216,6 @@ Spec delta for the next loop: apply-compaction must now REORDER the existing liv
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] amending a frozen-invariant DOC means reconciling EVERY position-describing sentence, not just the named clause — coherence spans the whole ritual (evidence: the clause-only red suite missed step5/L34/L39; the added coherence guard caught them)
-- [TDD · open] a byte-identical multi-home edit is provable by an md5-parity test + a fail-closed verbatim-transform script (evidence: invariant-amend wrote 3 fold.md homes from one source, md5 5fdc1c72 across all)
-- [ADD · open] a disclosed boundary AT the verify gate lets the human rule the reach explicitly instead of the AI guessing it (evidence: PASS accepted the routing-table-verbs boundary at the gate)
+- [ADD · folded] amending a frozen-invariant DOC means reconciling EVERY position-describing sentence, not just the named clause — coherence spans the whole ritual (evidence: the clause-only red suite missed step5/L34/L39; the added coherence guard caught them)
+- [TDD · folded] a byte-identical multi-home edit is provable by an md5-parity test + a fail-closed verbatim-transform script (evidence: invariant-amend wrote 3 fold.md homes from one source, md5 5fdc1c72 across all)
+- [ADD · folded] a disclosed boundary AT the verify gate lets the human rule the reach explicitly instead of the AI guessing it (evidence: PASS accepted the routing-table-verbs boundary at the gate)

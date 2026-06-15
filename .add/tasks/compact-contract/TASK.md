@@ -225,6 +225,6 @@ Spec delta for the next loop: the contract is convention-guided (no engine enfor
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [SDD · open] foundation specs need a PER-SPEC rolled-line dialect, not one generalized shape — the four specs' append-only forms differ structurally (evidence: compact-contract froze 5 distinct shapes for 5 spec sections)
-- [ADD · open] a convention-guided method contract (engine stays judgment-free) is still TDD-able via a prose contract doc + structural asserts (evidence: compact-contract shipped 6 green prose-contract tests with zero engine edit)
-- [SDD · open] newest-first ordering and compaction compose into ONE invariant amendment (newest on top, settled tail at bottom), not two themes (evidence: the ordering enhancement folded into invariant-amend mid-intake without a new task)
+- [SDD · folded] foundation specs need a PER-SPEC rolled-line dialect, not one generalized shape — the four specs' append-only forms differ structurally (evidence: compact-contract froze 5 distinct shapes for 5 spec sections)
+- [ADD · folded] a convention-guided method contract (engine stays judgment-free) is still TDD-able via a prose contract doc + structural asserts (evidence: compact-contract shipped 6 green prose-contract tests with zero engine edit)
+- [SDD · folded] newest-first ordering and compaction compose into ONE invariant amendment (newest on top, settled tail at bottom), not two themes (evidence: the ordering enhancement folded into invariant-amend mid-intake without a new task)

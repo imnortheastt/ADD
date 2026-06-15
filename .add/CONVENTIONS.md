@@ -27,6 +27,47 @@ Architecture:
 
 ## Method learnings (folded from OBSERVE deltas)
 
+- (ADD) **A frozen contract's NON-BINDING detail can collide with reality discovered at build — honor the binding
+  rule, DISCLOSE the deviation at the verify gate for the human to rule, never silently retrofit the frozen prose.**
+  Two faces this milestone: an ILLUSTRATIVE integer (§3 said §Spec "19→9"; the binding RULE rolled 18→10 — one
+  old-positioned bullet carried an fv21 reinforcement cite) and a PROSE-SKETCH heading (§3 sketched `## Seam`, but a
+  SEPARATE frozen engine guard `test_slang_absent_extended_surface` bans "seam" on the surface → shipped
+  `## Distinct from add.py compact`). In each, the realization honored the binding/harder thing and ESCALATED the
+  deviation AT the gate — a disclosed boundary lets the human rule the reach explicitly instead of the AI guessing it,
+  and the §3 prose is left frozen, not retrofitted. Reinforces "the change-request is the method working" + "a
+  security-line emerges at build → ratify at the gate". [compact-contract + apply-compaction + compact-guide +
+  invariant-amend — folded foundation-version 31]
+- (TDD) **A destructive in-place transform is made safe by a FROZEN pre-state snapshot + a shared parser used by BOTH
+  the test and the transform — turning "newest-first kept-run reversed, stable tail rolled" into an exact list-equality
+  assertion that catches any drop or reorder, never a vacuous set check.** apply-compaction froze `snapshot_before.json`
+  and shared `compaction_lib.split` so the test asserts the exact reordered+rolled list against the pre-state; a
+  byte-identical multi-home edit is likewise provable by an md5-parity test + a fail-closed verbatim-transform script
+  (invariant-amend). [apply-compaction + invariant-amend — folded foundation-version 31]
+- (TDD) **A presence guard is vacuous when the token recurs elsewhere or the behavior goes unobserved — pin the OWN
+  ENTRY by native format AND assert REAL enforcement + a delete-the-impl refute.** (a) `assertIn(term, file)` greened
+  even with a glossary term's OWN entry deleted, because the term string recurs inside another entry's body — pin it by
+  the home's native format (`**Term** —` bold / `term:` colon) and mutation-prove the guard bites (compact-book-align).
+  (b) A "git ignores X" / behavioral feature is verified by REAL `git check-ignore` enforcement + a refute (delete the
+  impl → the test fails), never by asserting the pattern STRING is present (gitignore-scaffold). The newest faces of
+  "words-exist≠method-works" / presence-necessary-not-sufficient. [compact-book-align + gitignore-scaffold — folded
+  foundation-version 31]
+- (TDD) **A never-clobber / preserve-existing guard cannot run RED pre-build — doing nothing already satisfies "leave
+  the file unchanged" — so disclose it as a green regression guard, never manufacture a vacuous RED.** The honest red
+  suite reds on the CREATE / ENFORCE drivers; the preserve guard is named as a disclosed green-throughout regression
+  guard, not faked red to look like a driver. [gitignore-scaffold — folded foundation-version 31]
+- (ADD) **The scope-walk EXCLUDES `.add/` (`_SCOPE_EXCLUDE_DIRS`), so a task that ALSO edits files under `.add/` gets
+  ZERO scope-gate coverage there — declare the canonical `add-method/…` files and treat the `.add/…` twins as
+  ride-along.** Only the canonical tree is gated; a `.add/` twin (the md5 mirror, a dogfood scaffold, a
+  `git rm --cached`) is synced by hand and confirmed by the task's own md5-parity test, never by the scope gate — so the
+  gated anchor must be the canonical file, never the `.add/` copy. [gitignore-scaffold + apply-compaction — folded
+  foundation-version 31]
+- (ADD) **A convention-guided method contract (the engine stays judgment-free — no `add.py` command) is still TDD-able
+  via a prose contract doc + structural asserts; and amending a frozen-invariant DOC means reconciling EVERY
+  position-describing sentence, not just the named clause.** compact-contract froze `compaction-contract.md` and pinned
+  it with structural tests though zero engine code changed; invariant-amend's newest-first re-freeze had to reconcile
+  every "appends one row / at the bottom" sentence across fold.md + PROJECT + CONVENTIONS + the book, because coherence
+  spans the whole ritual, not the one clause the change names. [compact-contract + invariant-amend — folded
+  foundation-version 31]
 - (ADD) **Two authoring rules for method-surface milestones: build in the build phase, and deliver per-step
   context as thin pointers.** (a) Authoring the implementation during SPECIFY makes the tests→build snapshot
   capture an already-built tree, so the scope-gate becomes a no-op — write code IN build so the gate
@@ -44,7 +85,10 @@ Architecture:
   (registration) and the `test_wording_lint` surface COUNT at the same time; both must be named in §5 Scope
   before the tests→build cross, or the frozen anchor records an undeclared touch. Sharpens
   §5-scope-frozen-at-tests-build for the new-engine-doc case: the inventory guards, not just the prose,
-  define the scope a method-surface task must declare. [advisor-strategy — folded foundation-version 30]
+  define the scope a method-surface task must declare. [advisor-strategy — folded foundation-version 30] **Re-validated at
+  foundation-compaction:** shipping the new surface guide `compact-foundation.md` reddened the wording-lint COUNT (24→25) + the
+  membership assert (`test_surface_files_cover_the_contract`) at once — fold the count+membership registration into §5 Scope up
+  front, before the tests→build cross. [compact-guide — flip-cite foundation-version 31]
 - (ADD) **Every state-CREATING seam needs its state-REMOVING transition specified in the SAME contract — and a
   shared-cap cross-source escalation test, not a same-source one.** Declared→undeclared had no cleanup path
   until a verify refute disclosed it (v3 change-request). Proving a SHARED violation cap is distinct: seeding the
@@ -55,7 +99,10 @@ Architecture:
   cannot clear a scope violation.** Only a full tests→build re-cross (reopen → contract → tests → advance)
   re-baselines the anchor. Sibling caveat: sibling-session commits landing on the shared branch mid-task can redden
   unrelated guards; the full-suite-before-gate rule catches and routes them rather than letting the gate record
-  over them. [next-footer-engine + scope-decl-template — folded foundation-version 29]
+  over them. [next-footer-engine + scope-decl-template — folded foundation-version 29] **Re-validated at foundation-compaction:**
+  compact-guide's scope_violation PERSISTED after editing §5 prose alone until a `phase tests`+`advance` re-cross re-anchored the
+  declared list (check 14→13 warnings); compact-book-align hit it again for two repo-root book copies. The live-run re-cross form is
+  `phase tests → advance` (no `reopen` mid-task). [compact-guide + compact-book-align — flip-cite foundation-version 31]
 - (ADD) **A human-approved mid-build change-request trips the tamper tripwire — the honest re-arm is
   `phase tests → advance`, never a gate override.** The tripwire snapshots the red test paths + §3 at tests→build;
   any edit (even a legitimate, human-approved bundle change) re-fires it. The path: reopen → contract → tests →
@@ -318,7 +365,11 @@ Architecture:
   the ground fold:** a byte-sync test added for a NEW term (`test_book_glossary_synced_x4`) caught the
   PRE-EXISTING repo-root appendix-c drift this bullet predicted — the root mirror had silently fallen a whole term
   behind canonical; a "synced ×N" guard pays for itself beyond the change that adds it, and the appendix-root leg
-  is now guarded. [ground-prose-align — folded foundation-version 25]
+  is now guarded. [ground-prose-align — folded foundation-version 25] **Re-validated at foundation-compaction:**
+  compact-book-align's §0 GROUND map UNDERCOUNTED the book mirror as ×3 when the engine mandates ×4 (the repo-root copy
+  too) — ground a mirror-parity task's home-count from the engine's own `test_ground_prose._doc_trees`, never a
+  hand-count; the ×3 miss surfaced as 6 sync-guard failures mid-build and a §3 ×3→×4 disclosure the human accepted at
+  the gate. [compact-book-align — flip-cite foundation-version 31]
 - (TDD) **A count-vs-set assertion guards an invariant only against the mutation it can see — name the blind
   spot, or a "latent guard" reads as a false all-clear.** "Exactly one entry per cite-key" has no dedicated
   uniqueness test; `test_appendix_g_frozen` asserts `len(set(keys)) == 27`, so an entry EDITED to collide
