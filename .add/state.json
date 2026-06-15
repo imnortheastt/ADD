@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "setup-suggest-milestone",
+  "active_task": "setup-domain-deepdive",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -851,12 +851,25 @@
     },
     "setup-domain-deepdive": {
       "title": "Setup: multi-turn per-drive domain deep-dive + ADRs",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v13-onboarding-polish",
       "depends_on": [],
       "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T13:53:09+00:00"
+      "updated": "2026-06-15T14:25:49+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "2ef440a1f66cf6b7b5974ce061b9758b",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/phases/0-setup.md",
+          ".claude/skills/add/phases/0-setup.md",
+          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md"
+        ],
+        "snapshot_md5": "8d4b92d0d74d6fa162c2c0c8cbf2a11f"
+      }
     },
     "soul-artifact": {
       "title": "SOUL.md living voice doc: schema + scaffold + read",
@@ -880,7 +893,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T14:18:11+00:00",
+  "updated": "2026-06-15T14:25:49+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

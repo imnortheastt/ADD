@@ -49,6 +49,26 @@ Ask only the live ones; skip what the request already answers. Rank your drafts 
 one notation every scope level shares — `⚠ <assumption> — lowest confidence because <why>; if wrong: <cost>` — and
 tag thin or inferred answers `guessed`.
 
+## 2c · Domain deep-dive — per-drive, across multiple turns (deepens §2b)
+
+§2b gets a foundation from one question per lens; this step DEEPENS it across **multiple
+turns**, one deep-dive per **drive** — naming all four, including the one §2b's lens list omitted:
+
+| Drive | Deepen |
+|-------|--------|
+| **DDD** (domain) | core nouns → model: the entities, the invariants, the bounded edges |
+| **SDD** (spec) | the milestone outcome → the behaviors and the explicit non-goals |
+| **UDD** (users) | the primary user → the jobs, the surface, the one flow that must feel right |
+| **TDD** (trust) | what "done & trusted" means: the risks to prove, the evidence that closes them |
+
+Capture each surfaced decision as an **ADR** (architecture decision record) into `PROJECT.md`
+**Key Decisions** as it lands — the Decisions lens becomes explicit ADR capture (the *why*, not just the *what*).
+
+**Under `autonomy: auto` with full context, auto-complete all four drives in one pass** — draft
+each without stopping to interview, still lowest-confidence-first, surfacing the top **flag**. Ask
+only the live drives; skip what the request already answered. This deepens **drafting**, never the
+gate: auto-complete NEVER skips the human baseline approval — the `lock` (§4) stays the one decision.
+
 ## 3 · Draft to the lock (both paths)
 
 1. **Fill the living documentation** (it outlives all code): `.add/PROJECT.md` (the foundation — Domain · Spec/active
