@@ -41,6 +41,54 @@ class AddToolTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self._run("init")
 
+    # --- gitignore scaffold (keep transient engine artifacts out of git) ---
+    def test_init_scaffolds_gitignore(self):
+        # RED pre-build: cmd_init does not yet write .add/.gitignore.
+        self._run("init", "--name", "demo", "--stage", "mvp")
+        gi = Path(self.tmp) / ".add" / ".gitignore"
+        self.assertTrue(gi.exists(), "init did not scaffold .add/.gitignore")
+        body = gi.read_text()
+        self.assertIn("scope-snapshot.json", body)
+        self.assertIn("pre-archive-state.bak.json", body)
+
+    def test_gitignore_ignores_transient_artifacts(self):
+        # RED pre-build: with no scaffolded rules, git ignores neither artifact.
+        # Enforcement, not string-presence: a real `git check-ignore` must match.
+        import shutil
+        import subprocess
+        if shutil.which("git") is None:
+            self.skipTest("git unavailable")
+        subprocess.run(["git", "init", "-q", self.tmp], check=True)
+        self._run("init", "--name", "demo", "--stage", "mvp")
+        root = Path(self.tmp) / ".add"
+        snap = root / "tasks" / "demo" / "scope-snapshot.json"
+        bak = root / "milestones" / "demo" / "pre-archive-state.bak.json"
+        snap.parent.mkdir(parents=True, exist_ok=True)
+        bak.parent.mkdir(parents=True, exist_ok=True)
+        snap.write_text("{}")
+        bak.write_text("{}")
+
+        def ignored(rel):
+            return subprocess.run(
+                ["git", "-C", self.tmp, "check-ignore", rel],
+                capture_output=True, text=True).returncode == 0
+
+        self.assertTrue(ignored(".add/tasks/demo/scope-snapshot.json"))
+        self.assertTrue(ignored(".add/milestones/demo/pre-archive-state.bak.json"))
+        # artifact-specific, never a blanket .add/ ignore
+        self.assertFalse(ignored(".add/state.json"))
+
+    def test_init_never_clobbers_existing_gitignore(self):
+        # Regression guard (green pre-build): a pre-existing .add/.gitignore is
+        # preserved. Only fails if the scaffold is ever made to clobber.
+        root = Path(self.tmp) / ".add"
+        root.mkdir(parents=True, exist_ok=True)
+        sentinel = "# human-customised\nfoo.tmp\n"
+        (root / ".gitignore").write_text(sentinel)
+        self._run("init", "--name", "demo", "--stage", "mvp")
+        self.assertEqual((root / ".gitignore").read_text(), sentinel)
+        self.assertTrue((root / "state.json").exists())
+
     # --- new-task ---
     def test_new_task_scaffolds_and_activates(self):
         self._run("init")
