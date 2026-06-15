@@ -367,16 +367,16 @@ Spec delta for the next loop: harden the §5 Scope grammar so a multi-line decla
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-  - [ADD · open] autonomy was the only MUTABLE first-class state with no CLI verb, so an agent under `auto` hallucinated
+  - [ADD · folded] autonomy was the only MUTABLE first-class state with no CLI verb, so an agent under `auto` hallucinated
     `add.py autonomy` and derailed — the phantom-command class of failure. Closing it needs BOTH the verb AND a wording
     fence (a verb alone leaves the command-shaped prose that lures the hallucination). (evidence: scla-mono logs
     `invalid choice: 'autonomy'`; test_no_command_shaped_string + the [enforced] WORDING_RUBRIC fence)
-  - [ADD · open] `_declared_scope` parses ONLY the first `Scope (may touch):` line (re.M, no re.S), so a WRAPPED §5
+  - [ADD · folded] `_declared_scope` parses ONLY the first `Scope (may touch):` line (re.M, no re.S), so a WRAPPED §5
     scope silently drops every continuation token — it LOOKS complete but isn't, and the build's legitimate touches
     (pin re-aim · bundle sync · census co-updates) surface as `scope_violation` at the verify gate. A silent truncation
     is worse than a loud reject. (evidence: THIS task hit scope_violation at the gate — declared captured 2 of 9 tokens;
     fixed by collapsing §5 to one line; root-caused at add.py:2629)
-  - [TDD · open] a vacuous green hides where a fixture string contains the asserted token — `set conservative` "passed"
+  - [TDD · folded] a vacuous green hides where a fixture string contains the asserted token — `set conservative` "passed"
     only because the header COMMENT enumerates `manual < conservative < auto`. Assert the parsed VALUE token, never the
     whole line. (evidence: test_set_idempotent_no_duplicate's first form; fixed with the `_autonomy_value` helper)
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->

@@ -31,6 +31,11 @@ Run the tool to find the resume point instead of re-reading the repo:
 python3 .add/tooling/add.py status
 ```
 
+`status` points at two things to read when orienting: `.add/PROJECT.md` (the foundation) and
+`.add/SOUL.md` (your **voice** — tone, communication style, what keeps the human's trust). Read
+`.add/SOUL.md` each session and let it shape how you speak; it is human-owned and self-improving
+(the `soul-self-improve` path proposes voice deltas the human confirms).
+
 - **No `.add/state.json` yet** (a fresh install drops tooling + docs but does *not* init — so `status` says
   `no .add/ project found`) → enter **autonomous setup**: YOU run init yourself —
   `add.py init --name "<inferred>" --stage <picked> --await-lock` (don't tell the human to) — then read
@@ -87,6 +92,9 @@ In **observe**, also emit **lessons learned** — learnings tagged by which of t
 You write them as `open`; the human consolidates them into `PROJECT.md`. Read `deltas.md` for the
 grammar and the status lifecycle. At milestone close (or on demand), run the retrospective consolidation that
 gathers confirmed deltas into a versioned foundation — read `fold.md`. Then (or on demand) compact the stable tail of each foundation spec into a rolled-up settled line — read `compact-foundation.md` (a SEPARATE step, run after `fold.md`).
+
+Observe also tunes your **voice**: propose a confirmable **voice delta** from the human's wordings +
+flow that, once they confirm, rewrites `SOUL.md` (the human is the only writer) — read `soul.md`.
 
 ## Beyond the bundle — load on demand
 

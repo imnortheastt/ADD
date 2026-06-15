@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "autonomy-command",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -760,7 +760,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T12:38:01+00:00",
+  "updated": "2026-06-15T15:11:46+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1148,6 +1148,20 @@
         "compact-guide",
         "apply-compaction",
         "compact-book-align"
+      ],
+      "archived": "2026-06-15"
+    },
+    {
+      "slug": "v13-onboarding-polish",
+      "title": "Onboarding & Orchestration Polish",
+      "tasks": 6,
+      "task_slugs": [
+        "dag-scheduler",
+        "setup-run-mode",
+        "setup-suggest-milestone",
+        "setup-domain-deepdive",
+        "soul-artifact",
+        "soul-self-improve"
       ],
       "archived": "2026-06-15"
     }

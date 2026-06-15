@@ -27,6 +27,46 @@ Architecture:
 
 ## Method learnings (folded from OBSERVE deltas)
 
+- (TDD) **A presence/substring assertion is vacuous when the asserted token ALSO lives in a sibling section, a
+  header comment, or fixture scaffold — anchor the assertion to a UNIQUE new marker (or the parsed VALUE token),
+  and keep the wording-lint inside the prose green bar.** Three faces this milestone: `set conservative` "passed"
+  only because the autonomy header COMMENT enumerates `manual < conservative < auto` (assert the parsed value, not
+  the whole line); a whole-file substring greened on sibling Run-mode vocabulary until the suite scoped to a unique
+  `kickoff` / `## 2c` marker region; and the wording-lint caught "dial" slang the content tests would have passed,
+  so a prose freeze is not green until the lint is too. The newest face of words-exist≠method-works /
+  presence-necessary-not-sufficient. [autonomy-command + setup-suggest-milestone + setup-domain-deepdive +
+  setup-run-mode — folded foundation-version 32]
+- (TDD) **When a build (or a sibling census) needs a NEW or CHANGED test, reopen to TESTS and re-snapshot — editing
+  a test during BUILD trips the tamper tripwire (build_tampered).** The honest loop is `phase tests → advance`
+  (re-snapshot) `→ build`. Dogfooded twice: a dag-scheduler guard test discovered at build, and the soul-self-improve
+  wording-surface census guards (count 25→26) registered in a REOPENED tests phase, never in build. Reinforces the
+  fv29 mid-build-CR-trips-tamper bullet. [dag-scheduler + soul-self-improve — folded foundation-version 32]
+- (ADD) **A MUTABLE first-class state needs a real CLI verb AND a wording fence — a verb alone leaves the
+  command-shaped prose that lures the phantom-command hallucination.** `autonomy` was the only mutable first-class
+  state with no `add.py` verb, so an agent under `auto` hallucinated `add.py autonomy` and derailed; closing the
+  failure class needed BOTH `add.py autonomy show|set` AND a WORDING_RUBRIC fence banning the command-shaped idiom on
+  the agent surface. [autonomy-command — folded foundation-version 32]
+- (ADD) **A hand-written-input parser that reads only the FIRST matching line (re.M, no re.S) silently drops a
+  WRAPPED continuation — it LOOKS complete but isn't, surfacing the build's legitimate touches as a scope_violation
+  at the verify gate.** `_declared_scope` parses only the first `Scope (may touch):` line, so a wrapped §5 scope
+  dropped its continuation tokens (pin re-aim · bundle sync · census co-updates) → declare scope on ONE line (or fix
+  the parser); a silent truncation is worse than a loud reject. Reinforces fv28 hand-written-input-parsing-discipline.
+  [autonomy-command — folded foundation-version 32]
+- (ADD) **The verify adversarial refute-read is not ceremony, and reuse inherits correctness.** The refute caught a
+  real HIGH bug all 9 first-pass tests missed (transitive blocking not propagated, so a task whose only dep was a
+  blocked sibling was mis-scheduled into wave 1); and because the read-only `waves` reporter REUSES the existing
+  `_dep_satisfied` predicate, the base was correct for free — the bug lived only in the NEW transitive layer.
+  [dag-scheduler — folded foundation-version 32]
+- (ADD) **"Show before ask" and "auto deepens DRAFTING, never the gate" extend to the SETUP / foundation altitude.**
+  A default-flip ships as a PROPOSAL + comparison table + confirm-to-keep (the human sees the flow before owning it);
+  and under autonomy=auto the per-drive domain deep-dive auto-completes its turns with full context but NEVER skips
+  the human baseline approval (the lock). [setup-run-mode + setup-domain-deepdive — folded foundation-version 32]
+- (ADD) **The AI's VOICE is a first-class human-owned living doc (SOUL.md) with its OWN propose→confirm→rewrite loop
+  (soul.md) — distinct target from competency deltas: voice routes to SOUL.md, not the foundation.** Self-improvement
+  now runs TWO routed loops sharing one discipline (the AI proposes, the human confirms, only then the append-only
+  newest-first write) but distinct homes. Ship identity content as a test-UNLOCKED PROPOSED starter — the gate attests
+  the mechanism while the human keeps the voice (the tests assert the schema, never the tone words). [soul-artifact +
+  soul-self-improve — folded foundation-version 32]
 - (ADD) **A frozen contract's NON-BINDING detail can collide with reality discovered at build — honor the binding
   rule, DISCLOSE the deviation at the verify gate for the human to rule, never silently retrofit the frozen prose.**
   Two faces this milestone: an ILLUSTRATIVE integer (§3 said §Spec "19→9"; the binding RULE rolled 18→10 — one

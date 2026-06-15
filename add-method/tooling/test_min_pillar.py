@@ -83,6 +83,8 @@ LIFECYCLE = [
                                                # on this board -> wave_not_found (expected nonzero,
                                                # tolerated below; reads WAVE.md/state, never docs/)
     ["ready"],
+    ["waves"],                                 # read-only DAG schedule of the active milestone
+                                               # (reads state only, never docs/; mvp is active so exit 0)
     ["guide", "t"],
     ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
     ["deltas"],                                # read-only: open competency deltas report

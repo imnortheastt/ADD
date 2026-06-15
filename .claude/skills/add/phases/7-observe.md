@@ -12,6 +12,11 @@ about the feature finally appears. Fill **§7** in TASK.md.
    one is a signal), latency of the risky operation under load.
 3. **Draft the next spec delta** — every defect, surprise, or new need becomes a
    concrete change that re-enters the flow at Specify (a new task).
+4. **Propose a voice delta** — you just worked a whole task alongside the human, so
+   notice where your voice diverged from theirs (their wordings + flow) and propose a
+   confirmable **voice delta** that tunes `SOUL.md`. Emit it `open`; the human confirms;
+   only then do you rewrite the routed SOUL.md section. Read `soul.md` for the grammar,
+   the routing, and the human-is-only-writer rule.
 
 ## AI prompt
 
