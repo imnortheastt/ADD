@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "soul-self-improve",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -757,185 +757,10 @@
           }
         ]
       }
-    },
-    "dag-scheduler": {
-      "title": "add.py waves \u2014 DAG wave scheduler + streams strategy",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-onboarding-polish",
-      "depends_on": [],
-      "created": "2026-06-15T13:23:21+00:00",
-      "updated": "2026-06-15T13:50:40+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "db6ca04e76167c8e891e202fde4d8230",
-        "tests": {
-          "add-method/tooling/test_dag_scheduler.py": "ff026ba029c4394e699f4b4dd482fe0b"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          ".claude/skills/add/streams.md",
-          "add-method/skill/add/streams.md",
-          "add-method/src/add_method/_bundled/skill/add/streams.md"
-        ],
-        "snapshot_md5": "2729ea57679673afa64f2b85b82b505e"
-      },
-      "heal": {
-        "attempts": 1,
-        "history": [
-          {
-            "at": "2026-06-15T13:50:06+00:00",
-            "reason": "tamper_detected:build_tampered:add-method/tooling/test_dag_scheduler.py",
-            "source": "tamper"
-          }
-        ]
-      }
-    },
-    "setup-run-mode": {
-      "title": "Setup: autonomy\u00d7streams table + parallel+auto default",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-onboarding-polish",
-      "depends_on": [
-        "dag-scheduler"
-      ],
-      "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T14:12:22+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "ed1d00b4ffe9530e76ebf0718057bb9e",
-        "tests": {
-          "add-method/tooling/test_setup_run_mode.py": "0db6dbcc126cf4472cc38814d4f688f0"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/phases/0-setup.md",
-          ".claude/skills/add/phases/0-setup.md",
-          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md",
-          "add-method/skill/add/streams.md",
-          ".claude/skills/add/streams.md",
-          "add-method/src/add_method/_bundled/skill/add/streams.md"
-        ],
-        "snapshot_md5": "e565f2ee4f8bd35140dec4ccf6a7c0f9"
-      }
-    },
-    "setup-suggest-milestone": {
-      "title": "Setup: propose first milestone (goal+flow+scenarios)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-onboarding-polish",
-      "depends_on": [],
-      "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T14:18:11+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "4699d6c2b52702c99671e09537194cba",
-        "tests": {
-          "add-method/tooling/test_setup_suggest_milestone.py": "552891a5f4b942d96fcb3bd59accdc9c"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/phases/0-setup.md",
-          ".claude/skills/add/phases/0-setup.md",
-          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md"
-        ],
-        "snapshot_md5": "4e94354d81c2e0141dd6dd86571c0267"
-      }
-    },
-    "setup-domain-deepdive": {
-      "title": "Setup: multi-turn per-drive domain deep-dive + ADRs",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-onboarding-polish",
-      "depends_on": [],
-      "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T14:25:49+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "2ef440a1f66cf6b7b5974ce061b9758b",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/phases/0-setup.md",
-          ".claude/skills/add/phases/0-setup.md",
-          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md"
-        ],
-        "snapshot_md5": "8d4b92d0d74d6fa162c2c0c8cbf2a11f"
-      }
-    },
-    "soul-artifact": {
-      "title": "SOUL.md living voice doc: schema + scaffold + read",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-onboarding-polish",
-      "depends_on": [],
-      "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T14:39:12+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "b341de3d75a441bf33d71a859a7afdac",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/templates/SOUL.md.tmpl",
-          ".add/tooling/templates/SOUL.md.tmpl",
-          "add-method/src/add_method/_bundled/tooling/templates/SOUL.md.tmpl",
-          "add-method/skill/add/SKILL.md",
-          ".claude/skills/add/SKILL.md",
-          "add-method/src/add_method/_bundled/skill/add/SKILL.md"
-        ],
-        "snapshot_md5": "e2993800a7e174a8a7989393670362a7"
-      }
-    },
-    "soul-self-improve": {
-      "title": "Observe\u2192confirm\u2192rewrite voice-delta loop for SOUL.md",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "v13-onboarding-polish",
-      "depends_on": [
-        "soul-artifact"
-      ],
-      "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T14:49:39+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "d23dbcc60ff3fd23db62fe26b1fcbe4a",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/soul.md",
-          ".claude/skills/add/soul.md",
-          "add-method/src/add_method/_bundled/skill/add/soul.md",
-          "add-method/skill/add/phases/7-observe.md",
-          ".claude/skills/add/phases/7-observe.md",
-          "add-method/src/add_method/_bundled/skill/add/phases/7-observe.md",
-          "add-method/skill/add/SKILL.md",
-          ".claude/skills/add/SKILL.md",
-          "add-method/src/add_method/_bundled/skill/add/SKILL.md",
-          "add-method/tooling/templates/SOUL.md.tmpl",
-          ".add/tooling/templates/SOUL.md.tmpl",
-          "add-method/src/add_method/_bundled/tooling/templates/SOUL.md.tmpl"
-        ],
-        "snapshot_md5": "bd3cfd76d08c37b8aac37b6668755b71"
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T14:50:36+00:00",
+  "updated": "2026-06-15T15:11:46+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1056,17 +881,9 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
-    },
-    "v13-onboarding-polish": {
-      "title": "Onboarding & Orchestration Polish",
-      "goal": "starting and running an ADD project feels guided and self-tuning \u2014 setup proposes the run-mode, first milestone, and per-drive domain depth; the engine schedules a milestone's tasks by their dependency DAG; and the AI's voice (SOUL.md) self-improves toward the human's wording",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-15T13:22:47+00:00",
-      "updated": "2026-06-15T14:50:36+00:00"
     }
   },
-  "active_milestone": "v13-onboarding-polish",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1331,6 +1148,20 @@
         "compact-guide",
         "apply-compaction",
         "compact-book-align"
+      ],
+      "archived": "2026-06-15"
+    },
+    {
+      "slug": "v13-onboarding-polish",
+      "title": "Onboarding & Orchestration Polish",
+      "tasks": 6,
+      "task_slugs": [
+        "dag-scheduler",
+        "setup-run-mode",
+        "setup-suggest-milestone",
+        "setup-domain-deepdive",
+        "soul-artifact",
+        "soul-self-improve"
       ],
       "archived": "2026-06-15"
     }
