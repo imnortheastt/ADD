@@ -251,5 +251,5 @@ Spec delta for the next loop: this is the FIRST live voice delta source — this
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] self-improvement now has TWO routed loops — competency deltas → foundation (deltas.md/fold.md) and voice deltas → SOUL.md (soul.md) — sharing one propose→confirm→write discipline but distinct targets (evidence: soul.md mirrors fold.md's lifecycle; test_human_only_writer guards the shared floor)
-- [ADD · open] the voice loop closes the SOUL.md story task 5 opened — task 5 shipped the target schema, task 6 ships the writer; together they make the AI's voice a living, human-confirmed doc (evidence: SOUL.md.tmpl "Voice deltas" now resolves to soul.md; test_soul_template_points_at_loop)
+- [ADD · folded] self-improvement now has TWO routed loops — competency deltas → foundation (deltas.md/fold.md) and voice deltas → SOUL.md (soul.md) — sharing one propose→confirm→write discipline but distinct targets (evidence: soul.md mirrors fold.md's lifecycle; test_human_only_writer guards the shared floor)
+- [ADD · folded] the voice loop closes the SOUL.md story task 5 opened — task 5 shipped the target schema, task 6 ships the writer; together they make the AI's voice a living, human-confirmed doc (evidence: SOUL.md.tmpl "Voice deltas" now resolves to soul.md; test_soul_template_points_at_loop)

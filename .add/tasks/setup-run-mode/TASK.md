@@ -219,5 +219,5 @@ Spec delta for the next loop: setup-suggest-milestone + setup-domain-deepdive wi
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] a default-flip is safe to ship as a PROPOSAL + comparison table + confirm-to-keep — the human sees the flow before owning it; "show before ask" applies to defaults too (evidence: setup-run-mode shipped the philosophy shift behind a confirm, floor unchanged)
-- [SDD · open] the wording lint is a real guard on prose tasks — it caught "dial" slang the content tests would have passed; prose freezes need the lint in the green bar (evidence: test_ubiquitous_language went red on autonomy-dial, fixed to "autonomy level")
+- [ADD · folded] a default-flip is safe to ship as a PROPOSAL + comparison table + confirm-to-keep — the human sees the flow before owning it; "show before ask" applies to defaults too (evidence: setup-run-mode shipped the philosophy shift behind a confirm, floor unchanged)
+- [SDD · folded] the wording lint is a real guard on prose tasks — it caught "dial" slang the content tests would have passed; prose freezes need the lint in the green bar (evidence: test_ubiquitous_language went red on autonomy-dial, fixed to "autonomy level")

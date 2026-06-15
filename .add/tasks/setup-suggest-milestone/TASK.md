@@ -203,5 +203,5 @@ Spec delta for the next loop: setup-domain-deepdive extends the same §2b interv
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [TDD · open] a whole-file substring test is too weak when sibling sections share vocabulary — anchor the region on a UNIQUE new marker so the suite is genuinely red (evidence: "propose"/"flow" pre-existed from setup-run-mode; scoping to the "kickoff" marker made the test honest)
-- [UDD · open] setup should SUGGEST from what it just read, not interrogate — the AI proposes the first milestone (goal+flow+scenarios) and the human reacts; show-before-ask applies at the foundation altitude too (evidence: setup-suggest-milestone)
+- [TDD · folded] a whole-file substring test is too weak when sibling sections share vocabulary — anchor the region on a UNIQUE new marker so the suite is genuinely red (evidence: "propose"/"flow" pre-existed from setup-run-mode; scoping to the "kickoff" marker made the test honest)
+- [UDD · folded] setup should SUGGEST from what it just read, not interrogate — the AI proposes the first milestone (goal+flow+scenarios) and the human reacts; show-before-ask applies at the foundation altitude too (evidence: setup-suggest-milestone)

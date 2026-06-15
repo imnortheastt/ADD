@@ -219,5 +219,5 @@ Spec delta for the next loop: the deep-dive and §2b now overlap (both lift the 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [TDD · open] setup's lens list omitted the trust/"done & trusted" drive — the four drives weren't symmetric at foundation level until 2c named TDD explicitly (evidence: §2b table had Domain/Spec/Users/Decisions, no trust lens; test_names_all_four_drives now guards all four)
-- [ADD · open] auto-mode's "deepen drafting, never the gate" rule now applies at SETUP, not just per-task verify — auto-complete collapses the deep-dive turns but never the lock (evidence: test_preserves_the_baseline_approval_gate)
+- [TDD · folded] setup's lens list omitted the trust/"done & trusted" drive — the four drives weren't symmetric at foundation level until 2c named TDD explicitly (evidence: §2b table had Domain/Spec/Users/Decisions, no trust lens; test_names_all_four_drives now guards all four)
+- [ADD · folded] auto-mode's "deepen drafting, never the gate" rule now applies at SETUP, not just per-task verify — auto-complete collapses the deep-dive turns but never the lock (evidence: test_preserves_the_baseline_approval_gate)

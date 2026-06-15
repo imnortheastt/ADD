@@ -260,5 +260,5 @@ Spec delta for the next loop: soul-self-improve (task 6) must define HOW a voice
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] the method had no first-class home for the AI's VOICE — tone/style/trust lived only in scattered global instructions; SOUL.md makes it a survivor-layer living doc the human owns (evidence: SETUP_FILES had no voice doc until this task; test_soul_in_setup_files now guards it)
-- [ADD · open] identity-owned content can ship as a PROPOSED, test-unlocked starter — the gate attests the mechanism while the human keeps the voice (evidence: tests assert schema not tone words; the §3 freeze explicitly carves the voice prose out of the contract)
+- [ADD · folded] the method had no first-class home for the AI's VOICE — tone/style/trust lived only in scattered global instructions; SOUL.md makes it a survivor-layer living doc the human owns (evidence: SETUP_FILES had no voice doc until this task; test_soul_in_setup_files now guards it)
+- [ADD · folded] identity-owned content can ship as a PROPOSED, test-unlocked starter — the gate attests the mechanism while the human keeps the voice (evidence: tests assert schema not tone words; the §3 freeze explicitly carves the voice prose out of the contract)
