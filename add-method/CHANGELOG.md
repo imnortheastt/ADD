@@ -10,6 +10,18 @@ Work merged to `main` since 1.3.0, not yet tagged or published. All additive; no
 breaking changes.
 
 ### Added
+- **First-class `add.py autonomy show|set`** — autonomy was the only mutable
+  first-class state with no CLI verb, so an agent driving under `autonomy: auto`
+  could hallucinate the missing `add.py autonomy` command, hit `invalid choice`,
+  and derail an autonomous run. `autonomy show` prints declared · effective
+  (fallback-resolved) · project default · the verify-gate owner; `autonomy set
+  <level> [slug] [--project] [--yes]` is the first writer of the `autonomy:`
+  header token — an idempotent, atomic single-line rewrite (trailing comment
+  preserved, never appended) with three fail-closed guards run before any write:
+  an invalid level, raising the rung without `--yes` (raising is a human-owned
+  trust escalation), and raising a `risk: high` task to `auto`. The command-shaped
+  header-edit wording is de-shaped to cite the verb, and an `[enforced]`
+  `WORDING_RUBRIC` fence keeps the phantom phrasing from regressing.
 - **Foundation compaction across all four specs** — the living foundation now
   stays relevant-first and short as a project grows. Every append-only sequence
   (`PROJECT.md` §Spec · §Key-Decisions · `CONVENTIONS.md` learnings) reads
