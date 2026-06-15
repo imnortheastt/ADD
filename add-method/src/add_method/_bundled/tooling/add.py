@@ -80,7 +80,7 @@ PHASE_OWNER = {
     "specify": "human", "scenarios": "human", "contract": "seam",
     "tests": "ai", "build": "ai", "verify": "human", "observe": "ai", "done": "human",
 }
-SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist", "DESIGN.md")
+SETUP_FILES = ("PROJECT.md", "CONVENTIONS.md", "GLOSSARY.md", "MODEL_REGISTRY.md", "dependencies.allowlist", "DESIGN.md", "SOUL.md")
 
 # Scaffolded into .add/.gitignore at init so the engine's transient LOCAL artifacts
 # never reach git. Bare-filename patterns match at any depth under .add/ (tasks/,
@@ -1013,6 +1013,10 @@ def cmd_status(args: argparse.Namespace) -> None:
     # foundation pointer — read the cross-milestone context first (anti-rot)
     if (root / "PROJECT.md").exists():
         print("context : .add/PROJECT.md  (foundation: domain · spec · UI/UX — read first)")
+    # voice pointer — the AI's SOUL (tone · style · trust); read each session, edit freely.
+    # Existence-only: no open/parse, so the pointer adds no IO failure path (a non-file is no voice).
+    if (root / "SOUL.md").exists():
+        print("voice   : .add/SOUL.md  (how I sound & what keeps your trust — read each session)")
     # wave resume hint — a live ledger outranks memory (streams.md "Wave ledger").
     # Existence-only: no open/read/parse, so the hint adds no IO failure path; a
     # non-file at the path is not a ledger. One line PER live ledger — more than

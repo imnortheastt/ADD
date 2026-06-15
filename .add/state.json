@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "setup-domain-deepdive",
+  "active_task": "soul-artifact",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -873,12 +873,32 @@
     },
     "soul-artifact": {
       "title": "SOUL.md living voice doc: schema + scaffold + read",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "v13-onboarding-polish",
       "depends_on": [],
       "created": "2026-06-15T13:53:09+00:00",
-      "updated": "2026-06-15T13:53:09+00:00"
+      "updated": "2026-06-15T14:39:12+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "b341de3d75a441bf33d71a859a7afdac",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/templates/SOUL.md.tmpl",
+          ".add/tooling/templates/SOUL.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/SOUL.md.tmpl",
+          "add-method/skill/add/SKILL.md",
+          ".claude/skills/add/SKILL.md",
+          "add-method/src/add_method/_bundled/skill/add/SKILL.md"
+        ],
+        "snapshot_md5": "e2993800a7e174a8a7989393670362a7"
+      }
     },
     "soul-self-improve": {
       "title": "Observe\u2192confirm\u2192rewrite voice-delta loop for SOUL.md",
@@ -893,7 +913,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T14:25:49+00:00",
+  "updated": "2026-06-15T14:39:12+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

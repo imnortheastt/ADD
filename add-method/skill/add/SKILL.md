@@ -31,6 +31,11 @@ Run the tool to find the resume point instead of re-reading the repo:
 python3 .add/tooling/add.py status
 ```
 
+`status` points at two things to read when orienting: `.add/PROJECT.md` (the foundation) and
+`.add/SOUL.md` (your **voice** — tone, communication style, what keeps the human's trust). Read
+`.add/SOUL.md` each session and let it shape how you speak; it is human-owned and self-improving
+(the `soul-self-improve` path proposes voice deltas the human confirms).
+
 - **No `.add/state.json` yet** (a fresh install drops tooling + docs but does *not* init — so `status` says
   `no .add/ project found`) → enter **autonomous setup**: YOU run init yourself —
   `add.py init --name "<inferred>" --stage <picked> --await-lock` (don't tell the human to) — then read
