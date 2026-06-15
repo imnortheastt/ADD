@@ -4,12 +4,46 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
-## [Unreleased]
+## [1.4.0] — 2026-06-15
 
-Work merged to `main` since 1.3.0, not yet tagged or published. All additive; no
-breaking changes.
+The guided-onboarding release: starting and running an ADD project is now guided
+and self-tuning. Setup interviews you into a run mode and a first milestone and
+deepens each drive, the engine schedules parallel work into dependency waves,
+stale installs nudge any agent to update, and the AI carries a human-owned voice
+that improves itself. All additive; no breaking changes (SemVer MINOR).
 
 ### Added
+- **Guided, self-tuning setup** — `0-setup` now interviews instead of assuming:
+  it proposes a **run mode** (a parallel+auto vs. sequential comparison table,
+  confirm-to-keep the recommended default), sketches a **first milestone** as a
+  kickoff suggestion (goal + flow + scenarios, shown before it asks), and runs a
+  per-drive **domain deep-dive** (DDD · SDD · UDD · TDD) that captures the
+  decisions as ADRs. Onboarding stops being a blank page.
+- **`add.py waves` DAG scheduler** — a new read-only command that groups the
+  active milestone's open tasks into topological **waves** (a wave is the tasks
+  whose in-milestone dependencies have all landed), names the **critical path**,
+  emits an advisory **tier hint** (a scope-of-impact proxy for model selection,
+  never a gate), and surfaces a transitively-**blocked** set with what each task
+  is waiting on. It never mutates state and `streams.md` gains a "DAG strategy"
+  section that points at it.
+- **`SOUL.md` — a human-owned, self-improving voice** — `init` now scaffolds a
+  `.add/SOUL.md` voice doc (schema: Name · Tone · Communication style · Trust ·
+  Learns-from · Voice deltas) with a *proposed* "Trusting" starter voice that is
+  explicitly yours to rewrite — the tests assert the schema, never the tone words.
+  `status` points at it to read each session, and a new `soul.md` guide drives an
+  observe→confirm→rewrite **voice-delta loop** (the human is the only writer),
+  the voice-side sibling of the competency-delta→foundation loop.
+- **Agent-agnostic update nudge** — because every agent is told to run
+  `add.py status`/`guide` first each session, the engine uses that one universal
+  chokepoint to flag a stale install: on those orientation reads only, when a
+  launcher `.add-version` stamp is present and the registry's latest is newer, it
+  writes one `ACTION REQUIRED` line to **stderr** naming the channel-correct
+  command (`npx @pilotspace/add@latest update` / `pipx run pilotspace-add
+  update`). It is the engine's one deliberate, tightly-bounded network touch:
+  fail-open (offline/timeout → silent no-op), throttled once per 24 h via a
+  git-ignored `.update-cache.json`, inert without a launcher stamp, and silenced
+  by `ADD_NO_UPDATE_CHECK=1`. stdout and exit codes are never touched, so `--json`
+  stays clean. (Originated as community PR #17.)
 - **First-class `add.py autonomy show|set`** — autonomy was the only mutable
   first-class state with no CLI verb, so an agent driving under `autonomy: auto`
   could hallucinate the missing `add.py autonomy` command, hit `invalid choice`,
@@ -41,8 +75,8 @@ breaking changes.
   agent driving the loop.
 - **`.add/.gitignore` scaffolded at init** — `init` now writes a co-located
   `.add/.gitignore` so the engine's transient local artifacts (scope snapshots,
-  pre-archive backups) never reach git. It is additive and never clobbers an
-  existing copy; edit it freely.
+  pre-archive backups, the update-nudge cache) never reach git. It is additive and
+  never clobbers an existing copy; edit it freely.
 
 ### Changed
 - **Conversational-only install hand-off** — after `init`, the closing hint points

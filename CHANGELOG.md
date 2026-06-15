@@ -5,9 +5,10 @@ one source of truth, updated on every version tag:
 
 **→ [`add-method/CHANGELOG.md`](./add-method/CHANGELOG.md)**
 
-Latest: **1.3.0** (2026-06-13) — render-ready UDD foundation, the scope gate,
-the engine next-step/driver marker, and the `update` command. One version tag
-publishes both channels: `@pilotspace/add` (npm) and `pilotspace-add` (PyPI).
+Latest: **1.4.0** (2026-06-15) — guided self-tuning setup, the `add.py waves`
+DAG scheduler, a human-owned self-improving `SOUL.md` voice, the `autonomy
+show|set` verb, and an agent-agnostic update nudge. One version tag publishes
+both channels: `@pilotspace/add` (npm) and `pilotspace-add` (PyPI).
 
 <!-- This file is deliberately a pointer, matching GETTING-STARTED.md. It
      replaced a stale full copy that had drifted: root stalled at v1.1.0 while
