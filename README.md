@@ -2,9 +2,11 @@
 
 ### A complete, practical book on building software when AI writes the code
 
-**Edition:** 1.0 · **Type:** Methodology + operating manual
+**Edition:** 1.3.0 · **Type:** AI Workflow Methodology
 
 ---
+
+![Foundation Domain Documents](add-foundation.png)
 
 ## What this book is
 
@@ -12,17 +14,17 @@ This is a complete guide to **AIDD (AI-Driven Development)** — a way of buildi
 
 It is written to be read once front to back, then kept open beside you as a working manual. The early chapters explain *why* the method has the shape it does; the middle chapters explain each step in detail; the later chapters explain how to operate it across a real team and product; the appendices are copy-paste reference material.
 
-A single worked example — *transferring money between a user's own accounts* — runs through the entire book so that every abstract step has a concrete form you can see.
-
 ## Who it is for
 
 Anyone who builds software with AI in the loop: engineers, architects, testers, designers, product owners, and the managers who lead them. No part assumes you have read the others; cross-references point you to what you need.
 
-## The method in one paragraph
+## The method in one paragraph in SDLC
 
 For every feature, before AI writes any code, you write four short artifacts in order — the rules it must obey, those rules as pass/fail scenarios, the data and interface contract, and the failing tests — and then you direct the AI to make the tests pass without changing them, and finally you verify the result through evidence rather than inspection. That ordered set of artifacts *is* the method. The code is disposable; the artifacts are the durable asset. Direction comes before speed, and trust comes from passing tests rather than from reading code and finding it plausible.
 
 ## The flow
+
+![ADD Flow](add-flow.png)
 
 > **Specify → Scenarios → Contract → Tests → Build → Verify → observe, then repeat.**
 
@@ -30,12 +32,14 @@ For every feature, before AI writes any code, you write four short artifacts in 
 
 ## Install and run your first feature
 
-ADD ships as an installable Claude Code skill — you install it once, then **talk to the
-agent and it drives the method**. Here is the whole path, from nothing to your first
-running feature.
+ADD ships as AI Agent skill — you install it once, then 
 
-> **Prerequisites:** Node ≥ 18 *(npm path)* or Python ≥ 3.10 *(pip path)* — the tool
-> itself is Python stdlib-only — plus [Claude Code](https://claude.ai/code).
+> **talk to the agent and it drives the method**.
+
+Here is the whole path, from nothing to your first running feature.
+
+> **Prerequisites:** Node ≥ 18 *(npm path)* or Python ≥ 3.10 *(pip path)*
+> **CLI Coding Agent:** Claude Code, Codex, ...
 
 ### 1 · Install into your project
 
@@ -46,6 +50,8 @@ From your project root (an empty folder or an existing repo), pick either ecosys
 npx @pilotspace/add init
 ```
 
+or
+
 ```bash
 # Python / pip
 pip install pilotspace-add && pilotspace-add init
@@ -55,7 +61,7 @@ pip install pilotspace-add && pilotspace-add init
 
 In Claude Code, run **`/add`** and say what you want to build:
 
-> `/add` — *"I want to let users transfer money between their own accounts."*
+> `/add 'Describe your goal'`
 
 From there the agent runs the on-ramp for you:
 
@@ -71,7 +77,9 @@ So your first feature is: **describe it → confirm the milestone → approve th
 
 ### 3 · Resume anytime
 
-> `/add` — *how are current status of this project?"*
+> `/add` 
+
+*AI will report to you how are current status of this project?*
 
 State lives on disk, not in the chat — close your laptop, come back tomorrow, and this
 tells you exactly where you left off. No context rot.
