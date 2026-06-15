@@ -56,8 +56,13 @@ tag thin or inferred answers `guessed`.
    `dependencies.allowlist`, and — for a UI project — `DESIGN.md` (the design source of truth: identity ·
    principles · screens · the named-set foundation pointers + render recipe; delete it if there's no UI).
    Brownfield: from the code. Greenfield: from the interview, gaps flagged `guessed`.
-2. **Size the first milestone** (read `scope.md`) and draft its `MILESTONE.md` — goal · scope · exit criteria
-   · breadth-first tasks.
+2. **Propose, then size it.** You just read the codebase (brownfield) or interviewed (greenfield) — so
+   don't silently draft. First float a **kickoff suggestion** for the first milestone the human reacts to:
+   a **goal** (one outcome sentence), a **flow** (the breadth-first task order that gets there), and
+   **scenarios** (concrete examples of what the user can DO once it ships). Keep it a lightweight react-to
+   sketch — a few bullets, NOT the frozen `MILESTONE.md` or per-task §2 suites. This is show-before-ask:
+   the human reacts (confirm / adjust / redirect); you do not auto-create. On their reaction, draft its
+   `MILESTONE.md` (read `scope.md`) — goal · scope · exit criteria · breadth-first tasks.
 3. **Create the first task and draft its candidate specification bundle.** `new-task` is allowed pre-lock:
    ```bash
    python3 .add/tooling/add.py new-task <slug> --title "<first feature>"
