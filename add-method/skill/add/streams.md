@@ -1,8 +1,11 @@
 # Parallel streams — pipelining independent tasks
 
-Load this **only** when a milestone has more than one task and you want to run them
-concurrently. The default ADD path is one task at a time; this rubric is the opt-in
-escape hatch for when independent tasks are queued and a human is ready to review.
+Load this when a milestone has more than one task and you want to run them concurrently.
+**Default since v13:** when a project confirms `parallel + auto` as its run mode at setup
+(`phases/0-setup.md` "Run mode"), parallel streaming is the project default — an **opt-out**, not
+the opt-in it once was; downgrade in one step (`add.py autonomy set conservative --project`, or just
+run tasks one at a time). A project that kept the conservative run mode still treats this rubric as
+the opt-in escape hatch. Either way it changes nothing below.
 
 It changes **no `add.py` code and no phase semantics**. It is a way *you, the
 orchestrator*, drive several tasks at once by reading the dependency DAG that

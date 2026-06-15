@@ -41,8 +41,8 @@ Out: a TUI/visual DAG render; auto-spawning workers without human confirm; readi
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [x] `add.py waves` emits topological waves + critical path + a per-tier hint, tested render-blind   (← dag-scheduler)
-- [ ] streams.md documents the DAG strategy AND the new parallel+auto default                          (← dag-scheduler + setup-run-mode)
-- [ ] setup prints the autonomy×streams comparison table and proposes parallel+auto, confirm-to-keep   (← setup-run-mode)
+- [x] streams.md documents the DAG strategy AND the new parallel+auto default                          (← dag-scheduler + setup-run-mode)
+- [x] setup prints the autonomy×streams comparison table and proposes parallel+auto, confirm-to-keep   (← setup-run-mode)
 - [ ] after the scan/interview, setup proposes a concrete first milestone with flow + scenarios         (← setup-suggest-milestone)
 - [ ] setup runs a multi-turn per-drive domain deep-dive capturing ADRs; auto mode auto-completes 4     (← setup-domain-deepdive)
 - [ ] SOUL.md exists, is scaffolded at setup, shipped by the installer, and read each session           (← soul-artifact)

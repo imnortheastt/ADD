@@ -68,6 +68,28 @@ tag thin or inferred answers `guessed`.
 4. **Write `.add/SETUP-REVIEW.md`** per `setup-review.md`: every decision you drafted (foundation, scope,
    first contract), **lowest-confidence-first**, each tagged `guessed` | `evidence-grounded`.
 
+## Run mode — how the build will be driven (propose parallel + auto; confirm to keep)
+
+Before the lock, surface ONE more choice so the human is aware of how ADD will drive the build:
+the **run mode**. Two settings compose it — the **autonomy** level (`add.py autonomy`, run.md: who owns
+the verify gate) and **streams** (`add.py waves` + `streams.md`: whether independent tasks pipeline).
+Show this table so the human sees the flow behavior of each, then PROPOSE the default:
+
+| Run mode | Human gates that fire | Concurrency / flow behavior |
+|----------|-----------------------|-----------------------------|
+| **sequential · manual/conservative** | the contract freeze **and** every Verify, one task at a time | one task start-to-finish before the next; safest, slowest; the reviewer waits on each build |
+| **parallel · auto** *(proposed default)* | the contract freeze **only** — Verify auto-PASSes on complete evidence (security/residue still escalate) | `add.py waves` schedules independent tasks into waves; builds overlap behind their frozen contracts while you review one bundle; the reviewer is never blocked on a build |
+
+**Propose `parallel + auto` as the default, and ask the human to confirm-to-keep** (or downgrade in
+one step — `add.py autonomy set conservative --project`, or just run tasks one at a time). This is a
+confirm, never a silent flip. Record the chosen mode in **`PROJECT.md` Key Decisions** (e.g. "run mode:
+parallel + auto (opt-out), confirmed by <name>") so every later session inherits it.
+
+What the default does **not** change: the irreducible floor still holds — **one human approval per
+contract** fires no matter the mode. `auto` + `parallel` change the *order and throttle* of the build
+(which tasks run when, and who gates Verify), never *whether* the contract decision point fires. A
+high-risk task still refuses `auto` and forces a lowered rung (run.md guard).
+
 ## 4 · The one human gate — the baseline approval
 
 Open the report with the ARC (goal · done · plan) per `report-template.md`, then present

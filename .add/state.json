@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "dag-scheduler",
+  "active_task": "setup-run-mode",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -795,10 +795,77 @@
           }
         ]
       }
+    },
+    "setup-run-mode": {
+      "title": "Setup: autonomy\u00d7streams table + parallel+auto default",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "v13-onboarding-polish",
+      "depends_on": [
+        "dag-scheduler"
+      ],
+      "created": "2026-06-15T13:53:09+00:00",
+      "updated": "2026-06-15T14:12:22+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "ed1d00b4ffe9530e76ebf0718057bb9e",
+        "tests": {
+          "add-method/tooling/test_setup_run_mode.py": "0db6dbcc126cf4472cc38814d4f688f0"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/phases/0-setup.md",
+          ".claude/skills/add/phases/0-setup.md",
+          "add-method/src/add_method/_bundled/skill/add/phases/0-setup.md",
+          "add-method/skill/add/streams.md",
+          ".claude/skills/add/streams.md",
+          "add-method/src/add_method/_bundled/skill/add/streams.md"
+        ],
+        "snapshot_md5": "e565f2ee4f8bd35140dec4ccf6a7c0f9"
+      }
+    },
+    "setup-suggest-milestone": {
+      "title": "Setup: propose first milestone (goal+flow+scenarios)",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "v13-onboarding-polish",
+      "depends_on": [],
+      "created": "2026-06-15T13:53:09+00:00",
+      "updated": "2026-06-15T13:53:09+00:00"
+    },
+    "setup-domain-deepdive": {
+      "title": "Setup: multi-turn per-drive domain deep-dive + ADRs",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "v13-onboarding-polish",
+      "depends_on": [],
+      "created": "2026-06-15T13:53:09+00:00",
+      "updated": "2026-06-15T13:53:09+00:00"
+    },
+    "soul-artifact": {
+      "title": "SOUL.md living voice doc: schema + scaffold + read",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "v13-onboarding-polish",
+      "depends_on": [],
+      "created": "2026-06-15T13:53:09+00:00",
+      "updated": "2026-06-15T13:53:09+00:00"
+    },
+    "soul-self-improve": {
+      "title": "Observe\u2192confirm\u2192rewrite voice-delta loop for SOUL.md",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "v13-onboarding-polish",
+      "depends_on": [
+        "soul-artifact"
+      ],
+      "created": "2026-06-15T13:53:09+00:00",
+      "updated": "2026-06-15T13:53:09+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T13:50:40+00:00",
+  "updated": "2026-06-15T14:12:22+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
