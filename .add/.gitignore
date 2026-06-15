@@ -2,3 +2,4 @@
 # (Scaffolded by `add.py init`; edit freely — init never clobbers an existing copy.)
 scope-snapshot.json
 pre-archive-state.bak.json
+snapshot_before.json

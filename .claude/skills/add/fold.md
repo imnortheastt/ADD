@@ -19,7 +19,7 @@ lives here so the engine stays judgment-free.
 2. **Group** — bucket them by competency (`DDD · SDD · UDD · TDD · ADD`).
 3. **Propose** — for each, draft the exact foundation edit (see routing) and show the human.
 4. **Confirm** — the human accepts or declines each delta. No write happens without this.
-5. **Write** — append the accepted edits, flip each delta's status, and bump the version.
+5. **Write** — prepend the accepted edits at the top (newest-first), flip each delta's status, and bump the version.
 
 ## Consolidation routing (every competency has a home)
 
@@ -31,15 +31,15 @@ lives here so the engine stays judgment-free.
 | `TDD` | `CONVENTIONS.md` | append a testing convention (no PROJECT.md section — it is the engine) |
 | `ADD` | `CONVENTIONS.md` | append a build/harness convention (likewise the engine) |
 
-**Every** consolidation — whatever the competency — ALSO appends one row to `PROJECT.md` **§Key Decisions**
+**Every** consolidation — whatever the competency — ALSO prepends one row at the TOP of `PROJECT.md` **§Key Decisions** (newest-first)
 (date · decision · why · outcome): the universal, auditable trail of what the foundation learned.
 
 ## Status transitions & version
 
-- on **confirm**: the delta moves `open` → `folded` (and its edit is appended to the routed target).
+- on **confirm**: the delta moves `open` → `folded` (and its edit is prepended at the top of the routed target, newest-first).
 - on **decline**: the delta moves `open` → `rejected` and is **left in place** — never deleted —
   so "we considered this and chose not to act" stays auditable.
-- a consolidation is **append-only**: it adds bullets/rows; it never silently rewrites existing foundation text.
+- a consolidation is **append-only (newest-first)**: it PREPENDS new bullets/rows at the top and never silently rewrites existing foundation text — EXCEPT via the recorded **compaction door** (`compact-foundation.md`): eligible (shipped + zero open residues) stable entries collapse upward into a rolled-up settled line at the tail. Reject: `open-residue-version` · `trail-loss` · `wrong-order`.
 - each consolidation session **bumps** the `foundation-version:` marker in `PROJECT.md` by one (monotonic int).
 
 ## Reject codes (the AI is first check, the human the backstop)

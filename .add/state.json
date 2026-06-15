@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "gitignore-scaffold",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -720,7 +720,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T02:09:01+00:00",
+  "updated": "2026-06-15T08:56:24+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1097,6 +1097,19 @@
         "per-step-hooks"
       ],
       "archived": "2026-06-14"
+    },
+    {
+      "slug": "foundation-compaction",
+      "title": "Foundation compaction \u2014 every survivor spec shrinks too",
+      "tasks": 5,
+      "task_slugs": [
+        "compact-contract",
+        "invariant-amend",
+        "compact-guide",
+        "apply-compaction",
+        "compact-book-align"
+      ],
+      "archived": "2026-06-15"
     }
   ]
 }
