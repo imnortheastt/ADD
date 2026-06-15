@@ -51,6 +51,7 @@ in the SAME commit it removes it — the lint stays green at every task close; t
 - autonomy dial -> autonomy level [enforced]
 - the dial -> the autonomy level [enforced]
 - lower the dial -> lower the autonomy level [enforced]
+- set autonomy: -> add.py autonomy set [enforced]
 - survivor layer -> living documentation [enforced]
 - the survivors -> the living documentation [enforced]
 - survivor file -> living-doc file [enforced]
