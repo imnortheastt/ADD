@@ -862,7 +862,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T13:28:27+00:00",
+  "updated": "2026-06-16T13:32:34+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -988,9 +988,9 @@
       "title": "Decision suggestions \u2014 a recommended pick + described alternatives at every human gate",
       "goal": "At every human decision point (baseline-lock, contract freeze, verify, intake, scope, milestone close, graduation, release, human-gated advance) ADD presents a highlighted recommended choice plus its real described alternatives, so the human decides with the recommendation and its consequences in view instead of a bare next-step line.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-16T11:36:49+00:00",
-      "updated": "2026-06-16T11:36:49+00:00"
+      "updated": "2026-06-16T13:32:34+00:00"
     }
   },
   "active_milestone": "decision-suggestions",

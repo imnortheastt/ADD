@@ -27,6 +27,31 @@ Architecture:
 
 ## Method learnings (folded from OBSERVE deltas)
 
+- (ADD) **A presentation convention ships as a single-source trail and dogfoods its own gates.** A cross-cutting UX
+  refinement (here: the guided choice — a highlighted ▶ recommended pick + 1–3 described alternatives) ships as ONE
+  specifying source (`report-template.md`) → a one-line cue in every human-gate guide → a describing-not-respecifying
+  book + GLOSSARY entry; it never adds a gate or re-freezes a contract (it is the presentation/layout layer that
+  iterates WITHOUT a re-freeze). Validate it by dogfooding it on its OWN gates — the milestone-confirm, the §3 freeze,
+  and the verify gate all rendered as the very guided choice being built. A MILESTONE exit criterion that
+  over-enumerates the work (a phantom 9th "human-gated-advance" gate) is reconciled to the real set (the 8 guides;
+  phase-advance is engine-mechanical, its human moments fold into the freeze + verify gates) as the recorded
+  change-as-method move, never a silent edit. `after EVIDENCE` and `Least-sure flag surfaced at freeze:` are PARSED
+  prose tokens a guard reads — the literal label is the machine seam, not decoration.
+- (ADD) **Discriminate autonomy by change-TYPE, not milestone theme.** Within one milestone a method-DEFINING task (it
+  writes a new convention/contract others build on) runs `conservative` + `risk: high`; a method-APPLYING or pure-docs
+  task runs `auto`. suggestion-block (defined the convention) ran conservative; gate-wiring + suggest-book-align
+  (applied + described it) ran auto. The axis is the KIND of change a task makes, decided per task — not the theme it
+  shares with its siblings.
+- (TDD) **A prose feature's red suite splits RED feature-token tests from STAY-GREEN invariant guards.** "Red for the
+  right reason" comes from the feature-token tests (the new prose absent → fail); the invariant guards (N-home md5
+  parity · five-block · no-new-tag) ride green from the start and catch regression during the multi-home edit. Two
+  guide-lint hazards: match CLOSING tags only (`</tag>`) — real block tags are paired but prose placeholders
+  (`<name>`,`<slug>`) never close, so a `</?tag>` matcher false-positives; and a per-guide tag-vocab check uses the FULL
+  closed-5 vocab (the on-demand guides intake/scope/release carry the engine-doc tags `constraints`/`reject_codes`, not
+  just the phase-guide trio). A repo-root book copy is declared in §5 with the `add-method/../<name>` climb (a
+  slash-bearing token resolves at project root; a bare `<name>` resolves as a SIBLING of the previous token's dir, so
+  the root copy goes undeclared) — and §5 scope is anchored at the tests→build crossing, so a declaration fix must
+  re-cross tests→build to re-anchor (reaffirms fv29 §5-scope-frozen-at-tests→build).
 - (ADD) **The RELEASE scope level is an engine that RECORDS, never acts — and its one security reject is
   un-forceable.** `add.py release <version>` is guarded like `cmd_stage` with a SINGLE deliberate divergence: the
   `release_security_open` check runs FIRST and carries NO `not forced` guard, so `--force` can never reach it
