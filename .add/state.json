@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "book-glossary-align",
+  "active_task": "release-guide",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -889,10 +889,41 @@
         ],
         "snapshot_md5": "a96ccb33aa92cf77442e1d04e8571e2a"
       }
+    },
+    "release-guide": {
+      "title": "Author release.md \u2014 the 7-step RELEASE altitude flow",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "release-altitude",
+      "depends_on": [],
+      "created": "2026-06-16T06:18:45+00:00",
+      "updated": "2026-06-16T06:56:18+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "65ae20448ef789f0b9a31b3ccdeb5c90",
+        "tests": {
+          ".add/tasks/release-guide/tests/test_release_guide.py": "fb4f5eb923fa0e1feab0bb0602830966"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/release.md",
+          "add-method/src/add_method/_bundled/skill/add/release.md",
+          ".claude/skills/add/release.md",
+          "add-method/skill/add/SKILL.md",
+          "add-method/src/add_method/_bundled/skill/add/SKILL.md",
+          ".claude/skills/add/SKILL.md",
+          "add-method/tooling/test_wording_lint.py",
+          "add-method/tooling/test_per_step_hooks.py",
+          ".add/tasks/release-guide/tests/",
+          ".add/tasks/release-guide/tests/add.py"
+        ],
+        "snapshot_md5": "58bc916bd82441143bf04e85de3468cb"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T04:07:42+00:00",
+  "updated": "2026-06-16T06:56:18+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1021,9 +1052,17 @@
       "status": "active",
       "created": "2026-06-15T16:34:04+00:00",
       "updated": "2026-06-15T16:34:04+00:00"
+    },
+    "release-altitude": {
+      "title": "Release Altitude",
+      "goal": "A project can cut a versioned, user-facing release that bundles one or more closed milestones \u2014 the AI drafts evidence-backed notes from folded deltas, the engine records the cut behind a security-hard-stop readiness floor, and the human owns the tag/publish \u2014 so shipping a version is a first-class 5th ADD altitude, not an ad-hoc ritual.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-16T06:09:47+00:00",
+      "updated": "2026-06-16T06:09:47+00:00"
     }
   },
-  "active_milestone": "udd-design-loop",
+  "active_milestone": "release-altitude",
   "archived": [
     {
       "slug": "v5",

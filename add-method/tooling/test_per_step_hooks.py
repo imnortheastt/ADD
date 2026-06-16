@@ -71,9 +71,9 @@ class TestPerStepHooks(unittest.TestCase):
         self.assertIn("confidence.md", self.skill, "SKILL.md must cross-ref confidence.md")
 
     def test_wording_surface_count_unchanged(self) -> None:
-        self.assertEqual(len(_wl.surface_files()), 27,
+        self.assertEqual(len(_wl.surface_files()), 28,
                          "editing guides must not change the wording-lint surface count "
-                         "(27: +design.md @ udd-design-loop)")
+                         "(28: +release.md @ release-altitude)")
 
 
 if __name__ == "__main__":

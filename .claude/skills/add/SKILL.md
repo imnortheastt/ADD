@@ -121,6 +121,13 @@ orchestration: gather `graduation-report` analytics → co-specify interview →
 milestone → human confirm → then (and only then) `stage production`. The flip is guarded
 (`stage_no_roadmap`) and is the FINAL step — never a bare label change.
 
+When one or more milestones have closed since the last release, `add.py status` prints
+**`→ releasable: N milestone(s) closed since last release`** — read `release.md` for the 5th scope
+level: gather `release-report` → draft notes from the consolidated deltas → meet the readiness floor
+(security HARD-STOP is un-forceable) → human confirms → `add.py release <version>` records the cut
+(CHANGELOG + `RELEASES.md` ledger + milestone attribution) → watch. The engine records; the human runs
+the tag / publish / deploy. A release bundles ≥1 milestone and is orthogonal to stage.
+
 ## Non-negotiable rules (from the method)
 
 <constraints>
