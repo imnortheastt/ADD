@@ -47,7 +47,8 @@ One arc, seven steps: **cue → gather → draft notes → readiness floor → h
    never auto-passed, never shipped silent.
 4. **Human confirms the cut** — present via `report-template.md`, opening with the ARC (goal · done · plan):
    the version you are shipping, the milestones + evidence that earn it, and the rollout + watch plan that
-   follows. Show the drafted notes, the version, and the waivers being shipped. The human approves once
+   follows. Render the cut as a guided choice — the recommended version + its described alternatives
+   (per `report-template.md`). Show the drafted notes, the version, and the waivers being shipped. The human approves once
    (the decision point) — never pre-stamped; you surface a summary to decide on, not the artifact itself.
 5. **Cut — record the marker** — only now run `add.py release <version> --notes <file>`. The engine
    **records**: it prepends the CHANGELOG entry, stamps one append-only row (newest-first) in

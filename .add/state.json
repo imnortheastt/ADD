@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "suggestion-block",
+  "active_task": "gate-wiring",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -782,10 +782,36 @@
         ],
         "snapshot_md5": "1bc8b43a5dbfdb08d5921c1f61300d88"
       }
+    },
+    "gate-wiring": {
+      "title": "Wire the guided-decision cue into every human-gate guide",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "decision-suggestions",
+      "depends_on": [],
+      "created": "2026-06-16T12:43:10+00:00",
+      "updated": "2026-06-16T12:58:46+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e6d4a0c51a6212452d3103e060b0c3f6",
+        "tests": {
+          ".add/tasks/gate-wiring/tests/test_gate_wiring.py": "71fcae577d02282cf6f97c31aa5b56b1"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/",
+          "add-method/src/add_method/_bundled/skill/add/",
+          ".claude/skills/add/",
+          ".add/milestones/decision-suggestions/MILESTONE.md",
+          ".add/tasks/gate-wiring/tests/"
+        ],
+        "snapshot_md5": "0a250b11a5d0d668848da29dc839d658"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T12:35:50+00:00",
+  "updated": "2026-06-16T12:58:46+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

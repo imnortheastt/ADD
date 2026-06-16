@@ -35,6 +35,7 @@ First ask "does this change already-frozen scope?" → if yes, it is a `change-r
 
 Present the proposal to the human via `report-template.md` — open with the ARC (goal · done ·
 plan): the goal this request serves, what is already covered, and the plan the chosen bucket sets up.
+Render the proposal as a guided choice — the recommended bucket + its described alternatives (per `report-template.md`).
 
 For every request, emit ONE of:
 

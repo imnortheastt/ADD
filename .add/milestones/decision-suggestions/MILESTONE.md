@@ -34,10 +34,10 @@ Out:
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
 - [ ] suggestion-block    depends-on: none              — extend `report-template.md`'s DECISION block into the recommended-pick + described-alternatives convention (the marker · the one-line-description rule · the 1–3-alternatives rule · the AskUserQuestion composition · the human-gate-only scope). Freezes the convention.
-- [ ] gate-wiring         depends-on: suggestion-block   — add the one-line convention cue to every human-gate guide (setup·contract·verify·intake·scope·close·graduate·release·human-gated-advance), mirroring arc-gate-wiring (no double-cue, one slot per guide).
+- [ ] gate-wiring         depends-on: suggestion-block   — add the one-line convention cue to every human-gate guide (the 8: setup·contract·verify·intake·scope·close·graduate·release), mirroring arc-gate-wiring (no double-cue, one slot per guide). [reconciled: phase-advance is engine-mechanical with no own guide — its human moments are the freeze + verify gates, both wired]
 - [ ] suggest-book-align  depends-on: gate-wiring        — book + GLOSSARY describe the guided-decision convention; skill mirror + book trees byte-identical + parity tests.
 
 ## Exit criteria (observable; map each to the task that delivers it)
 - [ ] `report-template.md`'s DECISION block specifies a highlighted recommended pick + 1–3 described alternatives + the AskUserQuestion composition, scoped to human gates   (← suggestion-block)   (verify: a lint asserts the recommended-marker + the described-alternatives rule + the AskUserQuestion-composition + the human-gate-only tokens are present in `report-template.md` across the skill mirror)
-- [ ] every human-gate guide (setup·contract·verify·intake·scope·close·graduate·release·human-gated-advance) cues the convention   (← gate-wiring)   (verify: a guard greps each named guide for the cue; the count matches the gate list)
+- [ ] every human-gate guide — the 8: setup·contract·verify·intake·scope·close·graduate·release — cues the convention   (← gate-wiring)   (verify: a guard greps each of the 8 guides for the "guided choice" cue; phase-advance is engine-mechanical, folded into the freeze + verify gates)
 - [ ] book + GLOSSARY describe the guided-decision convention, the skill mirror + book trees are byte-identical, and parity passes   (← suggest-book-align)   (verify: `test_book_parity` + `test_bundle_parity` green AND grep finds the glossary headword + the book line)
