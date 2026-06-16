@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "release-docs-align",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -889,144 +889,10 @@
         ],
         "snapshot_md5": "a96ccb33aa92cf77442e1d04e8571e2a"
       }
-    },
-    "release-guide": {
-      "title": "Author release.md \u2014 the 7-step RELEASE altitude flow",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "release-altitude",
-      "depends_on": [],
-      "created": "2026-06-16T06:18:45+00:00",
-      "updated": "2026-06-16T06:56:18+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "65ae20448ef789f0b9a31b3ccdeb5c90",
-        "tests": {
-          ".add/tasks/release-guide/tests/test_release_guide.py": "fb4f5eb923fa0e1feab0bb0602830966"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/release.md",
-          "add-method/src/add_method/_bundled/skill/add/release.md",
-          ".claude/skills/add/release.md",
-          "add-method/skill/add/SKILL.md",
-          "add-method/src/add_method/_bundled/skill/add/SKILL.md",
-          ".claude/skills/add/SKILL.md",
-          "add-method/tooling/test_wording_lint.py",
-          "add-method/tooling/test_per_step_hooks.py",
-          ".add/tasks/release-guide/tests/",
-          ".add/tasks/release-guide/tests/add.py"
-        ],
-        "snapshot_md5": "58bc916bd82441143bf04e85de3468cb"
-      }
-    },
-    "release-report": {
-      "title": "add.py release-report (read-only) + the releasable cue + RELEASES.md ledger schema",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "release-altitude",
-      "depends_on": [],
-      "created": "2026-06-16T07:03:13+00:00",
-      "updated": "2026-06-16T07:34:33+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "f15abf9a7a03f7e01c0908a501f96e5e",
-        "tests": {
-          ".add/tasks/release-report/tests/test_release_report.py": "e19718c6f204df7083df6463ccc227f3"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_min_pillar.py",
-          ".add/tasks/release-report/tests/",
-          ".add/tasks/release-report/tests/test_release_1_5_0",
-          ".add/tasks/release-report/tests/test_min_pillar.py"
-        ],
-        "snapshot_md5": "d5d8447361cc86dead442c149033da2c"
-      }
-    },
-    "release-command": {
-      "title": "add.py release <version> (guarded, record-only) \u2014 CHANGELOG prepend + RELEASES.md append-only row + milestone attribution; the 4-code readiness floor with an un-forceable security HARD-STOP",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "release-altitude",
-      "depends_on": [],
-      "created": "2026-06-16T07:38:09+00:00",
-      "updated": "2026-06-16T08:00:40+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "496b71c7c0ef40da4a012ee687fc5b69",
-        "tests": {
-          ".add/tasks/release-command/tests/test_release_command.py": "4dd470a7c1b3d31c357f5e8a17645f36"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_min_pillar.py",
-          ".add/tasks/release-command/tests/",
-          ".add/tasks/release-command/tests/cmd_release",
-          ".add/tasks/release-command/tests/release",
-          ".add/tasks/release-command/tests/_build_in_flight",
-          ".add/tasks/release-command/tests/test_min_pillar",
-          ".add/tasks/release-command/tests/_NONZERO_OK",
-          ".add/tasks/release-command/tests/release_no_closed_milestone",
-          ".add/tasks/release-command/tests/heal",
-          ".add/tasks/release-command/tests/wave-verify",
-          ".add/tasks/release-command/tests/CHANGELOG.md",
-          ".add/tasks/release-command/tests/RELEASES.md"
-        ],
-        "snapshot_md5": "a06da9a0eb1f3a93998233f6f6f9f5ac"
-      }
-    },
-    "release-docs-align": {
-      "title": "Propagate RELEASE to the book (ch.16 16-releasing.md) + 5 GLOSSARY entries + \u00d73-tree byte-parity; document the lifecycle order + the root-CHANGELOG nested-package caveat",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "release-altitude",
-      "depends_on": [],
-      "created": "2026-06-16T08:39:49+00:00",
-      "updated": "2026-06-16T09:12:42+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "7fa736f0adeeddab638f3ca905c75724",
-        "tests": {
-          "add-method/tooling/test_release_docs_accord.py": "b5606dd4254bce82685ebe5937bd279c"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/docs/",
-          "add-method/src/add_method/_bundled/docs/",
-          ".add/docs/",
-          "16-releasing.md",
-          "appendix-c-glossary.md",
-          "README.md",
-          "add-method/tooling/test_release_docs_accord.py",
-          "add-method/tooling/16-releasing.md",
-          "add-method/tooling/appendix-c-glossary.md",
-          "add-method/tooling/README.md",
-          "./",
-          "add-method/tooling/",
-          ".add/tasks/release-docs-align/tests/",
-          ".add/tasks/release-docs-align/tests/add.py",
-          ".add/tasks/release-docs-align/tests/engine_pin.py",
-          ".add/tasks/release-docs-align/tests/test_min_pillar.py"
-        ],
-        "snapshot_md5": "2b8657d86c2e3038337ae60f4094c67b"
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T09:12:42+00:00",
+  "updated": "2026-06-16T09:25:16+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1155,17 +1021,9 @@
       "status": "active",
       "created": "2026-06-15T16:34:04+00:00",
       "updated": "2026-06-15T16:34:04+00:00"
-    },
-    "release-altitude": {
-      "title": "Release Altitude",
-      "goal": "A project can cut a versioned, user-facing release that bundles one or more closed milestones \u2014 the AI drafts evidence-backed notes from folded deltas, the engine records the cut behind a security-hard-stop readiness floor, and the human owns the tag/publish \u2014 so shipping a version is a first-class 5th ADD altitude, not an ad-hoc ritual.",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-16T06:09:47+00:00",
-      "updated": "2026-06-16T06:09:47+00:00"
     }
   },
-  "active_milestone": "release-altitude",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1446,6 +1304,18 @@
         "soul-self-improve"
       ],
       "archived": "2026-06-15"
+    },
+    {
+      "slug": "release-altitude",
+      "title": "Release Altitude",
+      "tasks": 4,
+      "task_slugs": [
+        "release-guide",
+        "release-report",
+        "release-command",
+        "release-docs-align"
+      ],
+      "archived": "2026-06-16"
     }
   ]
 }

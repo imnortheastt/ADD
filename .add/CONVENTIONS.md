@@ -27,6 +27,48 @@ Architecture:
 
 ## Method learnings (folded from OBSERVE deltas)
 
+- (ADD) **The RELEASE scope level is an engine that RECORDS, never acts — and its one security reject is
+  un-forceable.** `add.py release <version>` is guarded like `cmd_stage` with a SINGLE deliberate divergence: the
+  `release_security_open` check runs FIRST and carries NO `not forced` guard, so `--force` can never reach it
+  (the un-forceable reject, cleanly modeled as an unguarded leading check). It then RECORDS only — prepends
+  `CHANGELOG.md` + appends one newest-first `RELEASES.md` row + attributes the bundled milestones — and NEVER
+  writes `state.json`, tags, publishes, or deploys (attribution lives in RELEASES.md membership, so the
+  `→ releasable` cue re-reads the ledger and release stays a pure 2-file write with a CHANGELOG-rollback if the
+  2nd write fails). Because a tool-agnostic engine cannot run the suite, `release_tests_red` is a recorded-evidence
+  PROXY (an in-flight build with no green gate); the human's real run is the `release.md` readiness backstop.
+  `release` writes `CHANGELOG.md` at the project ROOT — a repo with a different convention (e.g. a nested-package
+  root pointer) gets release blocks prepended ABOVE its content (preserved, not clobbered); reconcile per repo.
+  [release-command — folded foundation-version 34]
+- (ADD) **A new skill/docs prose surface must clear BOTH wording fences, and the bare-word fence's code-span
+  exemption is PER-LINE.** Two fences guard wording: the phrase-level `wording_lint`/WORDING_RUBRIC (skill/add +
+  appendix-b only) AND the stricter bare-word `test_ubiquitous_language` over the EXTENDED surface (skill + docs +
+  README + templates), which bans `fold`/`altitude`/`seam`/… as whole words in prose (inline-code-span-stripped
+  before matching). That strip is PER PHYSICAL LINE: a backtick span (e.g. `` `milestone-done → fold → …` ``) that
+  WRAPS to a second source line leaves the first line's banned tokens exposed — keep a code-span arc on ONE line.
+  Adding a skill GUIDE also auto-joins the wording-lint surface, so BOTH its surface-count guards (count +
+  membership) must bump in the SAME build. [release-guide + release-docs-align — folded foundation-version 34]
+- (ADD) **The subcommand census self-maintains — register a new verb additively.** A new `add.py` subcommand
+  reddens `test_min_pillar.test_every_subcommand_is_covered`; register it additively in `LIFECYCLE`, and if it can
+  legitimately exit non-zero at its census slot (a guarded WRITER like `release` that refuses on its floor) add it
+  to `_NONZERO_OK` alongside `heal`/`wave-verify`. (Reaffirms the fv29 `§5-scope-frozen-at-tests-build` rule: the
+  scope gate reads `declared` from the state.json ANCHOR snapshotted at tests→build, so a mid-build scope
+  expansion must amend §5 AND re-cross tests→build, never just edit the prose.)
+  [release-report + release-command — folded foundation-version 34]
+- (ADD) **An appended book chapter chains forward-only; prior chapters stay byte-frozen.** Appending ch.16 (zero
+  renumber churn) means chapters 00–15 keep their existing nav footers — ch.16 cannot repair the prior chapter's
+  "Next:" link without breaking the byte-parity that made the append cheap. The Contents/README index is the
+  authoritative link; an append-friendly book trades perfect prev/next adjacency for byte-stability.
+  [release-docs-align — folded foundation-version 34]
+- (TDD) **Release & docs guards: test the durable invariant and the rename-trap, on a real harness.** Patterns that
+  earned their keep this milestone: a docs-ACCORD guard asserts the flow arc appears VERBATIM in BOTH the book AND
+  its source guide (`release.md`), buying a "rename re-reds" property cheaply without duplicating byte-parity (owned
+  by the parity tests); design-for-failure rollback is testable by monkeypatching `_atomic_write` to fail on the
+  2nd write (assert the 1st file rolls back + state unchanged); an "engine-untouched" guard must assert a DURABLE
+  invariant (the engine never references the guide FILE), never "no <feature> command" (a sibling task legitimately
+  adds that command); the §3 freeze flag label is a parsed MACHINE TOKEN (`unflagged_freeze` requires the literal
+  `Least-sure flag surfaced at freeze:`); and mirroring the `graduation_data` harness (temp project + `add.main`
+  capture + direct state seeding) produces honest RED-first tests with zero throwaway scaffolding.
+  [release-command + release-report + release-guide + release-docs-align — folded foundation-version 34]
 - (TDD) **A docs-content guard earns its keep by cross-checking the SOURCE, not just asserting the target — and a
   content-reference test must be scoped to its evidence section AND assert a REAL artifact.** `test_docs_accord`
   intersects book ∩ `design.md` (`test_beats_are_sourced_from_the_guide`), so a beat rename can't pass by editing only
