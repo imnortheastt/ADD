@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "book-glossary-align",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -892,7 +892,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T04:07:42+00:00",
+  "updated": "2026-06-16T09:25:16+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1023,7 +1023,7 @@
       "updated": "2026-06-15T16:34:04+00:00"
     }
   },
-  "active_milestone": "udd-design-loop",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1304,6 +1304,18 @@
         "soul-self-improve"
       ],
       "archived": "2026-06-15"
+    },
+    {
+      "slug": "release-altitude",
+      "title": "Release Altitude",
+      "tasks": 4,
+      "task_slugs": [
+        "release-guide",
+        "release-report",
+        "release-command",
+        "release-docs-align"
+      ],
+      "archived": "2026-06-16"
     }
   ]
 }

@@ -4,6 +4,42 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.6.0] — 2026-06-16
+
+The releasing release: shipping a versioned cut is now a first-class **5th ADD
+scope level**, not an ad-hoc ritual. The AI gathers the inventory and drafts
+evidence-backed notes, the engine records the cut behind a security-hard-stop
+readiness floor, and the human owns the tag and publish. All additive; no
+breaking changes (SemVer MINOR).
+
+### Added
+- **The RELEASE scope level (`release.md`)** — the on-demand guide for the 7-step
+  flow `cue → gather → draft notes → readiness floor → human confirms → cut → watch`,
+  orthogonal to stage: bundle one or more closed milestones into a versioned,
+  watched cut. Cross-referenced from `SKILL.md`.
+- **`add.py release-report`** — a read-only gather of the five record-sets (closed
+  milestones · their consolidated deltas · riding `RISK-ACCEPTED` waivers · open
+  security `HARD-STOP` · scenarios → monitors), with `--json`, plus the
+  `→ releasable: N milestone(s)` status cue.
+- **`add.py release <version>`** — a guarded, record-only cut: it prepends the
+  `CHANGELOG.md` block, appends an append-only `RELEASES.md` ledger row
+  (newest-first), and attributes the bundled milestones — behind a four-code
+  readiness floor (`release_security_open` · `release_tests_red` ·
+  `release_no_closed_milestone` · `release_undisclosed_waiver`). The security stop
+  is **un-forceable**: `--force` can override the other three, never that one.
+- **`RELEASES.md`** — the append-only release ledger (date · version · milestones ·
+  waivers · evidence); membership is the attribution source, so the cue never has
+  to read a compacted milestone file.
+- **Book chapter 16 (`16-releasing.md`)** + five glossary entries (Release · Release
+  scope level · Readiness floor · RELEASES.md ledger · Hotfix release) + the
+  `test_release_docs_accord` guard that keeps the book in accord with `release.md`.
+
+### Notes
+- **The engine records; the human ships.** `add.py release` writes the changelog +
+  ledger + attribution; it never bumps a version source, tags, publishes, or
+  deploys. The outward act stays human-owned and tool-agnostic — exactly the
+  human-gated `git tag` that cut this very release.
+
 ## [1.5.0] — 2026-06-16
 
 The UDD design-loop release: defining the design *before* the code is now a

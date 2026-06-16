@@ -89,6 +89,10 @@ LIFECYCLE = [
     ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
     ["deltas"],                                # read-only: open competency deltas report
     ["graduation-report"], ["graduation-report", "--json"],  # read-only harvest (reads TASK/RETRO/state, never docs/)
+    ["release-report"], ["release-report", "--json"],  # read-only release inventory (reads state/RELEASES.md/TASK, never docs/)
+    ["release", "0.0.0"],                      # guarded record-only cut: no milestone is closed yet
+                                               # here -> refuses release_no_closed_milestone (expected
+                                               # nonzero, tolerated below; reads state/RELEASES.md, never docs/)
     ["project"],                               # read-only: prints PROJECT.md, reads no docs/ chapter
     ["sync-guidelines"],
     ["milestone-done", "mvp"],
@@ -106,7 +110,9 @@ _EXERCISED_IN_SETUP = {"init"}
 # (proving it reads no docs/ chapter) and tolerates its expected non-zero exit.
 # wave-verify is likewise a refusal verb on this board: no WAVE.md exists, so the
 # merge-time gate refuses (wave_not_found) — exercised under the read-spy, nonzero tolerated.
-_NONZERO_OK = {"heal", "wave-verify"}
+# release is guarded: no closed-unreleased milestone exists at its lifecycle slot, so it refuses
+# (release_no_closed_milestone) — exercised under the read-spy (reads state/RELEASES.md, never docs/).
+_NONZERO_OK = {"heal", "wave-verify", "release"}
 
 
 class MinimalPillarTest(unittest.TestCase):
