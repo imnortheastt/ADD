@@ -116,6 +116,22 @@ A green test suite would never have caught that; tests run serially and miss rac
 
 A week later, telemetry shows an unexpectedly high `forbidden` rate. The signal clusters: users are trying to transfer *into* a shared account they can see but don't own. That observation becomes a spec delta — "support transfers into accounts I'm authorized on" — and the flow returns to Step 1. **Observe** closed the loop, and production reality became the next specification.
 
+## From the field: 23 milestones in six days
+
+The money‑transfer feature is a teaching example. Here's the same method on a real production system.
+
+`ai-proxy` is a LiteLLM‑class multi‑tenant AI gateway — six upstream providers, an OpenAI‑compatible `/v1` surface, metering and billing, budgets, governance, a load‑balancing router, caching, SSO, and an enterprise dashboard. It was built end to end through ADD: **23 versioned milestones, ~120 tasks, six days, graduated to production.** Its foundation carries an append‑only log of 140+ decisions — the method's own audit trail of what each loop caught and why. Three findings stand out, because each is the thesis above turning into evidence.
+
+**Green test suites shipped clean while hiding real defects.** A live end‑to‑end run caught a defect that *326 passing tests* missed — a PII marker silently never recorded. A later milestone's live pass caught two production‑*dead* code paths that *399 passing tests* waved through. That's "trust‑by‑inspection breaks down" measured, not asserted — and it's exactly why ADD makes live verification and an adversarial **earned‑green refute‑read** load‑bearing *on top of* the suite. The refute‑read alone caught a coverage regression a `--no-coverage` run had hidden, and a fail‑open identity bypass where a followed redirect could chain to a trusted response.
+
+**Security stopped hard, every time.** An unverified session‑JWT decode in the dashboard escalated to a human as a `HARD-STOP`, became its own remediation task, then generalized into a project‑wide sweep — 13 secret‑bearing error paths hardened so a crash reporter couldn't walk the exception chain back to an API key. No security finding was ever auto‑passed. *(I spot‑checked that sweep against the live code; the audit trail matched.)*
+
+**The foundation compounded.** Every loop folded its lessons — tagged by discipline — back into the foundation, so later milestones reused proven patterns by name instead of re‑deriving them, and follow‑up debt was tracked as `OPEN` and closed on the record (two whole milestones existed to pay it down). The method improved itself across loops.
+
+And the agent's *behavior* changed with it: it surfaced its least‑confident assumption and asked before building, froze the contract and then refused to touch it, **attacked its own green** with a refute‑read and an independent security subagent, and treated a passing suite as necessary but never sufficient.
+
+*(The full field study, with every claim traced to its milestone, lives alongside this post: [`case-study-ai-proxy-add-in-production.md`](./case-study-ai-proxy-add-in-production.md).)*
+
 ## Why this actually fixes the AI‑era SDLC
 
 Walk the four failures back through the method:
