@@ -59,10 +59,12 @@ class ReportTest(unittest.TestCase):
         return self._root() / "tasks" / slug / "TASK.md"
 
     def _set_observe(self, slug, text):
+        # observe now derives from the §7 "### Spec delta" block (first open entry).
         p = self._task_md(slug)
         s = p.read_text()
-        s = s.replace("Spec delta for the next loop: <what production taught you>",
-                      f"Spec delta for the next loop: {text}")
+        marker = "### Spec delta"
+        idx = s.index(marker) + len(marker)
+        s = s[:idx] + f"\n- [SPEC · open] {text} (evidence: scn)\n" + s[idx:]
         p.write_text(s)
 
     def _add_delta(self, slug, line):
@@ -271,10 +273,12 @@ class ReportTest(unittest.TestCase):
         add.main(["new-task", "alpha"])
         p = self._task_md("alpha")
         s = p.read_text()
-        s = s.replace(
-            "Spec delta for the next loop: <what production taught you>",
-            "Spec delta for the next loop: first line of the delta\n"
-            "second physical line continues it\nthird line ends it")
+        marker = "### Spec delta"
+        idx = s.index(marker) + len(marker)
+        s = s[:idx] + (
+            "\n- [SPEC · open] first line of the delta\n"
+            "  second physical line continues it\n"
+            "  third line ends it (evidence: scn_x)\n") + s[idx:]
         s = s.rstrip() + (
             "\n- [ADD · open] a learning that wraps across\n"
             "  an indented continuation line (evidence: scn_y)\n")

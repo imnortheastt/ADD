@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "spec-delta-grammar",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -757,10 +757,43 @@
           }
         ]
       }
+    },
+    "spec-delta-grammar": {
+      "title": "Spec-delta grammar \u2014 separate resolution track",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [],
+      "created": "2026-06-16T14:31:54+00:00",
+      "updated": "2026-06-16T15:30:07+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "109c734cb9f3b5ac919b87fea5bcf061",
+        "tests": {
+          "add-method/tooling/test_spec_delta_grammar.py": "28b9d9462ef44f87bc64674a67e9ef04"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/templates/TASK.md.tmpl",
+          "add-method/tooling/test_spec_delta_grammar.py",
+          "add-method/tooling/test_ground_prose.py",
+          "add-method/tooling/test_template_form_tags.py",
+          "add-method/tooling/test_deltas_report.py",
+          "add-method/tooling/test_report.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/templates/TASK.md.tmpl",
+          ".add/tooling/add.py",
+          ".add/tooling/templates/TASK.md.tmpl"
+        ],
+        "snapshot_md5": "34cd2b66ae032d24113d53296288586a"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T13:42:32+00:00",
+  "updated": "2026-06-16T15:30:07+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -881,9 +914,17 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
+    },
+    "delta-resolution": {
+      "title": "Delta Resolution",
+      "goal": "every delta \u2014 spec and competency \u2014 has a recorded, engine-driven resolution event, never a silent dangling lesson",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-16T14:27:44+00:00",
+      "updated": "2026-06-16T14:27:44+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "delta-resolution",
   "archived": [
     {
       "slug": "v5",

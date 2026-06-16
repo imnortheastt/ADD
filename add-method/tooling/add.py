@@ -145,6 +145,8 @@ Status: DRAFT
 ### GATE RECORD
 Outcome:
 ## 7 · OBSERVE
+### Spec delta
+### Competency deltas
 """
 
 
@@ -3026,23 +3028,37 @@ def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
         return "(unknown)", []
     text = f.read_text(encoding="utf-8")
     m7 = re.search(r"##\s*7\s*·\s*OBSERVE.*\Z", text, re.S)
-    lines = (m7.group(0) if m7 else text).splitlines()
-    # observe: the field value + continuation lines until a blank line / heading / list
+    section = m7.group(0) if m7 else text
+    lines = section.splitlines()
+    # observe: prefer the first OPEN SPEC delta from the "### Spec delta" block; fall
+    # back to the legacy "Spec delta for the next loop:" free-text field (archived
+    # tasks predate the block); else "(unknown)".
     observe = "(unknown)"
-    for i, ln in enumerate(lines):
-        m = re.match(r"\s*Spec delta for the next loop:\s*(.*)", ln)
-        if not m:
+    for unit in _spec_delta_entries(section):
+        m = _SPEC_DELTA_RE.match(unit[0])
+        if m.group(2) != "open":
             continue
-        parts = [m.group(1).strip()]
-        for nxt in lines[i + 1:]:
-            t = nxt.strip()
-            if not t or t.startswith("#") or t.startswith("- ") or t.startswith("Watch"):
-                break
-            parts.append(t)
-        joined = " ".join(p for p in parts if p).strip()
-        if joined and not joined.startswith("<"):
-            observe = joined
-        break
+        tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
+        em = _EVIDENCE_RE.match(tail)
+        first = (em.group(1).strip() if em else tail)
+        if first and not first.startswith("<"):
+            observe = first
+            break
+    if observe == "(unknown)":
+        for i, ln in enumerate(lines):
+            m = re.match(r"\s*Spec delta for the next loop:\s*(.*)", ln)
+            if not m:
+                continue
+            parts = [m.group(1).strip()]
+            for nxt in lines[i + 1:]:
+                t = nxt.strip()
+                if not t or t.startswith("#") or t.startswith("- ") or t.startswith("Watch"):
+                    break
+                parts.append(t)
+            joined = " ".join(p for p in parts if p).strip()
+            if joined and not joined.startswith("<"):
+                observe = joined
+            break
 
     # deltas: each "- [COMP · status] ..." plus its indented continuation lines
     deltas, i = [], 0
@@ -3741,6 +3757,18 @@ _DELTA_RE = re.compile(
 )
 _EVIDENCE_RE = re.compile(r"^(.*?)\s*\(evidence:\s*(.*?)\)\s*$")
 
+# SPEC-delta track — a SEPARATE resolution lifecycle from the competency deltas
+# above. SPEC shares the "- [TAG · status]" LINE shape but its statuses are
+# DISJOINT (open|seeded|dropped) and it resolves into a TASK (seeded) or is
+# dismissed (dropped) — never consolidated into the foundation. _STATUS_SETS keys each
+# tag to its legal status set so the ONE lint can reject a cross-set pairing
+# ([SPEC · folded], [SDD · seeded]) without a parallel grammar.
+_SPEC_STATUSES = ("open", "seeded", "dropped")
+_SPEC_DELTA_RE = re.compile(
+    r"\s*-\s*\[\s*(SPEC)\s*·\s*(open|seeded|dropped)\s*\]\s*(.+)$"
+)
+_STATUS_SETS = {**{c: _DELTA_STATUSES for c in _COMPETENCY_ORDER}, "SPEC": _SPEC_STATUSES}
+
 # Broad structural tag detector: finds ANY "- [tok · tok]" line (valid OR malformed).
 # A line with a `· ` bracket separator is a delta-attempt. Does NOT enumerate
 # competencies or statuses — a different abstraction from _DELTA_RE (no DRY violation).
@@ -3748,21 +3776,25 @@ _TAG_BROAD_RE = re.compile(r"^\s*-\s*\[\s*([^\]·]+?)\s*·\s*([^\]·]+?)\s*\]\s*
 
 
 def _lint_task_deltas(root: Path, slug: str) -> tuple[bool, str] | None:
-    """Lint all open delta entries in a task's '### Competency deltas' block.
+    """Lint all open delta entries in a task's '### Competency deltas' AND '### Spec delta' blocks.
 
     Returns:
         None                    — no delta-attempts found; no check emitted.
         (True, "")              — all open entries pass.
         (False, "<code> -> <tag line>") — first failing entry with its failure code.
 
-    Contract rules (frozen §3, v1):
+    Contract rules (frozen §3, spec-delta-grammar v1):
     - SKIP HTML-comment lines and blank lines (they are never tag lines).
-    - Group lines into ENTRIES: a broad tag line starts an entry; following lines
-      until next tag / blank / end-of-block are its continuation.
+    - Group lines into ENTRIES across both blocks: a broad tag line starts an entry;
+      following lines until next tag / blank / block boundary are its continuation.
     - A line without a '· ' separator inside brackets (e.g. '- [x]') is NOT a tag.
-    - For each entry, skip folded/rejected (open-only — history not retrofitted).
-    - Validate the remaining (open) entries: COMP in _COMPETENCY_ORDER,
-      status in _DELTA_STATUSES, and '(evidence:' present SOMEWHERE in the unit.
+    - Validation is TAG-SCOPED via _STATUS_SETS: each tag carries its own legal
+      status set (the competency statuses for DDD…ADD, the SPEC statuses for SPEC).
+      A status drawn from the wrong set (e.g. a competency-only status on SPEC, or
+      `seeded` on a competency tag) is unknown_status.
+    - Skip an entry whose status is RESOLVED for its tag (open-only — history not
+      retrofitted). Validate the rest: tag known, status legal, non-empty text, and
+      '(evidence:' present — evidence is required on an OPEN entry of ANY tag.
     - Fail-closed: an unparseable attempt FAILS (never silently passes).
     """
     task_md = root / "tasks" / slug / "TASK.md"
@@ -3773,71 +3805,64 @@ def _lint_task_deltas(root: Path, slug: str) -> tuple[bool, str] | None:
     except OSError:
         return None
 
-    # Locate the "### Competency deltas" block.
-    block_match = re.search(r"###\s*Competency deltas\s*\n(.*?)(?=\n##|\Z)", text, re.S)
-    if not block_match:
+    # Locate BOTH delta blocks — "### Competency deltas" and the SPEC track
+    # "### Spec delta". Each contributes entries to the same tag-scoped validation.
+    blocks = []
+    for pat in (r"###\s*Competency deltas\s*\n(.*?)(?=\n##|\Z)",
+                r"###\s*Spec delta\s*\n(.*?)(?=\n##|\Z)"):
+        bm = re.search(pat, text, re.S)
+        if bm:
+            blocks.append(bm.group(1))
+    if not blocks:
         return None
 
-    block = block_match.group(1)
-    raw_lines = block.splitlines()
-
-    # First pass: collect entries (tag line + continuations).
-    # HTML-comment lines are skipped entirely (invisible to the guard).
-    # Blank lines terminate the current entry, but are not tags themselves.
+    # First pass: collect entries (tag line + continuations). HTML-comment and blank
+    # lines never start an entry; a block boundary closes any open entry.
     entries: list[tuple[str, list[str]]] = []  # (tag_line, [tag_line, *continuations])
-    current: list[str] | None = None
-    for raw_line in raw_lines:
-        stripped = raw_line.strip()
-        # Skip HTML-comment lines.
-        if stripped.startswith("<!--"):
-            continue
-        # Blank line terminates the current entry.
-        if not stripped:
-            current = None
-            continue
-        # Broad tag detection: any "- [tok · tok]" line starts a new entry.
-        m = _TAG_BROAD_RE.match(raw_line)
-        if m:
-            current = [stripped]
-            entries.append((stripped, current))
-        elif current is not None:
-            # Continuation line of the current entry.
-            current.append(stripped)
-        # else: non-blank, non-comment, non-tag line with no prior entry — ignore.
+    for block in blocks:
+        current: list[str] | None = None
+        for raw_line in block.splitlines():
+            stripped = raw_line.strip()
+            if stripped.startswith("<!--"):
+                continue
+            if not stripped:
+                current = None
+                continue
+            if _TAG_BROAD_RE.match(raw_line):
+                current = [stripped]
+                entries.append((stripped, current))
+            elif current is not None:
+                current.append(stripped)
 
     if not entries:
         return None  # no delta-attempts → no check emitted
 
-    # Second pass: validate each entry.
+    # Second pass: validate each entry, TAG-SCOPED. The status set is per-tag
+    # (_STATUS_SETS): competency → open|folded|rejected, SPEC → open|seeded|dropped.
     for tag_line, unit_lines in entries:
         m = _TAG_BROAD_RE.match(tag_line)
         if not m:
-            # Should not happen, but fail-closed.
-            return False, f"malformed_delta -> {tag_line}"
+            return False, f"malformed_delta -> {tag_line}"  # fail-closed
         raw_comp = m.group(1).strip()
         raw_status = m.group(2).strip()
+        tail = m.group(3).strip()
 
-        # Step 1: skip historical entries (folded/rejected) — open-only enforcement.
-        # MUST happen before competency/status validation per §3: "history not retrofitted".
-        if raw_status in ("folded", "rejected"):
+        # Skip RESOLVED (non-open) entries — history is not retrofitted. Resolved is
+        # tag-scoped (folded|rejected · seeded|dropped); an unknown tag defaults to the
+        # competency set so a legacy folded/rejected line still skips cleanly.
+        resolved = set(_STATUS_SETS.get(raw_comp, _DELTA_STATUSES)) - {"open"}
+        if raw_status in resolved:
             continue
 
-        # Step 2: use _DELTA_RE (the canonical grammar, single source of truth) to test
-        # whether the tag line is a fully-valid delta shape. If it matches, check evidence
-        # only. If it fails, classify the failure via the raw tokens (never a parallel grammar).
-        unit_text = " ".join(unit_lines)
-        if _DELTA_RE.match(tag_line):
-            # Valid comp + status + non-empty tail — check evidence in the joined unit.
-            if "(evidence:" not in unit_text:
-                return False, f"no_evidence -> {tag_line}"
-        else:
-            # Classify why _DELTA_RE rejected it (open entries only — folded/rejected skipped).
-            if raw_comp not in _COMPETENCY_ORDER:
-                return False, f"unknown_competency -> {tag_line}"
-            if raw_status not in _DELTA_STATUSES:
-                return False, f"unknown_status -> {tag_line}"
-            # Comp and status are valid but the line still failed _DELTA_RE (e.g. empty tail).
+        legal = _STATUS_SETS.get(raw_comp)
+        if legal is None:
+            return False, f"unknown_competency -> {tag_line}"
+        if raw_status not in legal:
+            return False, f"unknown_status -> {tag_line}"
+        if not tail:
             return False, f"malformed_delta -> {tag_line}"
+        if "(evidence:" not in " ".join(unit_lines):     # required on open of ANY tag
+            return False, f"no_evidence -> {tag_line}"
 
     return True, ""
 
@@ -3895,6 +3920,63 @@ def _collect_open_deltas(root: Path) -> dict[str, list[dict]]:
                 delta_text, evidence = tail, ""
             by_comp[comp].append({"task": slug, "text": delta_text, "evidence": evidence})
     return by_comp
+
+
+def _spec_delta_entries(text: str) -> list[list[str]]:
+    """Group a "### Spec delta" block into entries (tag line + continuation lines).
+
+    Same grouping discipline as _collect_open_deltas' competency pass, keyed on
+    _SPEC_DELTA_RE: a tag line starts an entry; a non-"- " line continues it; a
+    blank/comment or a new "- " item ends it. Returns [] when the block is absent."""
+    bm = re.search(r"###\s*Spec delta\s*\n(.*?)(?=\n##|\Z)", text, re.S)
+    if not bm:
+        return []
+    entries: list[list[str]] = []
+    current: list[str] | None = None
+    for line in bm.group(1).splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("<!--"):
+            current = None
+            continue
+        if _SPEC_DELTA_RE.match(stripped):
+            current = [stripped]
+            entries.append(current)
+        elif current is not None and not stripped.startswith("-"):
+            current.append(stripped)         # genuine wrap of the current entry
+        else:
+            current = None                   # a new / malformed list item ends the run
+    return entries
+
+
+def _collect_open_spec_deltas(root: Path) -> list[dict]:
+    """Scan every .add/tasks/*/TASK.md "### Spec delta" block for OPEN SPEC deltas.
+
+    Returns a FLAT list of {task, text, evidence} dicts (SPEC is one tag, never
+    bucketed by competency). A SPEC delta is a forward hand-off that resolves into
+    a TASK — never consolidated into the foundation — so it is collected SEPARATELY from
+    _collect_open_deltas. READ-ONLY; never mutates any file."""
+    out: list[dict] = []
+    tasks_dir = root / "tasks"
+    if not tasks_dir.is_dir():
+        return out
+    for task_md in sorted(tasks_dir.glob("*/TASK.md")):
+        slug = task_md.parent.name
+        try:
+            text = task_md.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for unit in _spec_delta_entries(text):
+            m = _SPEC_DELTA_RE.match(unit[0])
+            if m.group(2) != "open":         # seeded / dropped are resolved — excluded
+                continue
+            tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
+            em = _EVIDENCE_RE.match(tail)
+            if em:
+                delta_text, evidence = em.group(1).strip(), em.group(2).strip()
+            else:
+                delta_text, evidence = tail, ""
+            out.append({"task": slug, "text": delta_text, "evidence": evidence})
+    return out
 
 
 _AUDIT_STAMP_RE = re.compile(r"Status:\s*FROZEN @ v\d+\s*[—-]+\s*approved by\s+\S+")
@@ -4420,35 +4502,43 @@ def cmd_release(args: argparse.Namespace) -> None:
 
 
 def cmd_deltas(args: argparse.Namespace) -> None:
-    """Read-only: report all open lessons learned grouped by competency.
+    """Read-only: report open competency lessons AND open SPEC deltas, SEPARATELY.
 
-    Scans every .add/tasks/*/TASK.md '### Competency deltas' block for lines
-    matching the delta grammar; shows only `open` entries in canonical competency
-    order (DDD·SDD·UDD·TDD·ADD). --json emits one JSON object. Exit 0 ALWAYS.
-    Writes NOTHING."""
+    Scans every .add/tasks/*/TASK.md: '### Competency deltas' → open lessons grouped
+    by competency (DDD·SDD·UDD·TDD·ADD), and '### Spec delta' → open forward hand-offs
+    in their own section (a SPEC delta resolves into a task, never consolidates). --json emits
+    one JSON object with both under separate keys. Exit 0 ALWAYS. Writes NOTHING."""
     root = _require_root()
     by_comp = _collect_open_deltas(root)
     total = sum(len(v) for v in by_comp.values())
+    spec = _collect_open_spec_deltas(root)
 
     if getattr(args, "json", False):
         payload: dict = {
             "total": total,
             "by_competency": {c: v for c, v in by_comp.items() if v},
+            "spec": spec,
+            "spec_total": len(spec),
         }
         print(json.dumps(payload, ensure_ascii=False))
         return
 
-    if total == 0:
+    if total == 0 and not spec:
         print("no open deltas.")
         return
 
-    print(f"open lessons learned ({total} total):")
-    for comp in _COMPETENCY_ORDER:
-        entries = by_comp[comp]
-        if not entries:
-            continue
-        print(f"  {comp} ({len(entries)}):")
-        for e in entries:
+    if total:
+        print(f"open lessons learned ({total} total):")
+        for comp in _COMPETENCY_ORDER:
+            entries = by_comp[comp]
+            if not entries:
+                continue
+            print(f"  {comp} ({len(entries)}):")
+            for e in entries:
+                print(f"    - {e['text']}  [{e['task']}]")
+    if spec:
+        print(f"open spec deltas ({len(spec)} total):")
+        for e in spec:
             print(f"    - {e['text']}  [{e['task']}]")
 
 

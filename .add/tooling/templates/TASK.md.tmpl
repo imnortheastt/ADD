@@ -150,7 +150,11 @@ Reviewed by: <name> · date: <date>
 ## 7 · OBSERVE — feed the next loop ▸ docs/09-the-loop.md
 
 Watch (reuse scenarios as monitors): <error rate / per-rejection rate / latency>
-Spec delta for the next loop: <what production taught you>
+
+### Spec delta
+Forward changes for the next loop — each re-enters at Specify as the next task. One line
+each, tagged `[SPEC · open|seeded|dropped]`, with evidence (e.g. `[SPEC · open] rate-limit
+the retry path (evidence: prod herd spikes)`). See the `add` skill's `deltas.md`.
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
