@@ -27,6 +27,25 @@ Architecture:
 
 ## Method learnings (folded from OBSERVE deltas)
 
+- (TDD) **A docs-content guard earns its keep by cross-checking the SOURCE, not just asserting the target — and a
+  content-reference test must be scoped to its evidence section AND assert a REAL artifact.** `test_docs_accord`
+  intersects book ∩ `design.md` (`test_beats_are_sourced_from_the_guide`), so a beat rename can't pass by editing only
+  the book — the book is forced to FOLLOW the guide. Symmetric vacuity hazard: a "the capture is cited in TASK.md"
+  test vacuously matched the §4 test-plan's OWN literal `captures/welcome.png` prose until hardened to a §6-scoped
+  reference + a file-exists assert. Newest face of words-exist≠method-works / presence-necessary-not-sufficient.
+  [book-glossary-align + capture-evidence — folded foundation-version 33]
+- (ADD) **The scope-walk's `_SCOPE_EXCLUDE_DIRS` omits tool caches — a mid-verify MCP/tool write (`.serena/cache/`)
+  shows as an out-of-scope touch and would escalate at the gate.** The workaround is to re-anchor (`phase tests` +
+  `advance`) AFTER the cache settles so the snapshot baselines it; the DURABLE fix is adding `.serena` to
+  `_SCOPE_EXCLUDE_DIRS` alongside `.git`/`.add`/`__pycache__`/`node_modules` (a recorded forward engine task). A scope
+  gate that walks the live filesystem must exclude every regenerable tool-state dir, not only VCS/build junk.
+  [book-glossary-align — folded foundation-version 33]
+- (ADD) **The release-gate forward-pin migration belongs in the SAME `chore(release)` commit as the version bump.**
+  Cutting 1.5.0 bumped the 3 version sources + the CHANGELOG but left `test_release_1_4_0.py` pinned at 1.4.0,
+  reddening the suite (the pinned release test + the `test_shared_engine_pin` five-guards aggregator that re-runs it)
+  until migrated in a follow-up (`d8bc376`). A version bump and its forward-pin migration (rename → bump VERSION,
+  prepend the prior version to PRIOR_VERSIONS, retarget FEATURE_ANCHORS, repoint the aggregator's importer list) are
+  ONE atomic release step, never two. [book-glossary-align — folded foundation-version 33]
 - (TDD) **A presence/substring assertion is vacuous when the asserted token ALSO lives in a sibling section, a
   header comment, or fixture scaffold — anchor the assertion to a UNIQUE new marker (or the parsed VALUE token),
   and keep the wording-lint inside the prose green bar.** Three faces this milestone: `set conservative` "passed"

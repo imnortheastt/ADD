@@ -5,7 +5,7 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-15 · foundation-version: 32
+slug: AIDD-Book · stage: mvp · updated: 2026-06-16 · foundation-version: 33
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
@@ -35,6 +35,13 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   not (v22 · DDD; same archive seam as graduation-analytics' traversal-basis convention).
 
 ## Spec / Living Document (SDD) — what we are building, now
+- **Additive content folds into a frozen contract with NO re-freeze (udd-design-loop · SDD):** content that removes
+  no frozen §3 section and changes no reject is INSIDE the frozen contract — the "additive ⊆ frozen" judgment (the
+  json-render fast-path folded into `wireframe-mock-recipe` mid-build with no re-freeze; 12 tests + parity stayed
+  green), sibling to the §Domain "presentation/layout iterates freely WITHOUT a re-freeze" invariant. And a frozen
+  DESCRIPTIVE annotation can be wrong while the binding SEAM holds (§3 read a wording-lint count "25→26"; the real
+  base was 26→27 — the binding rule, design.md increments the guard by one + both guards update, held): honor the
+  seam, disclose the stale integer at the verify gate, never silently retrofit. [folded foundation-version 33]
 - **foundation-compaction (all 4 foundation specs shrink — newest-first + per-spec settled lines): SHIPPED 2026-06-15** —
   every append-only foundation sequence now reads NEWEST-FIRST (newest record on top) and, at milestone close, collapses its
   stable shipped zero-residue tail into ONE per-spec **rolled-up settled line** at the bottom (summarize + a `see git` pointer,
@@ -135,6 +142,17 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 ## Users (UDD) — UI/UX: design before code
 <!-- No-UI project: ADD ships as a CLI + a Claude skill. The "interface" is the
      command surface and the text it prints — there is no screen, so this stays short. -->
+- **The UDD design-definition loop SHIPPED end-to-end (udd-design-loop · UDD):** the loop
+  (`review-domain → research-components → wireframe → render-capture-confirm`) now lives where a PERSON learns ADD —
+  book ch.14 + GLOSSARY (`wireframe` · `design mock` · `capture` · `design-confirm`) — not only in the agent's
+  `design.md` guide. **Capture is measure-never-block**: the engine raises a never-red `missing_capture` WARN and
+  NEVER renders; the captured image is design-confirm evidence committed at `.add/design/captures/<name>.<ext>` AND
+  cited in the feature's `TASK.md` (traceability). **Two render tiers**: a zero-dependency HTML+CSS floor (any stack,
+  any screenshotter) + a json-render fast-path (`prototypes/<name>.json` IS a json-render `Spec`; `@json-render/image`
+  = deterministic Satori→PNG/SVG capture, no browser). Consistency-by-construction is demonstrable (one
+  semantic-token flip re-rendered both sample screens identically). Built-for-downstream ceiling reaffirmed — ADD is
+  CLI/no-UI, so the loop is validated by shape-lint + the design.md content, not a live ADD screen.
+  [udd-design-loop (4 tasks) — folded foundation-version 33]
 - **Setup SUGGESTS, never interrogates**: after the brownfield scan / greenfield interview, setup proposes
   the first milestone (goal + flow + scenarios) for the human to react to, and surfaces the run-mode as a
   comparison table + confirm-to-keep default — show-before-ask at the foundation altitude, not a questionnaire.
@@ -220,6 +238,7 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 ## Key Decisions (append-only — newest-first; compaction door per compact-foundation.md)
 | date | decision | why | outcome |
 |------|----------|-----|---------|
+| 2026-06-16 | ship udd-design-loop + fold → foundation-version 33 (19 open deltas from 4 tasks — SDD 2 · UDD 7 · TDD 4 · ADD 6; consolidated into 5 new bullets — §Users UDD design-loop-shipped · §Spec additive-⊆-frozen · 3 CONVENTIONS (docs-guard-cross-checks-source · tool-cache-outside-scope-exclude · release-pin-migration-same-commit) — + 6 flip-cite reaffirmations: §5-scope-before-crossing ×2 · dogfood-at-own-gate · engine-pin-3-parts · vacuous-substring-matcher · built-for-downstream) — the UDD design-definition loop (review-domain → research-components → wireframe → render-capture-confirm) now ships end-to-end: design.md guide + udd-wireframe.md recipe + capture-evidence `missing_capture` WARN + the loop described in the book ch.14 + GLOSSARY | the milestone closed the gap the human named (abstract token/catalog/prototype JSON had no VISIBLE layout to confirm before build) — a UI project's design now starts from the domain, researches+reuses components, and the human confirms a REAL captured image before build; consolidate-don't-append (19→5) keeps the foundation one-screen | udd-design-loop SHIPPED 4/4 tasks, 5/5 criteria, 4 PASS (all risk:high · conservative · human-gated); +1 §Users +1 §Spec +3 CONVENTIONS; 32→33; all 19 deltas open→folded; new test_docs_accord (7) + the release-gate migration to test_release_1_5_0; full suite 1152 green; commits bc5ac7f (task 4) · d8bc376 (release-gate) on release/v1.5.0 |
 | 2026-06-15 | ship v13-onboarding-polish + fold → foundation-version 32 (16 open deltas from 7 tasks — SDD 1 · UDD 1 · TDD 4 · ADD 10; merged into 7 new CONVENTIONS bullets + 1 §Users line) — setup now proposes run-mode + first milestone + per-drive domain deep-dive; `add.py waves` schedules the dependency DAG; and SOUL.md ("Trusting") + soul.md give the AI a human-owned, self-improving voice | the milestone made onboarding guided/self-tuning and gave the method its first VOICE loop; consolidate-don't-append (16→8) keeps the foundation lean; the SOUL.md voice ships as a human-owned PROPOSED starter (gate attests mechanism, human keeps voice) | v13 SHIPPED 6/6 tasks, 7/7 criteria, 6 PASS; +7 CONVENTIONS bullets; §Users suggest-not-interrogate line; 31→32; all 16 deltas open→folded; engine eebbb443→6c5ba081 (SOUL.md scaffold); full suite 1095 green; commits 372c74c · 44e401c · 3fe97af |
 | 2026-06-15 | ship foundation-compaction + fold → foundation-version 31 (19 open deltas from 6 tasks — SDD 4 · UDD 1 · TDD 6 · ADD 8, incl. 2 carried from gitignore-scaffold; aggressively merged into 1 §Spec ship bullet + 1 §Users prose-only-ban line + 6 new CONVENTIONS bullets + 3 flip-cites) — all four foundation specs now read NEWEST-FIRST and collapse their stable shipped zero-residue tail into a per-spec rolled-up settled line (summarize + `see git`, never delete; OPEN residue stays live); convention-guided (no `add.py` command) | the foundation grows past v30 and must stay relevant-first + one-screen — this milestone re-ordered every append-only sequence newest-first, added the compaction door, and dogfooded it on the LIVE specs with zero loss | foundation-compaction SHIPPED 5/5 tasks, 6/6 exit criteria; +6 CONVENTIONS +3 flip-cites; §Spec ship bullet; §Users prose-only-ban line; 30→31; all 19 deltas open→folded; build committed c93e41e |
 | 2026-06-14 | ship advisor-context + fold → foundation-version 30 (4 open deltas from 2 tasks: SDD 1 · TDD 1 · ADD 2; merged into 3 CONVENTIONS bullets) — every ADD step now carries a THIN Advisor·Confidence hook pointing to two new shared engine docs: `advisor.md` (when/how to spawn one plan-following subagent, vendor-neutral) + `confidence.md` (advisory 0–1 six-dimension self-score, refine-if-<0.9, never a gate) | the subagent-spawn pattern was scattered (ground sweep · verify refuter · streams adapter) and the self-score lived only in the streams worker prompt; promote both into first-class per-step guidance so any agent driving the loop knows when to delegate and how to self-assess — engine still never spawns, score never gates | advisor-context SHIPPED 3/3 tasks, 5/5 criteria; 3 new guards (test_confidence_rubric · test_advisor_strategy · test_per_step_hooks) + xml_convention ENGINE_FILES & wording_lint COUNT 22→24; +3 CONVENTIONS bullets (new-engine-doc-trips-inventory-guards · enumerate-full-set+distinctness · build-in-build+thin-pointer); 29→30; all 4 deltas open→folded |
