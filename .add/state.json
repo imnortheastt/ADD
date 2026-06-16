@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "spec-delta-grammar",
+  "active_task": "seed-and-drop",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -790,10 +790,39 @@
         ],
         "snapshot_md5": "34cd2b66ae032d24113d53296288586a"
       }
+    },
+    "seed-and-drop": {
+      "title": "Seed/drop verbs \u2014 resolve an open SPEC delta into a task or dismiss it",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [
+        "spec-delta-grammar"
+      ],
+      "created": "2026-06-16T15:32:26+00:00",
+      "updated": "2026-06-16T16:03:09+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9b743b40ecdebef2b1fd05c6edaddde9",
+        "tests": {
+          "add-method/tooling/test_seed_and_drop.py": "d92772127affee81782ac41ca99303ba"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/test_seed_and_drop.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py"
+        ],
+        "snapshot_md5": "7b41463cf88c20713f906463e1a5ba01"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T15:30:07+00:00",
+  "updated": "2026-06-16T16:03:09+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
