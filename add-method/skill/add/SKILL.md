@@ -106,6 +106,11 @@ template, the tier pick — read `advisor.md`; and at any decision point self-sc
 (0–1 across six dimensions, refine if any < 0.9) with `confidence.md`. Both are advisory: the
 engine never spawns, and the self-score is never a gate.
 
+When a **UI feature** reaches specify, run the **design-definition loop** in `design.md` (UDD):
+review the domain → research and reuse components → wireframe → render a real captured screen the
+human confirms **before** build — so the build matches the expected layout. Tool-agnostic; the
+engine never renders.
+
 When a milestone's tasks are all done but its **goal** (the `MILESTONE.md` exit criteria) is not
 yet met, `milestone-done` holds the milestone open — read `loop.md` for the dynamic loop that turns
 open deltas + extras into the next tasks, proposed by you and confirmed by the human, until the goal is met.

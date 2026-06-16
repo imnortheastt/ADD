@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "design-loop-guide",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -757,10 +757,47 @@
           }
         ]
       }
+    },
+    "design-loop-guide": {
+      "title": "Author design.md \u2014 the design-definition loop",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-loop",
+      "depends_on": [],
+      "created": "2026-06-15T16:35:42+00:00",
+      "updated": "2026-06-16T02:05:02+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "8d758f4393b21bf960d65bcce1926038",
+        "tests": {
+          "add-method/tooling/test_design_loop_guide.py": "3b8881618bc0bd36a2a8c0953897300b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/",
+          "add-method/src/add_method/_bundled/skill/add/",
+          ".claude/skills/add/",
+          "add-method/tooling/test_xml_convention.py",
+          "add-method/tooling/test_wording_lint.py",
+          "add-method/tooling/test_per_step_hooks.py"
+        ],
+        "snapshot_md5": "4acac052f069e9951437ec60a9c307e8"
+      },
+      "heal": {
+        "attempts": 1,
+        "history": [
+          {
+            "at": "2026-06-16T02:01:48+00:00",
+            "reason": "scope_violation: task 'design-loop-guide' touched outside its declared \u00a75 Scope \u2014 .claude/skills/add/SKILL.md \u00b7 .claude/skills/add/design.md \u00b7 .claude/skills/add/phases/0-setup.md \u00b7 .claude/skills/add/phases/1-specify.md \u00b7 add-method/skill/add/SKILL.md (15 total)",
+            "source": "scope"
+          }
+        ]
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-15T15:11:46+00:00",
+  "updated": "2026-06-16T02:05:02+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -881,9 +918,17 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
+    },
+    "udd-design-loop": {
+      "title": "UDD design-definition loop",
+      "goal": "A UI project's design step starts from the domain, researches and proposes components, and the human confirms the screen as a real captured image before build \u2014 so implementation matches the expected layout",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-15T16:34:04+00:00",
+      "updated": "2026-06-15T16:34:04+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "udd-design-loop",
   "archived": [
     {
       "slug": "v5",

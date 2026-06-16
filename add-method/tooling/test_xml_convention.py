@@ -204,6 +204,12 @@ ENGINE_FILES = {
             "## The plan-following prompt template",   # holds the ```xml template fence
             "## Choosing the model — vendor-neutral tiers",
         )},
+    "design.md": {                                     # UDD design-definition loop (udd-design-loop)
+        "tags": {"constraints"},
+        "narrative": (
+            "## The loop — four beats",
+            "## Tool-agnostic capture",
+        )},
     "SKILL.md": {
         "tags": {"constraints"},
         "narrative": (
