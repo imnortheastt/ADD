@@ -32,11 +32,15 @@ function parseArgs(argv) {
   // stage/name stay null unless EXPLICITLY passed — the engine's own `init`
   // defaults the stage and infers the name from the folder, so the manual-init
   // hint only echoes flags the user actually chose (shortest true command).
-  const args = { _: [], force: false, check: false, stage: null, name: null };
+  const args = { _: [], force: false, check: false, noSkill: false, stage: null, name: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--force") args.force = true;
     else if (a === "--check") args.check = true;
+    // --no-skill: drop the engine + book ONLY, not the skill. The Claude Code plugin
+    // already provides the `add` skill, so a plugin bootstrap uses this to materialize
+    // .add/tooling/ + .add/docs/ into the project without a duplicate .claude/skills/add.
+    else if (a === "--no-skill") args.noSkill = true;
     else if (a === "--stage" || a === "--name") {
       const v = argv[++i];
       // fail loudly on a trailing/abutting flag — never silently drop a value
@@ -72,13 +76,15 @@ function cmdInit(args) {
   if (!fs.existsSync(target)) fail("target directory does not exist: " + target);
   log("Installing ADD into " + target);
 
-  // 1. skill -> .claude/skills/add
-  copyDir(
-    path.join(PKG_ROOT, "skill", "add"),
-    path.join(target, ".claude", "skills", "add"),
-    { skipIfExists: !args.force, cleanReplace: args.force }
-  );
-  log("  ✓ skill      -> .claude/skills/add/");
+  // 1. skill -> .claude/skills/add  (skipped under --no-skill: the plugin provides it)
+  if (!args.noSkill) {
+    copyDir(
+      path.join(PKG_ROOT, "skill", "add"),
+      path.join(target, ".claude", "skills", "add"),
+      { skipIfExists: !args.force, cleanReplace: args.force }
+    );
+    log("  ✓ skill      -> .claude/skills/add/");
+  }
 
   // 2. tooling -> .add/tooling  (exclude tests from the installed copy)
   const toolingDest = path.join(target, ".add", "tooling");
@@ -101,7 +107,8 @@ function cmdInit(args) {
   // NO step 4: the installer DROPS FILES ONLY. Initialisation is deferred to the AI
   // (via `/add`) or a CLI user — a pre-run plain `add.py init` would grandfather-lock
   // the v12 lock-down gate before `/add` runs (see file header). So no Python is run here.
-  log("\nDone. The `add` skill + tooling are installed (no project state yet — that's intentional).");
+  log("\nDone. " + (args.noSkill ? "The engine + book are" : "The `add` skill + tooling are") +
+      " installed (no project state yet — that's intentional).");
   log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent");
   log("       sets up the foundation, sizes it into a milestone, and drives the build with you;");
   log("       you sign off once, at the lock-down.");
@@ -197,8 +204,9 @@ function main() {
       break;
     case "help":
     case "--help":
-      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check]");
+      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check] [--no-skill]");
       log("  init    install the ADD skill + tooling + book into a project");
+      log("          (--no-skill drops the engine + book only — used by the Claude Code plugin)");
       log("  update  re-materialize skill/tooling/docs to this package version (preserves your state)");
       break;
     default:

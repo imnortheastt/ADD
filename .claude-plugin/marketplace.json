@@ -1,0 +1,22 @@
+{
+  "name": "add-method",
+  "description": "ADD (AI-Driven Development) — the methodology skill, installable straight into Claude Code.",
+  "owner": {
+    "name": "pilotspace",
+    "email": "tindang.ht97@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "add",
+      "source": "./add-method",
+      "description": "Drives every feature through Specify → Scenarios → Contract → Tests → Build → Verify → Observe, with red/green TDD built in. On first run it materializes the engine and the AIDD book into your project — self-contained and portable, exactly like an npm or pip install, no extra tooling needed.",
+      "keywords": [
+        "ai-driven-development",
+        "aidd",
+        "tdd",
+        "spec-driven",
+        "methodology"
+      ]
+    }
+  ]
+}

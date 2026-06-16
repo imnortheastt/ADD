@@ -25,6 +25,23 @@ you are so context never rots across sessions.
 
 ## Always start here (orient — do not skip)
 
+The engine lives at `.add/tooling/add.py` and the book at `.add/docs/`. Make sure the
+engine is in this project before anything else:
+
+- If `.add/tooling/add.py` exists, go straight to `status` below.
+- If it does NOT exist, ADD was installed as a Claude Code plugin — the engine and the
+  book ride in the plugin, not the project. Materialize them into the project once, before
+  any other step:
+
+  ```bash
+  node "${CLAUDE_PLUGIN_ROOT}/bin/cli.js" init --no-skill
+  ```
+
+  That drops `.add/tooling/` (the engine) and `.add/docs/` (the book) here, so the engine,
+  the book, and the agent-agnostic guideline block in `CLAUDE.md` all work for every agent
+  and for a human at the shell — exactly like an npm or pip install. The skill itself stays
+  in the plugin, so nothing is duplicated.
+
 Run the tool to find the resume point instead of re-reading the repo:
 
 ```bash

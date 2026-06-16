@@ -4,6 +4,28 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [Unreleased]
+
+### Added
+- **Claude Code plugin distribution** — ADD is now installable straight from a
+  marketplace, with no npm or pip step: `/plugin marketplace add pilotspace/ADD`
+  then `/plugin install add@add-method`. A repo-root `.claude-plugin/marketplace.json`
+  lists the `add` plugin (`add-method/.claude-plugin/plugin.json`), which bundles the
+  skill, the engine, and the AIDD book. On first run the skill materializes the engine
+  and book INTO the project (`node "${CLAUDE_PLUGIN_ROOT}/bin/cli.js" init --no-skill`)
+  so `.add/tooling/add.py`, `.add/docs/`, and the agent-agnostic guideline block all
+  work for every agent and a human at the shell — a self-contained, portable result
+  identical to an npm/pip install. The skill stays in the plugin (no duplicate).
+- **`cli.js init --no-skill`** — drops the engine + book only, leaving skill delivery to
+  the plugin. Used by the plugin bootstrap above; npm/pip installs are unchanged.
+- **Plugin boundaries disclosure** (README "What this plugin does, writes, and runs") —
+  states plainly that the plugin is user-initiated, runs only its bundled engine, writes
+  only under the project's `.add/`, and makes a single advisory, opt-out (`ADD_NO_UPDATE_CHECK`)
+  update check — so a marketplace safety review can confirm the boundaries at a glance.
+  Guarded by `tooling/test_plugin_manifest.py` (manifests valid, version tracks
+  `package.json`, the bootstrap line can't be dropped, and `--no-skill` lands the engine
+  and book but no duplicate skill).
+
 ## [1.6.0] — 2026-06-16
 
 The releasing release: shipping a versioned cut is now a first-class **5th ADD

@@ -30,7 +30,7 @@ across sessions (context rot). ADD fixes both:
 
 ## Install
 
-Pick your ecosystem — both install the same skill, tooling, and book:
+Pick your ecosystem — all three install the same skill, tooling, and book:
 
 ```bash
 # Node / npm
@@ -42,6 +42,17 @@ npx @pilotspace/add init
 pip install pilotspace-add
 pilotspace-add init
 ```
+
+```text
+# Claude Code plugin — no npm or pip needed
+/plugin marketplace add pilotspace/ADD
+/plugin install add@add-method
+```
+
+The plugin carries the engine and the book. On first `/add`, the skill materializes them
+into the project (`node "${CLAUDE_PLUGIN_ROOT}/bin/cli.js" init --no-skill`) and scaffolds
+`.add/` — a self-contained, portable result identical to the npm/pip flow. The skill stays
+in the plugin, so nothing is duplicated.
 
 No flags needed — the project name is inferred from your folder and the stage
 defaults to `prototype` (pass `--name "My App" --stage mvp` to choose up front).
@@ -74,6 +85,28 @@ Project state (`.add/state.json`) and the living-documentation files (`CONVENTIO
 `GLOSSARY.md`, `MODEL_REGISTRY.md`, `dependencies.allowlist`, `SOUL.md` — the AI's
 human-owned voice) are *not* created here — the installer drops files only;
 initialisation is the agent's first move when you run `/add`.
+
+## What this plugin does, writes, and runs (boundaries)
+
+ADD is a development methodology, so by design it works *inside your project* — here is
+exactly what that means, so there are no surprises:
+
+- **Runs only when you ask.** Nothing executes on install. The skill acts when you run
+  `/add` (or another agent follows the guideline block). It is user-initiated, every time.
+- **What it runs:** the bundled engine and bootstrapper only — `node bin/cli.js` and
+  `python3 .add/tooling/add.py`. No downloaded or remote code is executed; everything it
+  runs ships in the package.
+- **What it writes:** files under your project's `.add/` (state, milestones, tasks, the
+  book) and the managed guideline block in `CLAUDE.md` / `AGENTS.md`. On a plugin install
+  it also materializes the engine + book into `.add/` on first run. It writes nowhere
+  outside the project working directory; it never touches files above the project root.
+- **Network:** one optional, advisory update check. On `status` / `guide` the engine may
+  make a single HTTPS GET to `https://registry.npmjs.org/@pilotspace/add/latest` to see if
+  a newer version exists — at most once per 24h (cached in `.update-cache.json`), 1.5s
+  timeout, fail-open (offline ⇒ silent no-op). It only writes a one-line note to **stderr**
+  and never changes a command's output or exit code. Disable it entirely with
+  `ADD_NO_UPDATE_CHECK=1`. No other network access, no telemetry, no analytics.
+- **No secrets, no credentials, no privileged access.** Pure local file orchestration.
 
 ## Use it
 

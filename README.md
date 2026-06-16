@@ -57,6 +57,18 @@ or
 pip install pilotspace-add && pilotspace-add init
 ```
 
+or, on **Claude Code**, install the skill straight from the marketplace — no npm or pip needed:
+
+```text
+/plugin marketplace add pilotspace/ADD
+/plugin install add@add-method
+```
+
+Open `/add` and say what you want to build. On first run the skill materializes the engine
+and the AIDD book into your project (`.add/tooling/` + `.add/docs/`) straight from the plugin,
+then scaffolds `.add/`. The result is self-contained and portable — identical to an npm or pip
+install, so every agent and a human at the shell can run `python3 .add/tooling/add.py`.
+
 ### 2 · Spawn your first feature — talk to the agent
 
 In Claude Code, run **`/add`** and say what you want to build:
