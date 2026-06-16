@@ -1158,6 +1158,12 @@ def cmd_status(args: argparse.Namespace) -> None:
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
         print(f"deltas  : {open_deltas} open — consolidate at milestone close (add.py deltas)")
+    # SPEC-delta nudge (project-wide): surface unresolved forward hand-offs so a seed/drop
+    # can't be silently skipped (read-only; silent when none). Sibling of the fold nudge.
+    open_spec = len(_collect_open_spec_deltas(root))
+    if open_spec:
+        noun = "delta" if open_spec == 1 else "deltas"
+        print(f"spec    : {open_spec} open SPEC {noun} — resolve: new-task --from-delta / drop-delta")
     # When the setup is unlocked, the only terminal guidance that matters is
     # review+lock; suppress the generic resume block so it does not compete.
     if unlocked:
@@ -2284,6 +2290,12 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
         noun = "delta" if open_deltas == 1 else "deltas"
         print(f"note: {open_deltas} open {noun} to consolidate into the foundation "
               f"— review with: add.py deltas")
+    # SPEC-delta nudge (project-wide): the close is also a natural prompt to RESOLVE the
+    # forward hand-offs (seed/drop) so none is orphaned at the eventual compaction.
+    open_spec = len(_collect_open_spec_deltas(root))
+    if open_spec:
+        noun = "delta" if open_spec == 1 else "deltas"
+        print(f"note: {open_spec} open SPEC {noun} to resolve (seed/drop) — review: add.py deltas")
     # the engine-sourced next step (converges the old "Confirm … archive/start the next" hint)
     print(_next_footer(root, state))
 
@@ -2380,6 +2392,15 @@ def cmd_compact(args: argparse.Namespace) -> None:
     if offenders:
         _die("open_deltas_unfolded: consolidate the open lessons first (`add.py deltas`) — "
              "open in: " + " · ".join(offenders))
+    # SPEC-delta guard (PROJECT-WIDE, by the §3 freeze decision): a SPEC delta is a forward
+    # hand-off that resolves into a task, not a foundation lesson — an open one ANYWHERE would
+    # be orphaned at the next compaction. Deliberately broader than the member-scoped competency
+    # guard above. Still validate-before-move: refuses BEFORE the first rename.
+    spec_offenders = sorted({d["task"] for d in _collect_open_spec_deltas(root)})
+    if spec_offenders:
+        _die("open_spec_deltas_unresolved: resolve every open SPEC delta first "
+             "(`add.py deltas`; seed with `new-task --from-delta`, or `drop-delta`) — "
+             "open in: " + " · ".join(spec_offenders))
     # every precondition passed — move (same-filesystem renames, never a delete)
     def _files(d: Path) -> int:
         return sum(1 for f in d.rglob("*") if f.is_file())
@@ -3193,6 +3214,8 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
                       "RISK-ACCEPTED": sum(1 for r in task_rows if r["gate"] == "RISK-ACCEPTED"),
                       "HARD-STOP": sum(1 for r in task_rows if r["gate"] == "HARD-STOP")},
             "exit_criteria": {"met": met, "total": total_ec},
+            # project-wide open SPEC-delta count (uniform with status/milestone-done/compact)
+            "open_spec": len(_collect_open_spec_deltas(root)),
         },
         "tasks": task_rows,
         "waivers": waivers,
@@ -3430,6 +3453,11 @@ def render_report(root: Path, state: dict, mslug: str, *,
             L.extend(_wrap(x, W - 5, f"   {g['bullet']} "))
     else:
         L.append(" LEARNINGS      none")
+    if d.get("summary", {}).get("open_spec"):   # project-wide open SPEC-delta nudge (read-only)
+        n = d["summary"]["open_spec"]
+        noun = "delta" if n == 1 else "deltas"
+        L.append("")
+        L.append(f" SPEC DELTAS    {n} open {noun} — resolve: new-task --from-delta / drop-delta")
     L.append("")   # DECIDE NEXT footer (v13): always present, APPEND-ONLY
     L.extend(_wrap(_decide_next_base(state, d), W - 15, " DECIDE NEXT  "))
     if _planned_hint(d):   # own segment so the phrase never splits mid-token

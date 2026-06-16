@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "seed-and-drop",
+  "active_task": "spec-delta-guards",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -819,10 +819,38 @@
         ],
         "snapshot_md5": "7b41463cf88c20713f906463e1a5ba01"
       }
+    },
+    "spec-delta-guards": {
+      "title": "Guard open SPEC deltas \u2014 compact blocks, status/report nudge",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [
+        "seed-and-drop"
+      ],
+      "created": "2026-06-16T16:04:58+00:00",
+      "updated": "2026-06-16T16:31:04+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "310decc294ac3538671d980833c63206",
+        "tests": {
+          "add-method/tooling/test_spec_delta_guards.py": "bfc12461af847537ed3b6dda4c3194cc"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/test_spec_delta_guards.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py"
+        ],
+        "snapshot_md5": "7e4759d73b3c09c225c9072b4e7abfa2"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T16:03:09+00:00",
+  "updated": "2026-06-16T16:31:04+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
