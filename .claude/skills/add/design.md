@@ -44,8 +44,11 @@ bound to `tokens.json` (resolved to CSS variables), composed from the **reusable
 kit** (one token-bound partial per catalog component), populated with realistic **mock** data.
 **Capture** a real image of it (a headless screenshot) and present that image to the human for
 **design-confirm** — show-before-ask, **before build**. On confirm, record the layout back to
-`prototypes/<name>.json` + `catalog.json`. The HTML mock is the *visible evidence*; the
-json-render tree is the *machine-checkable* record of the same screen.
+`prototypes/<name>.json` + `catalog.json`, save the captured image to
+`.add/design/captures/<name>.<ext>`, and **attach or mention it in the feature's `TASK.md`**
+(alongside the §6 evidence) — so the screen the human approved is traceable from the task that
+builds it. The HTML mock is the *visible evidence*; the json-render tree is the
+*machine-checkable* record of the same screen.
 
 ## Tool-agnostic capture
 
@@ -53,9 +56,16 @@ How you render and capture is **your** choice, not the engine's: a headless brow
 (Playwright / Puppeteer), an `html2image`-style renderer, a browser-automation skill, a design
 tool, or a hosted screenshot service — whatever the agent has. The recommended default is the
 self-contained HTML mock above, captured headless, because it needs no app build yet still wears
-the project's real tokens and component vocabulary. The captured image is a **design-confirm
-evidence** artifact the human approves; it is never an engine output, and the engine never
-renders. This keeps the loop tool-agnostic and the method renderer-free.
+the project's real tokens and component vocabulary. For a project that renders json-render, the
+recommended default is **`@json-render/image`** (Satori → PNG/SVG, no browser) — a deterministic
+`Spec` → image. The captured image is a **design-confirm evidence** artifact the human approves;
+it is never an engine output, and the engine never renders. This keeps the loop tool-agnostic and
+the method renderer-free.
+
+Captures live at **`.add/design/captures/<name>.<ext>`** (one per prototype) and are
+attached/mentioned in the feature's `TASK.md`. `add.py check` raises a never-red
+`missing_capture` WARN for any prototype under `.add/design/prototypes/` that still lacks a
+capture — a nudge to render + confirm it, never a blocker.
 
 The loop **binds** the existing UDD contracts **read-only**: `tokens.json`, `catalog.json`, and
 `prototypes/<name>.json` are read and composed, never reshaped — the `prototypes/<name>.json`

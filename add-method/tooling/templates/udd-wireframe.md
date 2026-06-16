@@ -87,10 +87,14 @@ one only for a genuine new `catalog.json` component.
 ## Capture is evidence
 
 The screenshot of a Stage-B mock is **design-confirm evidence** — the human-facing
-proof of beat 4 in `design.md`. It is **attached or mentioned in the feature's
-`TASK.md`** (alongside the §6 evidence), so the screen the human approved stays
-traceable from the task that builds it. The engine never produces this image; the
-capture recipe above is a recommendation with a named default, not an engine feature.
+proof of beat 4 in `design.md`. Captures live at **`.add/design/captures/<name>.<ext>`**
+(one per prototype) and are **attached or mentioned in the feature's `TASK.md`**
+(alongside the §6 evidence), so the screen the human approved stays traceable from the
+task that builds it. The recommended default capture engine for a json-render project is
+**`@json-render/image`** (Satori → PNG/SVG, no browser); otherwise capture the
+self-contained HTML mock headless. The engine never produces this image — it only
+MEASURES presence (`add.py check` raises a never-red `missing_capture` WARN for a
+prototype with no capture); the capture recipe is a recommendation, not an engine feature.
 
 ## Binds (read-only)
 

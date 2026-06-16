@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "wireframe-mock-recipe",
+  "active_task": "capture-evidence",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -820,10 +820,42 @@
         ],
         "snapshot_md5": "f644e08257e1f3e80468ab26cc5a3e5f"
       }
+    },
+    "capture-evidence": {
+      "title": "Capture-evidence convention: design-confirm capture location/naming + @json-render/image default + add.py check missing_capture WARN + captures-in-TASK.md + reopen design.md beat 4",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-loop",
+      "depends_on": [],
+      "created": "2026-06-16T02:56:54+00:00",
+      "updated": "2026-06-16T03:22:24+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "b095dfe1dbff9fa1ac30ad254c31c91d",
+        "tests": {
+          "add-method/tooling/test_capture_evidence.py": "7ca58edbd1314ec788d2bf2dc914ad5b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/skill/add/design.md",
+          "add-method/src/add_method/_bundled/skill/add/design.md",
+          ".claude/skills/add/design.md",
+          "add-method/tooling/templates/udd-wireframe.md",
+          "add-method/src/add_method/_bundled/tooling/templates/udd-wireframe.md",
+          "add-method/tooling/test_capture_evidence.py",
+          ".add/design/captures/"
+        ],
+        "snapshot_md5": "1f1f1149239e89b81929f968b6757be8"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T02:53:33+00:00",
+  "updated": "2026-06-16T03:22:24+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

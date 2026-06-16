@@ -1606,6 +1606,27 @@ def _udd_named_set_checks(root: Path) -> list[tuple[bool, str, str]]:
     return out
 
 
+_CAPTURE_EXTS = ("png", "svg", "jpg", "jpeg", "webp")
+
+
+def _missing_captures(root: Path) -> list[str]:
+    """Prototype names under `.add/design/prototypes/` lacking a design-confirm capture.
+
+    A prototype `<name>.json` is CAPTURED iff a file `.add/design/captures/<name>.<ext>`
+    exists (ext in _CAPTURE_EXTS). Returns the uncaptured names in document (sorted) order.
+    PURE · TOTAL (missing dirs -> []) · READ-ONLY (never writes, never renders): the engine
+    MEASURES capture presence; producing the image is the agent's tool-agnostic choice
+    (design.md beat 4; default `@json-render/image`). [] == every prototype captured / none exist.
+    """
+    proto_dir = root / "design" / "prototypes"
+    cap_dir = root / "design" / "captures"
+    if not proto_dir.is_dir():
+        return []
+    names = sorted(p.stem for p in proto_dir.glob("*.json") if p.is_file())
+    return [n for n in names
+            if not any((cap_dir / f"{n}.{ext}").is_file() for ext in _CAPTURE_EXTS)]
+
+
 def cmd_check(args: argparse.Namespace) -> None:
     """Read-only integrity check of the .add project. Exit 1 if anything fails."""
     as_json = getattr(args, "json", False)
@@ -1771,6 +1792,16 @@ def cmd_check(args: argparse.Namespace) -> None:
     # composes the token + catalog/tree validators + the cross-file prop-token resolution.
     # Silent when absent; read-only; fail-closed on malformed JSON.
     checks.extend(_udd_named_set_checks(root))
+
+    # capture-evidence: a never-red WARN naming each prototype with no design-confirm capture
+    # at .add/design/captures/<name>.<ext>. Measure-never-block — rides `warnings`, NEVER
+    # `checks` (so never feeds `failed`); silent-when-absent (no prototypes -> []). The engine
+    # MEASURES capture presence; producing the image is the agent's tool-agnostic choice.
+    for _pname in _missing_captures(root):
+        warnings.append(("missing_capture",
+                         f"prototype '{_pname}' has no design-confirm capture at "
+                         f".add/design/captures/{_pname}.<png|svg|…> — render + confirm it "
+                         "before build (design.md beat 4)"))
 
     passed = sum(1 for ok, _, _ in checks if ok)
     failed = len(checks) - passed
