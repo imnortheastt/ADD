@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "gate-wiring",
+  "active_task": "suggest-book-align",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -808,10 +808,61 @@
         ],
         "snapshot_md5": "0a250b11a5d0d668848da29dc839d658"
       }
+    },
+    "suggest-book-align": {
+      "title": "Book + GLOSSARY describe the guided-decision convention",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "decision-suggestions",
+      "depends_on": [],
+      "created": "2026-06-16T13:08:17+00:00",
+      "updated": "2026-06-16T13:28:27+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e6a821d36f2081cd0baa8b5603aa6e40",
+        "tests": {
+          ".add/tasks/suggest-book-align/tests/test_suggest_book_align.py": "24cdee020fdecfc8788c5ca5f329ea10"
+        }
+      },
+      "scope": {
+        "declared": [
+          "02-the-flow.md",
+          "add-method/docs/02-the-flow.md",
+          "add-method/src/add_method/_bundled/docs/02-the-flow.md",
+          ".add/docs/02-the-flow.md",
+          "appendix-c-glossary.md",
+          "add-method/docs/appendix-c-glossary.md",
+          "add-method/src/add_method/_bundled/docs/appendix-c-glossary.md",
+          ".add/docs/appendix-c-glossary.md",
+          ".add/tasks/suggest-book-align/tests/",
+          "./",
+          "<name>",
+          "add-method/docs/",
+          ".add/\u2026",
+          ".add/",
+          "add-method/\u2026"
+        ],
+        "snapshot_md5": "d1c506fbacf19b2f96963e1e45f86e37"
+      },
+      "heal": {
+        "attempts": 2,
+        "history": [
+          {
+            "at": "2026-06-16T13:26:22+00:00",
+            "reason": "scope_violation: task 'suggest-book-align' touched outside its declared \u00a75 Scope \u2014 02-the-flow.md \u00b7 appendix-c-glossary.md (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-16T13:27:20+00:00",
+            "reason": "scope_violation: task 'suggest-book-align' touched outside its declared \u00a75 Scope \u2014 02-the-flow.md \u00b7 appendix-c-glossary.md (2 total)",
+            "source": "scope"
+          }
+        ]
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T12:58:46+00:00",
+  "updated": "2026-06-16T13:28:27+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
