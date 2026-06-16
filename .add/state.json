@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "suggestion-block",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -758,141 +758,34 @@
         ]
       }
     },
-    "design-loop-guide": {
-      "title": "Author design.md \u2014 the design-definition loop",
+    "suggestion-block": {
+      "title": "Decision-suggestion convention: recommended pick + described alternatives in report-template.md",
       "phase": "done",
       "gate": "PASS",
-      "milestone": "udd-design-loop",
+      "milestone": "decision-suggestions",
       "depends_on": [],
-      "created": "2026-06-15T16:35:42+00:00",
-      "updated": "2026-06-16T02:05:02+00:00",
+      "created": "2026-06-16T11:37:27+00:00",
+      "updated": "2026-06-16T12:35:50+00:00",
       "flag_verified": true,
       "tripwire": {
-        "contract_md5": "8d758f4393b21bf960d65bcce1926038",
+        "contract_md5": "90a9721ba27e449eed6f13311b33b57d",
         "tests": {
-          "add-method/tooling/test_design_loop_guide.py": "3b8881618bc0bd36a2a8c0953897300b"
+          ".add/tasks/suggestion-block/tests/test_suggestion_block.py": "b097f61f12bec904b8c1bd3c5f8685de"
         }
       },
       "scope": {
         "declared": [
-          "add-method/skill/add/",
-          "add-method/src/add_method/_bundled/skill/add/",
-          ".claude/skills/add/",
-          "add-method/tooling/test_xml_convention.py",
-          "add-method/tooling/test_wording_lint.py",
-          "add-method/tooling/test_per_step_hooks.py"
+          "add-method/skill/add/report-template.md",
+          "add-method/src/add_method/_bundled/skill/add/report-template.md",
+          ".claude/skills/add/report-template.md",
+          ".add/tasks/suggestion-block/tests/"
         ],
-        "snapshot_md5": "4acac052f069e9951437ec60a9c307e8"
-      },
-      "heal": {
-        "attempts": 1,
-        "history": [
-          {
-            "at": "2026-06-16T02:01:48+00:00",
-            "reason": "scope_violation: task 'design-loop-guide' touched outside its declared \u00a75 Scope \u2014 .claude/skills/add/SKILL.md \u00b7 .claude/skills/add/design.md \u00b7 .claude/skills/add/phases/0-setup.md \u00b7 .claude/skills/add/phases/1-specify.md \u00b7 add-method/skill/add/SKILL.md (15 total)",
-            "source": "scope"
-          }
-        ]
-      }
-    },
-    "wireframe-mock-recipe": {
-      "title": "Wireframe Mock Recipe",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "udd-design-loop",
-      "depends_on": [
-        "design-loop-guide"
-      ],
-      "created": "2026-06-16T02:22:04+00:00",
-      "updated": "2026-06-16T02:53:33+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "a07f7fee6759e27a6c75385477becb60",
-        "tests": {
-          "add-method/tooling/test_wireframe_mock_recipe.py": "94f68f80bae9da0336b1ffebcd95c605"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/templates/",
-          "add-method/src/add_method/_bundled/tooling/templates/",
-          "add-method/tooling/test_wireframe_mock_recipe.py"
-        ],
-        "snapshot_md5": "f644e08257e1f3e80468ab26cc5a3e5f"
-      }
-    },
-    "capture-evidence": {
-      "title": "Capture-evidence convention: design-confirm capture location/naming + @json-render/image default + add.py check missing_capture WARN + captures-in-TASK.md + reopen design.md beat 4",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "udd-design-loop",
-      "depends_on": [],
-      "created": "2026-06-16T02:56:54+00:00",
-      "updated": "2026-06-16T03:22:24+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "b095dfe1dbff9fa1ac30ad254c31c91d",
-        "tests": {
-          "add-method/tooling/test_capture_evidence.py": "7ca58edbd1314ec788d2bf2dc914ad5b"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/skill/add/design.md",
-          "add-method/src/add_method/_bundled/skill/add/design.md",
-          ".claude/skills/add/design.md",
-          "add-method/tooling/templates/udd-wireframe.md",
-          "add-method/src/add_method/_bundled/tooling/templates/udd-wireframe.md",
-          "add-method/tooling/test_capture_evidence.py",
-          ".add/design/captures/"
-        ],
-        "snapshot_md5": "1f1f1149239e89b81929f968b6757be8"
-      }
-    },
-    "book-glossary-align": {
-      "title": "Propagate the design-definition loop + glossary terms to the book and \u00d73 trees",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "udd-design-loop",
-      "depends_on": [
-        "capture-evidence"
-      ],
-      "created": "2026-06-16T03:26:12+00:00",
-      "updated": "2026-06-16T04:07:42+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "a7a8b51d6677e73e9ad6420c7681bc41",
-        "tests": {
-          "add-method/tooling/test_docs_accord.py": "d48d860b0c062593092efdbc19792710"
-        }
-      },
-      "scope": {
-        "declared": [
-          "14-foundation.md",
-          "add-method/docs/14-foundation.md",
-          "add-method/src/add_method/_bundled/docs/14-foundation.md",
-          ".add/docs/14-foundation.md",
-          "appendix-c-glossary.md",
-          "add-method/docs/appendix-c-glossary.md",
-          "add-method/src/add_method/_bundled/docs/appendix-c-glossary.md",
-          ".add/docs/appendix-c-glossary.md",
-          "add-method/tooling/test_docs_accord.py",
-          "./",
-          ".add/\u2026",
-          ".add/",
-          "add-method/\u2026",
-          "add-method/add.py"
-        ],
-        "snapshot_md5": "a96ccb33aa92cf77442e1d04e8571e2a"
+        "snapshot_md5": "1bc8b43a5dbfdb08d5921c1f61300d88"
       }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T09:25:16+00:00",
+  "updated": "2026-06-16T12:35:50+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1014,16 +907,16 @@
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
     },
-    "udd-design-loop": {
-      "title": "UDD design-definition loop",
-      "goal": "A UI project's design step starts from the domain, researches and proposes components, and the human confirms the screen as a real captured image before build \u2014 so implementation matches the expected layout",
+    "decision-suggestions": {
+      "title": "Decision suggestions \u2014 a recommended pick + described alternatives at every human gate",
+      "goal": "At every human decision point (baseline-lock, contract freeze, verify, intake, scope, milestone close, graduation, release, human-gated advance) ADD presents a highlighted recommended choice plus its real described alternatives, so the human decides with the recommendation and its consequences in view instead of a bare next-step line.",
       "stage": "mvp",
       "status": "active",
-      "created": "2026-06-15T16:34:04+00:00",
-      "updated": "2026-06-15T16:34:04+00:00"
+      "created": "2026-06-16T11:36:49+00:00",
+      "updated": "2026-06-16T11:36:49+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "decision-suggestions",
   "archived": [
     {
       "slug": "v5",
@@ -1314,6 +1207,18 @@
         "release-report",
         "release-command",
         "release-docs-align"
+      ],
+      "archived": "2026-06-16"
+    },
+    {
+      "slug": "udd-design-loop",
+      "title": "UDD design-definition loop",
+      "tasks": 4,
+      "task_slugs": [
+        "design-loop-guide",
+        "wireframe-mock-recipe",
+        "capture-evidence",
+        "book-glossary-align"
       ],
       "archived": "2026-06-16"
     }
