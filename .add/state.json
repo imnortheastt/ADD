@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "design-loop-guide",
+  "active_task": "wireframe-mock-recipe",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -794,10 +794,36 @@
           }
         ]
       }
+    },
+    "wireframe-mock-recipe": {
+      "title": "Wireframe Mock Recipe",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-loop",
+      "depends_on": [
+        "design-loop-guide"
+      ],
+      "created": "2026-06-16T02:22:04+00:00",
+      "updated": "2026-06-16T02:53:33+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "a07f7fee6759e27a6c75385477becb60",
+        "tests": {
+          "add-method/tooling/test_wireframe_mock_recipe.py": "94f68f80bae9da0336b1ffebcd95c605"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/templates/",
+          "add-method/src/add_method/_bundled/tooling/templates/",
+          "add-method/tooling/test_wireframe_mock_recipe.py"
+        ],
+        "snapshot_md5": "f644e08257e1f3e80468ab26cc5a3e5f"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T02:05:02+00:00",
+  "updated": "2026-06-16T02:53:33+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
