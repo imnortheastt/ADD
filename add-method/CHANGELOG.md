@@ -4,6 +4,33 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.5.0] — 2026-06-16
+
+The UDD design-loop release: defining the design *before* the code is now a
+guided, evidence-backed loop inside the method. A new `design.md` drives the UDD
+beats to a confirmed screen, a wireframe + HTML-mock recipe renders a real screen
+the human approves before build, and the engine measures that the confirmation
+was actually captured. All additive; no breaking changes (SemVer MINOR).
+
+### Added
+- **UDD design-definition loop (`design.md`)** — turns the foundation's UDD
+  concern into a runnable loop: a low-fi structural wireframe → a self-contained
+  HTML mock (resolve semantic tokens → one kit class per component → compose the
+  prototype tree → populate with mock data) → a captured screen the human
+  confirms *before* any build. Wired into `0-setup` and `1-specify`.
+- **Wireframe + HTML-mock recipe (`udd-wireframe.md`) + sample templates** — a
+  zero-dependency, any-stack floor for rendering a prototype tree into a real
+  screen, with a worked sample set (`tokens.sample.css`, `kit.sample.css`,
+  `welcome.sample.html`, `settings.sample.html` reusing the kit,
+  `wireframe.sample.txt`). One semantic-token flip re-themes every screen by
+  construction. An optional `@json-render/image` (Satori → PNG/SVG, no browser)
+  fast path is noted for JS-ecosystem projects.
+- **Capture-evidence convention + `missing_capture` WARN** — design captures live
+  at `.add/design/captures/<name>.<ext>`; `add.py check` emits a never-red
+  `missing_capture` warning for any prototype lacking a capture (silent when
+  absent, so non-UI projects stay clean). The engine *measures* capture presence;
+  it never renders.
+
 ## [1.4.0] — 2026-06-15
 
 The guided-onboarding release: starting and running an ADD project is now guided
