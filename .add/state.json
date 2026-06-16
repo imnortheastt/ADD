@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "suggest-book-align",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -757,112 +757,10 @@
           }
         ]
       }
-    },
-    "suggestion-block": {
-      "title": "Decision-suggestion convention: recommended pick + described alternatives in report-template.md",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "decision-suggestions",
-      "depends_on": [],
-      "created": "2026-06-16T11:37:27+00:00",
-      "updated": "2026-06-16T12:35:50+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "90a9721ba27e449eed6f13311b33b57d",
-        "tests": {
-          ".add/tasks/suggestion-block/tests/test_suggestion_block.py": "b097f61f12bec904b8c1bd3c5f8685de"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/report-template.md",
-          "add-method/src/add_method/_bundled/skill/add/report-template.md",
-          ".claude/skills/add/report-template.md",
-          ".add/tasks/suggestion-block/tests/"
-        ],
-        "snapshot_md5": "1bc8b43a5dbfdb08d5921c1f61300d88"
-      }
-    },
-    "gate-wiring": {
-      "title": "Wire the guided-decision cue into every human-gate guide",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "decision-suggestions",
-      "depends_on": [],
-      "created": "2026-06-16T12:43:10+00:00",
-      "updated": "2026-06-16T12:58:46+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "e6d4a0c51a6212452d3103e060b0c3f6",
-        "tests": {
-          ".add/tasks/gate-wiring/tests/test_gate_wiring.py": "71fcae577d02282cf6f97c31aa5b56b1"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/skill/add/",
-          "add-method/src/add_method/_bundled/skill/add/",
-          ".claude/skills/add/",
-          ".add/milestones/decision-suggestions/MILESTONE.md",
-          ".add/tasks/gate-wiring/tests/"
-        ],
-        "snapshot_md5": "0a250b11a5d0d668848da29dc839d658"
-      }
-    },
-    "suggest-book-align": {
-      "title": "Book + GLOSSARY describe the guided-decision convention",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "decision-suggestions",
-      "depends_on": [],
-      "created": "2026-06-16T13:08:17+00:00",
-      "updated": "2026-06-16T13:28:27+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "e6a821d36f2081cd0baa8b5603aa6e40",
-        "tests": {
-          ".add/tasks/suggest-book-align/tests/test_suggest_book_align.py": "24cdee020fdecfc8788c5ca5f329ea10"
-        }
-      },
-      "scope": {
-        "declared": [
-          "02-the-flow.md",
-          "add-method/docs/02-the-flow.md",
-          "add-method/src/add_method/_bundled/docs/02-the-flow.md",
-          ".add/docs/02-the-flow.md",
-          "appendix-c-glossary.md",
-          "add-method/docs/appendix-c-glossary.md",
-          "add-method/src/add_method/_bundled/docs/appendix-c-glossary.md",
-          ".add/docs/appendix-c-glossary.md",
-          ".add/tasks/suggest-book-align/tests/",
-          "./",
-          "<name>",
-          "add-method/docs/",
-          ".add/\u2026",
-          ".add/",
-          "add-method/\u2026"
-        ],
-        "snapshot_md5": "d1c506fbacf19b2f96963e1e45f86e37"
-      },
-      "heal": {
-        "attempts": 2,
-        "history": [
-          {
-            "at": "2026-06-16T13:26:22+00:00",
-            "reason": "scope_violation: task 'suggest-book-align' touched outside its declared \u00a75 Scope \u2014 02-the-flow.md \u00b7 appendix-c-glossary.md (2 total)",
-            "source": "scope"
-          },
-          {
-            "at": "2026-06-16T13:27:20+00:00",
-            "reason": "scope_violation: task 'suggest-book-align' touched outside its declared \u00a75 Scope \u2014 02-the-flow.md \u00b7 appendix-c-glossary.md (2 total)",
-            "source": "scope"
-          }
-        ]
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T13:32:34+00:00",
+  "updated": "2026-06-16T13:42:32+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -983,17 +881,9 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
-    },
-    "decision-suggestions": {
-      "title": "Decision suggestions \u2014 a recommended pick + described alternatives at every human gate",
-      "goal": "At every human decision point (baseline-lock, contract freeze, verify, intake, scope, milestone close, graduation, release, human-gated advance) ADD presents a highlighted recommended choice plus its real described alternatives, so the human decides with the recommendation and its consequences in view instead of a bare next-step line.",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-16T11:36:49+00:00",
-      "updated": "2026-06-16T13:32:34+00:00"
     }
   },
-  "active_milestone": "decision-suggestions",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1296,6 +1186,17 @@
         "wireframe-mock-recipe",
         "capture-evidence",
         "book-glossary-align"
+      ],
+      "archived": "2026-06-16"
+    },
+    {
+      "slug": "decision-suggestions",
+      "title": "Decision suggestions \u2014 a recommended pick + described alternatives at every human gate",
+      "tasks": 3,
+      "task_slugs": [
+        "suggestion-block",
+        "gate-wiring",
+        "suggest-book-align"
       ],
       "archived": "2026-06-16"
     }
