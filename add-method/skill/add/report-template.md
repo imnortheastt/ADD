@@ -61,9 +61,12 @@ NEXT      the single next action + what it unlocks
 1. **SUMMARY** — one line carrying intent + target + position, e.g.
    "v13 task 2/3 — tests-declared-fallback is green, gate PASS." The reader
    knows where they are before they read anything else.
-2. **DECISION** — the question the human must answer, stated plainly; exactly
-   one decision per report, or an explicit "none — FYI". If a decision exists,
-   ask it AFTER everything below has been shown (show-before-ask).
+2. **DECISION** — the question the human must answer, presented as a **guided
+   decision**: lead with the one **recommended pick** marked `▶ … (recommended)`,
+   then its **1–3** described alternatives, every option carrying a one-line
+   description (see "guided choice" below). Exactly one decision per report, or an
+   explicit "none — FYI". If a decision exists, ask it after everything below has
+   been shown (show-before-ask).
 3. **⚠ FLAGS** — lowest-confidence first, each with *why* confidence is lowest and the
    *cost if wrong*. Where TASK.md markers exist (`⚠` / `- [~]` / `- [ ]`),
    quote them verbatim and keep their document order — extraction ≠ judgment.
@@ -74,9 +77,38 @@ NEXT      the single next action + what it unlocks
    line when it is right; overrule it only with a stated reason (e.g. planned
    tasks the state file cannot see yet).
 
-**The ask itself** — when block 2's decision becomes a literal question component
-(option picker, numbered menu), compose it as a summary: the detail stays in the
-report above, the question carries intent + what "yes" means + the flag count.
+### The DECISION block as a guided choice
+
+When the human must choose, render block 2 as a **guided decision** — never a bare next step:
+
+```
+DECISION  <the question>
+
+  ▶ <recommended option>  (recommended)
+      <one-line description — what it means · what it unlocks or costs>
+    <alternative option>
+      <one-line description>
+    <alternative option>
+      <one-line description>
+```
+
+- **Recommended pick** — exactly one option carries the `▶ … (recommended)` marker; never zero,
+  never two. Your `confidence.md` self-score informs which to recommend; the human overrides freely
+  (a recommendation, not a default that auto-proceeds).
+- **1–3 described alternatives** — only real, takeable options (no strawmen). If there is genuinely
+  one path, show the single recommended step + its description — never invent filler to reach three.
+- **Every option is described** — the pick and each alternative carry a one-line description (what
+  it means + what it unlocks or costs); ≤1 line, no bare labels.
+- **Human gates only** — render the guided choice at `[human gate]` decision points; at a
+  `[you drive]` autonomous step there is no human to choose, so render none. Show-before-ask still
+  holds — the described choice is the ASK, rendered after EVIDENCE.
+
+**The ask itself** — when block 2's decision becomes a literal question component (an
+`AskUserQuestion` picker or a numbered menu), compose it as the guided choice above: the
+**recommended option goes first, with a `(Recommended)` suffix**, and each option's `description`
+carries its one-line description. On a tool without `AskUserQuestion`, render the same shape as a
+numbered/`▶` menu in chat — the convention is tool-agnostic. The question text stays a summary —
+intent + what "yes" means + the flag count — pointing at the report above.
 
 ## Hard rules
 
@@ -84,6 +116,10 @@ report above, the question carries intent + what "yes" means + the flag count.
 - **Summary-first.** Never bury the decision under a task list or a diff.
 - **Show before ask.** Render the artifact (digest · diff · report) before any
   approval question; the human decides on what they can see.
+- **Guided decision.** At a `[human gate]`, present block 2 as a guided choice — one highlighted
+  **recommended pick** (`▶ … (recommended)`, exactly one) + its 1–3 described alternatives, every
+  option carrying a one-line description; never a bare next step. `confidence.md` informs the pick;
+  the human overrides freely. Not at `[you drive]` autonomous steps.
 - **Reconcile the count.** Before the ask, your ⚠ FLAGS must reconcile with
   `add.py report --decide`'s open-item count. If your prose calls an item
   resolved while the digest still counts it open, the engine wins — fix the data

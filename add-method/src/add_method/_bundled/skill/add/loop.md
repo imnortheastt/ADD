@@ -41,6 +41,7 @@ When every task is done but the goal is not, `add.py status` shows
    then `add.py milestone-done <slug>` succeeds (then consolidate the open deltas and archive).
    Present the close via `report-template.md` — open with the ARC (goal · done · plan): the
    milestone goal, the exit-criteria met that prove it, and the plan beyond the close.
+   Render the close as a guided choice — the recommended next move + its described alternatives (per `report-template.md`).
 
 ## Reopen is the verb; this loop is the trigger
 

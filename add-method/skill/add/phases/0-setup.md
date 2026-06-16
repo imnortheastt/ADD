@@ -118,7 +118,7 @@ high-risk task still refuses `auto` and forces a lowered rung (run.md guard).
 
 ## 4 · The one human gate — the baseline approval
 
-Open the report with the ARC (goal · done · plan) per `report-template.md`, then present
+Open the report with the ARC (goal · done · plan) per `report-template.md`, render the baseline-lock DECISION as a guided choice (the recommended pick + described alternatives), then present
 `SETUP-REVIEW.md` lowest-confidence-first (the `guessed` rows are what the human must actually check). They
 confirm **once** — an explicit yes to the baseline approval itself, in conversation; ambient agreement mid-stream is
 not a confirmation. On that recorded confirmation, you run the lock with their name:
