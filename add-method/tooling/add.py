@@ -36,6 +36,14 @@ STAGES = ("prototype", "poc", "mvp", "production")
 # v22 stage-graduation: the read-only cue `status` shows when the MVP is covered.
 # Worded as the ACTION (never a file) so it stands before graduate.md exists.
 GRADUATION_CUE = "MVP covered → propose graduation"
+# release-altitude: the read-only cue `status` shows when ≥1 closed milestone is
+# unreleased. The 5th scope level (release.md). `{n}` is filled at print time; the
+# wording matches SKILL.md's "Beyond the bundle" cross-ref byte-for-byte.
+RELEASABLE_CUE = "releasable: {n} milestone(s) closed since last release"
+# the append-only release ledger lives at the PROJECT ROOT (the dir containing .add/),
+# a sibling of CHANGELOG.md — NOT inside .add/. The ledger IS the attribution source:
+# a milestone is "released" iff its slug appears on a `milestones:` row.
+RELEASES_FILE = "RELEASES.md"
 PHASES = ("ground", "specify", "scenarios", "contract", "tests", "build", "verify", "observe", "done")
 GATES = ("none", "PASS", "RISK-ACCEPTED", "HARD-STOP")
 # heal-then-escalate (verify-integrity): the bounded self-heal loop cap. A CONFIRMED cheat
@@ -1054,6 +1062,14 @@ def cmd_status(args: argparse.Namespace) -> None:
         m_tasks = sum(rec.get("tasks", 0) for rec in archived)
         print(f"archived: {n} milestone{'s' if n != 1 else ''} "
               f"({m_tasks} task{'s' if m_tasks != 1 else ''})")
+
+    # release cue (release-altitude): project-global + read-only. Fires when ≥1 CLOSED
+    # milestone (live-done OR archived) is not yet attributed to a RELEASES.md row — so it
+    # stands even with no live milestones. Additive: a line solely when releasable; the
+    # ledger read is fail-open (a vanished ledger never silences the cue). See release.md.
+    _rel = _releasable(root, state)
+    if _rel:
+        print(f"  → {RELEASABLE_CUE.format(n=len(_rel))}")
 
     print(f"active  : {active or '(none)'}")
     # surface the active task's autonomy level (task explicit-autonomy-dial) so the human
@@ -4113,6 +4129,183 @@ def cmd_graduation_report(args: argparse.Namespace) -> None:
     print("\n".join(L))
 
 
+def _releases_path(root: Path) -> Path:
+    """The append-only release ledger — at the PROJECT ROOT (root IS the .add dir, so its
+    parent), a sibling of CHANGELOG.md. NOT inside .add/."""
+    return root.parent / RELEASES_FILE
+
+
+def _released_milestones(root: Path) -> set[str]:
+    """Slugs already attributed to a release — the union of every `milestones:` row in
+    RELEASES.md. Fail-OPEN: a missing/unreadable/malformed ledger yields the empty set, so
+    every closed milestone reads as still-releasable (a vanished ledger never hides work).
+    READ-ONLY."""
+    try:
+        text = _releases_path(root).read_text(encoding="utf-8")
+    except OSError:
+        return set()                         # no ledger (or a dir at the path) -> nothing released yet
+    out: set[str] = set()
+    for line in text.splitlines():
+        st = line.strip()
+        if st.lower().startswith("milestones:"):
+            for tok in re.split(r"[,\s]+", st.split(":", 1)[1]):
+                tok = tok.strip()
+                if tok and tok.lower() != "none":
+                    out.add(tok)
+    return out
+
+
+def _closed_milestones(state: dict) -> list[dict]:
+    """Every CLOSED milestone (its milestone-done gate passed): LIVE done milestones
+    (status == 'done', still in state) + ARCHIVED milestones (all were PASS-done before
+    archive — see _archived_task_slugs). Each: {slug, title, tier}."""
+    out: list[dict] = []
+    for slug, m in (state.get("milestones") or {}).items():
+        if m.get("status") == "done":
+            out.append({"slug": slug, "title": m.get("title", slug), "tier": "live"})
+    for rec in state.get("archived") or []:
+        if rec.get("slug"):
+            out.append({"slug": rec["slug"], "title": rec.get("title", rec["slug"]),
+                        "tier": "archived"})
+    return out
+
+
+def _releasable(root: Path, state: dict) -> list[dict]:
+    """Closed milestones NOT yet attributed to any RELEASES.md row — the cut's candidate
+    bundle. Drives BOTH the `→ releasable: N` status cue and release-report. READ-ONLY."""
+    released = _released_milestones(root)
+    return [m for m in _closed_milestones(state) if m["slug"] not in released]
+
+
+def _key_decisions_for(root: Path, slug: str) -> list[str]:
+    """Best-effort §Key-Decisions rows from PROJECT.md that NAME this milestone slug — the
+    consolidated decisions the changelog can cite. Fail-open: a missing section / unreadable
+    foundation / no slug match -> [] (a gather never raises). READ-ONLY."""
+    try:
+        text = (root / "PROJECT.md").read_text(encoding="utf-8")
+    except OSError:
+        return []
+    m = re.search(r"^#{1,6}[^\n]*key decision[^\n]*$(.*?)(?=^#{1,6}\s|\Z)", text, re.S | re.M | re.I)
+    if not m:
+        return []
+    return [st.lstrip("-* ").strip() for st in (ln.strip() for ln in m.group(1).splitlines())
+            if st.startswith(("-", "*")) and slug in st]
+
+
+def release_data(root: Path, state: dict) -> dict:
+    """The single source of FACTS for a release cut — PURE, NO writes (mirrors graduation_data).
+    Both the `release-report` text dashboard and `--json` render from this one dict, so the human
+    view and the machine view can never disagree.
+
+    GATHER, never JUDGE: every value is a RECORD the human verifies by looking; there is no
+    readiness/score/ranking field by construction. Five record-sets feed the release.md flow:
+      releasable — closed-but-unreleased milestones (the bundle candidate; the cue's count)
+      changed    — per releasable milestone: RETRO path + carried-delta count + §Key-Decisions rows
+      waivers    — open RISK-ACCEPTED riding into the cut (soonest expiry first)
+      blockers   — open HARD-STOP gate records (the security stop the floor will refuse on)
+      monitors   — declared §7 Watch lines to carry into the post-cut watch step
+    A source is read fail-closed (skip on error); the ledger is read fail-OPEN (see _releasable)."""
+    tasks = state.get("tasks") or {}
+    releasable = _releasable(root, state)
+
+    # changed — the consolidated learning trail per releasable milestone (the changelog source)
+    changed = []
+    for m in releasable:
+        slug = m["slug"]
+        retro = None
+        for sub in ("milestones", "archive"):
+            cand = root / sub / slug / "RETRO.md"
+            if cand.is_file():               # a directory at the path is not a ledger (fail-closed)
+                retro = str(cand.relative_to(root))
+                break
+        changed.append({"milestone": slug, "key_decisions": _key_decisions_for(root, slug),
+                        "retro": retro,
+                        "carried_deltas": _retro_carried(root / retro) if retro else 0})
+
+    # waivers — open RISK-ACCEPTED riding into the cut, soonest expiry first (mirrors graduation_data)
+    waivers = []
+    for slug, t in tasks.items():
+        if t.get("gate") == "RISK-ACCEPTED" and t.get("waiver"):
+            w = t["waiver"]
+            waivers.append({"slug": slug, "owner": w.get("owner", "?"),
+                            "ticket": w.get("ticket", "?"), "expires": w.get("expires", "?")})
+
+    def _exp_key(wv):
+        try:
+            return (0, date.fromisoformat(wv["expires"]).isoformat())
+        except (ValueError, TypeError):
+            return (1, "")                   # unparseable/missing -> after every real date
+    waivers.sort(key=_exp_key)
+
+    # blockers — open HARD-STOP gate records (the un-forceable security stop the floor enforces)
+    blockers = [{"slug": s, "gate": t.get("gate")} for s, t in tasks.items()
+                if t.get("gate") == "HARD-STOP"]
+
+    # monitors — declared §7 Watch lines (filled, not the `<…>` template) for the watch step
+    monitors = []
+    for slug in tasks:
+        try:
+            text = (root / "tasks" / slug / "TASK.md").read_text(encoding="utf-8")
+        except OSError:
+            continue                         # unreadable TASK.md -> skip this task's monitor record
+        for line in text.splitlines():
+            st = line.strip()
+            if st.startswith("Watch") and "<" not in st and st != "Watch":
+                monitors.append({"slug": slug, "watch": st})
+                break
+
+    return {
+        "releasable": releasable,
+        "changed": changed,
+        "waivers": waivers,
+        "blockers": blockers,
+        "monitors": monitors,
+        "summary": {
+            "releasable": len(releasable), "changed": len(changed), "waivers": len(waivers),
+            "blockers": len(blockers), "monitors": len(monitors),
+        },
+    }
+
+
+def cmd_release_report(args: argparse.Namespace) -> None:
+    """Read-only: GATHER the release inventory into five labeled record-sets for the release.md
+    flow. text (default) or --json (the frozen JSON facts interface). Exit 0 ALWAYS — a gather,
+    not a gate; the ONLY non-zero exit is no_project. Judges nothing. NO writes."""
+    root = find_root()
+    if root is None:                 # frozen contract: fail-closed with a no_project signal
+        _die("no_project: no .add/ project found. Run `add.py init` first.")
+    state = load_state(root)
+    d = release_data(root, state)
+
+    if getattr(args, "json", False):
+        print(json.dumps(d, ensure_ascii=False, indent=2))
+        return
+
+    s = d["summary"]
+    L = ["RELEASE REPORT — release inventory (gather, not judge)", ""]
+    L.append(f"Releasable ({s['releasable']}) — closed milestones not yet in {RELEASES_FILE}:")
+    for m in d["releasable"]:
+        L.append(f"  - {m['slug']} [{m['tier']}]: {m['title']}")
+    L.append("")
+    L.append(f"Changed ({s['changed']}) — the consolidated learning trail per milestone:")
+    for c in d["changed"]:
+        L.append(f"  - {c['milestone']}: {c['retro'] or '(no RETRO record)'} "
+                 f"({c['carried_deltas']} carried · {len(c['key_decisions'])} key decision(s))")
+    L.append("")
+    L.append(f"Waivers ({s['waivers']}) — open RISK-ACCEPTED riding into the cut, soonest expiry first:")
+    for w in d["waivers"]:
+        L.append(f"  - {w['slug']}: {w['owner']} · {w['ticket']} · expires {w['expires']}")
+    L.append("")
+    L.append(f"Blockers ({s['blockers']}) — open HARD-STOP (the un-forceable security stop):")
+    for b in d["blockers"]:
+        L.append(f"  - {b['slug']}: {b['gate']}")
+    L.append("")
+    L.append(f"Monitors ({s['monitors']}) — declared §7 Watch lines to carry into the watch step:")
+    for mo in d["monitors"]:
+        L.append(f"  - {mo['slug']}: {mo['watch']}")
+    print("\n".join(L))
+
+
 def cmd_deltas(args: argparse.Namespace) -> None:
     """Read-only: report all open lessons learned grouped by competency.
 
@@ -4424,6 +4617,14 @@ def build_parser() -> argparse.ArgumentParser:
     pgr.add_argument("--json", action="store_true", help="emit the frozen JSON facts interface")
     pgr.add_argument("--plain", action="store_true", help="ASCII/pipe-safe text (output is plain by default)")
     pgr.set_defaults(func=cmd_graduation_report)
+
+    prr = sub.add_parser("release-report",
+                         help="read-only: gather the release inventory (releasable milestones · "
+                              "changed/RETROs · waivers · HARD-STOP blockers · monitors) for a "
+                              "release cut — gathers, never judges")
+    prr.add_argument("--json", action="store_true", help="emit the frozen JSON facts interface")
+    prr.add_argument("--plain", action="store_true", help="ASCII/pipe-safe text (output is plain by default)")
+    prr.set_defaults(func=cmd_release_report)
 
     pau = sub.add_parser("audit",
                          help="read-only: verify recorded human decision points left well-formed records "

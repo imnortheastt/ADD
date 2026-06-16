@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "release-guide",
+  "active_task": "release-report",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -920,10 +920,39 @@
         ],
         "snapshot_md5": "58bc916bd82441143bf04e85de3468cb"
       }
+    },
+    "release-report": {
+      "title": "add.py release-report (read-only) + the releasable cue + RELEASES.md ledger schema",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "release-altitude",
+      "depends_on": [],
+      "created": "2026-06-16T07:03:13+00:00",
+      "updated": "2026-06-16T07:34:33+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "f15abf9a7a03f7e01c0908a501f96e5e",
+        "tests": {
+          ".add/tasks/release-report/tests/test_release_report.py": "e19718c6f204df7083df6463ccc227f3"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_min_pillar.py",
+          ".add/tasks/release-report/tests/",
+          ".add/tasks/release-report/tests/test_release_1_5_0",
+          ".add/tasks/release-report/tests/test_min_pillar.py"
+        ],
+        "snapshot_md5": "d5d8447361cc86dead442c149033da2c"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T06:56:18+00:00",
+  "updated": "2026-06-16T07:34:33+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

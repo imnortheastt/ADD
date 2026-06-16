@@ -89,6 +89,7 @@ LIFECYCLE = [
     ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
     ["deltas"],                                # read-only: open competency deltas report
     ["graduation-report"], ["graduation-report", "--json"],  # read-only harvest (reads TASK/RETRO/state, never docs/)
+    ["release-report"], ["release-report", "--json"],  # read-only release inventory (reads state/RELEASES.md/TASK, never docs/)
     ["project"],                               # read-only: prints PROJECT.md, reads no docs/ chapter
     ["sync-guidelines"],
     ["milestone-done", "mvp"],
