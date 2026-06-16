@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "release-command",
+  "active_task": "release-docs-align",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -986,10 +986,47 @@
         ],
         "snapshot_md5": "a06da9a0eb1f3a93998233f6f6f9f5ac"
       }
+    },
+    "release-docs-align": {
+      "title": "Propagate RELEASE to the book (ch.16 16-releasing.md) + 5 GLOSSARY entries + \u00d73-tree byte-parity; document the lifecycle order + the root-CHANGELOG nested-package caveat",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "release-altitude",
+      "depends_on": [],
+      "created": "2026-06-16T08:39:49+00:00",
+      "updated": "2026-06-16T09:12:42+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "7fa736f0adeeddab638f3ca905c75724",
+        "tests": {
+          "add-method/tooling/test_release_docs_accord.py": "b5606dd4254bce82685ebe5937bd279c"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/docs/",
+          "add-method/src/add_method/_bundled/docs/",
+          ".add/docs/",
+          "16-releasing.md",
+          "appendix-c-glossary.md",
+          "README.md",
+          "add-method/tooling/test_release_docs_accord.py",
+          "add-method/tooling/16-releasing.md",
+          "add-method/tooling/appendix-c-glossary.md",
+          "add-method/tooling/README.md",
+          "./",
+          "add-method/tooling/",
+          ".add/tasks/release-docs-align/tests/",
+          ".add/tasks/release-docs-align/tests/add.py",
+          ".add/tasks/release-docs-align/tests/engine_pin.py",
+          ".add/tasks/release-docs-align/tests/test_min_pillar.py"
+        ],
+        "snapshot_md5": "2b8657d86c2e3038337ae60f4094c67b"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T08:00:40+00:00",
+  "updated": "2026-06-16T09:12:42+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
