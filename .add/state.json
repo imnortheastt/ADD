@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "capture-evidence",
+  "active_task": "book-glossary-align",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -852,10 +852,47 @@
         ],
         "snapshot_md5": "1f1f1149239e89b81929f968b6757be8"
       }
+    },
+    "book-glossary-align": {
+      "title": "Propagate the design-definition loop + glossary terms to the book and \u00d73 trees",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "udd-design-loop",
+      "depends_on": [
+        "capture-evidence"
+      ],
+      "created": "2026-06-16T03:26:12+00:00",
+      "updated": "2026-06-16T04:07:42+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "a7a8b51d6677e73e9ad6420c7681bc41",
+        "tests": {
+          "add-method/tooling/test_docs_accord.py": "d48d860b0c062593092efdbc19792710"
+        }
+      },
+      "scope": {
+        "declared": [
+          "14-foundation.md",
+          "add-method/docs/14-foundation.md",
+          "add-method/src/add_method/_bundled/docs/14-foundation.md",
+          ".add/docs/14-foundation.md",
+          "appendix-c-glossary.md",
+          "add-method/docs/appendix-c-glossary.md",
+          "add-method/src/add_method/_bundled/docs/appendix-c-glossary.md",
+          ".add/docs/appendix-c-glossary.md",
+          "add-method/tooling/test_docs_accord.py",
+          "./",
+          ".add/\u2026",
+          ".add/",
+          "add-method/\u2026",
+          "add-method/add.py"
+        ],
+        "snapshot_md5": "a96ccb33aa92cf77442e1d04e8571e2a"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T03:22:24+00:00",
+  "updated": "2026-06-16T04:07:42+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
