@@ -2896,12 +2896,17 @@ def _tripwire_divergence(root: Path, slug: str, tw: dict) -> list[str]:
 # ── §5 scope gate (build-scope-lock): touched ⊆ declared, from bytes alone ──────────
 # The walk's NAMED exclusion set — ONE constant; widening it is an additive
 # change-request, never silent. `.add` is engine domain (tripwire + audit guard it);
-# the rest is VCS/bytecode/OS junk + code-intelligence tool caches with no build
-# signal. `.serena` holds a symbol index that re-writes itself whenever a source
-# file changes (md5 churn from a build edit must never read as an out-of-scope
-# touch — the dogfooding lesson that added it here).
-_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules", ".serena")
-_SCOPE_EXCLUDE_FILES = (".DS_Store",)          # plus *.pyc by suffix
+# the rest is VCS/bytecode/OS junk + code-intelligence tool caches + gitignored BUILD
+# ARTIFACTS, none with build signal. `.serena` holds a symbol index that re-writes itself
+# whenever a source file changes (md5 churn from a build edit must never read as an
+# out-of-scope touch — the dogfooding lesson that added it). A regenerated artifact is
+# likewise NOT a source touch — counting one produced repeated false `scope_violation`s in
+# consuming projects (`.next/`, `coverage/`, `tsconfig.tsbuildinfo`, whose `incremental`
+# rewrite even races a clean re-snapshot), so they are pruned here too.
+_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules", ".serena",
+                       ".next", "coverage", "test-results")
+_SCOPE_EXCLUDE_FILES = (".DS_Store",)                  # plus *.pyc / *.tsbuildinfo by suffix
+_SCOPE_EXCLUDE_SUFFIXES = (".pyc", ".tsbuildinfo")
 
 
 def _declared_scope(root: Path, slug: str) -> list[str] | None:
@@ -2960,14 +2965,15 @@ def _in_scope(rel: str, declared: list[str]) -> bool:
 
 def _scope_walk(rootp: Path) -> dict[str, str]:
     """{project-root-relative path: md5} over the project tree, pruning
-    _SCOPE_EXCLUDE_DIRS at any depth and skipping bytecode/OS junk. A file
+    _SCOPE_EXCLUDE_DIRS at any depth and skipping bytecode/OS junk +
+    gitignored build artifacts (_SCOPE_EXCLUDE_FILES/_SCOPE_EXCLUDE_SUFFIXES). A file
     unreadable at SNAPSHOT time is skipped; at the GATE the resulting absence
     reads as a touch (fail-closed at the biting end). Bytes only — no git."""
     files: dict[str, str] = {}
     for dirpath, dirnames, filenames in os.walk(rootp):
         dirnames[:] = [d for d in dirnames if d not in _SCOPE_EXCLUDE_DIRS]
         for name in filenames:
-            if name in _SCOPE_EXCLUDE_FILES or name.endswith(".pyc"):
+            if name in _SCOPE_EXCLUDE_FILES or name.endswith(_SCOPE_EXCLUDE_SUFFIXES):
                 continue
             p = Path(dirpath) / name
             h = _md5_file(p)

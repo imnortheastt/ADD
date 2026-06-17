@@ -264,6 +264,28 @@ class SnapshotTest(_Board):
         second = self._task_state("alpha")["scope"]["snapshot_md5"]
         self.assertNotEqual(first, second, "a re-crossed change-request re-snapshots")
 
+    def test_advance_excludes_build_artifacts(self):
+        # Gitignored BUILD ARTIFACTS must never enter the scope snapshot. A regenerated
+        # artifact is not a source touch — e.g. a Next.js `.next/` build, a `coverage/`
+        # run, Playwright `test-results/`, or `tsconfig.tsbuildinfo` (whose `incremental`
+        # rewrite even races a clean re-snapshot) must not trip a false scope_violation.
+        artifacts = (
+            "apps/.next/BUILD_ID", "apps/.next/cache/c.json",
+            "apps/coverage/lcov.info", "apps/test-results/r.xml",
+            "apps/tsconfig.tsbuildinfo", "nested/foo.tsbuildinfo",
+        )
+        for rel in artifacts:
+            p = self.tmp / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("x\n", encoding="utf-8")
+        self._arm("alpha", SCOPED_SRC)
+        snap = json.loads(self._sidecar("alpha").read_text(encoding="utf-8")).get("files", {})
+        for banned in artifacts:
+            self.assertNotIn(banned, snap,
+                             f"build artifact leaked into the scope snapshot: {banned}")
+        self.assertIn("src/app.py", snap,
+                      "real source must still be tracked (the exclusion is not over-broad)")
+
 
 # ── the gate: containment, violations, laundering, stop ──────────────────────
 class GateTest(_Board):
