@@ -63,23 +63,6 @@ function parseArgs(argv) {
   return args;
 }
 
-function copyDir(src, dest, { skipIfExists, cleanReplace } = {}) {
-  if (!fs.existsSync(src)) fail("missing packaged source: " + src);
-  if (skipIfExists && fs.existsSync(dest)) {
-    warn(dest + " exists — leaving it untouched");
-    return;
-  }
-  // Clean replace: drop a stale dest before copying so a `--force` re-install can
-  // never leave orphaned files from a previous version behind. fs.cpSync merges
-  // (it never removes), so without this `--force` is a merge, not a replace. Mirrors
-  // _installer.py's `shutil.rmtree(skill_dest)` so npm and pip behave identically.
-  if (cleanReplace && fs.existsSync(dest)) {
-    fs.rmSync(dest, { recursive: true, force: true });
-  }
-  fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.cpSync(src, dest, { recursive: true });
-}
-
 // --- interactive layer (clack on a real TTY; plain text everywhere else) -----
 // Designed-for-failure: any doubt (non-TTY, CI, --yes, a failed import, an
 // un-promptable stream) degrades to the EXACT plain-text path below. The clack
@@ -119,38 +102,12 @@ async function runClackPreamble(clack, target) {
   return { cancelled: false, target: String(chosen || target) };
 }
 
-// The plain-text drop — byte-identical to the pre-interactive installer. The
-// interactive path resolves a target then calls straight into this.
+// The drop — now a RECONCILE: restore missing managed trees + refresh present ones
+// (sweep orphans) + report per-tree status. Byte-compatible handoff with the prior
+// installer. The interactive path resolves a target then calls straight into this.
 function dropFiles(args, target) {
   log("Installing ADD into " + target);
-
-  // 1. skill -> .claude/skills/add  (skipped under --no-skill: the plugin provides it)
-  if (!args.noSkill) {
-    copyDir(
-      path.join(PKG_ROOT, "skill", "add"),
-      path.join(target, ".claude", "skills", "add"),
-      { skipIfExists: !args.force, cleanReplace: args.force }
-    );
-    log("  ✓ skill      -> .claude/skills/add/");
-  }
-
-  // 2. tooling -> .add/tooling  (exclude tests from the installed copy)
-  const toolingDest = path.join(target, ".add", "tooling");
-  copyDir(path.join(PKG_ROOT, "tooling"), toolingDest, { skipIfExists: false });
-  // installed copy is runtime-only: drop ALL test files and any compiled cache
-  // (glob test_*.py — not just test_add.py — so no test leaks into installs)
-  fs.rmSync(path.join(toolingDest, "__pycache__"), { recursive: true, force: true });
-  for (const entry of fs.readdirSync(toolingDest)) {
-    if (/^test_.*\.py$/.test(entry)) {
-      fs.rmSync(path.join(toolingDest, entry), { force: true });
-    }
-  }
-  log("  ✓ tooling    -> .add/tooling/add.py (+ templates)");
-
-  // 3. docs (the book / trust layer) -> .add/docs
-  copyDir(path.join(PKG_ROOT, "docs"), path.join(target, ".add", "docs"),
-    { skipIfExists: false });
-  log("  ✓ trust docs -> .add/docs/ (the AIDD book)");
+  reconcile(args, target);
 
   // NO step 4: the installer DROPS FILES ONLY. Initialisation is deferred to the AI
   // (via `/add`) or a CLI user — a pre-run plain `add.py init` would grandfather-lock
@@ -231,6 +188,43 @@ function cleanReplaceTree(src, dest, stripTests) {
   }
 }
 
+const TREE_LABEL = { "skill/add": "skill", "tooling": "tooling", "docs": "docs" };
+
+// Per managed tree: "missing" (dest absent OR empty) or "present".
+function managedStatus(target) {
+  const status = {};
+  for (const [sub, destParts] of MANAGED) {
+    const dest = path.join(target, ...destParts);
+    const present = fs.existsSync(dest) && fs.readdirSync(dest).length > 0;
+    status[sub] = present ? "present" : "missing";
+  }
+  return status;
+}
+
+// reconcile: restore-missing + refresh-present (sweep orphans) across the managed trees,
+// reporting per-tree status. Honors --no-skill (the plugin provides the skill). Touches
+// ONLY managed trees — never user data. Prechecks ALL sources first (design-for-failure:
+// a corrupt package leaves the target untouched).
+function reconcile(args, target) {
+  const trees = MANAGED.filter(([sub]) => !(sub === "skill/add" && args.noSkill));
+  for (const [sub] of trees) {
+    if (!fs.existsSync(path.join(PKG_ROOT, sub))) {
+      fail("missing packaged source: " + path.join(PKG_ROOT, sub));
+    }
+  }
+  const status = managedStatus(target);
+  for (const [sub, destParts, stripTests] of trees) {
+    cleanReplaceTree(path.join(PKG_ROOT, sub), path.join(target, ...destParts), stripTests);
+    const dest = destParts.join("/");
+    if (status[sub] === "missing") {
+      log("  ✓ restored  " + TREE_LABEL[sub].padEnd(8) + "-> " + dest + "  (was missing)");
+    } else {
+      log("  ✓ refreshed " + TREE_LABEL[sub].padEnd(8) + "-> " + dest);
+    }
+  }
+  return status;
+}
+
 function cmdUpdate(args) {
   const target = path.resolve(args._[0] || ".");
   const addDir = path.join(target, ".add");
@@ -247,7 +241,11 @@ function cmdUpdate(args) {
     else log("ADD update available: project on " + cur + ", package is " + version + ". Run `update`.");
     return;
   }
-  if (cur === version && !args.force) {
+  // same-version no-op ONLY when nothing is missing — a missing managed tree HEALS
+  // even at the current version (heal-reconcile).
+  const status = managedStatus(target);
+  const missing = MANAGED.some(([sub]) => status[sub] === "missing");
+  if (cur === version && !args.force && !missing) {
     log("ADD already at " + version + " — nothing to update (use --force to re-materialize).");
     return;
   }
@@ -256,12 +254,10 @@ function cmdUpdate(args) {
   if (fs.existsSync(stateFile)) {
     fs.copyFileSync(stateFile, path.join(addDir, "pre-update-state.bak.json"));
   }
-  for (const [sub, destParts, stripTests] of MANAGED) {
-    cleanReplaceTree(path.join(PKG_ROOT, sub), path.join(target, ...destParts), stripTests);
-  }
+  reconcile(args, target);
   writeStamp(addDir, version);
   log("ADD updated " + (cur || "(unstamped)") + " -> " + version +
-      " · skill · tooling · docs refreshed · your project state untouched.");
+      " · managed layer reconciled · your project state untouched.");
 }
 
 async function main() {

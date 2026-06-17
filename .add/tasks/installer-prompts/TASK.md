@@ -270,7 +270,7 @@ Reviewed by: Tin Dang (authorized "independent review → PASS") + adversarial s
 Watch (reuse scenarios as monitors): clack import failure rate (clack_unavailable warns) · cancel rate (exit 130) · any "ignoring unknown flag" regression on --yes/--non-interactive.
 
 ### Spec delta
-- [SPEC · seeded → agent-detect] the agent-detect prompt is a STEP in this interactive flow — render it through the established npm `ui` layer / clack flow, not a separate prompt stack (evidence: §3 ui layer + the milestone decomposition; agent-detect depends conceptually on this shell).
+- [SPEC · seeded] the agent-detect prompt is a STEP in this interactive flow — render it through the established npm `ui` layer / clack flow, not a separate prompt stack (evidence: §3 ui layer + the milestone decomposition; agent-detect depends conceptually on this shell) [→ agent-detect]
 - [SPEC · open] give pip a richer interactive prompt lib (e.g. questionary/rich) for true parity with npm's two-step clack flow — deferred per A2 / milestone Out-list (evidence: pip is a single stdlib input() confirm by deliberate choice).
 - [SPEC · open] extract a reusable PTY test helper so interactive happy-paths are automatable in CI (agent-detect/heal will need it too) (evidence: M1 was verified by an ad-hoc pty probe, not a committed test).
 

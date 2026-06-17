@@ -40,11 +40,6 @@ def _log(msg: str) -> None:
     sys.stdout.flush()
 
 
-def _warn(msg: str) -> None:
-    sys.stderr.write("warn: " + msg + "\n")
-    sys.stderr.flush()
-
-
 def _fail(msg: str) -> int:
     sys.stderr.write("error: " + msg + "\n")
     sys.stderr.flush()
@@ -116,9 +111,12 @@ def install(
     name: str | None = None,
     yes: bool = False,
     non_interactive: bool = False,
+    bundled: str | None = None,
 ) -> int:
-    """Install ADD into `target` directory.
+    """Install ADD into `target` directory — RECONCILES the managed layer (restore
+    missing trees + refresh present ones, sweeping orphans), never touching user data.
 
+    `bundled` injects a synthetic source root (test hook; parity with update()).
     Returns 0 on success, 1 on error, 130 on a user cancel (nothing written).
     """
     target_path = Path(target).resolve()
@@ -138,47 +136,20 @@ def install(
 
     _log(f"Installing ADD into {target_path}")
 
-    # Locate bundled data.
+    # Locate bundled data (synthetic `bundled` for tests; the wheel's _bundled/ otherwise).
     try:
-        bundled = _bundled_root()
+        bundled_root = Path(bundled) if bundled else _bundled_root()
     except RuntimeError as exc:
         return _fail(str(exc))
 
-    # Verify sources exist before touching anything (design-for-failure).
-    for sub in ("skill/add", "tooling", "docs"):
-        src = bundled / sub
-        if not src.exists():
-            return _fail(f"missing bundled source: {src}")
+    # design-for-failure: verify ALL sources exist BEFORE touching the target.
+    for sub, _dest, _strip in MANAGED:
+        if not (bundled_root / sub).exists():
+            return _fail(f"missing bundled source: {bundled_root / sub}")
 
-    # 1. skill -> <target>/.claude/skills/add/
-    #    Skip-if-exists unless --force (mirrors cli.js skipIfExists logic).
-    skill_dest = target_path / ".claude" / "skills" / "add"
-    if skill_dest.exists() and not force:
-        _warn(f"{skill_dest} exists — leaving it untouched")
-    else:
-        skill_dest.parent.mkdir(parents=True, exist_ok=True)
-        if skill_dest.exists() and force:
-            shutil.rmtree(skill_dest)
-        shutil.copytree(str(bundled / "skill" / "add"), str(skill_dest))
-    _log("  ✓ skill      -> .claude/skills/add/")
-
-    # 2. tooling -> <target>/.add/tooling/
-    #    Always refresh (dirs_exist_ok=True) — no test_*.py in bundle.
-    tooling_dest = target_path / ".add" / "tooling"
-    tooling_dest.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(
-        str(bundled / "tooling"), str(tooling_dest), dirs_exist_ok=True
-    )
-    _log("  ✓ tooling    -> .add/tooling/add.py (+ templates)")
-
-    # 3. docs -> <target>/.add/docs/
-    #    Always refresh.
-    docs_dest = target_path / ".add" / "docs"
-    docs_dest.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(
-        str(bundled / "docs"), str(docs_dest), dirs_exist_ok=True
-    )
-    _log("  ✓ trust docs -> .add/docs/ (the AIDD book)")
+    # RECONCILE: restore missing trees + refresh present ones (sweep orphans). Touches
+    # ONLY the managed layer — state.json / PROJECT.md / milestones / tasks are never read.
+    _reconcile(target_path, bundled_root)
 
     # NO step 4: the installer DROPS FILES ONLY (npm ↔ pip parity with bin/cli.js).
     # Initialisation is deferred to the AI (via `/add`) or a CLI user — a pre-run plain
@@ -249,6 +220,33 @@ def _clean_replace(src: Path, dest: Path, *, strip_tests: bool = False) -> None:
                 child.unlink()
 
 
+_TREE_LABEL = {"skill/add": "skill", "tooling": "tooling", "docs": "docs"}
+
+
+def _managed_status(target_path: Path) -> dict:
+    """Per managed tree: 'missing' (dest absent OR empty) or 'present'."""
+    status = {}
+    for sub, dest_rel, _strip in MANAGED:
+        dest = target_path / dest_rel
+        present = dest.exists() and any(dest.iterdir())
+        status[sub] = "present" if present else "missing"
+    return status
+
+
+def _reconcile(target_path: Path, bundled_root: Path) -> dict:
+    """Clean-replace every managed tree (restore-if-missing / refresh-if-present, sweeping
+    orphans) and REPORT per-tree status. Touches ONLY managed trees — never user data.
+    The caller verifies sources exist first (design-for-failure). Returns the pre-status."""
+    status = _managed_status(target_path)
+    for sub, dest_rel, strip in MANAGED:
+        _clean_replace(bundled_root / sub, target_path / dest_rel, strip_tests=strip)
+        if status[sub] == "missing":
+            _log(f"  ✓ restored  {_TREE_LABEL[sub]:8s}-> {dest_rel}  (was missing)")
+        else:
+            _log(f"  ✓ refreshed {_TREE_LABEL[sub]:8s}-> {dest_rel}")
+    return status
+
+
 def _run_migrations(state_file: Path, from_version: str | None, to_version: str) -> None:
     """Apply forward-only, idempotent state migrations. No-op while MIGRATIONS is empty."""
     if not MIGRATIONS or not state_file.exists():
@@ -301,7 +299,10 @@ def update(
     new_version = version or _pkg_version()
     stamp = _read_stamp(add_dir)
     cur_version = stamp.get("version") if stamp else None
-    if cur_version == new_version and not force:
+    missing = [sub for sub, st in _managed_status(target_path).items() if st == "missing"]
+    # same-version no-op ONLY when nothing is missing — a missing managed tree HEALS
+    # even at the current version (heal-reconcile).
+    if cur_version == new_version and not force and not missing:
         _log(f"ADD already at {new_version} — nothing to update (use --force to re-materialize).")
         return 0
 
@@ -310,8 +311,7 @@ def update(
     if state_file.exists():
         shutil.copyfile(str(state_file), str(add_dir / "pre-update-state.bak.json"))
 
-    for sub, dest_rel, strip in MANAGED:
-        _clean_replace(bundled_root / sub, target_path / dest_rel, strip_tests=strip)
+    _reconcile(target_path, bundled_root)
     _run_migrations(state_file, cur_version, new_version)
     _write_stamp(add_dir, new_version, channel=channel)
 

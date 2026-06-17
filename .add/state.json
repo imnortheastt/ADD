@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "installer-prompts",
+  "active_task": "heal-reconcile",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -984,12 +984,28 @@
     },
     "heal-reconcile": {
       "title": "init+update scan .add/, overwrite managed + add missing, never touch user data",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "installer-experience",
       "depends_on": [],
       "created": "2026-06-17T08:22:59+00:00",
-      "updated": "2026-06-17T08:22:59+00:00"
+      "updated": "2026-06-17T09:33:35+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "594c284d6ecf5ac563c240df30fb4ab8",
+        "tests": {
+          "add-method/tooling/test_heal_reconcile.py": "6022845858b78ccf91cf7326f09563c8"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py",
+          "add-method/tooling/test_heal_reconcile.py",
+          "add-method/tooling/test_v8_install.py"
+        ],
+        "snapshot_md5": "1df06e75740397bed217dee34fae2f26"
+      }
     },
     "global-install": {
       "title": "Global ADD home: engine+book+skill installed once, updated for all projects",
@@ -1015,7 +1031,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T09:00:34+00:00",
+  "updated": "2026-06-17T09:33:35+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
