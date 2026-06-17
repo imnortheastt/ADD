@@ -85,6 +85,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--global", dest="as_global", action="store_true",
                         help="ALSO install the managed layer to a shared home "
                              "(ADD_HOME|XDG_DATA_HOME/add|~/.add) + register this project")
+    parser.add_argument("--global-data", dest="as_global_data", action="store_true",
+                        help="(implies --global) ALSO persist this project's user-data "
+                             "under <home>/data/<key> keyed by path")
 
     args = parser.parse_args(rest)
 
@@ -97,6 +100,7 @@ def main(argv: list[str] | None = None) -> int:
         yes=args.yes,
         non_interactive=args.non_interactive,
         as_global=args.as_global,
+        as_global_data=args.as_global_data,
     )
 
 

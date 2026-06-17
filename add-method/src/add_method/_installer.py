@@ -13,6 +13,7 @@ Designed for failure:
 """
 from __future__ import annotations
 
+import hashlib
 import importlib.resources
 import json
 import os
@@ -288,6 +289,59 @@ def _reconcile_global(home: Path, claude_dir: Path, bundled_root: Path, no_skill
         _clean_replace(home / "skill" / "add", claude_dir)
 
 
+# --- global DATA: an OPT-IN per-project user-data snapshot under <home>/data/<key> ----------
+# Strictly additive to the global home; the per-project local + git-tracked default is untouched.
+# The snapshot copies ONLY user-data (the managed trees + transient/managed-meta are excluded),
+# CLEAN-REPLACED, one-way (project->home). Mirrored by behaviour in cli.js.
+_DATA_EXCLUDE = {"tooling", "docs", ".update-cache", STAMP_FILE}   # managed trees + managed-meta
+
+
+def data_key(project_abspath) -> str:
+    """A filesystem-safe, deterministic, collision-resistant key for an absolute project path:
+    `<sanitized-basename>-<sha1(abspath_utf8)[:12]>`. Pure · total · identical on both twins."""
+    p = str(project_abspath)
+    digest = hashlib.sha1(p.encode("utf-8")).hexdigest()[:12]
+    base = Path(p).name or "root"
+    safe = "".join(c if (c.isalnum() or c in "-_.") else "_" for c in base)
+    return f"{safe}-{digest}"
+
+
+def _is_user_data(name: str) -> bool:
+    """A top-level `.add/` entry is user-data unless it is a managed tree or a transient artifact."""
+    if name in _DATA_EXCLUDE:
+        return False
+    if name.startswith("scope-snapshot"):
+        return False
+    if "pre-archive-bak" in name:
+        return False
+    if name.endswith(".bak.json"):
+        return False
+    return True
+
+
+def _persist_data(home: Path, project_abspath) -> bool:
+    """Clean-replace a project's USER-DATA into <home>/data/<key>. Returns True if persisted,
+    False if there is nothing to persist (no .add/ or no user-data — an honest skip, not an
+    error). Raises OSError if the data dir can't be written — the caller fails 'data_unwritable'."""
+    add_dir = Path(project_abspath) / ".add"
+    if not add_dir.exists():
+        return False
+    entries = [e for e in sorted(add_dir.iterdir()) if _is_user_data(e.name)]
+    if not entries:
+        return False
+    dest = home / "data" / data_key(str(project_abspath))
+    if dest.exists():
+        shutil.rmtree(dest)                 # clean-replace: a locally-deleted file leaves no orphan
+    dest.mkdir(parents=True, exist_ok=True)
+    for e in entries:
+        target = dest / e.name
+        if e.is_dir():
+            shutil.copytree(str(e), str(target))
+        else:
+            shutil.copyfile(str(e), str(target))
+    return True
+
+
 def install(
     target: str = ".",
     force: bool = False,
@@ -298,6 +352,7 @@ def install(
     bundled: str | None = None,
     env=None,
     as_global: bool = False,
+    as_global_data: bool = False,
 ) -> int:
     """Install ADD into `target` directory — RECONCILES the managed layer (restore
     missing trees + refresh present ones, sweeping orphans), never touching user data.
@@ -305,8 +360,12 @@ def install(
     `bundled` injects a synthetic source root (test hook; parity with update()). `env`
     injects the home/skill base for hermetic global tests. `as_global` ALSO installs the
     managed layer to the shared home + registers the project (the per-project drop still runs).
+    `as_global_data` IMPLIES `as_global` and ALSO persists the project's user-data to
+    <home>/data/<key> (opt-in; one-way snapshot).
     Returns 0 on success, 1 on error, 130 on a user cancel (nothing written).
     """
+    if as_global_data:
+        as_global = True            # you cannot persist data without a home to persist into
     target_path = Path(target).resolve()
     if not target_path.exists():
         return _fail(f"target directory does not exist: {target_path}")
@@ -385,6 +444,20 @@ def install(
     else:
         _log(f"Detected {profile['label']}.")
         _log(f"Next:  {profile['next_step']}")
+
+    # OPT-IN data persist: snapshot this project's USER-DATA under <home>/data/<key> (one-way).
+    # A fresh drop has no user-data yet -> honest skip (exit 0). Unwritable -> data_unwritable.
+    if as_global_data:
+        env_map = os.environ if env is None else env
+        home = resolve_global_home(env_map)
+        try:
+            persisted = _persist_data(home, target_path)
+        except OSError as exc:
+            return _fail(f"cannot write global data {home / 'data' / data_key(str(target_path))} — {exc}")
+        if persisted:
+            _log(f"  ✓ persisted data -> {home / 'data' / data_key(str(target_path))}")
+        else:
+            _log("  (no project data to persist yet — run /add to create one, then re-run --global-data)")
     _log("")
     return 0
 
@@ -540,8 +613,10 @@ def _update_global(target, *, force=False, bundled=None, version=None, env=None)
         if not Path(p).exists():
             _log(f"  ⚠ registered project {p} not found — pruning")
             pruned += 1
-            continue
+            continue                        # a vanished project's data snapshot is KEPT (the backup outlives it)
         _reconcile(Path(p), home)          # standard MANAGED map, sourced from the home mirror
+        if (home / "data" / data_key(p)).exists():
+            _persist_data(home, p)          # keep the opted-in project's snapshot current
         kept.append(p)
     _write_registry(home, kept)
     tail = f" ({pruned} pruned)" if pruned else ""

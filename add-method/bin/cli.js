@@ -26,6 +26,7 @@
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const crypto = require("crypto");
 
 const PKG_ROOT = path.resolve(__dirname, "..");
 
@@ -38,7 +39,7 @@ function parseArgs(argv) {
   // defaults the stage and infers the name from the folder, so the manual-init
   // hint only echoes flags the user actually chose (shortest true command).
   const args = { _: [], force: false, check: false, noSkill: false, stage: null, name: null,
-                 yes: false, nonInteractive: false, global: false };
+                 yes: false, nonInteractive: false, global: false, globalData: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--force") args.force = true;
@@ -46,6 +47,9 @@ function parseArgs(argv) {
     // --global: ALSO install the managed layer to a shared home + register this project
     // (the per-project self-contained drop still runs). update --global refreshes all.
     else if (a === "--global") args.global = true;
+    // --global-data: (implies --global) ALSO persist this project's user-data under
+    // <home>/data/<key> keyed by path (opt-in, one-way snapshot).
+    else if (a === "--global-data") args.globalData = true;
     // --yes / --non-interactive: skip all prompts, take defaults — the explicit
     // non-interactive selector the interactive() gate honors (CI/pipes do this too).
     else if (a === "--yes" || a === "-y") args.yes = true;
@@ -269,10 +273,13 @@ async function cmdInit(args) {
       if (outcome.profile) profile = outcome.profile;   // honor the user's override
     }
   }
+  if (args.globalData) args.global = true;   // --global-data implies --global (need a home)
   // OPT-IN global home, BEFORE the per-project drop (fail-closed if the home is unwritable
   // or its registry is corrupt — the package + the self-contained default stay usable).
   if (args.global) installGlobal(args, chosenTarget);
   dropFiles(args, chosenTarget, profile);
+  // OPT-IN data persist, AFTER the drop (one-way snapshot of existing user-data).
+  if (args.globalData) installGlobalData(chosenTarget);
 }
 
 // --- update: re-materialize the managed layer without a re-install -----------
@@ -421,6 +428,60 @@ function reconcileGlobal(home, claudeDir, noSkill) {
   if (!noSkill) cleanReplaceTree(path.join(home, "skill", "add"), claudeDir, false);
 }
 
+// --- global DATA: an OPT-IN per-project user-data snapshot under <home>/data/<key> ----------
+// Strictly additive; copies ONLY user-data (managed trees + transient excluded), clean-replaced,
+// one-way (project->home). Mirror of _installer.py (identical key + include/exclude rule).
+const DATA_EXCLUDE = ["tooling", "docs", ".update-cache", STAMP_FILE];   // managed trees + meta
+
+// data_key twin: <sanitized-basename>-<sha1(abspath_utf8)[:12]>. Pure · total · separator-free.
+function dataKey(projectAbspath) {
+  const p = String(projectAbspath);
+  const digest = crypto.createHash("sha1").update(p, "utf8").digest("hex").slice(0, 12);
+  const base = (path.basename(p) || "root").replace(/[^A-Za-z0-9._-]/g, "_");
+  return base + "-" + digest;
+}
+
+// A top-level .add/ entry is user-data unless it is a managed tree or a transient artifact.
+function isUserData(name) {
+  if (DATA_EXCLUDE.includes(name)) return false;
+  if (name.startsWith("scope-snapshot")) return false;
+  if (name.includes("pre-archive-bak")) return false;
+  if (name.endsWith(".bak.json")) return false;
+  return true;
+}
+
+// Clean-replace a project's USER-DATA into <home>/data/<key>. true=persisted, false=skipped
+// (no .add or no user-data — an honest skip). Throws if the data dir can't be written.
+function persistData(home, projectAbspath) {
+  const addDir = path.join(projectAbspath, ".add");
+  if (!fs.existsSync(addDir)) return false;
+  const entries = fs.readdirSync(addDir).filter(isUserData);
+  if (entries.length === 0) return false;
+  const dest = path.join(home, "data", dataKey(projectAbspath));
+  if (fs.existsSync(dest)) fs.rmSync(dest, { recursive: true, force: true });
+  fs.mkdirSync(dest, { recursive: true });
+  for (const e of entries) {
+    fs.cpSync(path.join(addDir, e), path.join(dest, e), { recursive: true });
+  }
+  return true;
+}
+
+// init --global-data: persist this project's user-data after the per-project drop. Resolves the
+// SAME realpath the registry uses (so the key matches). Skip+notice when empty; fail on unwritable.
+function installGlobalData(chosenTarget) {
+  const home = resolveGlobalHome(process.env);
+  let resolved = chosenTarget;
+  try { resolved = fs.realpathSync(chosenTarget); } catch (_e) { /* fall back to the abspath */ }
+  let persisted;
+  try { persisted = persistData(home, resolved); }
+  catch (e) {
+    fail("cannot write global data " + path.join(home, "data", dataKey(resolved)) +
+         " — " + (e && e.message ? e.message : e));
+  }
+  if (persisted) log("  ✓ persisted data -> " + path.join(home, "data", dataKey(resolved)));
+  else log("  (no project data to persist yet — run /add to create one, then re-run --global-data)");
+}
+
 // init --global: install the managed layer ONCE to the shared home + register this project,
 // fail-closed BEFORE the per-project drop. Returns the resolved target for the normal drop.
 function installGlobal(args, chosenTarget) {
@@ -463,6 +524,9 @@ function cmdUpdateGlobal(args) {
   for (const p of reg) {
     if (!fs.existsSync(p)) { log("  ⚠ registered project " + p + " not found — pruning"); pruned++; continue; }
     reconcile(args, p, home);     // standard MANAGED map, sourced from the home mirror
+    // re-persist an opted-in project (one that already has a snapshot); a vanished
+    // project's snapshot is KEPT above (the backup outlives the dir).
+    if (fs.existsSync(path.join(home, "data", dataKey(p)))) persistData(home, p);
     kept.push(p);
   }
   writeRegistry(home, kept);
@@ -523,6 +587,7 @@ async function main() {
       log("  init    install the ADD skill + tooling + book into a project");
       log("          (--no-skill drops the engine + book only — used by the Claude Code plugin)");
       log("          (--global ALSO installs to a shared home [ADD_HOME|XDG_DATA_HOME/add|~/.add] + registers the project)");
+      log("          (--global-data implies --global + persists this project's user-data under <home>/data/<key>)");
       log("          (interactive in a real terminal; --yes / --non-interactive force the plain path)");
       log("  update  re-materialize skill/tooling/docs to this package version (preserves your state)");
       log("          (--global refreshes the shared home + propagates to every registered project)");
