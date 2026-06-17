@@ -1,7 +1,7 @@
-# TASK: {{title}}
+# TASK: Multi File Commit
 
-slug: {{slug}} · created: {{date}} · stage: {{stage}}
-autonomy: {{autonomy}}   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it, or run `add.py autonomy set`. -->
+slug: multi-file-commit · created: 2026-06-17 · stage: mvp
+autonomy: auto   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it, or run `add.py autonomy set`. -->
 phase: ground   <!-- ground -> specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower the
      autonomy level to `manual` or `conservative` — the engine refuses an unguarded completion
@@ -24,7 +24,7 @@ Anchors the contract cites: <the symbols §3 will name>
 
 ## 1 · SPECIFY — the rules ▸ docs/03-step-1-specify.md
 
-Feature: <name>
+Feature: give the engine a true multi-file commit primitive (stage every temp → fsync → rename-all, rollback-on-fail) so `fold`/`seed`/`release` get all-or-nothing across N files, closing the near-impossible mid-rename residual two-phase commit still leaves (evidence: fold-command verify refute-read — `_atomic_write_many` shrank but did not eliminate the window). (from fold-command spec-delta)
 Framings weighed: <chosen> (chosen) · <alternative> · <alternative>
 Must:
 <must>

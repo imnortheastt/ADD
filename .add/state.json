@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "compact-force-override",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -757,10 +757,189 @@
           }
         ]
       }
+    },
+    "spec-delta-grammar": {
+      "title": "Spec-delta grammar \u2014 separate resolution track",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [],
+      "created": "2026-06-16T14:31:54+00:00",
+      "updated": "2026-06-16T15:30:07+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "109c734cb9f3b5ac919b87fea5bcf061",
+        "tests": {
+          "add-method/tooling/test_spec_delta_grammar.py": "28b9d9462ef44f87bc64674a67e9ef04"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/templates/TASK.md.tmpl",
+          "add-method/tooling/test_spec_delta_grammar.py",
+          "add-method/tooling/test_ground_prose.py",
+          "add-method/tooling/test_template_form_tags.py",
+          "add-method/tooling/test_deltas_report.py",
+          "add-method/tooling/test_report.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/templates/TASK.md.tmpl",
+          ".add/tooling/add.py",
+          ".add/tooling/templates/TASK.md.tmpl"
+        ],
+        "snapshot_md5": "34cd2b66ae032d24113d53296288586a"
+      }
+    },
+    "seed-and-drop": {
+      "title": "Seed/drop verbs \u2014 resolve an open SPEC delta into a task or dismiss it",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [
+        "spec-delta-grammar"
+      ],
+      "created": "2026-06-16T15:32:26+00:00",
+      "updated": "2026-06-16T16:03:09+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9b743b40ecdebef2b1fd05c6edaddde9",
+        "tests": {
+          "add-method/tooling/test_seed_and_drop.py": "d92772127affee81782ac41ca99303ba"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/test_seed_and_drop.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py"
+        ],
+        "snapshot_md5": "7b41463cf88c20713f906463e1a5ba01"
+      }
+    },
+    "spec-delta-guards": {
+      "title": "Guard open SPEC deltas \u2014 compact blocks, status/report nudge",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [
+        "seed-and-drop"
+      ],
+      "created": "2026-06-16T16:04:58+00:00",
+      "updated": "2026-06-16T16:31:04+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "310decc294ac3538671d980833c63206",
+        "tests": {
+          "add-method/tooling/test_spec_delta_guards.py": "bfc12461af847537ed3b6dda4c3194cc"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/test_spec_delta_guards.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          ".add/tooling/add.py"
+        ],
+        "snapshot_md5": "7e4759d73b3c09c225c9072b4e7abfa2"
+      }
+    },
+    "fold-command": {
+      "title": "add.py fold \u2014 mechanize competency-delta consolidation (flip+stamp+route+bump)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [
+        "spec-delta-guards"
+      ],
+      "created": "2026-06-16T16:54:01+00:00",
+      "updated": "2026-06-17T02:00:33+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "5445b76c40714282d355ef02bd8a8140",
+        "tests": {
+          "add-method/tooling/test_fold_command.py": "a231e1fd6c1844f8cbd5d0dee1d01b36"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/test_foundation_update_loop.py",
+          "add-method/tooling/test_ubiquitous_language.py",
+          "add-method/tooling/test_scope_gate_enforce.py",
+          "add-method/skill/add/fold.md",
+          "add-method/src/add_method/_bundled/skill/add/fold.md",
+          ".claude/skills/add/fold.md"
+        ],
+        "snapshot_md5": "6af925e021b3660a8cd0c1b6b8f17750"
+      },
+      "heal": {
+        "attempts": 3,
+        "history": [
+          {
+            "at": "2026-06-17T01:47:19+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-17T01:48:35+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-17T01:50:11+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-17T01:51:02+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          }
+        ]
+      }
+    },
+    "multi-file-commit": {
+      "title": "Multi File Commit",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "delta-resolution-polish",
+      "depends_on": [],
+      "created": "2026-06-17T02:07:27+00:00",
+      "updated": "2026-06-17T02:07:27+00:00",
+      "from_delta": "fold-command"
+    },
+    "delta-match-selector": {
+      "title": "Delta Match Selector",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "delta-resolution-polish",
+      "depends_on": [],
+      "created": "2026-06-17T02:07:27+00:00",
+      "updated": "2026-06-17T02:07:27+00:00",
+      "from_delta": "seed-and-drop"
+    },
+    "compact-force-override": {
+      "title": "Compact Force Override",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "delta-resolution-polish",
+      "depends_on": [],
+      "created": "2026-06-17T02:07:27+00:00",
+      "updated": "2026-06-17T02:07:27+00:00",
+      "from_delta": "spec-delta-guards"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T13:42:32+00:00",
+  "updated": "2026-06-17T02:08:18+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -881,9 +1060,25 @@
       "status": "done",
       "created": "2026-06-11T17:19:27+00:00",
       "updated": "2026-06-12T17:19:38+00:00"
+    },
+    "delta-resolution": {
+      "title": "Delta Resolution",
+      "goal": "every delta \u2014 spec and competency \u2014 has a recorded, engine-driven resolution event, never a silent dangling lesson",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-16T14:27:44+00:00",
+      "updated": "2026-06-17T02:08:18+00:00"
+    },
+    "delta-resolution-polish": {
+      "title": "Delta Resolution Polish",
+      "goal": "polish the delta-resolution machinery from the deltas the first milestone surfaced: a true multi-file commit primitive (all-or-nothing across N files), a --match selector to target a specific open SPEC delta, and a compact --force override for an unrelated open SPEC delta",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-17T02:07:15+00:00",
+      "updated": "2026-06-17T02:07:15+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "delta-resolution-polish",
   "archived": [
     {
       "slug": "v5",

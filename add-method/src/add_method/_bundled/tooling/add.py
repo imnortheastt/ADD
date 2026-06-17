@@ -145,6 +145,8 @@ Status: DRAFT
 ### GATE RECORD
 Outcome:
 ## 7 · OBSERVE
+### Spec delta
+### Competency deltas
 """
 
 
@@ -168,6 +170,32 @@ def _atomic_write(path: Path, text: str) -> None:
     finally:
         if os.path.exists(tmp):
             os.unlink(tmp)
+
+
+def _atomic_write_many(writes: list[tuple[Path, str]]) -> None:
+    """Two-phase commit across several files — design-for-failure for a multi-file write.
+
+    Phase 1 STAGES every (path, text) to a sibling temp file; the realistic IO failures
+    (disk full, permission denied) surface HERE, before any visible file changes — and on any
+    failure every staged temp is removed, so NOTHING is committed. Phase 2 then `os.replace`s
+    each staged temp into place (same-dir renames are atomic and effectively never fail once the
+    temp is written). This narrows the partial-write window of N independent `_atomic_write`s to
+    the rename loop, honouring a caller's "any failure -> write nothing" across the whole set.
+    """
+    staged: list[tuple[str, Path]] = []
+    try:
+        for path, text in writes:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(text)
+            staged.append((tmp, path))
+        for tmp, path in staged:                  # phase 2: commit via atomic renames
+            os.replace(tmp, path)
+    finally:
+        for tmp, _ in staged:                     # leftover temps (a failed/aborted stage) never persist
+            if os.path.exists(tmp):
+                os.unlink(tmp)
 
 
 def _templates_dir() -> Path:
@@ -476,15 +504,37 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         _die("unknown_milestone")
     depends_on = _parse_deps(getattr(args, "depends_on", None))
 
+    # SEED (--from-delta): resolve a prior task's FIRST open SPEC delta into THIS task.
+    # validate-ALL-then-write — resolve the prior, read its open delta, and compute the
+    # seeded flip NOW (before any write); the slug-free check above has already passed, so
+    # the only writes below are the new TASK.md, then the prior flip, then state.
+    from_delta = getattr(args, "from_delta", None)
+    feature_override = prior_md = flipped_prior = None
+    if from_delta:
+        prior = _resolve_task(state, from_delta)            # unknown prior -> _die
+        prior_md = root / "tasks" / prior / "TASK.md"
+        prior_text = prior_md.read_text(encoding="utf-8")
+        delta_text = _first_open_spec_text(prior_text)
+        if delta_text is None:
+            _die(f"no_open_spec_delta: task '{prior}' has no open SPEC delta to seed")
+        feature_override = f"{delta_text} (from {prior} spec-delta)"
+        flipped_prior = _resolve_spec_delta(prior_text, "seeded", pointer=slug)
+
     (tdir / "tests").mkdir(parents=True, exist_ok=True)
     (tdir / "src").mkdir(parents=True, exist_ok=True)
     title = args.title or slug.replace("-", " ").replace("_", " ").title()
     # inherit the project's DECLARED autonomy default (task init-auto-default) — fail-SAFE:
     # absent -> auto, garbled -> conservative; the posture is project-scoped, not hardcoded.
     autonomy = _project_autonomy(root)
-    _atomic_write(task_md, _render_template(
+    rendered = _render_template(
         "TASK.md", title=title, slug=slug, date=date.today().isoformat(),
-        stage=state["stage"], autonomy=autonomy))
+        stage=state["stage"], autonomy=autonomy)
+    if feature_override:                                     # pre-fill §1 from the seeded delta
+        rendered = re.sub(r"(?m)^Feature:.*$",
+                          lambda _m: f"Feature: {feature_override}", rendered, count=1)
+    _atomic_write(task_md, rendered)
+    if flipped_prior is not None:                           # consume the source delta -> seeded
+        _atomic_write(prior_md, flipped_prior)
     if _project_autonomy_token(root) == "?":
         print("warning: garbled_project_autonomy — PROJECT.md declares an unrecognized "
               f"autonomy token; new task seeded fail-safe '{autonomy}' "
@@ -499,6 +549,8 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         "created": _now(),
         "updated": _now(),
     }
+    if from_delta:
+        state["tasks"][slug]["from_delta"] = from_delta     # lineage: seeded from <prior>
     state["active_task"] = slug
     save_state(root, state)
     print(f"created task '{slug}' -> {task_md}")
@@ -510,8 +562,29 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         # intake -> milestone flow. Speaks of STRUCTURE (not attached), never the act.
         print(f"note: '{slug}' is not attached to a milestone — size it via /add (intake), "
               "or pass --milestone <id>")
+    if from_delta:
+        print(f"seeded from '{from_delta}' — its open SPEC delta is now "
+              f"[SPEC · seeded] … [→ {slug}]; §1 Feature pre-filled.")
     print("active task set. phase: ground. Gather the real codebase (section 0 GROUND).")
     print(_next_footer(root, state))   # converges the old "then: add.py advance" hint
+
+
+def cmd_drop_delta(args: argparse.Namespace) -> None:
+    """DISMISS a task's first open SPEC delta — `[SPEC · open]` -> `[SPEC · dropped]`.
+
+    The dismiss half of the SPEC-delta resolution pair (seed lives on `new-task
+    --from-delta`). Validate-then-write: refuse `no_open_spec_delta` before any write;
+    text + `(evidence: …)` are byte-preserved by the pure `_resolve_spec_delta`."""
+    root = _require_root()
+    state = load_state(root)
+    slug = _resolve_task(state, args.slug)                  # unknown task -> _die
+    task_md = root / "tasks" / slug / "TASK.md"
+    new_text = _resolve_spec_delta(task_md.read_text(encoding="utf-8"), "dropped")
+    if new_text is None:
+        _die(f"no_open_spec_delta: task '{slug}' has no open SPEC delta to drop")
+    _atomic_write(task_md, new_text)
+    print(f"dropped the first open SPEC delta in '{slug}' -> [SPEC · dropped]")
+    print(_next_footer(root, state))
 
 
 def _parse_deps(raw: str | None) -> list[str]:
@@ -1111,6 +1184,12 @@ def cmd_status(args: argparse.Namespace) -> None:
     open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
     if open_deltas:
         print(f"deltas  : {open_deltas} open — consolidate at milestone close (add.py deltas)")
+    # SPEC-delta nudge (project-wide): surface unresolved forward hand-offs so a seed/drop
+    # can't be silently skipped (read-only; silent when none). Sibling of the fold nudge.
+    open_spec = len(_collect_open_spec_deltas(root))
+    if open_spec:
+        noun = "delta" if open_spec == 1 else "deltas"
+        print(f"spec    : {open_spec} open SPEC {noun} — resolve: new-task --from-delta / drop-delta")
     # When the setup is unlocked, the only terminal guidance that matters is
     # review+lock; suppress the generic resume block so it does not compete.
     if unlocked:
@@ -2237,6 +2316,12 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
         noun = "delta" if open_deltas == 1 else "deltas"
         print(f"note: {open_deltas} open {noun} to consolidate into the foundation "
               f"— review with: add.py deltas")
+    # SPEC-delta nudge (project-wide): the close is also a natural prompt to RESOLVE the
+    # forward hand-offs (seed/drop) so none is orphaned at the eventual compaction.
+    open_spec = len(_collect_open_spec_deltas(root))
+    if open_spec:
+        noun = "delta" if open_spec == 1 else "deltas"
+        print(f"note: {open_spec} open SPEC {noun} to resolve (seed/drop) — review: add.py deltas")
     # the engine-sourced next step (converges the old "Confirm … archive/start the next" hint)
     print(_next_footer(root, state))
 
@@ -2333,6 +2418,15 @@ def cmd_compact(args: argparse.Namespace) -> None:
     if offenders:
         _die("open_deltas_unfolded: consolidate the open lessons first (`add.py deltas`) — "
              "open in: " + " · ".join(offenders))
+    # SPEC-delta guard (PROJECT-WIDE, by the §3 freeze decision): a SPEC delta is a forward
+    # hand-off that resolves into a task, not a foundation lesson — an open one ANYWHERE would
+    # be orphaned at the next compaction. Deliberately broader than the member-scoped competency
+    # guard above. Still validate-before-move: refuses BEFORE the first rename.
+    spec_offenders = sorted({d["task"] for d in _collect_open_spec_deltas(root)})
+    if spec_offenders:
+        _die("open_spec_deltas_unresolved: resolve every open SPEC delta first "
+             "(`add.py deltas`; seed with `new-task --from-delta`, or `drop-delta`) — "
+             "open in: " + " · ".join(spec_offenders))
     # every precondition passed — move (same-filesystem renames, never a delete)
     def _files(d: Path) -> int:
         return sum(1 for f in d.rglob("*") if f.is_file())
@@ -2802,8 +2896,11 @@ def _tripwire_divergence(root: Path, slug: str, tw: dict) -> list[str]:
 # ── §5 scope gate (build-scope-lock): touched ⊆ declared, from bytes alone ──────────
 # The walk's NAMED exclusion set — ONE constant; widening it is an additive
 # change-request, never silent. `.add` is engine domain (tripwire + audit guard it);
-# the rest is VCS/bytecode/OS junk with no build signal.
-_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules")
+# the rest is VCS/bytecode/OS junk + code-intelligence tool caches with no build
+# signal. `.serena` holds a symbol index that re-writes itself whenever a source
+# file changes (md5 churn from a build edit must never read as an out-of-scope
+# touch — the dogfooding lesson that added it here).
+_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules", ".serena")
 _SCOPE_EXCLUDE_FILES = (".DS_Store",)          # plus *.pyc by suffix
 
 
@@ -3026,23 +3123,37 @@ def _task_prose(root: Path, slug: str) -> tuple[str, list[str]]:
         return "(unknown)", []
     text = f.read_text(encoding="utf-8")
     m7 = re.search(r"##\s*7\s*·\s*OBSERVE.*\Z", text, re.S)
-    lines = (m7.group(0) if m7 else text).splitlines()
-    # observe: the field value + continuation lines until a blank line / heading / list
+    section = m7.group(0) if m7 else text
+    lines = section.splitlines()
+    # observe: prefer the first OPEN SPEC delta from the "### Spec delta" block; fall
+    # back to the legacy "Spec delta for the next loop:" free-text field (archived
+    # tasks predate the block); else "(unknown)".
     observe = "(unknown)"
-    for i, ln in enumerate(lines):
-        m = re.match(r"\s*Spec delta for the next loop:\s*(.*)", ln)
-        if not m:
+    for unit in _spec_delta_entries(section):
+        m = _SPEC_DELTA_RE.match(unit[0])
+        if m.group(2) != "open":
             continue
-        parts = [m.group(1).strip()]
-        for nxt in lines[i + 1:]:
-            t = nxt.strip()
-            if not t or t.startswith("#") or t.startswith("- ") or t.startswith("Watch"):
-                break
-            parts.append(t)
-        joined = " ".join(p for p in parts if p).strip()
-        if joined and not joined.startswith("<"):
-            observe = joined
-        break
+        tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
+        em = _EVIDENCE_RE.match(tail)
+        first = (em.group(1).strip() if em else tail)
+        if first and not first.startswith("<"):
+            observe = first
+            break
+    if observe == "(unknown)":
+        for i, ln in enumerate(lines):
+            m = re.match(r"\s*Spec delta for the next loop:\s*(.*)", ln)
+            if not m:
+                continue
+            parts = [m.group(1).strip()]
+            for nxt in lines[i + 1:]:
+                t = nxt.strip()
+                if not t or t.startswith("#") or t.startswith("- ") or t.startswith("Watch"):
+                    break
+                parts.append(t)
+            joined = " ".join(p for p in parts if p).strip()
+            if joined and not joined.startswith("<"):
+                observe = joined
+            break
 
     # deltas: each "- [COMP · status] ..." plus its indented continuation lines
     deltas, i = [], 0
@@ -3132,6 +3243,8 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
                       "RISK-ACCEPTED": sum(1 for r in task_rows if r["gate"] == "RISK-ACCEPTED"),
                       "HARD-STOP": sum(1 for r in task_rows if r["gate"] == "HARD-STOP")},
             "exit_criteria": {"met": met, "total": total_ec},
+            # project-wide open SPEC-delta count (uniform with status/milestone-done/compact)
+            "open_spec": len(_collect_open_spec_deltas(root)),
         },
         "tasks": task_rows,
         "waivers": waivers,
@@ -3369,6 +3482,11 @@ def render_report(root: Path, state: dict, mslug: str, *,
             L.extend(_wrap(x, W - 5, f"   {g['bullet']} "))
     else:
         L.append(" LEARNINGS      none")
+    if d.get("summary", {}).get("open_spec"):   # project-wide open SPEC-delta nudge (read-only)
+        n = d["summary"]["open_spec"]
+        noun = "delta" if n == 1 else "deltas"
+        L.append("")
+        L.append(f" SPEC DELTAS    {n} open {noun} — resolve: new-task --from-delta / drop-delta")
     L.append("")   # DECIDE NEXT footer (v13): always present, APPEND-ONLY
     L.extend(_wrap(_decide_next_base(state, d), W - 15, " DECIDE NEXT  "))
     if _planned_hint(d):   # own segment so the phrase never splits mid-token
@@ -3741,6 +3859,18 @@ _DELTA_RE = re.compile(
 )
 _EVIDENCE_RE = re.compile(r"^(.*?)\s*\(evidence:\s*(.*?)\)\s*$")
 
+# SPEC-delta track — a SEPARATE resolution lifecycle from the competency deltas
+# above. SPEC shares the "- [TAG · status]" LINE shape but its statuses are
+# DISJOINT (open|seeded|dropped) and it resolves into a TASK (seeded) or is
+# dismissed (dropped) — never consolidated into the foundation. _STATUS_SETS keys each
+# tag to its legal status set so the ONE lint can reject a cross-set pairing
+# ([SPEC · folded], [SDD · seeded]) without a parallel grammar.
+_SPEC_STATUSES = ("open", "seeded", "dropped")
+_SPEC_DELTA_RE = re.compile(
+    r"\s*-\s*\[\s*(SPEC)\s*·\s*(open|seeded|dropped)\s*\]\s*(.+)$"
+)
+_STATUS_SETS = {**{c: _DELTA_STATUSES for c in _COMPETENCY_ORDER}, "SPEC": _SPEC_STATUSES}
+
 # Broad structural tag detector: finds ANY "- [tok · tok]" line (valid OR malformed).
 # A line with a `· ` bracket separator is a delta-attempt. Does NOT enumerate
 # competencies or statuses — a different abstraction from _DELTA_RE (no DRY violation).
@@ -3748,21 +3878,25 @@ _TAG_BROAD_RE = re.compile(r"^\s*-\s*\[\s*([^\]·]+?)\s*·\s*([^\]·]+?)\s*\]\s*
 
 
 def _lint_task_deltas(root: Path, slug: str) -> tuple[bool, str] | None:
-    """Lint all open delta entries in a task's '### Competency deltas' block.
+    """Lint all open delta entries in a task's '### Competency deltas' AND '### Spec delta' blocks.
 
     Returns:
         None                    — no delta-attempts found; no check emitted.
         (True, "")              — all open entries pass.
         (False, "<code> -> <tag line>") — first failing entry with its failure code.
 
-    Contract rules (frozen §3, v1):
+    Contract rules (frozen §3, spec-delta-grammar v1):
     - SKIP HTML-comment lines and blank lines (they are never tag lines).
-    - Group lines into ENTRIES: a broad tag line starts an entry; following lines
-      until next tag / blank / end-of-block are its continuation.
+    - Group lines into ENTRIES across both blocks: a broad tag line starts an entry;
+      following lines until next tag / blank / block boundary are its continuation.
     - A line without a '· ' separator inside brackets (e.g. '- [x]') is NOT a tag.
-    - For each entry, skip folded/rejected (open-only — history not retrofitted).
-    - Validate the remaining (open) entries: COMP in _COMPETENCY_ORDER,
-      status in _DELTA_STATUSES, and '(evidence:' present SOMEWHERE in the unit.
+    - Validation is TAG-SCOPED via _STATUS_SETS: each tag carries its own legal
+      status set (the competency statuses for DDD…ADD, the SPEC statuses for SPEC).
+      A status drawn from the wrong set (e.g. a competency-only status on SPEC, or
+      `seeded` on a competency tag) is unknown_status.
+    - Skip an entry whose status is RESOLVED for its tag (open-only — history not
+      retrofitted). Validate the rest: tag known, status legal, non-empty text, and
+      '(evidence:' present — evidence is required on an OPEN entry of ANY tag.
     - Fail-closed: an unparseable attempt FAILS (never silently passes).
     """
     task_md = root / "tasks" / slug / "TASK.md"
@@ -3773,71 +3907,64 @@ def _lint_task_deltas(root: Path, slug: str) -> tuple[bool, str] | None:
     except OSError:
         return None
 
-    # Locate the "### Competency deltas" block.
-    block_match = re.search(r"###\s*Competency deltas\s*\n(.*?)(?=\n##|\Z)", text, re.S)
-    if not block_match:
+    # Locate BOTH delta blocks — "### Competency deltas" and the SPEC track
+    # "### Spec delta". Each contributes entries to the same tag-scoped validation.
+    blocks = []
+    for pat in (r"###\s*Competency deltas\s*\n(.*?)(?=\n##|\Z)",
+                r"###\s*Spec delta\s*\n(.*?)(?=\n##|\Z)"):
+        bm = re.search(pat, text, re.S)
+        if bm:
+            blocks.append(bm.group(1))
+    if not blocks:
         return None
 
-    block = block_match.group(1)
-    raw_lines = block.splitlines()
-
-    # First pass: collect entries (tag line + continuations).
-    # HTML-comment lines are skipped entirely (invisible to the guard).
-    # Blank lines terminate the current entry, but are not tags themselves.
+    # First pass: collect entries (tag line + continuations). HTML-comment and blank
+    # lines never start an entry; a block boundary closes any open entry.
     entries: list[tuple[str, list[str]]] = []  # (tag_line, [tag_line, *continuations])
-    current: list[str] | None = None
-    for raw_line in raw_lines:
-        stripped = raw_line.strip()
-        # Skip HTML-comment lines.
-        if stripped.startswith("<!--"):
-            continue
-        # Blank line terminates the current entry.
-        if not stripped:
-            current = None
-            continue
-        # Broad tag detection: any "- [tok · tok]" line starts a new entry.
-        m = _TAG_BROAD_RE.match(raw_line)
-        if m:
-            current = [stripped]
-            entries.append((stripped, current))
-        elif current is not None:
-            # Continuation line of the current entry.
-            current.append(stripped)
-        # else: non-blank, non-comment, non-tag line with no prior entry — ignore.
+    for block in blocks:
+        current: list[str] | None = None
+        for raw_line in block.splitlines():
+            stripped = raw_line.strip()
+            if stripped.startswith("<!--"):
+                continue
+            if not stripped:
+                current = None
+                continue
+            if _TAG_BROAD_RE.match(raw_line):
+                current = [stripped]
+                entries.append((stripped, current))
+            elif current is not None:
+                current.append(stripped)
 
     if not entries:
         return None  # no delta-attempts → no check emitted
 
-    # Second pass: validate each entry.
+    # Second pass: validate each entry, TAG-SCOPED. The status set is per-tag
+    # (_STATUS_SETS): competency → open|folded|rejected, SPEC → open|seeded|dropped.
     for tag_line, unit_lines in entries:
         m = _TAG_BROAD_RE.match(tag_line)
         if not m:
-            # Should not happen, but fail-closed.
-            return False, f"malformed_delta -> {tag_line}"
+            return False, f"malformed_delta -> {tag_line}"  # fail-closed
         raw_comp = m.group(1).strip()
         raw_status = m.group(2).strip()
+        tail = m.group(3).strip()
 
-        # Step 1: skip historical entries (folded/rejected) — open-only enforcement.
-        # MUST happen before competency/status validation per §3: "history not retrofitted".
-        if raw_status in ("folded", "rejected"):
+        # Skip RESOLVED (non-open) entries — history is not retrofitted. Resolved is
+        # tag-scoped (folded|rejected · seeded|dropped); an unknown tag defaults to the
+        # competency set so a legacy folded/rejected line still skips cleanly.
+        resolved = set(_STATUS_SETS.get(raw_comp, _DELTA_STATUSES)) - {"open"}
+        if raw_status in resolved:
             continue
 
-        # Step 2: use _DELTA_RE (the canonical grammar, single source of truth) to test
-        # whether the tag line is a fully-valid delta shape. If it matches, check evidence
-        # only. If it fails, classify the failure via the raw tokens (never a parallel grammar).
-        unit_text = " ".join(unit_lines)
-        if _DELTA_RE.match(tag_line):
-            # Valid comp + status + non-empty tail — check evidence in the joined unit.
-            if "(evidence:" not in unit_text:
-                return False, f"no_evidence -> {tag_line}"
-        else:
-            # Classify why _DELTA_RE rejected it (open entries only — folded/rejected skipped).
-            if raw_comp not in _COMPETENCY_ORDER:
-                return False, f"unknown_competency -> {tag_line}"
-            if raw_status not in _DELTA_STATUSES:
-                return False, f"unknown_status -> {tag_line}"
-            # Comp and status are valid but the line still failed _DELTA_RE (e.g. empty tail).
+        legal = _STATUS_SETS.get(raw_comp)
+        if legal is None:
+            return False, f"unknown_competency -> {tag_line}"
+        if raw_status not in legal:
+            return False, f"unknown_status -> {tag_line}"
+        if not tail:
             return False, f"malformed_delta -> {tag_line}"
+        if "(evidence:" not in " ".join(unit_lines):     # required on open of ANY tag
+            return False, f"no_evidence -> {tag_line}"
 
     return True, ""
 
@@ -3895,6 +4022,295 @@ def _collect_open_deltas(root: Path) -> dict[str, list[dict]]:
                 delta_text, evidence = tail, ""
             by_comp[comp].append({"task": slug, "text": delta_text, "evidence": evidence})
     return by_comp
+
+
+def _spec_delta_entries(text: str) -> list[list[str]]:
+    """Group a "### Spec delta" block into entries (tag line + continuation lines).
+
+    Same grouping discipline as _collect_open_deltas' competency pass, keyed on
+    _SPEC_DELTA_RE: a tag line starts an entry; a non-"- " line continues it; a
+    blank/comment or a new "- " item ends it. Returns [] when the block is absent."""
+    bm = re.search(r"###\s*Spec delta\s*\n(.*?)(?=\n##|\Z)", text, re.S)
+    if not bm:
+        return []
+    entries: list[list[str]] = []
+    current: list[str] | None = None
+    for line in bm.group(1).splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("<!--"):
+            current = None
+            continue
+        if _SPEC_DELTA_RE.match(stripped):
+            current = [stripped]
+            entries.append(current)
+        elif current is not None and not stripped.startswith("-"):
+            current.append(stripped)         # genuine wrap of the current entry
+        else:
+            current = None                   # a new / malformed list item ends the run
+    return entries
+
+
+def _collect_open_spec_deltas(root: Path) -> list[dict]:
+    """Scan every .add/tasks/*/TASK.md "### Spec delta" block for OPEN SPEC deltas.
+
+    Returns a FLAT list of {task, text, evidence} dicts (SPEC is one tag, never
+    bucketed by competency). A SPEC delta is a forward hand-off that resolves into
+    a TASK — never consolidated into the foundation — so it is collected SEPARATELY from
+    _collect_open_deltas. READ-ONLY; never mutates any file."""
+    out: list[dict] = []
+    tasks_dir = root / "tasks"
+    if not tasks_dir.is_dir():
+        return out
+    for task_md in sorted(tasks_dir.glob("*/TASK.md")):
+        slug = task_md.parent.name
+        try:
+            text = task_md.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for unit in _spec_delta_entries(text):
+            m = _SPEC_DELTA_RE.match(unit[0])
+            if m.group(2) != "open":         # seeded / dropped are resolved — excluded
+                continue
+            tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
+            em = _EVIDENCE_RE.match(tail)
+            if em:
+                delta_text, evidence = em.group(1).strip(), em.group(2).strip()
+            else:
+                delta_text, evidence = tail, ""
+            out.append({"task": slug, "text": delta_text, "evidence": evidence})
+    return out
+
+
+# The FIRST writer of the seeded/dropped statuses (task 1 only TOLERATED them on read).
+# seed-and-drop's resolution verbs both route through here.
+_SPEC_OPEN_TOKEN_RE = re.compile(r"(\[\s*SPEC\s*·\s*)open(\s*\])")
+
+
+def _resolve_spec_delta(text: str, new_status: str, pointer: str | None = None) -> str | None:
+    """Flip the FIRST `[SPEC · open]` line in `text` to `new_status`; return the new text.
+
+    PURE — no IO. Only the status token changes (+ a trailing ` [→ <pointer>]` provenance
+    stamp when seeding); the entry's text and `(evidence: …)` are byte-preserved. Returns
+    None when there is NO open SPEC delta — the caller then refuses and writes nothing
+    (validate-all-then-write). Mirrors the `_autonomy_decl_line` pure-transform pattern."""
+    lines = text.splitlines(keepends=True)
+    for i, ln in enumerate(lines):
+        m = _SPEC_DELTA_RE.match(ln.rstrip("\n"))
+        if not m or m.group(2) != "open":
+            continue
+        eol = ln[len(ln.rstrip("\n")):]            # preserve the exact line ending
+        body = _SPEC_OPEN_TOKEN_RE.sub(rf"\g<1>{new_status}\g<2>", ln.rstrip("\n"), count=1)
+        if pointer:
+            body = f"{body} [→ {pointer}]"
+        lines[i] = body + eol
+        return "".join(lines)
+    return None
+
+
+def _first_open_spec_text(text: str) -> str | None:
+    """The first OPEN SPEC delta's text (evidence stripped) in `text`, or None.
+
+    Used to pre-fill a seeded task's §1 Feature line from the SAME in-memory text the
+    flip operates on (one read, consistent selection)."""
+    for unit in _spec_delta_entries(text):
+        m = _SPEC_DELTA_RE.match(unit[0])
+        if m.group(2) != "open":
+            continue
+        tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
+        em = _EVIDENCE_RE.match(tail)
+        return em.group(1).strip() if em else tail
+    return None
+
+
+# ── add.py fold — mechanized competency-lesson consolidation ────────────────────────────────
+# The HUMAN-AUTHORIZED reversal of the prior "the engine stays judgment-free; there is no
+# add.py fold" principle (foundation-update-loop re-frozen @ v3). The engine now mechanizes ONE
+# consolidation session — flip + stamp + route + version-bump — but only ever TRANSCRIBES a
+# lesson's own captured text into its routed home; it NEVER composes or merges prose (that
+# editorial judgment stays the human's, via the compaction door). `fold`/`folded` are Group C
+# machine tokens here (the subcommand name + the status value), referenced by NAME inside output
+# strings so the ubiquitous-language prose lint sees no slang — only the two defs below carry the
+# literal, both exempt via MACHINE_CONSTANTS.
+_FOLD_VERB = "fold"        # the subcommand / decision-record verb
+_FOLDED = "folded"         # the resolved status value
+_COMP_OPEN_TOKEN_RE = re.compile(r"(\[\s*(?:DDD|SDD|UDD|TDD|ADD)\s*·\s*)open(\s*\])")
+
+# competency -> (foundation file, section-heading PREFIX) — fold.md's routing table. DDD/SDD/UDD
+# land in PROJECT.md sections; TDD/ADD in CONVENTIONS.md (they ARE the engine). Total over the five.
+_FOLD_ROUTES = {
+    "DDD": ("PROJECT.md", "## Domain"),
+    "SDD": ("PROJECT.md", "## Spec"),
+    "UDD": ("PROJECT.md", "## Users"),
+    "TDD": ("CONVENTIONS.md", "## Method learnings"),
+    "ADD": ("CONVENTIONS.md", "## Method learnings"),
+}
+_KEY_DECISIONS_HEADING = "## Key Decisions"   # the universal audit-trail section (every session adds one row)
+_TABLE_SEP_RE = re.compile(r"\s*\|[-\s|]+\|\s*$")
+
+
+def _fold_competency_delta(text: str, version: int, comps=None) -> str | None:
+    """Flip EVERY open competency lesson in `text` to resolved + append ` [<resolved> foundation-version N]`.
+
+    PURE — no IO. Mirrors `_resolve_spec_delta`: only the status token changes plus the trailing
+    stamp; the line's text + `(evidence: …)` are byte-preserved. `comps` (a set of competency tags)
+    narrows which to flip; None = all five. Returns the new text, or None when NOTHING was open to
+    flip (the caller then refuses / skips — validate-all-then-write)."""
+    lines = text.splitlines(keepends=True)
+    flipped = False
+    for i, ln in enumerate(lines):
+        m = _DELTA_RE.match(ln.rstrip("\n"))
+        if not m or m.group(2) != "open":
+            continue
+        if comps is not None and m.group(1) not in comps:
+            continue
+        eol = ln[len(ln.rstrip("\n")):]                       # preserve the exact line ending
+        body = _COMP_OPEN_TOKEN_RE.sub(rf"\g<1>{_FOLDED}\g<2>", ln.rstrip("\n"), count=1)
+        body = f"{body} [{_FOLDED} foundation-version {version}]"
+        lines[i] = body + eol
+        flipped = True
+    return "".join(lines) if flipped else None
+
+
+def _section_present(text: str, heading_prefix: str) -> bool:
+    return any(ln.startswith(heading_prefix) for ln in text.splitlines())
+
+
+def _prepend_to_section(text: str, heading_prefix: str, bullet: str) -> str:
+    """Insert `bullet` immediately after the first line starting with `heading_prefix`
+    (newest-first, at the TOP of the section). Caller guarantees the heading exists."""
+    lines = text.splitlines(keepends=True)
+    for i, ln in enumerate(lines):
+        if ln.startswith(heading_prefix):
+            lines.insert(i + 1, bullet if bullet.endswith("\n") else bullet + "\n")
+            return "".join(lines)
+    return text
+
+
+def _prepend_key_decision_row(text: str, row: str) -> str:
+    """Insert `row` just below the §Key Decisions table separator (newest-first); if the table
+    separator is absent, fall back to right after the heading. Caller guarantees the heading."""
+    lines = text.splitlines(keepends=True)
+    head = next((i for i, ln in enumerate(lines)
+                 if ln.startswith(_KEY_DECISIONS_HEADING)), None)
+    if head is None:
+        return text
+    at = head + 1
+    for j in range(head + 1, min(head + 6, len(lines))):
+        if _TABLE_SEP_RE.match(lines[j].rstrip("\n")):
+            at = j + 1
+            break
+    lines.insert(at, row if row.endswith("\n") else row + "\n")
+    return "".join(lines)
+
+
+def cmd_fold(args: argparse.Namespace) -> None:
+    """Mechanize ONE competency-lesson consolidation session — flip + stamp + route + bump, atomic.
+
+    Collect every OPEN competency lesson (optionally narrowed by --task/--comp), flip each to the
+    resolved status + ` [<resolved> foundation-version N]`, transcribe it VERBATIM into its routed
+    foundation section, prepend one §Key Decisions row, and bump `foundation-version` ONCE.
+    Validate-ALL-then-write: every precondition is checked and every new body built in memory BEFORE
+    any write, so a reject leaves the whole tree byte-unchanged. The engine transcribes — it never
+    composes/merges prose (the human's consolidation, via the compaction door). Running the command
+    IS the human's confirmation; it never self-approves WHICH lessons to keep."""
+    root = _require_root()
+    state = load_state(root)
+
+    by_comp = _collect_open_deltas(root)
+    want_task = getattr(args, "task", None)
+    want_comp = getattr(args, "comp", None)
+    selected = []
+    for comp in _COMPETENCY_ORDER:
+        if want_comp and comp != want_comp:
+            continue
+        for it in by_comp.get(comp, []):
+            if want_task and it["task"] != want_task:
+                continue
+            selected.append({**it, "comp": comp})
+    if not selected:
+        scope = (f"task '{want_task}'" if want_task else "the project") + \
+                (f", competency {want_comp}" if want_comp else "")
+        _die(f"no_open_deltas: no open lesson to consolidate in {scope} (see `add.py deltas`)")
+
+    # version — one bump for the whole session; every stamp carries the SAME N.
+    project_md = root / "PROJECT.md"
+    project_text = project_md.read_text(encoding="utf-8")
+    vm = re.search(r"foundation-version:\s*(\d+)", project_text)
+    if not vm:
+        _die("no_foundation_version: PROJECT.md has no parseable 'foundation-version:' header to bump")
+    prev_v = int(vm.group(1))
+    new_v = prev_v + 1
+
+    # routing — every selected lesson's destination section (and the audit-trail section) must exist.
+    conventions_md = root / "CONVENTIONS.md"
+    conventions_text = conventions_md.read_text(encoding="utf-8") if conventions_md.exists() else ""
+    file_text = {"PROJECT.md": project_text, "CONVENTIONS.md": conventions_text}
+    for it in selected:
+        fname, heading = _FOLD_ROUTES[it["comp"]]
+        if not _section_present(file_text[fname], heading):
+            _die(f"missing_route_section: {fname} has no '{heading}' section for a "
+                 f"{it['comp']} lesson — add the section header and re-run")
+    if not _section_present(project_text, _KEY_DECISIONS_HEADING):
+        _die(f"missing_route_section: PROJECT.md has no '{_KEY_DECISIONS_HEADING}' "
+             "section for the audit-trail row — add the section header and re-run")
+
+    # ── build EVERY edit in memory before writing anything ──────────────────────────────────────
+    comps_filter = {want_comp} if want_comp else None
+    task_new: dict[str, str] = {}
+    for slug in dict.fromkeys(it["task"] for it in selected):
+        tmd = root / "tasks" / slug / "TASK.md"
+        flipped = _fold_competency_delta(tmd.read_text(encoding="utf-8"), new_v, comps_filter)
+        if flipped is None:                                   # defensive: selected ⇒ ≥1 open here
+            _die(f"no_open_deltas: task '{slug}' lost its open lesson mid-session")
+        task_new[slug] = flipped
+
+    def _bullet(it):
+        ev = f" (evidence: {it['evidence']})" if it["evidence"] else ""
+        return (f"- ({it['comp']}) {it['text']}{ev}  "
+                f"[{_FOLDED} foundation-version {new_v} · from {it['task']}]")
+
+    # transcribe verbatim (reverse so canonical-order first lands on top, newest-first).
+    proj_text, conv_text = project_text, conventions_text
+    for it in reversed(selected):
+        fname, heading = _FOLD_ROUTES[it["comp"]]
+        if fname == "PROJECT.md":
+            proj_text = _prepend_to_section(proj_text, heading, _bullet(it))
+        else:
+            conv_text = _prepend_to_section(conv_text, heading, _bullet(it))
+
+    counts = {c: sum(1 for it in selected if it["comp"] == c) for c in _COMPETENCY_ORDER}
+    count_str = " · ".join(f"{c} {counts[c]}" for c in _COMPETENCY_ORDER if counts[c])
+    scope = "all" if not (want_task or want_comp) else " ".join(
+        filter(None, [f"--task {want_task}" if want_task else "",
+                      f"--comp {want_comp}" if want_comp else ""]))
+    row = (f"| {date.today().isoformat()} | {_FOLD_VERB} {scope} → foundation-version {new_v} "
+           f"({count_str}) | consolidate captured OBSERVE lessons into the versioned foundation "
+           f"| {len(selected)} lessons open→{_FOLDED}; +{len(selected)} routed bullets; {prev_v}→{new_v} |")
+    proj_text = _prepend_key_decision_row(proj_text, row)
+    proj_text = re.sub(r"foundation-version:\s*\d+", f"foundation-version: {new_v}", proj_text, count=1)
+
+    # ── all bodies built; commit via a two-phase write (stage every temp, then rename-all). A
+    #    phase-1 temp-write failure — the REALISTIC one (disk-full / permission) — leaves NOTHING
+    #    written. A phase-2 mid-rename failure (near-impossible on same-dir renames) can leave the
+    #    foundation advanced while a TASK.md stays unflipped; files are ordered foundation-FIRST so
+    #    the lesson then stays visibly `open` and a re-run re-transcribes (DUPLICATING, never
+    #    losing — manual fixup), rather than a silently-flipped-but-untranscribed loss. A true
+    #    all-or-nothing N-file commit is the multi-file-commit follow-up task. ────────────────────
+    writes: list[tuple[Path, str]] = [(project_md, proj_text)]
+    touched = ["PROJECT.md"]
+    if conv_text != conventions_text:
+        writes.append((conventions_md, conv_text))
+        touched.append("CONVENTIONS.md")
+    for slug, body in task_new.items():
+        writes.append((root / "tasks" / slug / "TASK.md", body))
+    touched.append(f"{len(task_new)} TASK.md")
+    _atomic_write_many(writes)
+
+    print(f"{_FOLDED} {len(selected)} lessons -> foundation-version {new_v}")
+    print(f"  {count_str}")
+    print(f"  bumped PROJECT.md  {prev_v} -> {new_v}")
+    print(f"  files: {', '.join(touched)}")
+    print(_next_footer(root, state))
 
 
 _AUDIT_STAMP_RE = re.compile(r"Status:\s*FROZEN @ v\d+\s*[—-]+\s*approved by\s+\S+")
@@ -4420,35 +4836,43 @@ def cmd_release(args: argparse.Namespace) -> None:
 
 
 def cmd_deltas(args: argparse.Namespace) -> None:
-    """Read-only: report all open lessons learned grouped by competency.
+    """Read-only: report open competency lessons AND open SPEC deltas, SEPARATELY.
 
-    Scans every .add/tasks/*/TASK.md '### Competency deltas' block for lines
-    matching the delta grammar; shows only `open` entries in canonical competency
-    order (DDD·SDD·UDD·TDD·ADD). --json emits one JSON object. Exit 0 ALWAYS.
-    Writes NOTHING."""
+    Scans every .add/tasks/*/TASK.md: '### Competency deltas' → open lessons grouped
+    by competency (DDD·SDD·UDD·TDD·ADD), and '### Spec delta' → open forward hand-offs
+    in their own section (a SPEC delta resolves into a task, never consolidates). --json emits
+    one JSON object with both under separate keys. Exit 0 ALWAYS. Writes NOTHING."""
     root = _require_root()
     by_comp = _collect_open_deltas(root)
     total = sum(len(v) for v in by_comp.values())
+    spec = _collect_open_spec_deltas(root)
 
     if getattr(args, "json", False):
         payload: dict = {
             "total": total,
             "by_competency": {c: v for c, v in by_comp.items() if v},
+            "spec": spec,
+            "spec_total": len(spec),
         }
         print(json.dumps(payload, ensure_ascii=False))
         return
 
-    if total == 0:
+    if total == 0 and not spec:
         print("no open deltas.")
         return
 
-    print(f"open lessons learned ({total} total):")
-    for comp in _COMPETENCY_ORDER:
-        entries = by_comp[comp]
-        if not entries:
-            continue
-        print(f"  {comp} ({len(entries)}):")
-        for e in entries:
+    if total:
+        print(f"open lessons learned ({total} total):")
+        for comp in _COMPETENCY_ORDER:
+            entries = by_comp[comp]
+            if not entries:
+                continue
+            print(f"  {comp} ({len(entries)}):")
+            for e in entries:
+                print(f"    - {e['text']}  [{e['task']}]")
+    if spec:
+        print(f"open spec deltas ({len(spec)} total):")
+        for e in spec:
             print(f"    - {e['text']}  [{e['task']}]")
 
 
@@ -4581,8 +5005,16 @@ def build_parser() -> argparse.ArgumentParser:
     pn.add_argument("--milestone", default=None, help="attach to a milestone (default: active)")
     pn.add_argument("--depends-on", dest="depends_on", default=None,
                     help="comma-separated task slugs this task depends on")
+    pn.add_argument("--from-delta", dest="from_delta", default=None, metavar="PRIOR",
+                    help="SEED PRIOR's first open SPEC delta into this task (pre-fills §1 "
+                         "Feature, flips the source -> [SPEC · seeded] [→ this])")
     pn.add_argument("--force", action="store_true", help="overwrite TASK.md if present")
     pn.set_defaults(func=cmd_new_task)
+
+    pdd = sub.add_parser("drop-delta",
+                         help="dismiss a task's first open SPEC delta -> [SPEC · dropped]")
+    pdd.add_argument("slug", help="task whose first open SPEC delta to drop")
+    pdd.set_defaults(func=cmd_drop_delta)
 
     pm = sub.add_parser("new-milestone", help="scaffold a milestone (SDD living doc)")
     pm.add_argument("slug")
@@ -4723,6 +5155,13 @@ def build_parser() -> argparse.ArgumentParser:
                          help="read-only report: open lessons learned grouped by competency")
     pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pdt.set_defaults(func=cmd_deltas)
+
+    pfo = sub.add_parser(_FOLD_VERB,
+                         help="record one retrospective consolidation of open lessons into the "
+                              "versioned foundation (stamp + route + version-bump, atomic)")
+    pfo.add_argument("--task", help="narrow to one task's open lessons")
+    pfo.add_argument("--comp", choices=_COMPETENCY_ORDER, help="narrow to one competency's open lessons")
+    pfo.set_defaults(func=cmd_fold)
 
     pgr = sub.add_parser("graduation-report",
                          help="read-only: gather the MVP loop's evidence (deltas · waivers · RETROs · "

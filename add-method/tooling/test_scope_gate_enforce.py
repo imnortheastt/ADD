@@ -69,6 +69,11 @@ class _Board(unittest.TestCase):
         (self.tmp / ".git" / "HEAD").write_text("ref: x\n", encoding="utf-8")
         (self.tmp / "src" / "__pycache__").mkdir(exist_ok=True)
         (self.tmp / "src" / "__pycache__" / "app.cpython-312.pyc").write_bytes(b"\x00")
+        # a code-intelligence tool cache (serena) — re-writes itself on every source
+        # edit, so it must be pruned from the walk or a build edit reads as an
+        # out-of-scope touch (the fold-command dogfooding HARD-STOP that added .serena).
+        (self.tmp / ".serena" / "cache" / "python").mkdir(parents=True, exist_ok=True)
+        (self.tmp / ".serena" / "cache" / "python" / "symbols.pkl").write_bytes(b"\x00\x01")
 
     def tearDown(self):
         os.chdir(self._cwd)
@@ -211,7 +216,8 @@ class SnapshotTest(_Board):
         snap = json.loads(side.read_text(encoding="utf-8"))
         self.assertIn("src/app.py", snap.get("files", {}),
                       "project files are hashed by project-root-relative path")
-        for banned in (".git/HEAD", "src/__pycache__/app.cpython-312.pyc"):
+        for banned in (".git/HEAD", "src/__pycache__/app.cpython-312.pyc",
+                       ".serena/cache/python/symbols.pkl"):
             self.assertNotIn(banned, snap.get("files", {}),
                              f"excluded path leaked into the snapshot: {banned}")
         self.assertFalse(any(k.startswith(".add/") for k in snap.get("files", {})),

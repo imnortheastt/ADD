@@ -1,7 +1,7 @@
-# TASK: {{title}}
+# TASK: Compact Force Override
 
-slug: {{slug}} · created: {{date}} · stage: {{stage}}
-autonomy: {{autonomy}}   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it, or run `add.py autonomy set`. -->
+slug: compact-force-override · created: 2026-06-17 · stage: mvp
+autonomy: auto   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it, or run `add.py autonomy set`. -->
 phase: ground   <!-- ground -> specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower the
      autonomy level to `manual` or `conservative` — the engine refuses an unguarded completion
@@ -24,7 +24,7 @@ Anchors the contract cites: <the symbols §3 will name>
 
 ## 1 · SPECIFY — the rules ▸ docs/03-step-1-specify.md
 
-Feature: <name>
+Feature: the project-wide compact guard has NO override — add a `compact --force` (or `--allow-open-spec`) escape hatch for when an UNRELATED open SPEC delta must not block an urgent compaction (from spec-delta-guards spec-delta)
 Framings weighed: <chosen> (chosen) · <alternative> · <alternative>
 Must:
 <must>

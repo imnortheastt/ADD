@@ -88,6 +88,12 @@ LIFECYCLE = [
     ["guide", "t"],
     ["report"], ["report", "mvp"],             # read-only dashboard (reads MILESTONE/TASK, not docs/)
     ["deltas"],                                # read-only: open competency deltas report
+    ["drop-delta", "t"],                       # SPEC-delta dismiss verb: task t holds no open
+                                               # SPEC delta here -> refuses no_open_spec_delta
+                                               # (expected nonzero, tolerated; reads TASK.md, never docs/)
+    ["fold"],                                  # consolidation verb: this board has no open competency
+                                               # lesson -> refuses no_open_deltas (expected nonzero,
+                                               # tolerated; reads TASK/PROJECT/CONVENTIONS, never docs/)
     ["graduation-report"], ["graduation-report", "--json"],  # read-only harvest (reads TASK/RETRO/state, never docs/)
     ["release-report"], ["release-report", "--json"],  # read-only release inventory (reads state/RELEASES.md/TASK, never docs/)
     ["release", "0.0.0"],                      # guarded record-only cut: no milestone is closed yet
@@ -112,7 +118,11 @@ _EXERCISED_IN_SETUP = {"init"}
 # merge-time gate refuses (wave_not_found) — exercised under the read-spy, nonzero tolerated.
 # release is guarded: no closed-unreleased milestone exists at its lifecycle slot, so it refuses
 # (release_no_closed_milestone) — exercised under the read-spy (reads state/RELEASES.md, never docs/).
-_NONZERO_OK = {"heal", "wave-verify", "release"}
+# drop-delta is a refusal verb on this board: task t holds no open SPEC delta, so it refuses
+# (no_open_spec_delta) — exercised under the read-spy (reads TASK.md/state, never docs/).
+# fold is likewise a refusal verb here: no open competency lesson exists, so it refuses
+# (no_open_deltas) — exercised under the read-spy (reads TASK/PROJECT/CONVENTIONS, never docs/).
+_NONZERO_OK = {"heal", "wave-verify", "release", "drop-delta", "fold"}
 
 
 class MinimalPillarTest(unittest.TestCase):
