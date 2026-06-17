@@ -11,6 +11,15 @@ description: >-
   new feature and you want spec/tests-first discipline instead of vague-prompt
   coding. Also use it to resume work across sessions (it reads `.add/state.json`
   so you never re-read the whole repo).
+user-invocable: true
+when_to_use: "Invoke in any repo with a `.add/` directory, or when the user wants spec/tests-first feature work, resumes ADD work, or asks to start/advance a task."
+category: workflows
+keywords: [add, aidd, ai-driven-development, spec-first, tdd, contract, scenarios, verify, milestone, task-orchestration]
+argument-hint: "[describe your goals] OR [describe what is your expectation] (e.g., implement authentication flows for both server api and client side to handle email + Google OAuth login, session refresh, RBAC guards, and a profile page that survives page reloads)"
+license: MIT
+metadata:
+  author: add
+  version: "1.0.0"
 ---
 
 # ADD — the orchestration engine
