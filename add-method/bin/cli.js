@@ -63,6 +63,106 @@ function parseArgs(argv) {
   return args;
 }
 
+// --- agent detection: which coding agent is invoking the installer -----------
+// ORDERED registry; detectAgent walks it top->bottom, first match wins, `generic` is
+// the fallback. Mirror of _installer.py:AGENT_PROFILES. The per-agent env SIGNAL is
+// best-effort (a mis-detect degrades to generic + is overridable in the clack confirm)
+// — refine via a SPEC delta, never a hard fail.
+const GENERIC_NEXT =
+  "open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and " +
+  "say what you want to build — the agent sets up the foundation, sizes it into a " +
+  "milestone, and drives the build with you; you sign off once, at the lock-down.";
+
+const AGENT_PROFILES = [
+  { id: "claude", label: "Claude Code / Claude app", integration_file: "CLAUDE.md",
+    env: ["CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT"], envPrefix: null,
+    next_step: "Open Claude Code and run `/add` — the skill drives intake -> milestone -> build." },
+  { id: "codex", label: "Codex", integration_file: "AGENTS.md",
+    env: ["CODEX_HOME"], envPrefix: "CODEX_",
+    next_step: "Open Codex — it reads AGENTS.md; run `/add` or say what you want to build." },
+  { id: "opencode", label: "OpenCode", integration_file: "AGENTS.md",
+    env: ["OPENCODE"], envPrefix: "OPENCODE",
+    next_step: "Open OpenCode — it reads AGENTS.md; say what you want to build." },
+  { id: "generic", label: "your AI agent", integration_file: "AGENTS.md",
+    env: [], envPrefix: null, next_step: GENERIC_NEXT },
+];
+
+// The SAME markers add.py:sync-guidelines uses, so init's sync-guidelines REPLACES this
+// drop-time pointer in place (one block, never a duplicate).
+const GUIDE_BEGIN = "<!-- ADD:BEGIN — managed by `add.py sync-guidelines`; do not edit inside -->";
+const GUIDE_END = "<!-- ADD:END -->";
+
+function profileMatches(profile, env) {
+  for (const key of profile.env) { if (env[key]) return true; }
+  if (profile.envPrefix) {
+    for (const k of Object.keys(env)) {
+      if (env[k] && k.startsWith(profile.envPrefix)) return true;
+    }
+  }
+  return false;
+}
+
+// Pure, total, deterministic: same env -> same profile; never throws. Generic is last.
+function detectAgent(env) {
+  const generic = AGENT_PROFILES[AGENT_PROFILES.length - 1];
+  for (const profile of AGENT_PROFILES.slice(0, -1)) {
+    if (profileMatches(profile, env)) return profile;
+  }
+  return generic;
+}
+
+function agentPointerBlock(profile) {
+  return (
+    GUIDE_BEGIN + "\n" +
+    "## ADD — how to work in this repo\n" +
+    "\n" +
+    "This project uses **ADD (AI-Driven Development)**. The engine + book are installed.\n" +
+    "To begin: run `python3 .add/tooling/add.py status` (the resume point), read\n" +
+    "`.add/PROJECT.md`, then `python3 .add/tooling/add.py guide` for the current phase.\n" +
+    "\n" +
+    profile.next_step + "\n" +
+    "\n" +
+    "This pointer is replaced by the full guideline block when `add.py sync-guidelines`\n" +
+    "runs (at `/add`->init). Edit outside the markers, not inside.\n" +
+    GUIDE_END
+  );
+}
+
+// Inject the ADD pointer into <target>/<integration_file>, mirroring add.py:_inject_block.
+// created|updated|unchanged|skipped. Only the marked region is (re)written; content outside
+// the markers is preserved; a real change backs up <file>.bak first. Fail-soft (warn+skip).
+function writeAgentPointer(target, profile) {
+  const dest = path.join(target, profile.integration_file);
+  const block = agentPointerBlock(profile);
+  try {
+    if (fs.existsSync(dest)) {
+      const current = fs.readFileSync(dest, "utf8");
+      const begin = current.indexOf(GUIDE_BEGIN);
+      let next;
+      if (begin !== -1) {
+        const endIdx = current.indexOf(GUIDE_END, begin);
+        if (endIdx !== -1) {
+          next = current.slice(0, begin) + block + current.slice(endIdx + GUIDE_END.length);
+        } else {                       // begin with no end: corrupt — append fresh
+          next = current.replace(/\n+$/, "") + "\n\n" + block + "\n";
+        }
+      } else {                         // no block yet — append, keep user content
+        next = current.replace(/\n+$/, "") + "\n\n" + block + "\n";
+      }
+      if (next === current) return "unchanged";
+      fs.writeFileSync(dest + ".bak", current);   // rollback path before mutate
+      fs.writeFileSync(dest, next);
+      return "updated";
+    }
+    fs.writeFileSync(dest, block + "\n");
+    return "created";
+  } catch (e) {
+    warn("could not write " + profile.integration_file + " — " +
+         (e && e.message ? e.message : e) + "; skipped");
+    return "skipped";
+  }
+}
+
 // --- interactive layer (clack on a real TTY; plain text everywhere else) -----
 // Designed-for-failure: any doubt (non-TTY, CI, --yes, a failed import, an
 // un-promptable stream) degrades to the EXACT plain-text path below. The clack
@@ -89,7 +189,7 @@ async function loadClack() {
 // Returns { cancelled, target }. A cancel happens BEFORE any file is written, so a
 // cancelled run leaves the target untouched. Without a real TTY to read (the forced
 // test seam), we cannot prompt — abort safely rather than hang.
-async function runClackPreamble(clack, target) {
+async function runClackPreamble(clack, target, detected) {
   clack.intro("ADD — AI-Driven Development");
   if (!process.stdin.isTTY) return { cancelled: true, target: target };
   const chosen = await clack.text({
@@ -99,24 +199,45 @@ async function runClackPreamble(clack, target) {
   if (clack.isCancel(chosen)) return { cancelled: true, target: target };
   const ok = await clack.confirm({ message: "Write the ADD skill + tooling + book here?" });
   if (clack.isCancel(ok) || !ok) return { cancelled: true, target: target };
-  return { cancelled: false, target: String(chosen || target) };
+  // agent-detect STEP (seeded delta: a STEP in THIS flow, via the clack ui layer) — the
+  // user confirms or overrides the detected agent before any file is written.
+  const picked = await clack.select({
+    message: "Set up for which agent? (detected: " + detected.label + ")",
+    options: AGENT_PROFILES.map((p) => ({ value: p.id, label: p.label })),
+    initialValue: detected.id,
+  });
+  if (clack.isCancel(picked)) return { cancelled: true, target: target };
+  const profile = AGENT_PROFILES.find((p) => p.id === picked) || detected;
+  return { cancelled: false, target: String(chosen || target), profile: profile };
 }
 
 // The drop — now a RECONCILE: restore missing managed trees + refresh present ones
 // (sweep orphans) + report per-tree status. Byte-compatible handoff with the prior
 // installer. The interactive path resolves a target then calls straight into this.
-function dropFiles(args, target) {
+function dropFiles(args, target, profile) {
+  profile = profile || detectAgent(process.env);
   log("Installing ADD into " + target);
   reconcile(args, target);
+
+  // Agent detection: write THE detected agent's integration file (a marker-delimited
+  // pointer init's sync-guidelines later supersedes) + tailor the closing next-step.
+  // Best-effort + fail-soft — never aborts the successful drop above.
+  writeAgentPointer(target, profile);
 
   // NO step 4: the installer DROPS FILES ONLY. Initialisation is deferred to the AI
   // (via `/add`) or a CLI user — a pre-run plain `add.py init` would grandfather-lock
   // the v12 lock-down gate before `/add` runs (see file header). So no Python is run here.
   log("\nDone. " + (args.noSkill ? "The engine + book are" : "The `add` skill + tooling are") +
       " installed (no project state yet — that's intentional).");
-  log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent");
-  log("       sets up the foundation, sizes it into a milestone, and drives the build with you;");
-  log("       you sign off once, at the lock-down.");
+  if (profile.id === "generic") {
+    // the generic onramp line — kept literal so the conversational-only handoff is stable
+    log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent");
+    log("       sets up the foundation, sizes it into a milestone, and drives the build with you;");
+    log("       you sign off once, at the lock-down.");
+  } else {
+    log("Detected " + profile.label + ".");
+    log("Next:  " + profile.next_step);
+  }
   log("");
 }
 
@@ -125,12 +246,13 @@ async function cmdInit(args) {
   if (!fs.existsSync(target)) fail("target directory does not exist: " + target);
 
   let chosenTarget = target;
+  let profile = detectAgent(process.env);     // default: non-interactive / fallback
   if (interactive(args)) {
     let clack = null;
     try { clack = await loadClack(); }
     catch (_e) { warn("clack unavailable — falling back to plain-text install"); }
     if (clack) {
-      const outcome = await runClackPreamble(clack, target);
+      const outcome = await runClackPreamble(clack, target, profile);
       if (outcome.cancelled) {
         // the exit code IS the contract; a closed-pipe stdout (EPIPE) must not
         // mask the cancel — guard the courtesy message, never let it throw.
@@ -140,9 +262,10 @@ async function cmdInit(args) {
       }
       chosenTarget = path.resolve(outcome.target);
       if (!fs.existsSync(chosenTarget)) fail("target directory does not exist: " + chosenTarget);
+      if (outcome.profile) profile = outcome.profile;   // honor the user's override
     }
   }
-  dropFiles(args, chosenTarget);
+  dropFiles(args, chosenTarget, profile);
 }
 
 // --- update: re-materialize the managed layer without a re-install -----------

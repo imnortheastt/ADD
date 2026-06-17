@@ -38,14 +38,26 @@ ENGINE_PATHS = (
 )
 
 
+def _baseline_env():
+    """A scrubbed env so the flagless install tests the GENERIC (no-agent-detected)
+    handoff deterministically — wherever the suite runs. agent-detect tailors the
+    handoff when a coding-agent signal is present (CLAUDECODE/CODEX_*/OPENCODE*); the
+    agent-specific paths are covered in test_agent_detect. Here we pin the baseline."""
+    env = dict(os.environ)
+    for k in list(env):
+        if k in ("CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT") or k.startswith(("CODEX_", "OPENCODE")):
+            env.pop(k, None)
+    return env
+
+
 def _run_node_init(extra=(), cwd=None):
     return subprocess.run(
         [NODE, str(CLI_JS), "init", *extra],
-        cwd=cwd, capture_output=True, text=True, timeout=120)
+        cwd=cwd, capture_output=True, text=True, timeout=120, env=_baseline_env())
 
 
 def _run_pip_init(extra=(), cwd=None):
-    env = dict(os.environ)
+    env = _baseline_env()
     env["PYTHONPATH"] = str(SRC_DIR) + os.pathsep + env.get("PYTHONPATH", "")
     code = ("import sys; from add_method._cli import main; "
             "sys.exit(main(sys.argv[1:]))")

@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "heal-reconcile",
+  "active_task": "agent-detect",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -975,12 +975,28 @@
     },
     "agent-detect": {
       "title": "Detect the coding agent, write its integration file, print its exact next step",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "installer-experience",
       "depends_on": [],
       "created": "2026-06-17T08:22:59+00:00",
-      "updated": "2026-06-17T08:22:59+00:00"
+      "updated": "2026-06-17T09:57:23+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9e79d74820e42acb3a54c482494dcd71",
+        "tests": {
+          "add-method/tooling/test_agent_detect.py": "aa66e513d6b3b740653bffae22f1e67d"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py",
+          "add-method/tooling/test_agent_detect.py",
+          "add-method/tooling/test_installer_handoff.py"
+        ],
+        "snapshot_md5": "f1f74aad64bb530749476b0ffa685428"
+      }
     },
     "heal-reconcile": {
       "title": "init+update scan .add/, overwrite managed + add missing, never touch user data",
@@ -1031,7 +1047,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T09:33:35+00:00",
+  "updated": "2026-06-17T09:57:23+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

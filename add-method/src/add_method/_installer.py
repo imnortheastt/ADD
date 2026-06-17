@@ -104,6 +104,109 @@ def _bundled_root() -> Path:
     return path
 
 
+# --- agent detection: which coding agent is invoking the installer -----------
+# An ORDERED registry; _detect_agent walks it top->bottom, first match wins, `generic`
+# is the fallback. Mirrored by behaviour in bin/cli.js (AGENT_PROFILES). The per-agent
+# env SIGNAL is best-effort: a mis-detect degrades to generic (today's working path) and
+# is overridable in the interactive confirm — refine via a SPEC delta, never a hard fail.
+_GENERIC_NEXT = (
+    "open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and "
+    "say what you want to build — the agent sets up the foundation, sizes it into a "
+    "milestone, and drives the build with you; you sign off once, at the lock-down."
+)
+AGENT_PROFILES = (
+    {"id": "claude", "label": "Claude Code / Claude app", "integration_file": "CLAUDE.md",
+     "env": ("CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT"), "env_prefix": None,
+     "next_step": "Open Claude Code and run `/add` — the skill drives intake -> milestone -> build."},
+    {"id": "codex", "label": "Codex", "integration_file": "AGENTS.md",
+     "env": ("CODEX_HOME",), "env_prefix": "CODEX_",
+     "next_step": "Open Codex — it reads AGENTS.md; run `/add` or say what you want to build."},
+    {"id": "opencode", "label": "OpenCode", "integration_file": "AGENTS.md",
+     "env": ("OPENCODE",), "env_prefix": "OPENCODE",
+     "next_step": "Open OpenCode — it reads AGENTS.md; say what you want to build."},
+    {"id": "generic", "label": "your AI agent", "integration_file": "AGENTS.md",
+     "env": (), "env_prefix": None, "next_step": _GENERIC_NEXT},
+)
+
+# The SAME markers add.py:sync-guidelines uses — so a later `/add`->init->sync-guidelines
+# REPLACES this drop-time pointer in place (one block, never a duplicate).
+_GUIDE_BEGIN = "<!-- ADD:BEGIN — managed by `add.py sync-guidelines`; do not edit inside -->"
+_GUIDE_END = "<!-- ADD:END -->"
+
+
+def _profile_matches(profile: dict, env) -> bool:
+    """A profile matches if any of its env keys is truthy, or any env key carries its prefix."""
+    for key in profile["env"]:
+        if env.get(key):
+            return True
+    prefix = profile["env_prefix"]
+    if prefix and any(k.startswith(prefix) for k, v in env.items() if v):
+        return True
+    return False
+
+
+def _detect_agent(env=None) -> dict:
+    """Pure, total, deterministic: same env -> same profile; never throws. Generic last."""
+    env = os.environ if env is None else env
+    generic = AGENT_PROFILES[-1]
+    for profile in AGENT_PROFILES[:-1]:
+        if _profile_matches(profile, env):
+            return profile
+    return generic
+
+
+def _agent_pointer_block(profile: dict) -> str:
+    """The minimal, transitional drop-time pointer (superseded by the full block at init)."""
+    return (
+        f"{_GUIDE_BEGIN}\n"
+        "## ADD — how to work in this repo\n"
+        "\n"
+        "This project uses **ADD (AI-Driven Development)**. The engine + book are installed.\n"
+        "To begin: run `python3 .add/tooling/add.py status` (the resume point), read\n"
+        "`.add/PROJECT.md`, then `python3 .add/tooling/add.py guide` for the current phase.\n"
+        "\n"
+        f"{profile['next_step']}\n"
+        "\n"
+        "This pointer is replaced by the full guideline block when `add.py sync-guidelines`\n"
+        "runs (at `/add`->init). Edit outside the markers, not inside.\n"
+        f"{_GUIDE_END}"
+    )
+
+
+def _write_agent_pointer(target, profile: dict) -> str:
+    """Inject the ADD pointer into <target>/<integration_file>, mirroring add.py:_inject_block.
+
+    created|updated|unchanged|skipped. Only the marked region is (re)written; content
+    outside the markers is preserved; a real change backs up <file>.bak first. Designed for
+    failure: an unwritable or non-UTF-8 target -> warn + 'skipped' (file left untouched)."""
+    path = Path(target) / profile["integration_file"]
+    block = _agent_pointer_block(profile)
+    try:
+        if path.exists():
+            current = path.read_text(encoding="utf-8")
+            begin = current.find(_GUIDE_BEGIN)
+            if begin != -1:
+                end = current.find(_GUIDE_END, begin)
+                if end != -1:
+                    end += len(_GUIDE_END)
+                    new = current[:begin] + block + current[end:]
+                else:                       # begin with no end: corrupt — append fresh
+                    new = current.rstrip("\n") + "\n\n" + block + "\n"
+            else:                           # no block yet — append, keep user content
+                new = current.rstrip("\n") + "\n\n" + block + "\n"
+            if new == current:
+                return "unchanged"
+            Path(str(path) + ".bak").write_text(current, encoding="utf-8")   # rollback path
+            path.write_text(new, encoding="utf-8")
+            return "updated"
+        path.write_text(block + "\n", encoding="utf-8")
+        return "created"
+    except (OSError, UnicodeDecodeError) as exc:
+        sys.stderr.write(f"warn: could not write {profile['integration_file']} — {exc}; skipped\n")
+        sys.stderr.flush()
+        return "skipped"
+
+
 def install(
     target: str = ".",
     force: bool = False,
@@ -112,6 +215,7 @@ def install(
     yes: bool = False,
     non_interactive: bool = False,
     bundled: str | None = None,
+    env=None,
 ) -> int:
     """Install ADD into `target` directory — RECONCILES the managed layer (restore
     missing trees + refresh present ones, sweeping orphans), never touching user data.
@@ -151,14 +255,25 @@ def install(
     # ONLY the managed layer — state.json / PROJECT.md / milestones / tasks are never read.
     _reconcile(target_path, bundled_root)
 
+    # Agent detection: write THE detected agent's integration file (a marker-delimited
+    # pointer init's sync-guidelines later supersedes) + tailor the closing next-step.
+    # Best-effort + fail-soft — never aborts the successful drop above.
+    profile = _detect_agent(env)
+    _write_agent_pointer(target_path, profile)
+
     # NO step 4: the installer DROPS FILES ONLY (npm ↔ pip parity with bin/cli.js).
     # Initialisation is deferred to the AI (via `/add`) or a CLI user — a pre-run plain
     # `add.py init` would grandfather-lock the v12 lock-down gate before `/add` runs (see
     # the module header). So we do NOT exec add.py here.
     _log("\nDone. The `add` skill + tooling are installed (no project state yet — that's intentional).")
-    _log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent")
-    _log("       sets up the foundation, sizes it into a milestone, and drives the build with you;")
-    _log("       you sign off once, at the lock-down.")
+    if profile["id"] == "generic":
+        # the generic onramp line — kept literal so the conversational-only handoff is stable
+        _log("Next:  open your AI Agent CLI (like Claude Code, Codex, etc.), then run `/add`, and say what you want to build — the agent")
+        _log("       sets up the foundation, sizes it into a milestone, and drives the build with you;")
+        _log("       you sign off once, at the lock-down.")
+    else:
+        _log(f"Detected {profile['label']}.")
+        _log(f"Next:  {profile['next_step']}")
     _log("")
     return 0
 
