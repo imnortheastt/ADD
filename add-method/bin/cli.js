@@ -25,6 +25,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 
 const PKG_ROOT = path.resolve(__dirname, "..");
 
@@ -37,11 +38,14 @@ function parseArgs(argv) {
   // defaults the stage and infers the name from the folder, so the manual-init
   // hint only echoes flags the user actually chose (shortest true command).
   const args = { _: [], force: false, check: false, noSkill: false, stage: null, name: null,
-                 yes: false, nonInteractive: false };
+                 yes: false, nonInteractive: false, global: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--force") args.force = true;
     else if (a === "--check") args.check = true;
+    // --global: ALSO install the managed layer to a shared home + register this project
+    // (the per-project self-contained drop still runs). update --global refreshes all.
+    else if (a === "--global") args.global = true;
     // --yes / --non-interactive: skip all prompts, take defaults — the explicit
     // non-interactive selector the interactive() gate honors (CI/pipes do this too).
     else if (a === "--yes" || a === "-y") args.yes = true;
@@ -265,6 +269,9 @@ async function cmdInit(args) {
       if (outcome.profile) profile = outcome.profile;   // honor the user's override
     }
   }
+  // OPT-IN global home, BEFORE the per-project drop (fail-closed if the home is unwritable
+  // or its registry is corrupt — the package + the self-contained default stay usable).
+  if (args.global) installGlobal(args, chosenTarget);
   dropFiles(args, chosenTarget, profile);
 }
 
@@ -290,11 +297,11 @@ function readStamp(addDir) {
   try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch (_e) { return null; }
 }
 
-function writeStamp(addDir, version) {
+function writeStamp(addDir, version, channel) {
   fs.mkdirSync(addDir, { recursive: true });
   fs.writeFileSync(
     path.join(addDir, STAMP_FILE),
-    JSON.stringify({ version: version, channel: "npm", installed_at: new Date().toISOString() }, null, 2) + "\n"
+    JSON.stringify({ version: version, channel: channel || "npm", installed_at: new Date().toISOString() }, null, 2) + "\n"
   );
 }
 
@@ -328,16 +335,17 @@ function managedStatus(target) {
 // reporting per-tree status. Honors --no-skill (the plugin provides the skill). Touches
 // ONLY managed trees — never user data. Prechecks ALL sources first (design-for-failure:
 // a corrupt package leaves the target untouched).
-function reconcile(args, target) {
+function reconcile(args, target, srcRoot) {
+  srcRoot = srcRoot || PKG_ROOT;   // default: the package; the global home feeds propagation
   const trees = MANAGED.filter(([sub]) => !(sub === "skill/add" && args.noSkill));
   for (const [sub] of trees) {
-    if (!fs.existsSync(path.join(PKG_ROOT, sub))) {
-      fail("missing packaged source: " + path.join(PKG_ROOT, sub));
+    if (!fs.existsSync(path.join(srcRoot, sub))) {
+      fail("missing packaged source: " + path.join(srcRoot, sub));
     }
   }
   const status = managedStatus(target);
   for (const [sub, destParts, stripTests] of trees) {
-    cleanReplaceTree(path.join(PKG_ROOT, sub), path.join(target, ...destParts), stripTests);
+    cleanReplaceTree(path.join(srcRoot, sub), path.join(target, ...destParts), stripTests);
     const dest = destParts.join("/");
     if (status[sub] === "missing") {
       log("  ✓ restored  " + TREE_LABEL[sub].padEnd(8) + "-> " + dest + "  (was missing)");
@@ -348,7 +356,122 @@ function reconcile(args, target) {
   return status;
 }
 
+// --- global home: an OPT-IN shared install (engine+book+skill) updated for all projects ----
+// Resolution is PURE + total (never throws); the home MIRRORS the bundled managed layer so
+// `update --global` propagation reuses reconcile() unchanged. Mirror of _installer.py.
+function resolveGlobalHome(env) {
+  // ADD_HOME (set, non-empty) -> else XDG_DATA_HOME/add -> else <HOME>/.add. Reads HOME from
+  // the env mapping (never $HOME directly) so tests can inject a hermetic home.
+  env = env || process.env;
+  if (env.ADD_HOME) return path.resolve(env.ADD_HOME);
+  if (env.XDG_DATA_HOME) return path.join(path.resolve(env.XDG_DATA_HOME), "add");
+  return path.join(env.HOME || os.homedir(), ".add");
+}
+
+function claudeSkillsDir(env) {
+  env = env || process.env;
+  return path.join(env.HOME || os.homedir(), ".claude", "skills", "add");
+}
+
+function registryPath(home) { return path.join(home, "registry.json"); }
+
+// [] when ABSENT; THROWS on present-but-corrupt so the caller fails LOUD (never a silent
+// empty-list no-op that quietly skips every registered project).
+function readRegistry(home) {
+  const p = registryPath(home);
+  if (!fs.existsSync(p)) return [];
+  let data;
+  try { data = JSON.parse(fs.readFileSync(p, "utf8")); }
+  catch (_e) { throw new Error("registry_corrupt"); }
+  if (!Array.isArray(data)) throw new Error("registry_corrupt");
+  return data;
+}
+
+// ATOMIC (temp + rename), de-duplicated preserving first-seen order.
+function writeRegistry(home, paths) {
+  fs.mkdirSync(home, { recursive: true });
+  const seen = [];
+  for (const p of paths) { if (!seen.includes(p)) seen.push(p); }
+  const target = registryPath(home);
+  const tmp = target + ".tmp";
+  fs.writeFileSync(tmp, JSON.stringify(seen, null, 2) + "\n");
+  fs.renameSync(tmp, target);   // atomic on the same filesystem (POSIX + Windows)
+}
+
+// The home mirrors the bundled layout (skill/add + tooling + docs at the SAME relative paths
+// the package ships) so reconcile(args, project, home) reuses MANAGED unchanged.
+const GLOBAL_TREES = [
+  ["skill/add", ["skill", "add"], false],
+  ["tooling", ["tooling"], true],
+  ["docs", ["docs"], false],
+];
+
+// Clean-replace the bundled managed layer INTO <home> (canonical mirror), then DEPLOY the
+// skill to ~/.claude/skills/add. Throws if a dir can't be written (caller -> home_unwritable).
+// Prechecks ALL sources first (design-for-failure: a corrupt package leaves the home as-is).
+function reconcileGlobal(home, claudeDir, noSkill) {
+  for (const [sub] of GLOBAL_TREES) {
+    if (!fs.existsSync(path.join(PKG_ROOT, sub))) {
+      fail("missing packaged source: " + path.join(PKG_ROOT, sub));
+    }
+  }
+  for (const [sub, destParts, stripTests] of GLOBAL_TREES) {
+    cleanReplaceTree(path.join(PKG_ROOT, sub), path.join(home, ...destParts), stripTests);
+  }
+  if (!noSkill) cleanReplaceTree(path.join(home, "skill", "add"), claudeDir, false);
+}
+
+// init --global: install the managed layer ONCE to the shared home + register this project,
+// fail-closed BEFORE the per-project drop. Returns the resolved target for the normal drop.
+function installGlobal(args, chosenTarget) {
+  const home = resolveGlobalHome(process.env);
+  const claudeDir = claudeSkillsDir(process.env);
+  try { reconcileGlobal(home, claudeDir, args.noSkill); }                 // home_unwritable
+  catch (e) { fail("cannot write global home " + home + " — " + (e && e.message ? e.message : e)); }
+  writeStamp(home, pkgVersion(), "global");
+  let reg;
+  try { reg = readRegistry(home); }                                        // registry_corrupt
+  catch (_e) { fail("global registry " + registryPath(home) + " is corrupt — fix or delete it; not registering"); }
+  let resolved = chosenTarget;
+  try { resolved = fs.realpathSync(chosenTarget); } catch (_e) { /* fall back to the abspath */ }
+  reg.push(resolved);
+  try { writeRegistry(home, reg); }                                        // atomic + dedup
+  catch (e) { fail("cannot write global registry " + registryPath(home) + " — " + (e && e.message ? e.message : e)); }
+  log("  ✓ global home ready at " + home);
+  log("  ✓ registered " + resolved + " (registry: " + readRegistry(home).length + ")");
+}
+
+// update --global: refresh the home mirror + skill, then propagate to every registered+existing
+// project via reconcile(.., home); prune vanished projects (warn) + rewrite the registry atomically.
+function cmdUpdateGlobal(args) {
+  const home = resolveGlobalHome(process.env);
+  const claudeDir = claudeSkillsDir(process.env);
+  if (!fs.existsSync(path.join(home, STAMP_FILE))) {
+    fail("no global ADD install at " + home + " (.add-version not found) — run `init --global` first");
+  }
+  // Read the registry BEFORE refreshing the home — a corrupt registry fails closed with ZERO
+  // writes (never a silent empty-list no-op), leaving the file for the user to fix or delete.
+  let reg;
+  try { reg = readRegistry(home); }
+  catch (_e) { fail("global registry " + registryPath(home) + " is corrupt — fix or delete it; not propagating"); }
+  try { reconcileGlobal(home, claudeDir, args.noSkill); }
+  catch (e) { fail("cannot write global home " + home + " — " + (e && e.message ? e.message : e)); }
+  const version = pkgVersion();
+  writeStamp(home, version, "global");
+  const kept = [];
+  let pruned = 0;
+  for (const p of reg) {
+    if (!fs.existsSync(p)) { log("  ⚠ registered project " + p + " not found — pruning"); pruned++; continue; }
+    reconcile(args, p, home);     // standard MANAGED map, sourced from the home mirror
+    kept.push(p);
+  }
+  writeRegistry(home, kept);
+  log("ADD " + version + " · global home + " + kept.length + " project(s) reconciled" +
+      (pruned ? " (" + pruned + " pruned)" : "") + ".");
+}
+
 function cmdUpdate(args) {
+  if (args.global) return cmdUpdateGlobal(args);
   const target = path.resolve(args._[0] || ".");
   const addDir = path.join(target, ".add");
   if (!fs.existsSync(path.join(addDir, "tooling")) && !fs.existsSync(path.join(addDir, "state.json"))) {
@@ -396,11 +519,13 @@ async function main() {
       break;
     case "help":
     case "--help":
-      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check] [--no-skill] [--yes|--non-interactive]");
+      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check] [--no-skill] [--global] [--yes|--non-interactive]");
       log("  init    install the ADD skill + tooling + book into a project");
       log("          (--no-skill drops the engine + book only — used by the Claude Code plugin)");
+      log("          (--global ALSO installs to a shared home [ADD_HOME|XDG_DATA_HOME/add|~/.add] + registers the project)");
       log("          (interactive in a real terminal; --yes / --non-interactive force the plain path)");
       log("  update  re-materialize skill/tooling/docs to this package version (preserves your state)");
+      log("          (--global refreshes the shared home + propagates to every registered project)");
       break;
     default:
       fail("unknown command '" + cmd + "'. Try: npx @pilotspace/add init");

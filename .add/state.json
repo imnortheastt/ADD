@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "agent-detect",
+  "active_task": "global-install",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1025,14 +1025,30 @@
     },
     "global-install": {
       "title": "Global ADD home: engine+book+skill installed once, updated for all projects",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "installer-experience",
       "depends_on": [
         "heal-reconcile"
       ],
       "created": "2026-06-17T08:23:05+00:00",
-      "updated": "2026-06-17T08:23:05+00:00"
+      "updated": "2026-06-17T10:51:12+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "fdaf799aaa3f5b0d37dc9ec7b6d5102b",
+        "tests": {
+          "add-method/tooling/test_global_install.py": "ed5b9d881b6df177bf139e0e89cc8518"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py",
+          "add-method/src/add_method/_cli.py",
+          "add-method/tooling/test_global_install.py"
+        ],
+        "snapshot_md5": "337971ebca6dad36ec207d5d9f1a300e"
+      }
     },
     "global-data": {
       "title": "--global-data opt-in: per-project data persisted under the global home, keyed by path",
@@ -1047,7 +1063,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T09:57:23+00:00",
+  "updated": "2026-06-17T10:51:12+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

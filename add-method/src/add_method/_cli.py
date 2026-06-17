@@ -21,10 +21,14 @@ def main(argv: list[str] | None = None) -> int:
         cmd, rest = "init", raw
 
     if cmd in ("help", "--help", "-h"):
-        print("usage: pilotspace-add <init|update> [targetDir] [--force] [--check]")
+        print("usage: pilotspace-add <init|update> [targetDir] [--force] [--check] [--global]")
         print("  init    install the ADD skill + tooling + book into a project")
+        print("          (--global ALSO installs to a shared home [ADD_HOME|XDG_DATA_HOME/add|"
+              "~/.add] + registers the project)")
         print("  update  re-materialize skill/tooling/docs to this package version "
               "(preserves your state)")
+        print("          (--global refreshes the shared home + propagates to every registered "
+              "project)")
         return 0
 
     if cmd == "update":
@@ -40,11 +44,15 @@ def main(argv: list[str] | None = None) -> int:
         parser.add_argument("--yes", "-y", action="store_true", help=argparse.SUPPRESS)
         parser.add_argument("--non-interactive", dest="non_interactive",
                             action="store_true", help=argparse.SUPPRESS)
+        parser.add_argument("--global", dest="as_global", action="store_true",
+                            help="refresh the shared global home + propagate to every "
+                                 "registered project")
         args = parser.parse_args(rest)
         from add_method._installer import update, update_check
         if args.check:
             return update_check(target=args.target)
-        return update(target=args.target, force=args.force, channel="pip")
+        return update(target=args.target, force=args.force, channel="pip",
+                      as_global=args.as_global)
 
     if cmd != "init":
         print(f"pilotspace-add: error: unknown command '{cmd}'. Try: pilotspace-add init",
@@ -74,6 +82,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="skip prompts and take defaults (forces the non-interactive path)")
     parser.add_argument("--non-interactive", dest="non_interactive", action="store_true",
                         help="never prompt; take defaults (same as --yes; what CI / pipes do)")
+    parser.add_argument("--global", dest="as_global", action="store_true",
+                        help="ALSO install the managed layer to a shared home "
+                             "(ADD_HOME|XDG_DATA_HOME/add|~/.add) + register this project")
 
     args = parser.parse_args(rest)
 
@@ -85,6 +96,7 @@ def main(argv: list[str] | None = None) -> int:
         name=args.name,
         yes=args.yes,
         non_interactive=args.non_interactive,
+        as_global=args.as_global,
     )
 
 

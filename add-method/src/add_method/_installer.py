@@ -207,6 +207,87 @@ def _write_agent_pointer(target, profile: dict) -> str:
         return "skipped"
 
 
+# --- global home: an OPT-IN shared install of the managed layer (engine+book+skill) ----
+# Resolution is PURE + total (never throws); the home MIRRORS the bundled managed layer so
+# `update --global` propagation reuses the SAME MANAGED map. Mirrored by behaviour in cli.js.
+def resolve_global_home(env=None) -> Path:
+    """ADD_HOME (set, non-empty) -> else XDG_DATA_HOME/add -> else <HOME>/.add. Pure · total ·
+    never throws · may return a path that doesn't exist yet. Reads HOME from the env mapping
+    (defaults to os.environ) — never `$HOME` directly — so tests can inject a hermetic home."""
+    env = os.environ if env is None else env
+    add_home = env.get("ADD_HOME")
+    if add_home:
+        return Path(add_home).expanduser()
+    xdg = env.get("XDG_DATA_HOME")
+    if xdg:
+        return Path(xdg).expanduser() / "add"
+    home = env.get("HOME")
+    base = Path(home) if home else Path.home()
+    return base / ".add"
+
+
+def _claude_skills_dir(env=None) -> Path:
+    """~/.claude/skills/add — Claude Code's user-global skill dir (HOME from the env mapping)."""
+    env = os.environ if env is None else env
+    home = env.get("HOME")
+    base = Path(home) if home else Path.home()
+    return base / ".claude" / "skills" / "add"
+
+
+def _registry_path(home: Path) -> Path:
+    return home / "registry.json"
+
+
+def _read_registry(home: Path) -> list:
+    """A flat list of absolute project-root paths. [] when the file is ABSENT; raises
+    ValueError('registry_corrupt') when present-but-unparseable or not a list — the caller
+    turns that into a LOUD fail (never a silent empty-list no-op that skips every project)."""
+    p = _registry_path(home)
+    if not p.exists():
+        return []
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"registry_corrupt: {exc}")
+    if not isinstance(data, list):
+        raise ValueError("registry_corrupt: not a JSON list")
+    return data
+
+
+def _write_registry(home: Path, paths) -> None:
+    """ATOMIC (temp + os.replace) write of a de-duplicated list (first-seen order preserved)."""
+    home.mkdir(parents=True, exist_ok=True)
+    seen: list = []
+    for p in paths:
+        if p not in seen:
+            seen.append(p)
+    target = _registry_path(home)
+    tmp = target.with_name(target.name + ".tmp")
+    tmp.write_text(json.dumps(seen, indent=2) + "\n", encoding="utf-8")
+    os.replace(str(tmp), str(target))   # atomic on POSIX + Windows (same filesystem)
+
+
+# The home MIRRORS the bundled managed layer (skill/add + tooling + docs at the SAME relative
+# paths the package ships) so `_reconcile(project, source=<home>)` reuses MANAGED unchanged.
+# (bundled subpath, dest relative to <home>, strip dev-only test_*.py)
+_GLOBAL_TREES = (
+    ("skill/add", "skill/add", False),
+    ("tooling", "tooling", True),
+    ("docs", "docs", False),
+)
+
+
+def _reconcile_global(home: Path, claude_dir: Path, bundled_root: Path, no_skill: bool = False) -> None:
+    """Clean-replace the bundled managed layer INTO <home> (the canonical mirror), then DEPLOY
+    the skill to ~/.claude/skills/add for Claude discovery. Raises OSError if the home or skill
+    dir can't be written — the caller turns that into a clean 'home_unwritable' fail. The caller
+    verifies the bundled sources exist first (design-for-failure)."""
+    for sub, dest_rel, strip in _GLOBAL_TREES:
+        _clean_replace(bundled_root / sub, home / dest_rel, strip_tests=strip)
+    if not no_skill:
+        _clean_replace(home / "skill" / "add", claude_dir)
+
+
 def install(
     target: str = ".",
     force: bool = False,
@@ -216,11 +297,14 @@ def install(
     non_interactive: bool = False,
     bundled: str | None = None,
     env=None,
+    as_global: bool = False,
 ) -> int:
     """Install ADD into `target` directory — RECONCILES the managed layer (restore
     missing trees + refresh present ones, sweeping orphans), never touching user data.
 
-    `bundled` injects a synthetic source root (test hook; parity with update()).
+    `bundled` injects a synthetic source root (test hook; parity with update()). `env`
+    injects the home/skill base for hermetic global tests. `as_global` ALSO installs the
+    managed layer to the shared home + registers the project (the per-project drop still runs).
     Returns 0 on success, 1 on error, 130 on a user cancel (nothing written).
     """
     target_path = Path(target).resolve()
@@ -250,6 +334,33 @@ def install(
     for sub, _dest, _strip in MANAGED:
         if not (bundled_root / sub).exists():
             return _fail(f"missing bundled source: {bundled_root / sub}")
+
+    # OPT-IN global home: install the managed layer ONCE to a shared home + register this
+    # project, THEN fall through to the NORMAL per-project drop below (the self-contained
+    # default is untouched — global is strictly additive). Fail-closed: an unwritable home or
+    # a corrupt registry aborts BEFORE the per-project drop, leaving the package + default usable.
+    if as_global:
+        env_map = os.environ if env is None else env
+        home = resolve_global_home(env_map)
+        claude_dir = _claude_skills_dir(env_map)
+        try:
+            _reconcile_global(home, claude_dir, bundled_root)               # home_unwritable
+        except OSError as exc:
+            return _fail(f"cannot write global home {home} — {exc}")
+        _write_stamp(home, _pkg_version(), channel="global")
+        try:
+            reg = _read_registry(home)                                      # registry_corrupt
+        except ValueError:
+            return _fail(
+                f"global registry {_registry_path(home)} is corrupt — fix or delete it; not registering"
+            )
+        reg.append(str(target_path))
+        try:
+            _write_registry(home, reg)                                      # atomic + dedup
+        except OSError as exc:
+            return _fail(f"cannot write global registry {_registry_path(home)} — {exc}")
+        _log(f"  ✓ global home ready at {home}")
+        _log(f"  ✓ registered {target_path} (registry: {len(_read_registry(home))})")
 
     # RECONCILE: restore missing trees + refresh present ones (sweep orphans). Touches
     # ONLY the managed layer — state.json / PROJECT.md / milestones / tasks are never read.
@@ -388,16 +499,73 @@ def _add_dir(target_path: Path) -> Path:
     return target_path / ".add"
 
 
+def _update_global(target, *, force=False, bundled=None, version=None, env=None) -> int:
+    """`update --global`: refresh the shared home (mirror + skill, re-stamp) then propagate to
+    every registered+existing project via `reconcile(p, source=<home>)`; prune vanished projects
+    (warn) and rewrite the registry atomically. Fail-closed: no home install yet -> no_global_home;
+    a corrupt registry -> LOUD fail with the registry LEFT INTACT (read BEFORE any home write, so a
+    corrupt registry aborts with zero mutations)."""
+    env_map = os.environ if env is None else env
+    home = resolve_global_home(env_map)
+    claude_dir = _claude_skills_dir(env_map)
+    if not _stamp_path(home).exists():
+        return _fail(
+            f"no global ADD install at {home} (.add-version not found) — run `init --global` first"
+        )
+    try:
+        bundled_root = Path(bundled) if bundled else _bundled_root()
+    except RuntimeError as exc:
+        return _fail(str(exc))
+    for sub, _dest, _strip in MANAGED:
+        if not (bundled_root / sub).exists():
+            return _fail(f"missing bundled source: {bundled_root / sub}")
+    # Read the registry BEFORE refreshing the home — a corrupt registry fails closed with ZERO
+    # writes (never a silent empty-list no-op), leaving the file for the user to fix or delete.
+    try:
+        reg = _read_registry(home)
+    except ValueError:
+        return _fail(
+            f"global registry {_registry_path(home)} is corrupt — fix or delete it; not propagating"
+        )
+    new_version = version or _pkg_version()
+    try:
+        _reconcile_global(home, claude_dir, bundled_root)
+    except OSError as exc:
+        return _fail(f"cannot write global home {home} — {exc}")
+    _write_stamp(home, new_version, channel="global")
+    # Propagate from the home mirror to each still-existing project; prune the vanished.
+    kept: list = []
+    pruned = 0
+    for p in reg:
+        if not Path(p).exists():
+            _log(f"  ⚠ registered project {p} not found — pruning")
+            pruned += 1
+            continue
+        _reconcile(Path(p), home)          # standard MANAGED map, sourced from the home mirror
+        kept.append(p)
+    _write_registry(home, kept)
+    tail = f" ({pruned} pruned)" if pruned else ""
+    _log(f"ADD {new_version} · global home + {len(kept)} project(s) reconciled{tail}.")
+    return 0
+
+
 def update(
     target: str = ".",
     force: bool = False,
     bundled: str | None = None,
     version: str | None = None,
     channel: str = "pip",
+    env=None,
+    as_global: bool = False,
 ) -> int:
     """Re-materialize the managed layer (skill · tooling · docs) from the installed
     package into an EXISTING .add/ project, preserving ALL user data. Idempotent;
-    clean-replaces so no orphan files survive a version bump. 0 on success/no-op, 1 on error."""
+    clean-replaces so no orphan files survive a version bump. 0 on success/no-op, 1 on error.
+
+    `as_global` instead refreshes the shared global home + propagates to every registered
+    project (see `_update_global`); `env` injects the home/skill base for hermetic tests."""
+    if as_global:
+        return _update_global(target, force=force, bundled=bundled, version=version, env=env)
     target_path = Path(target).resolve()
     add_dir = _add_dir(target_path)
     if not (add_dir / "tooling").exists() and not (add_dir / "state.json").exists():
