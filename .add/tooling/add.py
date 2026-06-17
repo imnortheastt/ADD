@@ -4289,10 +4289,13 @@ def cmd_fold(args: argparse.Namespace) -> None:
     proj_text = _prepend_key_decision_row(proj_text, row)
     proj_text = re.sub(r"foundation-version:\s*\d+", f"foundation-version: {new_v}", proj_text, count=1)
 
-    # ── all bodies built; commit via a two-phase write (stage every temp, then rename all) so a
-    #    mid-commit IO failure leaves NOTHING written. Foundation files are ordered first so the
-    #    near-impossible mid-rename residual is a still-open lesson (visible, re-runnable), never a
-    #    flipped-but-untranscribed one (a silent loss). ───────────────────────────────────────────
+    # ── all bodies built; commit via a two-phase write (stage every temp, then rename-all). A
+    #    phase-1 temp-write failure — the REALISTIC one (disk-full / permission) — leaves NOTHING
+    #    written. A phase-2 mid-rename failure (near-impossible on same-dir renames) can leave the
+    #    foundation advanced while a TASK.md stays unflipped; files are ordered foundation-FIRST so
+    #    the lesson then stays visibly `open` and a re-run re-transcribes (DUPLICATING, never
+    #    losing — manual fixup), rather than a silently-flipped-but-untranscribed loss. A true
+    #    all-or-nothing N-file commit is the multi-file-commit follow-up task. ────────────────────
     writes: list[tuple[Path, str]] = [(project_md, proj_text)]
     touched = ["PROJECT.md"]
     if conv_text != conventions_text:
