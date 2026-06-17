@@ -32,6 +32,19 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # The npm installer twin now carries a runtime dep (@clack/prompts) on the
+      # interactive path. The tooling suite spawns `node cli.js` with the
+      # force-interactive seam, so @clack/prompts must be importable for the
+      # clack-cancel branch (test_installer_prompts: the "1" seam) to be exercised
+      # — without it the run degrades to the plain-text fallback (exit 0 != 130).
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+
+      - name: Install npm deps (clack interactive path)
+        working-directory: add-method
+        run: npm ci
+
       - name: Run tooling test suite
         working-directory: add-method
         run: python3 -m unittest discover -s tooling -p 'test_*.py'

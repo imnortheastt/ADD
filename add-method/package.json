@@ -8,6 +8,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@clack/prompts": "^1.5.1"
+  },
   "scripts": {
     "test": "python3 -m unittest discover -s tooling -p 'test_*.py'",
     "prepublishOnly": "python3 -m unittest discover -s tooling -p 'test_packaging.py'"

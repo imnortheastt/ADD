@@ -66,8 +66,10 @@ class V8InstallTest(unittest.TestCase):
 
     # --- the brain is bundled (GUARD the working behavior) ------------------
     def test_cli_bundles_brain(self):
+        # GUARD the behavior, not a stale literal form: heal-reconcile moved the copy
+        # to the MANAGED list, so the skill source is "skill/add" mapped to .claude/skills/add.
         cli = _cli()
-        self.assertTrue(re.search(r'"skill",\s*"add".*?\.claude.*?skills.*?add', cli, re.DOTALL),
+        self.assertTrue(re.search(r'"skill/add".*?\.claude.*?skills.*?add', cli, re.DOTALL),
                         "cli.js must copy the skill into .claude/skills/add/")
         self.assertTrue(re.search(r'"docs".*?\.add.*?docs', cli, re.DOTALL),
                         "cli.js must copy the book into .add/docs/")

@@ -5,13 +5,14 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-16 · foundation-version: 37
+slug: AIDD-Book · stage: mvp · updated: 2026-06-16 · foundation-version: 38
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---
 
 ## Domain (DDD) — the language and the boundaries
+- (DDD) the managed↔user-data boundary is now a REUSED domain concept: heal-reconcile/global-install copy the MANAGED layer, global-data copies its COMPLEMENT (user-data) — naming the boundary once (an explicit include/exclude rule) let both sides share it (evidence: `_is_user_data` is the inverse of MANAGED).  [folded foundation-version 38 · from global-data]
 - Core concepts: **task** (one feature), **milestone** (depth-bounded group of
   tasks), **phase** (specify→…→observe→done), **gate** (PASS·RISK-ACCEPTED·HARD-STOP),
   **contract** (frozen shape), **survivor layer** (durable artifacts), **stage**
@@ -35,6 +36,7 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
   not (v22 · DDD; same archive seam as graduation-analytics' traversal-basis convention).
 
 ## Spec / Living Document (SDD) — what we are building, now
+- (SDD) a new runtime dependency falsifies any "zero-dep" prose; grep + fix the claim in the SAME change (evidence: cli.js header corrected from "Zero npm dependencies"; README/GETTING-STARTED/docs grepped clean).  [folded foundation-version 38 · from installer-prompts]
 - (SDD) one glossary term touches 9 files across 3 sync regimes (book ×4 · template ×3 · dogfood ×1) and must be written in EACH type's native format (appendix `**T** — d` · template/dogfood `t: d`) — parity guards catch byte-divergence but the per-type FORMAT is a manual judgment the test must pin per type (evidence: test_B2 asserts format-by-type)  [folded foundation-version 37 · from close-book-accord]
 - (SDD) the wording-lint scans skill guides for bare status/process slang AND exempts code spans — the lifecycle `milestone-done → fold → compact → archive` must be backticked (as release.md does), not bare prose; a bare "fold" turned the full suite red (evidence: test_slang_absent_extended_surface term='fold' until the code-span reword)  [folded foundation-version 37 · from close-guide]
 - (SDD) the domain wording-lint rejects status-name slang in new docstrings — document the grammar abstractly, not by spelling the status words (evidence: test_sync_guidelines_domain_clean failed twice before the reword)  [folded foundation-version 36 · from spec-delta-grammar]
@@ -259,6 +261,7 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 ## Key Decisions (append-only — newest-first; compaction door per compact-foundation.md)
 | date | decision | why | outcome |
 |------|----------|-----|---------|
+| 2026-06-17 | fold all → foundation-version 38 (DDD 1 · SDD 1 · TDD 5 · ADD 8) | consolidate captured OBSERVE lessons into the versioned foundation | 15 lessons open→folded; +15 routed bullets; 37→38 |
 | 2026-06-17 | fold all → foundation-version 37 (SDD 2 · TDD 1 · ADD 4) | consolidate captured OBSERVE lessons into the versioned foundation | 7 lessons open→folded; +7 routed bullets; 36→37 |
 | 2026-06-17 | fold all → foundation-version 36 (SDD 1 · TDD 3 · ADD 6) | consolidate captured OBSERVE lessons into the versioned foundation | 10 lessons open→folded; +10 routed bullets; 35→36 |
 | 2026-06-16 | ship decision-suggestions + fold → foundation-version 35 (10 open deltas from 3 tasks — SDD 3 · TDD 2 · ADD 5; consolidated into 4 new bullets — 1 §Spec decision-suggestions ship bullet carrying the 2 SDD lessons (prose-convention-§3-freezes-a-token-set · docs-accord-describes-by-own-entry-regex+md5+points-at-source) + 3 CONVENTIONS (ADD presentation-convention-ships-as-a-trail+dogfoods-its-own-gates · ADD discriminate-autonomy-by-change-type · TDD prose-red-suite-splits+closing-tag-lint+climb-token-scope); the §5 repo-root scope-token bug reaffirms the fv29 §5-scope-frozen-at-tests→build convention) — every human gate now renders its DECISION as a guided choice (▶ recommended pick + 1–3 described alternatives): report-template.md specifies · 8 guides cue · book+GLOSSARY describe; NO engine change | the human asked to highlight a suggestion + short description at every gate — the convention makes the recommendation + consequences visible instead of a bare next-step line, dogfooding ADD's own presentation layer (it even rendered its own freeze/verify/close gates as guided choices); consolidate-don't-append (10→4) keeps the foundation one-screen | decision-suggestions SHIPPED 3/3 tasks, 3/3 criteria, 3 PASS (suggestion-block risk:high conservative · gate-wiring + suggest-book-align auto); +1 §Spec +3 CONVENTIONS; 34→35; all 10 deltas open→folded; report-template.md + engine add.py byte-unchanged; full suite 1158 green; verify caught a real §5 scope-token bug (bare filename vs `add-method/..` climb), fixed by re-crossing tests→build; commits a378d2e (report-template) · 450483e (8 guides) · <task-3 book> on feat/decision-suggestions |
