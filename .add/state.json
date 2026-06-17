@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "compact-force-override",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -939,7 +939,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T02:08:18+00:00",
+  "updated": "2026-06-17T07:09:32+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1078,7 +1078,7 @@
       "updated": "2026-06-17T02:07:15+00:00"
     }
   },
-  "active_milestone": "delta-resolution-polish",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1394,6 +1394,18 @@
         "suggest-book-align"
       ],
       "archived": "2026-06-16"
+    },
+    {
+      "slug": "ship-review",
+      "title": "ship-review",
+      "tasks": 3,
+      "task_slugs": [
+        "close-section-template",
+        "close-guide",
+        "close-book-accord"
+      ],
+      "archived": "2026-06-17",
+      "compacted": "2026-06-17"
     }
   ]
 }

@@ -84,6 +84,10 @@
 
 **Release scope level** — the fifth scope level: releasing as its own granularity, orthogonal to the stage. A release bundles ≥1 closed milestone (never forced one-per-milestone) and may be cut at any stage — prototype preview, mvp beta, production GA. Distinct from milestone-close (feature-complete + consolidated) and from stage graduation (which changes rigor, not version). See **Scope level** and [16 · Releasing](./16-releasing.md).
 
+**Ship review** — the whole-milestone, cross-task evidence the AI fills at milestone close in the `## Close — ship review` section: ship-by-domain (what changed per bounded context), cross-task evidence (one row per task: gate · tests · residue), and a goal-met map (each exit criterion tied to its evidence). A person reads it *before* checking the exit-criteria boxes — evidence, not a new gate. The ritual lives in the `add` skill's `loop.md`. See [09 · The Loop](./09-the-loop.md).
+
+**Release steps** — the AI-defined, per-milestone ordered hints to ship a closed milestone, of which `merge` is one small step (a pull request, an exported hand-off document, a tag or a publish are others). Defined at close and **fed** into the release scope (see **Release**), never a second flow.
+
 **Readiness floor** — the engine-enforced pre-cut gate `add.py release` applies before it records anything: a green suite, zero open security `HARD-STOP`, a closed-and-unreleased milestone to bundle, and every riding `RISK-ACCEPTED` waiver disclosed in the notes. Its four rejects are `release_security_open` (un-forceable) · `release_tests_red` · `release_no_closed_milestone` · `release_undisclosed_waiver`; `--force` may override every reject except the security stop.
 
 **RELEASES.md ledger** — the append-only, newest-first trail of release rows at the project root (date · version · milestones · waivers shipped · evidence). Like the §Key Decisions log it is never rewritten; a superseded or yanked version is recorded as a new row. The ledger is the attribution source — a milestone is "released" because a row says so — which is why the `→ releasable` cue never has to read a milestone file.
