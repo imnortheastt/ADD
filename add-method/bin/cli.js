@@ -4,7 +4,7 @@
 /**
  * @pilotspace/add installer.
  *
- *   npx @pilotspace/add init [targetDir] [--force] [--stage <stage>] [--name <name>]
+ *   npx @pilotspace/add init [targetDir] [--force] [--stage <stage>] [--name <name>] [--yes|--non-interactive]
  *
  * Installs the ADD skill + tooling + book into a target project:
  *   <target>/.claude/skills/add/   (the skill Claude loads)
@@ -15,8 +15,12 @@
  * to a CLI user. A pre-run plain init would grandfather-lock the gate before `/add` runs
  * AND consume the brownfield signal in the terminal, where the AI never sees it.
  *
- * Zero npm dependencies, no Python needed at install time. Designed for failure:
- * verifies sources exist before copying, never clobbers an existing skill.
+ * One lazy, optional dependency (@clack/prompts) powers the interactive flow on a real
+ * terminal; it is dynamic-import()ed ONLY on that path, so a non-interactive / CI run
+ * (and the `--yes` / `--non-interactive` path) never loads it and degrades to plain text
+ * if it is missing. No Python needed at install time. Designed for failure: verifies
+ * sources exist before copying, never clobbers an existing skill, never throws on a
+ * non-TTY or a failed clack import.
  */
 
 const fs = require("fs");
@@ -32,11 +36,16 @@ function parseArgs(argv) {
   // stage/name stay null unless EXPLICITLY passed — the engine's own `init`
   // defaults the stage and infers the name from the folder, so the manual-init
   // hint only echoes flags the user actually chose (shortest true command).
-  const args = { _: [], force: false, check: false, noSkill: false, stage: null, name: null };
+  const args = { _: [], force: false, check: false, noSkill: false, stage: null, name: null,
+                 yes: false, nonInteractive: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--force") args.force = true;
     else if (a === "--check") args.check = true;
+    // --yes / --non-interactive: skip all prompts, take defaults — the explicit
+    // non-interactive selector the interactive() gate honors (CI/pipes do this too).
+    else if (a === "--yes" || a === "-y") args.yes = true;
+    else if (a === "--non-interactive") args.nonInteractive = true;
     // --no-skill: drop the engine + book ONLY, not the skill. The Claude Code plugin
     // already provides the `add` skill, so a plugin bootstrap uses this to materialize
     // .add/tooling/ + .add/docs/ into the project without a duplicate .claude/skills/add.
@@ -71,9 +80,48 @@ function copyDir(src, dest, { skipIfExists, cleanReplace } = {}) {
   fs.cpSync(src, dest, { recursive: true });
 }
 
-function cmdInit(args) {
-  const target = path.resolve(args._[0] || ".");
-  if (!fs.existsSync(target)) fail("target directory does not exist: " + target);
+// --- interactive layer (clack on a real TTY; plain text everywhere else) -----
+// Designed-for-failure: any doubt (non-TTY, CI, --yes, a failed import, an
+// un-promptable stream) degrades to the EXACT plain-text path below. The clack
+// import is dynamic + lazy (clack 1.x is ESM-only) so a non-interactive / CI run
+// never loads it. A test seam (ADD_INSTALLER_FORCE_INTERACTIVE) reaches the branch
+// without a PTY: "1" forces interactive, "fail" forces it but throws on import.
+
+function interactive(args) {
+  if (args.yes || args.nonInteractive) return false;       // explicit opt-out wins
+  const seam = process.env.ADD_INSTALLER_FORCE_INTERACTIVE;
+  if (seam === "1" || seam === "fail") return true;        // documented test seam
+  return Boolean(process.stdout.isTTY && process.stdin.isTTY) && !process.env.CI;
+}
+
+async function loadClack() {
+  // honors the "fail" seam so the clack_unavailable fallback is testable without
+  // uninstalling the dependency.
+  if (process.env.ADD_INSTALLER_FORCE_INTERACTIVE === "fail") {
+    throw new Error("forced clack import failure (test seam)");
+  }
+  return import("@clack/prompts");
+}
+
+// Returns { cancelled, target }. A cancel happens BEFORE any file is written, so a
+// cancelled run leaves the target untouched. Without a real TTY to read (the forced
+// test seam), we cannot prompt — abort safely rather than hang.
+async function runClackPreamble(clack, target) {
+  clack.intro("ADD — AI-Driven Development");
+  if (!process.stdin.isTTY) return { cancelled: true, target: target };
+  const chosen = await clack.text({
+    message: "Install ADD into which directory?",
+    initialValue: target, defaultValue: target,
+  });
+  if (clack.isCancel(chosen)) return { cancelled: true, target: target };
+  const ok = await clack.confirm({ message: "Write the ADD skill + tooling + book here?" });
+  if (clack.isCancel(ok) || !ok) return { cancelled: true, target: target };
+  return { cancelled: false, target: String(chosen || target) };
+}
+
+// The plain-text drop — byte-identical to the pre-interactive installer. The
+// interactive path resolves a target then calls straight into this.
+function dropFiles(args, target) {
   log("Installing ADD into " + target);
 
   // 1. skill -> .claude/skills/add  (skipped under --no-skill: the plugin provides it)
@@ -113,6 +161,31 @@ function cmdInit(args) {
   log("       sets up the foundation, sizes it into a milestone, and drives the build with you;");
   log("       you sign off once, at the lock-down.");
   log("");
+}
+
+async function cmdInit(args) {
+  const target = path.resolve(args._[0] || ".");
+  if (!fs.existsSync(target)) fail("target directory does not exist: " + target);
+
+  let chosenTarget = target;
+  if (interactive(args)) {
+    let clack = null;
+    try { clack = await loadClack(); }
+    catch (_e) { warn("clack unavailable — falling back to plain-text install"); }
+    if (clack) {
+      const outcome = await runClackPreamble(clack, target);
+      if (outcome.cancelled) {
+        // the exit code IS the contract; a closed-pipe stdout (EPIPE) must not
+        // mask the cancel — guard the courtesy message, never let it throw.
+        try { clack.cancel("Installation cancelled — nothing was written."); }
+        catch (_e) { /* stdout unavailable (e.g. closed pipe) — exit code carries it */ }
+        process.exit(130);                // user_cancelled: nothing written
+      }
+      chosenTarget = path.resolve(outcome.target);
+      if (!fs.existsSync(chosenTarget)) fail("target directory does not exist: " + chosenTarget);
+    }
+  }
+  dropFiles(args, chosenTarget);
 }
 
 // --- update: re-materialize the managed layer without a re-install -----------
@@ -191,22 +264,23 @@ function cmdUpdate(args) {
       " · skill · tooling · docs refreshed · your project state untouched.");
 }
 
-function main() {
+async function main() {
   const argv = process.argv.slice(2);
   const cmd = argv[0] && !argv[0].startsWith("--") ? argv.shift() : "init";
   const args = parseArgs(argv);
   switch (cmd) {
     case "init":
-      cmdInit(args);
+      await cmdInit(args);
       break;
     case "update":
       cmdUpdate(args);
       break;
     case "help":
     case "--help":
-      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check] [--no-skill]");
+      log("usage: npx @pilotspace/add <init|update> [targetDir] [--force] [--check] [--no-skill] [--yes|--non-interactive]");
       log("  init    install the ADD skill + tooling + book into a project");
       log("          (--no-skill drops the engine + book only — used by the Claude Code plugin)");
+      log("          (interactive in a real terminal; --yes / --non-interactive force the plain path)");
       log("  update  re-materialize skill/tooling/docs to this package version (preserves your state)");
       break;
     default:
@@ -214,4 +288,4 @@ function main() {
   }
 }
 
-main();
+main().catch((e) => fail(e && e.message ? e.message : String(e)));

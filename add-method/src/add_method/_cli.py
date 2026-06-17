@@ -35,6 +35,11 @@ def main(argv: list[str] | None = None) -> int:
                             help="re-materialize even when already current")
         parser.add_argument("--check", action="store_true",
                             help="report version drift without writing anything")
+        # accepted for CLI-surface parity with init / the npm twin; update is
+        # non-interactive by nature, so these are no-ops here.
+        parser.add_argument("--yes", "-y", action="store_true", help=argparse.SUPPRESS)
+        parser.add_argument("--non-interactive", dest="non_interactive",
+                            action="store_true", help=argparse.SUPPRESS)
         args = parser.parse_args(rest)
         from add_method._installer import update, update_check
         if args.check:
@@ -65,6 +70,10 @@ def main(argv: list[str] | None = None) -> int:
                              "to prototype")
     parser.add_argument("--name", default=None,
                         help="Project name (default: target directory name)")
+    parser.add_argument("--yes", "-y", action="store_true",
+                        help="skip prompts and take defaults (forces the non-interactive path)")
+    parser.add_argument("--non-interactive", dest="non_interactive", action="store_true",
+                        help="never prompt; take defaults (same as --yes; what CI / pipes do)")
 
     args = parser.parse_args(rest)
 
@@ -74,6 +83,8 @@ def main(argv: list[str] | None = None) -> int:
         force=args.force,
         stage=args.stage,
         name=args.name,
+        yes=args.yes,
+        non_interactive=args.non_interactive,
     )
 
 

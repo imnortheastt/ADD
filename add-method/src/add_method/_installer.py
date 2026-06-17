@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import importlib.resources
 import json
+import os
 import shutil
 import sys
 from datetime import datetime, timezone
@@ -50,6 +51,44 @@ def _fail(msg: str) -> int:
     return 1
 
 
+# --- interactive layer (stdlib input(); npm's clack twin — NO new dependency) ---
+# Mirrors bin/cli.js: interactive only on a real terminal, byte-identical plain text
+# everywhere else. clack is Node-only, so pip uses a single stdlib input() confirm.
+CANCEL = object()  # sentinel: the user aborted before any write
+
+
+def _interactive(yes: bool, non_interactive: bool) -> bool:
+    if yes or non_interactive:
+        return False
+    seam = os.environ.get("ADD_INSTALLER_FORCE_INTERACTIVE")
+    if seam in ("1", "fail"):       # documented test seam (parity with cli.js)
+        return True
+    return (
+        sys.stdin.isatty()
+        and sys.stdout.isatty()
+        and not os.environ.get("CI")
+    )
+
+
+def _prompt_target(default_path: Path):
+    """Confirm the target directory. Enter accepts the default; a typed path overrides.
+    A cancel (EOF / Ctrl-C) returns CANCEL — the caller writes nothing.
+
+    Deliberately a SINGLE confirm (npm's clack flow has a second write-confirm step):
+    "parity ENOUGH" is the accepted §1 A2 assumption — a richer pip prompt is a deferred
+    follow-up per the milestone Out-list, not a parity bug."""
+    try:
+        resp = input(
+            f"Install ADD into target directory [{default_path}] "
+            "(Enter to confirm, or type a path): "
+        ).strip()
+    except (EOFError, KeyboardInterrupt):
+        return CANCEL
+    if not resp:
+        return default_path
+    return Path(resp).expanduser().resolve()
+
+
 def _bundled_root() -> Path:
     """Return a concrete filesystem path to src/add_method/_bundled/.
 
@@ -75,14 +114,27 @@ def install(
     force: bool = False,
     stage: str | None = None,
     name: str | None = None,
+    yes: bool = False,
+    non_interactive: bool = False,
 ) -> int:
     """Install ADD into `target` directory.
 
-    Returns 0 on success, 1 on error.
+    Returns 0 on success, 1 on error, 130 on a user cancel (nothing written).
     """
     target_path = Path(target).resolve()
     if not target_path.exists():
         return _fail(f"target directory does not exist: {target_path}")
+
+    # Interactive confirm (real terminal only) — degrades to the plain path under
+    # --yes/--non-interactive, CI, or a pipe. A cancel writes NOTHING (exit 130).
+    if _interactive(yes, non_interactive):
+        chosen = _prompt_target(target_path)
+        if chosen is CANCEL:
+            _log("\nInstallation cancelled — nothing was written.")
+            return 130
+        target_path = chosen
+        if not target_path.exists():
+            return _fail(f"target directory does not exist: {target_path}")
 
     _log(f"Installing ADD into {target_path}")
 
