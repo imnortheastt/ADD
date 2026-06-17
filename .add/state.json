@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "global-data",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -936,150 +936,10 @@
       "created": "2026-06-17T02:07:27+00:00",
       "updated": "2026-06-17T02:07:27+00:00",
       "from_delta": "spec-delta-guards"
-    },
-    "installer-prompts": {
-      "title": "Interactive npm installer via @clack/prompts + plain-text fallback (pip parity)",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "installer-experience",
-      "depends_on": [],
-      "created": "2026-06-17T08:22:59+00:00",
-      "updated": "2026-06-17T09:00:34+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "4a93599c82e4d8c8415c5f98ab792dd5",
-        "tests": {
-          "add-method/tooling/test_installer_prompts.py": "f0cfe7833849a5eaed89333eecc2c311"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/bin/cli.js",
-          "add-method/package.json",
-          "add-method/src/add_method/_cli.py",
-          "add-method/src/add_method/_installer.py",
-          "add-method/tooling/test_installer_prompts.py"
-        ],
-        "snapshot_md5": "5242045410412b745025984cf4ccd5a6"
-      },
-      "heal": {
-        "attempts": 1,
-        "history": [
-          {
-            "at": "2026-06-17T08:59:05+00:00",
-            "reason": "tamper_detected:build_tampered:add-method/tooling/test_installer_prompts.py",
-            "source": "tamper"
-          }
-        ]
-      }
-    },
-    "agent-detect": {
-      "title": "Detect the coding agent, write its integration file, print its exact next step",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "installer-experience",
-      "depends_on": [],
-      "created": "2026-06-17T08:22:59+00:00",
-      "updated": "2026-06-17T09:57:23+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "9e79d74820e42acb3a54c482494dcd71",
-        "tests": {
-          "add-method/tooling/test_agent_detect.py": "aa66e513d6b3b740653bffae22f1e67d"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/bin/cli.js",
-          "add-method/src/add_method/_installer.py",
-          "add-method/tooling/test_agent_detect.py",
-          "add-method/tooling/test_installer_handoff.py"
-        ],
-        "snapshot_md5": "f1f74aad64bb530749476b0ffa685428"
-      }
-    },
-    "heal-reconcile": {
-      "title": "init+update scan .add/, overwrite managed + add missing, never touch user data",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "installer-experience",
-      "depends_on": [],
-      "created": "2026-06-17T08:22:59+00:00",
-      "updated": "2026-06-17T09:33:35+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "594c284d6ecf5ac563c240df30fb4ab8",
-        "tests": {
-          "add-method/tooling/test_heal_reconcile.py": "6022845858b78ccf91cf7326f09563c8"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/bin/cli.js",
-          "add-method/src/add_method/_installer.py",
-          "add-method/tooling/test_heal_reconcile.py",
-          "add-method/tooling/test_v8_install.py"
-        ],
-        "snapshot_md5": "1df06e75740397bed217dee34fae2f26"
-      }
-    },
-    "global-install": {
-      "title": "Global ADD home: engine+book+skill installed once, updated for all projects",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "installer-experience",
-      "depends_on": [
-        "heal-reconcile"
-      ],
-      "created": "2026-06-17T08:23:05+00:00",
-      "updated": "2026-06-17T10:51:12+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "fdaf799aaa3f5b0d37dc9ec7b6d5102b",
-        "tests": {
-          "add-method/tooling/test_global_install.py": "ed5b9d881b6df177bf139e0e89cc8518"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/bin/cli.js",
-          "add-method/src/add_method/_installer.py",
-          "add-method/src/add_method/_cli.py",
-          "add-method/tooling/test_global_install.py"
-        ],
-        "snapshot_md5": "337971ebca6dad36ec207d5d9f1a300e"
-      }
-    },
-    "global-data": {
-      "title": "--global-data opt-in: per-project data persisted under the global home, keyed by path",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "installer-experience",
-      "depends_on": [
-        "global-install"
-      ],
-      "created": "2026-06-17T08:23:05+00:00",
-      "updated": "2026-06-17T14:09:14+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "984b68e54ccfc57c196812f277fef54c",
-        "tests": {
-          "add-method/tooling/test_global_data.py": "5fa140697048104d7071a7c1a734a80d"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/bin/cli.js",
-          "add-method/src/add_method/_installer.py",
-          "add-method/src/add_method/_cli.py",
-          "add-method/tooling/test_global_data.py"
-        ],
-        "snapshot_md5": "5d65cc10ff975dea18f9696818a77613"
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T14:11:06+00:00",
+  "updated": "2026-06-17T14:17:17+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1216,17 +1076,9 @@
       "status": "active",
       "created": "2026-06-17T02:07:15+00:00",
       "updated": "2026-06-17T02:07:15+00:00"
-    },
-    "installer-experience": {
-      "title": "Installer Experience",
-      "goal": "stand up or repair ADD for any coding agent through one guided installer \u2014 interactive when the terminal allows, agent-aware, self-healing on partial setups, and installable globally or per-project",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-17T08:22:22+00:00",
-      "updated": "2026-06-17T14:11:06+00:00"
     }
   },
-  "active_milestone": "installer-experience",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1554,6 +1406,19 @@
       ],
       "archived": "2026-06-17",
       "compacted": "2026-06-17"
+    },
+    {
+      "slug": "installer-experience",
+      "title": "Installer Experience",
+      "tasks": 5,
+      "task_slugs": [
+        "installer-prompts",
+        "agent-detect",
+        "heal-reconcile",
+        "global-install",
+        "global-data"
+      ],
+      "archived": "2026-06-17"
     }
   ]
 }
