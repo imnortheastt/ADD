@@ -25,13 +25,13 @@ Out: changing the five competencies or their fold ROUTING (deltas.md/fold.md rou
 - the `add.py fold` CLI surface + the version-bump write contract (one bump per call vs per session) + what it stamps vs leaves to prose -> owning task fold-command
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] spec-delta-grammar   depends-on: none                              — introduce SPEC as a separate delta track: `### Spec delta` block + `[SPEC · open|seeded|dropped]` grammar, tag-aware parse/lint, an open-SPEC collector, `add.py deltas` surfaces them apart from competency learnings
-- [ ] seed-and-drop        depends-on: spec-delta-grammar                — the resolution verbs: `new-task --from-delta <prior>` (prefill §1 Feature, flip open→seeded + `[→ <new>]` stamp, record `from_delta` state) and a drop path (open→dropped)
-- [ ] spec-delta-guards    depends-on: spec-delta-grammar,seed-and-drop  — the can't-drop-silently net: `compact` blocks a member task with an open SPEC delta; `status`/`report` nudge unconsumed open SPEC deltas
-- [ ] fold-command         depends-on: none                              — `add.py fold <task> --comp <TAG>` flips a competency delta open→folded, stamps `[folded foundation-version N]`, bumps the PROJECT.md header version atomically (validate-all-then-write); updates fold.md
+- [x] spec-delta-grammar   depends-on: none                              — introduce SPEC as a separate delta track: `### Spec delta` block + `[SPEC · open|seeded|dropped]` grammar, tag-aware parse/lint, an open-SPEC collector, `add.py deltas` surfaces them apart from competency learnings
+- [x] seed-and-drop        depends-on: spec-delta-grammar                — the resolution verbs: `new-task --from-delta <prior>` (prefill §1 Feature, flip open→seeded + `[→ <new>]` stamp, record `from_delta` state) and a drop path (open→dropped)
+- [x] spec-delta-guards    depends-on: spec-delta-grammar,seed-and-drop  — the can't-drop-silently net: `compact` blocks a member task with an open SPEC delta; `status`/`report` nudge unconsumed open SPEC deltas
+- [x] fold-command         depends-on: none                              — `add.py fold <task> --comp <TAG>` flips a competency delta open→folded, stamps `[folded foundation-version N]`, bumps the PROJECT.md header version atomically (validate-all-then-write); updates fold.md
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] A §7 `### Spec delta` block accepts `[SPEC · open|seeded|dropped]`, the lint rejects a cross-set state, and `add.py deltas` lists open SPEC deltas separately from competency learnings   (← spec-delta-grammar)
-- [ ] `add.py new-task --from-delta <prior>` prefills the new §1 Feature, flips the source SPEC delta to `seeded` with `[→ <new>]`, records `from_delta`; a drop path flips an open SPEC delta to `dropped`   (← seed-and-drop)
-- [ ] `add.py compact` refuses a task carrying an open SPEC delta, and `status`/`report` surface a nudge for each unconsumed open SPEC delta   (← spec-delta-guards)
-- [ ] `add.py fold <task> --comp <TAG>` flips the delta open→folded, writes the `[folded foundation-version N]` stamp, and bumps the PROJECT.md `foundation-version:` header atomically (a reject leaves tree + version byte-for-byte unchanged)   (← fold-command)
+- [x] A §7 `### Spec delta` block accepts `[SPEC · open|seeded|dropped]`, the lint rejects a cross-set state, and `add.py deltas` lists open SPEC deltas separately from competency learnings   (← spec-delta-grammar)
+- [x] `add.py new-task --from-delta <prior>` prefills the new §1 Feature, flips the source SPEC delta to `seeded` with `[→ <new>]`, records `from_delta`; a drop path flips an open SPEC delta to `dropped`   (← seed-and-drop)
+- [x] `add.py compact` refuses a task carrying an open SPEC delta, and `status`/`report` surface a nudge for each unconsumed open SPEC delta   (← spec-delta-guards)
+- [x] `add.py fold <task> --comp <TAG>` flips the delta open→folded, writes the `[folded foundation-version N]` stamp, and bumps the PROJECT.md `foundation-version:` header atomically (a reject leaves tree + version byte-for-byte unchanged)   (← fold-command)

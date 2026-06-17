@@ -241,10 +241,10 @@ Watch (reuse scenarios as monitors): per-verb refusal rate (`no_open_spec_delta`
 
 ### Spec delta
 Forward changes for the next loop — each re-enters at Specify as the next task.
-  - [SPEC · open] add a `--match <substr>` selector to `new-task --from-delta` and `drop-delta` so a specific open SPEC delta can be targeted when a task holds several (evidence: the v1 freeze took "first-open" as the coarse default and deferred this — flagged the bundle's lowest-confidence point)
+  - [SPEC · seeded] add a `--match <substr>` selector to `new-task --from-delta` and `drop-delta` so a specific open SPEC delta can be targeted when a task holds several (evidence: the v1 freeze took "first-open" as the coarse default and deferred this — flagged the bundle's lowest-confidence point) [→ delta-match-selector]
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-  - [TDD · open] a new SUBCOMMAND ripples into test_min_pillar's LIFECYCLE census, which derives the command set from `sub.choices` DYNAMICALLY — grep `LIFECYCLE`/`sub.choices`/`_NONZERO_OK` before adding a subcommand, not just `add_parser`/`--help` (evidence: `drop-delta` tripped test_every_subcommand_is_covered after a clean pre-build grep, forcing a §5 expansion + re-cross)
-  - [ADD · open] verb-vs-flag sizes the census ripple: a new FLAG on an existing command (`--from-delta`) adds no subcommand and is census-free, but a new SUBCOMMAND (`drop-delta`) costs a LIFECYCLE entry — declare the census file in §5 up front whenever a task adds a subcommand (evidence: the flag was free, the verb was not)
+  - [TDD · folded] a new SUBCOMMAND ripples into test_min_pillar's LIFECYCLE census, which derives the command set from `sub.choices` DYNAMICALLY — grep `LIFECYCLE`/`sub.choices`/`_NONZERO_OK` before adding a subcommand, not just `add_parser`/`--help` (evidence: `drop-delta` tripped test_every_subcommand_is_covered after a clean pre-build grep, forcing a §5 expansion + re-cross) [folded foundation-version 36]
+  - [ADD · folded] verb-vs-flag sizes the census ripple: a new FLAG on an existing command (`--from-delta`) adds no subcommand and is census-free, but a new SUBCOMMAND (`drop-delta`) costs a LIFECYCLE entry — declare the census file in §5 up front whenever a task adds a subcommand (evidence: the flag was free, the verb was not) [folded foundation-version 36]

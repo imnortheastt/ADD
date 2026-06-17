@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "fold-command",
+  "active_task": "compact-force-override",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -906,10 +906,40 @@
           }
         ]
       }
+    },
+    "multi-file-commit": {
+      "title": "Multi File Commit",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "delta-resolution-polish",
+      "depends_on": [],
+      "created": "2026-06-17T02:07:27+00:00",
+      "updated": "2026-06-17T02:07:27+00:00",
+      "from_delta": "fold-command"
+    },
+    "delta-match-selector": {
+      "title": "Delta Match Selector",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "delta-resolution-polish",
+      "depends_on": [],
+      "created": "2026-06-17T02:07:27+00:00",
+      "updated": "2026-06-17T02:07:27+00:00",
+      "from_delta": "seed-and-drop"
+    },
+    "compact-force-override": {
+      "title": "Compact Force Override",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "delta-resolution-polish",
+      "depends_on": [],
+      "created": "2026-06-17T02:07:27+00:00",
+      "updated": "2026-06-17T02:07:27+00:00",
+      "from_delta": "spec-delta-guards"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T02:00:33+00:00",
+  "updated": "2026-06-17T02:08:18+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1035,12 +1065,20 @@
       "title": "Delta Resolution",
       "goal": "every delta \u2014 spec and competency \u2014 has a recorded, engine-driven resolution event, never a silent dangling lesson",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-16T14:27:44+00:00",
-      "updated": "2026-06-16T14:27:44+00:00"
+      "updated": "2026-06-17T02:08:18+00:00"
+    },
+    "delta-resolution-polish": {
+      "title": "Delta Resolution Polish",
+      "goal": "polish the delta-resolution machinery from the deltas the first milestone surfaced: a true multi-file commit primitive (all-or-nothing across N files), a --match selector to target a specific open SPEC delta, and a compact --force override for an unrelated open SPEC delta",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-17T02:07:15+00:00",
+      "updated": "2026-06-17T02:07:15+00:00"
     }
   },
-  "active_milestone": "delta-resolution",
+  "active_milestone": "delta-resolution-polish",
   "archived": [
     {
       "slug": "v5",

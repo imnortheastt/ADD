@@ -286,12 +286,12 @@ Watch (reuse scenarios as monitors): `check` red-rate on malformed SPEC lines ·
 
 ### Spec delta
 Forward changes for the next loop — each re-enters at Specify as the next task.
-  - [SPEC · open] add `new-task --from-delta <prior>` to seed an open SPEC delta into the next task's §1 Feature, flipping it `seeded` with a `[→ <new>]` stamp (evidence: this loop landed the grammar but `seeded`/`dropped` have no writer yet — seed-and-drop, task 2)
-  - [SPEC · open] `compact` must block open SPEC deltas, symmetric with the open-competency `open_deltas_unfolded` guard, and status/report must nudge unconsumed ones (evidence: an open SPEC line can currently be lost at compaction with no warning — spec-delta-guards, task 3)
+  - [SPEC · dropped] add `new-task --from-delta <prior>` to seed an open SPEC delta into the next task's §1 Feature, flipping it `seeded` with a `[→ <new>]` stamp (evidence: this loop landed the grammar but `seeded`/`dropped` have no writer yet — seed-and-drop, task 2)
+  - [SPEC · dropped] `compact` must block open SPEC deltas, symmetric with the open-competency `open_deltas_unfolded` guard, and status/report must nudge unconsumed ones (evidence: an open SPEC line can currently be lost at compaction with no warning — spec-delta-guards, task 3)
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-  - [ADD · open] a §5 BUILD scope for an `add.py` parser change must pre-list the test mirrors, `engine_pin.py`, and the 3 byte-identical dogfood copies up front — the change ripples to all of them (evidence: scope under-declared mid-build forced a tests→build re-cross to re-anchor the tripwire)
-  - [TDD · open] before removing a template/placeholder field, grep its downstream consumers first — observe-reading tests broke on the removed legacy `Spec delta for the next loop:` line (evidence: test_report.py 2 regressions surfaced only at full-suite run)
-  - [SDD · open] the domain wording-lint rejects status-name slang in new docstrings — document the grammar abstractly, not by spelling the status words (evidence: test_sync_guidelines_domain_clean failed twice before the reword)
+  - [ADD · folded] a §5 BUILD scope for an `add.py` parser change must pre-list the test mirrors, `engine_pin.py`, and the 3 byte-identical dogfood copies up front — the change ripples to all of them (evidence: scope under-declared mid-build forced a tests→build re-cross to re-anchor the tripwire) [folded foundation-version 36]
+  - [TDD · folded] before removing a template/placeholder field, grep its downstream consumers first — observe-reading tests broke on the removed legacy `Spec delta for the next loop:` line (evidence: test_report.py 2 regressions surfaced only at full-suite run) [folded foundation-version 36]
+  - [SDD · folded] the domain wording-lint rejects status-name slang in new docstrings — document the grammar abstractly, not by spelling the status words (evidence: test_sync_guidelines_domain_clean failed twice before the reword) [folded foundation-version 36]
