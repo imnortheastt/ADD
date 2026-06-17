@@ -186,7 +186,7 @@ class AddPyProseTest(unittest.TestCase):
 
     # Group C machine literals (frozen §3 machine-layer rule — state keys / enum values /
     # grammar patterns keep their names, bridged in the glossary):
-    MACHINE_CONSTANTS = {"seam", "folded"}      # --json owner enum + decide key · delta status
+    MACHINE_CONSTANTS = {"seam", "folded", "fold"}   # --json owner enum + decide key · delta status · `add.py fold` subcommand (v3)
     MACHINE_SPANS = (                           # machine-token fragments inside longer strings
         "###\\s*Competency deltas",             # the _DELTA block locator pattern (x2)
         "### Competency deltas",                # docstrings quoting the machine heading

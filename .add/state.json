@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "spec-delta-guards",
+  "active_task": "fold-command",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -847,10 +847,69 @@
         ],
         "snapshot_md5": "7e4759d73b3c09c225c9072b4e7abfa2"
       }
+    },
+    "fold-command": {
+      "title": "add.py fold \u2014 mechanize competency-delta consolidation (flip+stamp+route+bump)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "delta-resolution",
+      "depends_on": [
+        "spec-delta-guards"
+      ],
+      "created": "2026-06-16T16:54:01+00:00",
+      "updated": "2026-06-17T02:00:33+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "5445b76c40714282d355ef02bd8a8140",
+        "tests": {
+          "add-method/tooling/test_fold_command.py": "a231e1fd6c1844f8cbd5d0dee1d01b36"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/test_foundation_update_loop.py",
+          "add-method/tooling/test_ubiquitous_language.py",
+          "add-method/tooling/test_scope_gate_enforce.py",
+          "add-method/skill/add/fold.md",
+          "add-method/src/add_method/_bundled/skill/add/fold.md",
+          ".claude/skills/add/fold.md"
+        ],
+        "snapshot_md5": "6af925e021b3660a8cd0c1b6b8f17750"
+      },
+      "heal": {
+        "attempts": 3,
+        "history": [
+          {
+            "at": "2026-06-17T01:47:19+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-17T01:48:35+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-17T01:50:11+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          },
+          {
+            "at": "2026-06-17T01:51:02+00:00",
+            "reason": "scope_violation: task 'fold-command' touched outside its declared \u00a75 Scope \u2014 .serena/cache/python/document_symbols.pkl \u00b7 .serena/cache/python/raw_document_symbols.pkl (2 total)",
+            "source": "scope"
+          }
+        ]
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-16T16:31:04+00:00",
+  "updated": "2026-06-17T02:00:33+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

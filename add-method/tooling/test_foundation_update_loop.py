@@ -8,10 +8,16 @@ human confirm → append-only write), so the deliverable is a rubric (skill/add/
 the rubric exists in both skill trees (md5 parity), documents the ritual, the fold routing for all
 five competencies (DDD/SDD/UDD→PROJECT.md sections, TDD/ADD→CONVENTIONS.md, all→§Key Decisions), the
 status transitions, append-only+version-bump, the trigger convention, and the three reject codes;
-add.py gains NO fold command; PROJECT.md carries the version marker; the worked example cites real
-history; and the "Foundation version" glossary entry is present across the three doc trees. Exactly
-12 tests — frozen @ v2 (test 12 added by change-request 2026-06-03, closing the v5 disclosed gap:
-the glossary entry was built but unguarded). (The mechanical delta counter is convergence-signal.)
+PROJECT.md carries the version marker; the worked example cites real history; and the "Foundation
+version" glossary entry is present across the three doc trees.
+
+Re-frozen @ v3 (human-authorized change-request, 2026-06-17, task fold-command): the prior principle
+"the engine stays judgment-free; add.py gains NO fold command" is REVERSED. `add.py fold` now
+mechanizes ONE consolidation session — flip + stamp + route + version-bump — but TRANSCRIPTION-ONLY:
+it routes each lesson's OWN captured text and NEVER composes/merges prose (the human still owns
+consolidation, via the compaction door). test_add_py_exposes_the_fold_command asserts the command
+EXISTS; REJECT_CODES tracks the command's codes (missing_route_section / no_foundation_version replace
+the convention-era unconfirmed_fold / unroutable_delta). (The mechanical delta counter is convergence-signal.)
 
 Run: python3 -m unittest test_foundation_update_loop -v
 """
@@ -41,7 +47,7 @@ GLOSSARY_TREES = (
 )
 
 COMPETENCIES = {"DDD", "SDD", "UDD", "TDD", "ADD"}
-REJECT_CODES = {"no_open_deltas", "unconfirmed_fold", "unroutable_delta"}
+REJECT_CODES = {"no_open_deltas", "missing_route_section", "no_foundation_version"}
 
 
 def _md5(p: Path) -> str:
@@ -102,11 +108,20 @@ class FoundationUpdateLoopTest(unittest.TestCase):
         self.assertTrue(re.search(r"milestone clos|on demand|on-demand", low),
                         "fold.md must state the trigger (milestone close / on demand)")
 
-    def test_add_py_exposes_no_fold_command(self):
+    def test_add_py_exposes_the_fold_command(self):
+        # foundation-update-loop @ v3 (human-authorized reversal of @ v2): the engine NOW mechanizes
+        # one consolidation session via `add.py fold` — but TRANSCRIPTION-ONLY (it routes a lesson's
+        # OWN captured text; it never composes/merges prose). Assert the command exists and is wired
+        # to the mechanical core.
         src = ADD_PY.read_text(encoding="utf-8")
-        m = re.search(r'add_parser\(\s*["\'](fold|foundation)["\']', src)
-        self.assertIsNone(
-            m, "add.py must NOT gain a fold/foundation subcommand (engine stays judgment-free)")
+        self.assertIsNotNone(
+            re.search(r'add_parser\(\s*(?:_FOLD_VERB|["\']fold["\'])', src),
+            "add.py must register the `fold` subcommand (v3 reversal)")
+        self.assertIn("def cmd_fold(", src, "add.py must define cmd_fold")
+        self.assertIn("def _fold_competency_delta(", src,
+                      "fold must flip via the mechanical _fold_competency_delta core")
+        self.assertRegex(src, r"transcrib",
+                         "fold must be documented transcription-only (it never composes prose)")
 
     def test_documents_all_three_reject_codes(self):
         text = _fold_text()

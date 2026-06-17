@@ -172,6 +172,32 @@ def _atomic_write(path: Path, text: str) -> None:
             os.unlink(tmp)
 
 
+def _atomic_write_many(writes: list[tuple[Path, str]]) -> None:
+    """Two-phase commit across several files — design-for-failure for a multi-file write.
+
+    Phase 1 STAGES every (path, text) to a sibling temp file; the realistic IO failures
+    (disk full, permission denied) surface HERE, before any visible file changes — and on any
+    failure every staged temp is removed, so NOTHING is committed. Phase 2 then `os.replace`s
+    each staged temp into place (same-dir renames are atomic and effectively never fail once the
+    temp is written). This narrows the partial-write window of N independent `_atomic_write`s to
+    the rename loop, honouring a caller's "any failure -> write nothing" across the whole set.
+    """
+    staged: list[tuple[str, Path]] = []
+    try:
+        for path, text in writes:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(text)
+            staged.append((tmp, path))
+        for tmp, path in staged:                  # phase 2: commit via atomic renames
+            os.replace(tmp, path)
+    finally:
+        for tmp, _ in staged:                     # leftover temps (a failed/aborted stage) never persist
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+
+
 def _templates_dir() -> Path:
     return Path(__file__).resolve().parent / "templates"
 
@@ -2870,8 +2896,11 @@ def _tripwire_divergence(root: Path, slug: str, tw: dict) -> list[str]:
 # ── §5 scope gate (build-scope-lock): touched ⊆ declared, from bytes alone ──────────
 # The walk's NAMED exclusion set — ONE constant; widening it is an additive
 # change-request, never silent. `.add` is engine domain (tripwire + audit guard it);
-# the rest is VCS/bytecode/OS junk with no build signal.
-_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules")
+# the rest is VCS/bytecode/OS junk + code-intelligence tool caches with no build
+# signal. `.serena` holds a symbol index that re-writes itself whenever a source
+# file changes (md5 churn from a build edit must never read as an out-of-scope
+# touch — the dogfooding lesson that added it here).
+_SCOPE_EXCLUDE_DIRS = (".git", ".add", "__pycache__", "node_modules", ".serena")
 _SCOPE_EXCLUDE_FILES = (".DS_Store",)          # plus *.pyc by suffix
 
 
@@ -4093,6 +4122,194 @@ def _first_open_spec_text(text: str) -> str | None:
     return None
 
 
+# ── add.py fold — mechanized competency-lesson consolidation ────────────────────────────────
+# The HUMAN-AUTHORIZED reversal of the prior "the engine stays judgment-free; there is no
+# add.py fold" principle (foundation-update-loop re-frozen @ v3). The engine now mechanizes ONE
+# consolidation session — flip + stamp + route + version-bump — but only ever TRANSCRIBES a
+# lesson's own captured text into its routed home; it NEVER composes or merges prose (that
+# editorial judgment stays the human's, via the compaction door). `fold`/`folded` are Group C
+# machine tokens here (the subcommand name + the status value), referenced by NAME inside output
+# strings so the ubiquitous-language prose lint sees no slang — only the two defs below carry the
+# literal, both exempt via MACHINE_CONSTANTS.
+_FOLD_VERB = "fold"        # the subcommand / decision-record verb
+_FOLDED = "folded"         # the resolved status value
+_COMP_OPEN_TOKEN_RE = re.compile(r"(\[\s*(?:DDD|SDD|UDD|TDD|ADD)\s*·\s*)open(\s*\])")
+
+# competency -> (foundation file, section-heading PREFIX) — fold.md's routing table. DDD/SDD/UDD
+# land in PROJECT.md sections; TDD/ADD in CONVENTIONS.md (they ARE the engine). Total over the five.
+_FOLD_ROUTES = {
+    "DDD": ("PROJECT.md", "## Domain"),
+    "SDD": ("PROJECT.md", "## Spec"),
+    "UDD": ("PROJECT.md", "## Users"),
+    "TDD": ("CONVENTIONS.md", "## Method learnings"),
+    "ADD": ("CONVENTIONS.md", "## Method learnings"),
+}
+_KEY_DECISIONS_HEADING = "## Key Decisions"   # the universal audit-trail section (every session adds one row)
+_TABLE_SEP_RE = re.compile(r"\s*\|[-\s|]+\|\s*$")
+
+
+def _fold_competency_delta(text: str, version: int, comps=None) -> str | None:
+    """Flip EVERY open competency lesson in `text` to resolved + append ` [<resolved> foundation-version N]`.
+
+    PURE — no IO. Mirrors `_resolve_spec_delta`: only the status token changes plus the trailing
+    stamp; the line's text + `(evidence: …)` are byte-preserved. `comps` (a set of competency tags)
+    narrows which to flip; None = all five. Returns the new text, or None when NOTHING was open to
+    flip (the caller then refuses / skips — validate-all-then-write)."""
+    lines = text.splitlines(keepends=True)
+    flipped = False
+    for i, ln in enumerate(lines):
+        m = _DELTA_RE.match(ln.rstrip("\n"))
+        if not m or m.group(2) != "open":
+            continue
+        if comps is not None and m.group(1) not in comps:
+            continue
+        eol = ln[len(ln.rstrip("\n")):]                       # preserve the exact line ending
+        body = _COMP_OPEN_TOKEN_RE.sub(rf"\g<1>{_FOLDED}\g<2>", ln.rstrip("\n"), count=1)
+        body = f"{body} [{_FOLDED} foundation-version {version}]"
+        lines[i] = body + eol
+        flipped = True
+    return "".join(lines) if flipped else None
+
+
+def _section_present(text: str, heading_prefix: str) -> bool:
+    return any(ln.startswith(heading_prefix) for ln in text.splitlines())
+
+
+def _prepend_to_section(text: str, heading_prefix: str, bullet: str) -> str:
+    """Insert `bullet` immediately after the first line starting with `heading_prefix`
+    (newest-first, at the TOP of the section). Caller guarantees the heading exists."""
+    lines = text.splitlines(keepends=True)
+    for i, ln in enumerate(lines):
+        if ln.startswith(heading_prefix):
+            lines.insert(i + 1, bullet if bullet.endswith("\n") else bullet + "\n")
+            return "".join(lines)
+    return text
+
+
+def _prepend_key_decision_row(text: str, row: str) -> str:
+    """Insert `row` just below the §Key Decisions table separator (newest-first); if the table
+    separator is absent, fall back to right after the heading. Caller guarantees the heading."""
+    lines = text.splitlines(keepends=True)
+    head = next((i for i, ln in enumerate(lines)
+                 if ln.startswith(_KEY_DECISIONS_HEADING)), None)
+    if head is None:
+        return text
+    at = head + 1
+    for j in range(head + 1, min(head + 6, len(lines))):
+        if _TABLE_SEP_RE.match(lines[j].rstrip("\n")):
+            at = j + 1
+            break
+    lines.insert(at, row if row.endswith("\n") else row + "\n")
+    return "".join(lines)
+
+
+def cmd_fold(args: argparse.Namespace) -> None:
+    """Mechanize ONE competency-lesson consolidation session — flip + stamp + route + bump, atomic.
+
+    Collect every OPEN competency lesson (optionally narrowed by --task/--comp), flip each to the
+    resolved status + ` [<resolved> foundation-version N]`, transcribe it VERBATIM into its routed
+    foundation section, prepend one §Key Decisions row, and bump `foundation-version` ONCE.
+    Validate-ALL-then-write: every precondition is checked and every new body built in memory BEFORE
+    any write, so a reject leaves the whole tree byte-unchanged. The engine transcribes — it never
+    composes/merges prose (the human's consolidation, via the compaction door). Running the command
+    IS the human's confirmation; it never self-approves WHICH lessons to keep."""
+    root = _require_root()
+    state = load_state(root)
+
+    by_comp = _collect_open_deltas(root)
+    want_task = getattr(args, "task", None)
+    want_comp = getattr(args, "comp", None)
+    selected = []
+    for comp in _COMPETENCY_ORDER:
+        if want_comp and comp != want_comp:
+            continue
+        for it in by_comp.get(comp, []):
+            if want_task and it["task"] != want_task:
+                continue
+            selected.append({**it, "comp": comp})
+    if not selected:
+        scope = (f"task '{want_task}'" if want_task else "the project") + \
+                (f", competency {want_comp}" if want_comp else "")
+        _die(f"no_open_deltas: no open lesson to consolidate in {scope} (see `add.py deltas`)")
+
+    # version — one bump for the whole session; every stamp carries the SAME N.
+    project_md = root / "PROJECT.md"
+    project_text = project_md.read_text(encoding="utf-8")
+    vm = re.search(r"foundation-version:\s*(\d+)", project_text)
+    if not vm:
+        _die("no_foundation_version: PROJECT.md has no parseable 'foundation-version:' header to bump")
+    prev_v = int(vm.group(1))
+    new_v = prev_v + 1
+
+    # routing — every selected lesson's destination section (and the audit-trail section) must exist.
+    conventions_md = root / "CONVENTIONS.md"
+    conventions_text = conventions_md.read_text(encoding="utf-8") if conventions_md.exists() else ""
+    file_text = {"PROJECT.md": project_text, "CONVENTIONS.md": conventions_text}
+    for it in selected:
+        fname, heading = _FOLD_ROUTES[it["comp"]]
+        if not _section_present(file_text[fname], heading):
+            _die(f"missing_route_section: {fname} has no '{heading}' section for a "
+                 f"{it['comp']} lesson — add the section header and re-run")
+    if not _section_present(project_text, _KEY_DECISIONS_HEADING):
+        _die(f"missing_route_section: PROJECT.md has no '{_KEY_DECISIONS_HEADING}' "
+             "section for the audit-trail row — add the section header and re-run")
+
+    # ── build EVERY edit in memory before writing anything ──────────────────────────────────────
+    comps_filter = {want_comp} if want_comp else None
+    task_new: dict[str, str] = {}
+    for slug in dict.fromkeys(it["task"] for it in selected):
+        tmd = root / "tasks" / slug / "TASK.md"
+        flipped = _fold_competency_delta(tmd.read_text(encoding="utf-8"), new_v, comps_filter)
+        if flipped is None:                                   # defensive: selected ⇒ ≥1 open here
+            _die(f"no_open_deltas: task '{slug}' lost its open lesson mid-session")
+        task_new[slug] = flipped
+
+    def _bullet(it):
+        ev = f" (evidence: {it['evidence']})" if it["evidence"] else ""
+        return (f"- ({it['comp']}) {it['text']}{ev}  "
+                f"[{_FOLDED} foundation-version {new_v} · from {it['task']}]")
+
+    # transcribe verbatim (reverse so canonical-order first lands on top, newest-first).
+    proj_text, conv_text = project_text, conventions_text
+    for it in reversed(selected):
+        fname, heading = _FOLD_ROUTES[it["comp"]]
+        if fname == "PROJECT.md":
+            proj_text = _prepend_to_section(proj_text, heading, _bullet(it))
+        else:
+            conv_text = _prepend_to_section(conv_text, heading, _bullet(it))
+
+    counts = {c: sum(1 for it in selected if it["comp"] == c) for c in _COMPETENCY_ORDER}
+    count_str = " · ".join(f"{c} {counts[c]}" for c in _COMPETENCY_ORDER if counts[c])
+    scope = "all" if not (want_task or want_comp) else " ".join(
+        filter(None, [f"--task {want_task}" if want_task else "",
+                      f"--comp {want_comp}" if want_comp else ""]))
+    row = (f"| {date.today().isoformat()} | {_FOLD_VERB} {scope} → foundation-version {new_v} "
+           f"({count_str}) | consolidate captured OBSERVE lessons into the versioned foundation "
+           f"| {len(selected)} lessons open→{_FOLDED}; +{len(selected)} routed bullets; {prev_v}→{new_v} |")
+    proj_text = _prepend_key_decision_row(proj_text, row)
+    proj_text = re.sub(r"foundation-version:\s*\d+", f"foundation-version: {new_v}", proj_text, count=1)
+
+    # ── all bodies built; commit via a two-phase write (stage every temp, then rename all) so a
+    #    mid-commit IO failure leaves NOTHING written. Foundation files are ordered first so the
+    #    near-impossible mid-rename residual is a still-open lesson (visible, re-runnable), never a
+    #    flipped-but-untranscribed one (a silent loss). ───────────────────────────────────────────
+    writes: list[tuple[Path, str]] = [(project_md, proj_text)]
+    touched = ["PROJECT.md"]
+    if conv_text != conventions_text:
+        writes.append((conventions_md, conv_text))
+        touched.append("CONVENTIONS.md")
+    for slug, body in task_new.items():
+        writes.append((root / "tasks" / slug / "TASK.md", body))
+    touched.append(f"{len(task_new)} TASK.md")
+    _atomic_write_many(writes)
+
+    print(f"{_FOLDED} {len(selected)} lessons -> foundation-version {new_v}")
+    print(f"  {count_str}")
+    print(f"  bumped PROJECT.md  {prev_v} -> {new_v}")
+    print(f"  files: {', '.join(touched)}")
+    print(_next_footer(root, state))
+
+
 _AUDIT_STAMP_RE = re.compile(r"Status:\s*FROZEN @ v\d+\s*[—-]+\s*approved by\s+\S+")
 _AUDIT_OUTCOME_RE = re.compile(r"^Outcome:\s*(PASS|RISK-ACCEPTED|HARD-STOP)\b", re.M)
 _AUDIT_SECURITY_RE = re.compile(
@@ -4935,6 +5152,13 @@ def build_parser() -> argparse.ArgumentParser:
                          help="read-only report: open lessons learned grouped by competency")
     pdt.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pdt.set_defaults(func=cmd_deltas)
+
+    pfo = sub.add_parser(_FOLD_VERB,
+                         help="record one retrospective consolidation of open lessons into the "
+                              "versioned foundation (stamp + route + version-bump, atomic)")
+    pfo.add_argument("--task", help="narrow to one task's open lessons")
+    pfo.add_argument("--comp", choices=_COMPETENCY_ORDER, help="narrow to one competency's open lessons")
+    pfo.set_defaults(func=cmd_fold)
 
     pgr = sub.add_parser("graduation-report",
                          help="read-only: gather the MVP loop's evidence (deltas · waivers · RETROs · "
