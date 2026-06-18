@@ -315,7 +315,7 @@ Forward changes for the next loop — each re-enters at Specify as the next task
 each, tagged `[SPEC · open|seeded|dropped]`, with evidence (e.g. `[SPEC · open] rate-limit
 the retry path (evidence: prod herd spikes)`).
 
-- [SPEC · open] extract a reusable PTY test helper that drives clack select/confirm so the interactive agent-select step (D8) is covered in CI (evidence: D8 disclosed as PTY-only-reachable at the gate; the installer-prompts PTY-helper delta is still open — consolidate them)
+- [SPEC · seeded] [→ pty-clack-harness] extract a reusable PTY test helper that drives clack select/confirm so the interactive agent-select step (D8) is covered in CI (evidence: D8 disclosed as PTY-only-reachable at the gate; consolidated with the installer-prompts PTY-helper delta into the installer-smarts-polish task pty-clack-harness — flipped by hand because this task is archived out of the live state registry, so `--from-delta` could not reach it)
 - [SPEC · open] widen the agent registry to Cursor + Copilot (.cursor/rules · .github/copilot-instructions.md) with their own integration files (evidence: the user's "etc." in the ask; the milestone scoped only claude/codex/opencode/generic for mvp)
 - [SPEC · open] confirm the real env signals each agent sets (CODEX_*/OPENCODE*) against their shipping CLIs and pin them (evidence: D-A1 accepted at freeze as best-effort, refinable data)
 
