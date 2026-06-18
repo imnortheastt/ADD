@@ -85,7 +85,9 @@ unsharp intent? **Interview before you size** — explore and suggest first (`in
 Once a request is classified `new-major`/`sub-milestone`, drafting the actual
 `MILESTONE.md` (goal · scope · exit criteria · breadth-first tasks) is the second
 half of intake: read `scope.md` for how to fill it well, the per-outcome behavior,
-and the confirm-before-create rule. You propose the draft; the human confirms.
+and the confirm-before-create rule. Or if it's classified `task`/`change-request`, 
+create the task with `add.py new-task` and then read the phase guide for the first phase (probably `0-setup.md`).
+You propose the draft; the human confirms.
 
 ## The flow and which file to load
 
