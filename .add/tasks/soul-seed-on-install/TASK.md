@@ -135,7 +135,7 @@ CALL SITE update()
 
 Least-sure flag surfaced at freeze: [spec] M4 fail-soft — if `_seed_soul_md` raises unexpectedly beyond OSError (e.g. a logic bug), the call sites have no wrapper today; cost: install/update could surface an unhandled exception. Mitigation: the helper catches all OSError and returns; risk accepted at this scope.
 
-Status: FROZEN @ v1.8.0 — approved by Tin Dang
+Status: FROZEN @ v1 — approved by Tin Dang
 
 ---
 
