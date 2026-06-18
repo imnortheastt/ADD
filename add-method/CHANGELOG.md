@@ -4,27 +4,60 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
-## [Unreleased]
+## [1.7.0] — 2026-06-18
+
+The installer & onboarding release: standing up — or repairing — ADD is now one
+guided installer that adapts to the terminal and the agent, and the method's own
+build loop gained recorded delta resolution, guided choices at every human gate,
+and a milestone-close ship review. All additive; no breaking changes (SemVer MINOR).
 
 ### Added
+- **Guided, agent-aware, self-healing installer (`installer-experience`)** — `npx
+  @pilotspace/add` (and `pilotspace-add`) now runs an interactive `@clack/prompts`
+  onramp in a real terminal and degrades to a byte-identical plain-text flow in
+  CI / non-TTY (the pip twin matches, on the stdlib). It **detects the active agent**
+  (Claude Code · Claude app/cowork · Codex · OpenCode · generic) and writes that
+  agent's integration file (`CLAUDE.md` / `AGENTS.md`) as a marker-delimited pointer,
+  then prints that agent's exact next step. `init` **and** `update` now **heal/reconcile**
+  a partial `.add/` — restoring missing managed assets and refreshing stale ones
+  **without touching** `state.json` / `PROJECT.md` / milestones / tasks.
+- **Global install (`--global`)** — install the engine + book + skill once into a
+  shared ADD home (`ADD_HOME` → `XDG_DATA_HOME/add` → `~/.add`) and reuse it across
+  projects; `update --global` refreshes the home and propagates to every registered
+  project. The home mirrors the bundled layer; the registry is a flat, atomically
+  written `registry.json`, and a corrupt registry fails loud (read-before-write,
+  zero-mutation abort).
+- **Global data (`--global-data`)** — opt-in (implies `--global`): a one-way snapshot
+  of a project's **user-data** under `<home>/data/<key>` keyed by project path, so the
+  shared home remembers each opting project. The per-project, git-tracked default is
+  byte-unchanged; without the flag, data stays local.
 - **Claude Code plugin distribution** — ADD is now installable straight from a
   marketplace, with no npm or pip step: `/plugin marketplace add pilotspace/ADD`
   then `/plugin install add@add-method`. A repo-root `.claude-plugin/marketplace.json`
-  lists the `add` plugin (`add-method/.claude-plugin/plugin.json`), which bundles the
-  skill, the engine, and the AIDD book. On first run the skill materializes the engine
-  and book INTO the project (`node "${CLAUDE_PLUGIN_ROOT}/bin/cli.js" init --no-skill`)
-  so `.add/tooling/add.py`, `.add/docs/`, and the agent-agnostic guideline block all
-  work for every agent and a human at the shell — a self-contained, portable result
-  identical to an npm/pip install. The skill stays in the plugin (no duplicate).
-- **`cli.js init --no-skill`** — drops the engine + book only, leaving skill delivery to
-  the plugin. Used by the plugin bootstrap above; npm/pip installs are unchanged.
-- **Plugin boundaries disclosure** (README "What this plugin does, writes, and runs") —
-  states plainly that the plugin is user-initiated, runs only its bundled engine, writes
-  only under the project's `.add/`, and makes a single advisory, opt-out (`ADD_NO_UPDATE_CHECK`)
-  update check — so a marketplace safety review can confirm the boundaries at a glance.
-  Guarded by `tooling/test_plugin_manifest.py` (manifests valid, version tracks
-  `package.json`, the bootstrap line can't be dropped, and `--no-skill` lands the engine
-  and book but no duplicate skill).
+  lists the `add` plugin, which bundles the skill, the engine, and the AIDD book; on
+  first run the skill materializes the engine and book INTO the project
+  (`cli.js init --no-skill`) so every agent and a human at the shell get a
+  self-contained result identical to an npm/pip install. The skill stays in the plugin
+  (no duplicate); boundaries are disclosed in the README and guarded by
+  `tooling/test_plugin_manifest.py`.
+- **Recorded delta resolution (`delta-resolution`)** — both delta types now resolve
+  explicitly: SPEC deltas get a `seed` / `drop` lifecycle and competency deltas
+  consolidate into the foundation via **`add.py fold`** (transcription-only, human-
+  authorized). `add.py check` stays green only when deltas are well-formed.
+- **Guided-choice prompts (`decision-suggestions`)** — every human gate (intake ·
+  bundle approval · verify · milestone close · release) renders a recommended pick
+  plus 1–3 described alternatives. Presentation-only — the engine is untouched.
+- **Milestone-close ship review (`ship-review`)** — closing a milestone now records a
+  cross-task ship review (ship-by-domain · per-task evidence · goal-met map) that the
+  existing engine gate reads, plus AI-defined release-step hints that feed `release.md`.
+
+### Notes
+- The `udd-design-loop` work (the `design.md` UDD loop + the wireframe/HTML-mock
+  recipe, described narratively under [1.5.0]) is attributed to this cut in the
+  `RELEASES.md` ledger — its first explicit ledger accounting.
+- **The engine records; the human ships.** `add.py release` recorded the `RELEASES.md`
+  row and this changelog lineage; it never bumps a version source, tags, or publishes.
+  The human-gated `git tag v1.7.0` triggers the npm / PyPI publish.
 
 ## [1.6.0] — 2026-06-16
 
