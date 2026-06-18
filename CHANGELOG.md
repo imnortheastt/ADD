@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.2 — 2026-06-18
+
+- Installer Smarts Polish — 5 carried · 0 key decision(s)
+
 ## 1.7.1 — 2026-06-18
 
 - Smart onboarding installer — 0 carried · 0 key decision(s)

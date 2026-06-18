@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "soul-seed-on-install",
+  "active_task": "pty-clack-harness",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1102,12 +1102,12 @@
     },
     "pty-clack-harness": {
       "title": "Reusable PTY test helper for clack interactive paths",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "installer-smarts-polish",
       "depends_on": [],
       "created": "2026-06-18T11:37:17+00:00",
-      "updated": "2026-06-18T11:37:17+00:00"
+      "updated": "2026-06-18T14:53:16+00:00"
     },
     "soul-seed-on-install": {
       "title": "Seed .add/SOUL.md from bundled template during install and update",
@@ -1133,7 +1133,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-18T13:58:42+00:00",
+  "updated": "2026-06-18T14:53:16+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1299,9 +1299,9 @@
       "title": "Installer Smarts Polish",
       "goal": "Close the PTY-only-reachable interactive-coverage gaps the installer-smarts gates disclosed: a reusable PTY test helper that drives clack select/confirm so the agent-select step and the clack happy-path prompts are exercised in CI (today they are node-syntax-checked + logic-unit-tested only).",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-18T11:35:30+00:00",
-      "updated": "2026-06-18T11:35:30+00:00"
+      "updated": "2026-06-18T14:53:16+00:00"
     },
     "installer-soul-seed": {
       "title": "Installer seeds SOUL.md on install and update",

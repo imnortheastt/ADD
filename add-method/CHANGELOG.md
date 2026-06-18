@@ -4,6 +4,20 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.7.2] — 2026-06-18
+
+Test-coverage and project-hygiene patch. Additive; no breaking changes.
+
+### Added
+- **PTY harness for clack interactive coverage (`installer-smarts-polish`)** — a
+  reusable PTY test helper (`tooling/pty_clack.py`) drives the clack
+  select/confirm prompts, so the agent-select step and the interactive
+  happy-path are exercised under a real pseudo-terminal in CI (previously
+  node-syntax-checked and logic-unit-tested only).
+- **`SECURITY.md` security policy** — supported-version table, private
+  vulnerability reporting via GitHub Security Advisories, and response SLAs;
+  shipped in both the npm tarball and the PyPI sdist/wheel.
+
 ## [1.7.1] — 2026-06-18
 
 Installer depth and method quality release: the onboarding installer gains

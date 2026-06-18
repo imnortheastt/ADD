@@ -1,5 +1,10 @@
 # Releases
 
+## 1.7.2 — 2026-06-18
+milestones: installer-smarts-polish
+waivers: none
+evidence: ADD 1.7.2 — installer-smarts-polish (PTY harness via tooling/pty_clack.py exercises clack select/confirm under a real pseudo-terminal in CI) + SECURITY.md security policy shipped in npm + PyPI; suite 1345 green; tag v1.7.2 triggers npm/PyPI publish
+
 ## 1.7.1 — 2026-06-18
 milestones: installer-smarts, scope-drafting-quality, verify-expectations, installer-soul-seed
 waivers: none
