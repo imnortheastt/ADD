@@ -231,7 +231,7 @@ class UserCancelledPipTest(unittest.TestCase):
 class PipInteractiveHappyTest(unittest.TestCase):
     def test_pip_interactive_happy_path(self):
         with tempfile.TemporaryDirectory(prefix="ip-pip-") as tmp:
-            res = _run_pip(["init"], cwd=tmp, stdin="\n",   # accept default target
+            res = _run_pip(["init"], cwd=tmp, stdin="\nn\n",   # accept default target, then project-only scope
                            env_extra={"ADD_INSTALLER_FORCE_INTERACTIVE": "1"})
             self.assertEqual(res.returncode, 0, res.stderr)
             self.assertTrue(_brain_landed(Path(tmp)),

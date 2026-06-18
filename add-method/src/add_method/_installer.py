@@ -85,6 +85,141 @@ def _prompt_target(default_path: Path):
     return Path(resp).expanduser().resolve()
 
 
+# The two install-scope choices — global-first (recommended) vs self-contained. A PURE seam
+# (the npm scopeOptions twin) so the recommended pick + its why are hermetically testable.
+_SCOPE_OPTIONS = (
+    {"value": "global", "label": "Global home + this project",
+     "hint": "a shared ~/.add + ~/.claude/skills/add reused by every project "
+             "(this project still gets its own copy)",
+     "recommended": True},
+    {"value": "project", "label": "This project only",
+     "hint": "self-contained + git-tracked: nothing is written outside this folder"},
+)
+
+
+def _scope_options():
+    """The scope choices, global recommended first. Returns fresh dicts (callers never mutate
+    the module constant)."""
+    return [dict(o) for o in _SCOPE_OPTIONS]
+
+
+def _prompt_scope(default_global: bool = True):
+    """Global-first scope step on the INTERACTIVE path: show the recommended global home (▶)
+    and the project-only alternative, then confirm. Enter accepts the recommended default;
+    'n'/'no' picks project-only; a cancel (EOF / Ctrl-C) returns CANCEL — the caller writes
+    nothing. Mirrors _prompt_target's single confirm (lean pip UI, npm clack twin)."""
+    rec = next(o for o in _scope_options() if o.get("recommended"))
+    alt = next(o for o in _scope_options() if not o.get("recommended"))
+    caps = _terminal_caps(os.environ)
+    arrow = "▶" if caps["unicode"] else ">"      # caps-aware marker; ASCII fallback (design-for-failure)
+    _log(f"  {arrow} {rec['label']} - {rec['hint']}")
+    _log(f"    {alt['label']} - {alt['hint']}")
+    suffix = "[Y/n]" if default_global else "[y/N]"
+    try:
+        resp = input(f"Set up the global ADD home (recommended)? {suffix} ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        return CANCEL
+    if not resp:
+        return default_global
+    if resp in ("y", "yes"):
+        return True
+    if resp in ("n", "no"):
+        return False
+    return default_global       # unrecognized input -> the recommended default (never silently global-off)
+
+
+def _prompt_intent() -> str:
+    """Optional LAST step: capture a one-line build intent for `/add` to read. Fully optional —
+    Enter / empty / EOF / Ctrl-C all SKIP (return ""); this prompt NEVER cancels (the install has
+    already succeeded by the time it runs). Returns the stripped intent, or ""."""
+    try:
+        return input("What do you want to build first? (optional — Enter to skip): ").strip()
+    except (EOFError, KeyboardInterrupt):
+        return ""
+
+
+def _write_intent_note(target, intent: str) -> bool:
+    """Persist `intent` as a NOTE at <target>/.add/.intent for `/add` to read — iff non-empty.
+    DEFERRED-INIT: this writes inert text only; it NEVER runs add.py/init and NEVER touches
+    state.json. Fail-soft: a write error is swallowed (the note is a best-effort handoff, never
+    a reason to fail a successful install). Returns whether the note was written."""
+    text = (intent or "").strip()
+    if not text:
+        return False
+    try:
+        add_dir = Path(target) / ".add"
+        add_dir.mkdir(parents=True, exist_ok=True)      # .add/ exists post-drop; mkdir is a no-op then
+        (add_dir / ".intent").write_text(text + "\n", encoding="utf-8")
+        return True
+    except OSError:
+        return False                                    # design-for-failure: never abort the install
+
+
+# --- brand + feature showcase (interactive path only; fail-soft) ----------------
+# The 7 post-ground ADD phases the showcase names — grounded in the method (the
+# PROJECT.md goal + the engine's phase flow), never invented marketing. The wordmark
+# glyphs / tagline / accent are a SWAPPABLE content slot, not part of the frozen boundary.
+_LOOP = ("Specify", "Scenarios", "Contract", "Tests", "Build", "Verify", "Observe")
+
+
+def _terminal_caps(env):
+    try:
+        width = int(env.get("COLUMNS") or 0)
+    except (TypeError, ValueError):
+        width = 0
+    if not width:
+        try:
+            width = os.get_terminal_size().columns
+        except OSError:
+            width = 80
+    enc = (env.get("LC_ALL") or env.get("LC_CTYPE") or env.get("LANG") or "")
+    unicode_ok = "utf" in enc.lower() and not env.get("ADD_INSTALLER_ASCII")
+    return {"width": width, "unicode": unicode_ok}
+
+
+def _brand_lines(caps):
+    wide = caps["width"] >= 40
+    uni = caps["unicode"]
+    head = [
+        " █████╗ ██████╗ ██████╗",
+        "██╔══██╗██╔══██╗██╔══██╗",
+        "███████║██║  ██║██║  ██║",
+        "██╔══██║██║  ██║██║  ██║",
+        "██║  ██║██████╔╝██████╔╝",
+        "╚═╝  ╚═╝╚═════╝ ╚═════╝ ",
+    ] if (uni and wide) else ["ADD"]          # plain-ASCII wordmark fallback
+    arrow = " → " if uni else " -> "
+    dash = " — " if uni else " - "
+    return [
+        *head,
+        "AI-Driven Development",
+        "",
+        "Spec-and-tests-first development" + dash + "any agent, through the CLI, no lost context.",
+        "The loop ADD drives with you:",
+        "  " + arrow.join(_LOOP),
+        "",
+    ]
+
+
+def _render_brand(env=None, stream=None) -> None:
+    """Wordmark + value line + the 7-step loop, on the INTERACTIVE path only. Fail-soft:
+    any error is swallowed — a banner must NEVER abort the install. No color is emitted
+    (default accent: none). On a non-UTF-8 stream the unicode render is retried as pure
+    ASCII so the showcase still appears."""
+    env = os.environ if env is None else env
+    out = stream if stream is not None else sys.stdout
+    caps = _terminal_caps(env)
+    for attempt_unicode in (caps["unicode"], False):
+        try:
+            out.write("\n".join(_brand_lines(dict(caps, unicode=attempt_unicode))) + "\n")
+            out.flush()
+            return
+        except UnicodeEncodeError:
+            continue                          # retry as ASCII
+        except Exception:
+            return                            # fail-soft: never abort the install for a banner
+
+
 def _bundled_root() -> Path:
     """Return a concrete filesystem path to src/add_method/_bundled/.
 
@@ -154,6 +289,58 @@ def _detect_agent(env=None) -> dict:
         if _profile_matches(profile, env):
             return profile
     return generic
+
+
+def _detect_agent_enriched(env=None, target=None, which=None) -> dict:
+    """ADDITIVE enrichment for the INTERACTIVE default — never replaces _detect_agent (which
+    stays env-only; test_agent_detect pins it, the non-interactive write uses it). Precedence:
+    env signal (authoritative) > a CLAUDE.md in the target (repo signal; AGENTS.md is ambiguous,
+    so it does NOT pick) > an installed agent CLI (machine signal; PATH lookup only) > generic.
+    Pure + fail-soft: a throwing probe reads as absent."""
+    env = os.environ if env is None else env
+    which = shutil.which if which is None else which
+    base = _detect_agent(env)
+    if base["id"] != "generic":
+        return base                                    # env signal wins
+    by_id = {p["id"]: p for p in AGENT_PROFILES}
+    try:
+        if target is not None and (Path(target) / "CLAUDE.md").exists():
+            return by_id["claude"]                     # repo signal
+    except OSError:
+        pass
+    for agent_id in ("claude", "codex", "opencode"):
+        try:
+            if which(agent_id):
+                return by_id[agent_id]                 # machine signal (no spawn)
+        except OSError:
+            continue
+    return base                                        # generic
+
+
+def _readiness_line(env=None, target=None, which=None) -> str:
+    """Fail-soft pre-flight summary for the INTERACTIVE path (the caller gates):
+    'Pre-flight: git <✓|–> · python3 <✓|–> · agent: <label>'. Each probe is a PATH lookup;
+    a failure reads as absent. Never raises."""
+    env = os.environ if env is None else env
+    which = shutil.which if which is None else which
+    caps = _terminal_caps(env)
+    tick = "✓" if caps["unicode"] else "+"
+    cross = "–" if caps["unicode"] else "-"
+    sep = " · " if caps["unicode"] else " | "
+
+    def have(cmd):
+        try:
+            return bool(which(cmd))
+        except OSError:
+            return False
+
+    try:
+        label = _detect_agent_enriched(env, target, which)["label"]
+    except Exception:
+        label = "your AI agent"
+    mark = lambda ok: tick if ok else cross
+    return (f"Pre-flight: git {mark(have('git'))}{sep}"
+            f"python3 {mark(have('python3'))}{sep}agent: {label}")
 
 
 def _agent_pointer_block(profile: dict) -> str:
@@ -372,7 +559,13 @@ def install(
 
     # Interactive confirm (real terminal only) — degrades to the plain path under
     # --yes/--non-interactive, CI, or a pipe. A cancel writes NOTHING (exit 130).
+    intent = ""                              # build-intent NOTE — stays "" on the non-interactive path
     if _interactive(yes, non_interactive):
+        _render_brand()                      # brand + showcase BEFORE the first prompt (interactive only)
+        try:
+            _log(_readiness_line(env, target_path))   # pre-flight: git · python3 · agent (fail-soft)
+        except Exception:
+            pass                             # the pre-flight line is informational — never block the install
         chosen = _prompt_target(target_path)
         if chosen is CANCEL:
             _log("\nInstallation cancelled — nothing was written.")
@@ -380,6 +573,15 @@ def install(
         target_path = chosen
         if not target_path.exists():
             return _fail(f"target directory does not exist: {target_path}")
+        # Global-first SCOPE step — only when the scope was not already chosen by an explicit
+        # --global/--global-data flag (honored, not re-asked). A cancel writes NOTHING (130).
+        if not as_global:
+            picked = _prompt_scope()
+            if picked is CANCEL:
+                _log("\nInstallation cancelled — nothing was written.")
+                return 130
+            as_global = bool(picked)         # global stays STRICTLY ADDITIVE: the per-project drop still runs
+        intent = _prompt_intent()            # LAST optional step; "" on skip/EOF/Ctrl-C (never cancels)
 
     _log(f"Installing ADD into {target_path}")
 
@@ -428,8 +630,18 @@ def install(
     # Agent detection: write THE detected agent's integration file (a marker-delimited
     # pointer init's sync-guidelines later supersedes) + tailor the closing next-step.
     # Best-effort + fail-soft — never aborts the successful drop above.
-    profile = _detect_agent(env)
+    # The INTERACTIVE path uses the enriched detector (env > CLAUDE.md > installed CLI), already
+    # disclosed in the pre-flight line and overridable by cancel+rerun. The NON-interactive path
+    # stays env-only (the byte-identical boundary + test_agent_detect pin).
+    if _interactive(yes, non_interactive):
+        profile = _detect_agent_enriched(env, target_path)
+    else:
+        profile = _detect_agent(env)
     _write_agent_pointer(target_path, profile)
+
+    # Optional build-intent NOTE for `/add` to read — a NOTE only (no init, no state.json).
+    # "" on the non-interactive path or a skipped prompt -> no file written.
+    _write_intent_note(target_path, intent)
 
     # NO step 4: the installer DROPS FILES ONLY (npm ↔ pip parity with bin/cli.js).
     # Initialisation is deferred to the AI (via `/add`) or a CLI user — a pre-run plain

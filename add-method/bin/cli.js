@@ -119,6 +119,63 @@ function detectAgent(env) {
   return generic;
 }
 
+// A PATH lookup (no spawn): is an executable named `cmd` on PATH? Fail-soft -> null.
+// Injectable into the enriched detector so the dev machine's installed agents never pollute tests.
+function whichSync(cmd) {
+  try {
+    const dirs = (process.env.PATH || "").split(path.delimiter).filter(Boolean);
+    const exts = process.platform === "win32"
+      ? (process.env.PATHEXT || ".EXE;.CMD;.BAT").split(";")
+      : [""];
+    for (const dir of dirs) {
+      for (const ext of exts) {
+        const hit = path.join(dir, cmd + ext);
+        if (fs.existsSync(hit)) return hit;
+      }
+    }
+  } catch (_e) { /* fail-soft */ }
+  return null;
+}
+
+// ADDITIVE enrichment for the INTERACTIVE default — never replaces detectAgent (which stays
+// env-only; test_agent_detect pins it, the non-interactive write uses it). Precedence:
+// env signal (authoritative) > a CLAUDE.md in the target (repo signal; AGENTS.md is ambiguous,
+// so it does NOT pick) > an installed agent CLI (machine signal; PATH lookup only) > generic.
+// Pure + fail-soft: a throwing probe reads as absent. `which` is injectable for hermetic tests.
+function detectAgentEnriched(env, target, which) {
+  which = which || whichSync;
+  const base = detectAgent(env);
+  if (base.id !== "generic") return base;              // env signal wins
+  const byId = {};
+  for (const p of AGENT_PROFILES) byId[p.id] = p;
+  try {
+    if (target && fs.existsSync(path.join(target, "CLAUDE.md"))) return byId.claude;   // repo signal
+  } catch (_e) { /* fall through */ }
+  for (const id of ["claude", "codex", "opencode"]) {
+    try { if (which(id)) return byId[id]; } catch (_e) { /* probe absent */ }   // machine signal
+  }
+  return base;                                         // generic
+}
+
+// Fail-soft pre-flight summary for the INTERACTIVE path (the caller gates):
+// "Pre-flight: git <✓|–> · python3 <✓|–> · agent: <label>". Each probe is a PATH lookup;
+// a failure reads as absent. Never throws.
+function readinessLine(env, target, which) {
+  env = env || process.env;
+  which = which || whichSync;
+  const caps = terminalCaps(env, process.stdout);
+  const tick = caps.unicode ? "✓" : "+";
+  const cross = caps.unicode ? "–" : "-";
+  const sep = caps.unicode ? " · " : " | ";
+  const have = (cmd) => { try { return !!which(cmd); } catch (_e) { return false; } };
+  let label;
+  try { label = detectAgentEnriched(env, target, which).label; }
+  catch (_e) { label = "your AI agent"; }
+  const mark = (ok) => (ok ? tick : cross);
+  return "Pre-flight: git " + mark(have("git")) + sep +
+         "python3 " + mark(have("python3")) + sep + "agent: " + label;
+}
+
 function agentPointerBlock(profile) {
   return (
     GUIDE_BEGIN + "\n" +
@@ -194,10 +251,73 @@ async function loadClack() {
   return import("@clack/prompts");
 }
 
-// Returns { cancelled, target }. A cancel happens BEFORE any file is written, so a
+// --- brand + feature showcase (interactive path only; fail-soft) -------------
+// Wordmark + value line + the 7-step Specify->Observe loop, rendered BEFORE the first
+// prompt on the interactive path only — so the non-interactive byte stream is unchanged.
+// The 7 labels are the real ADD phases (grounded in the method, never invented). Fail-soft:
+// any draw error is swallowed so a banner can never abort the install. No color is emitted
+// (default accent: none); the glyphs / tagline / accent are a SWAPPABLE content slot.
+const BRAND_LOOP = ["Specify", "Scenarios", "Contract", "Tests", "Build", "Verify", "Observe"];
+
+function terminalCaps(env, stream) {
+  const width = Number(env.COLUMNS) || (stream && stream.columns) || 80;
+  const enc = env.LC_ALL || env.LC_CTYPE || env.LANG || "";
+  const unicode = /utf-?8/i.test(enc) && !env.ADD_INSTALLER_ASCII;
+  return { width: width, unicode: unicode };
+}
+
+function brandLines(caps) {
+  const head = (caps.unicode && caps.width >= 40)
+    ? [
+        " █████╗ ██████╗ ██████╗",
+        "██╔══██╗██╔══██╗██╔══██╗",
+        "███████║██║  ██║██║  ██║",
+        "██╔══██║██║  ██║██║  ██║",
+        "██║  ██║██████╔╝██████╔╝",
+        "╚═╝  ╚═╝╚═════╝ ╚═════╝ ",
+      ]
+    : ["ADD"];                                  // plain-ASCII wordmark fallback
+  const arrow = caps.unicode ? " → " : " -> ";
+  const dash = caps.unicode ? " — " : " - ";
+  return head.concat([
+    "AI-Driven Development",
+    "",
+    "Spec-and-tests-first development" + dash + "any agent, through the CLI, no lost context.",
+    "The loop ADD drives with you:",
+    "  " + BRAND_LOOP.join(arrow),
+    "",
+  ]);
+}
+
+function renderBrand(env, stream) {
+  try {
+    env = env || process.env;
+    stream = stream || process.stdout;
+    stream.write(brandLines(terminalCaps(env, stream)).join("\n") + "\n");
+  } catch (_e) { /* fail-soft: a banner must never abort the install */ }
+}
+
+// The two install-scope choices — global-first (recommended) vs self-contained. PURE +
+// exported (the pip _scope_options twin) so the recommended pick + its why are hermetically
+// testable; the interactive scope SELECT renders these.
+function scopeOptions() {
+  return [
+    { value: "global", label: "Global home + this project",
+      hint: "a shared ~/.add + ~/.claude/skills/add reused by every project (this project still gets its own copy)",
+      recommended: true },
+    { value: "project", label: "This project only",
+      hint: "self-contained + git-tracked: nothing is written outside this folder" },
+  ];
+}
+
+// Returns { cancelled, target, profile, global }. A cancel happens BEFORE any file is written, so a
 // cancelled run leaves the target untouched. Without a real TTY to read (the forced
-// test seam), we cannot prompt — abort safely rather than hang.
-async function runClackPreamble(clack, target, detected) {
+// test seam), we cannot prompt — abort safely rather than hang. `askScope` is false when an
+// explicit --global already chose the scope (honored, not re-asked).
+async function runClackPreamble(clack, target, detected, askScope) {
+  renderBrand(process.env, process.stdout);   // brand + showcase BEFORE the first prompt
+  try { log(readinessLine(process.env, target)); }   // pre-flight: git · python3 · agent (fail-soft)
+  catch (_e) { /* the pre-flight line is informational — never block the install */ }
   clack.intro("ADD — AI-Driven Development");
   if (!process.stdin.isTTY) return { cancelled: true, target: target };
   const chosen = await clack.text({
@@ -207,6 +327,19 @@ async function runClackPreamble(clack, target, detected) {
   if (clack.isCancel(chosen)) return { cancelled: true, target: target };
   const ok = await clack.confirm({ message: "Write the ADD skill + tooling + book here?" });
   if (clack.isCancel(ok) || !ok) return { cancelled: true, target: target };
+  // global-first SCOPE step (after the target confirm, before agent-detect) — recommended
+  // global home, explicit pick; skipped when --global already chose. global stays ADDITIVE.
+  let scopeGlobal = false;
+  if (askScope) {
+    const opts = scopeOptions();
+    const scope = await clack.select({
+      message: "Install scope?",
+      options: opts.map((o) => ({ value: o.value, label: o.label, hint: o.hint })),
+      initialValue: opts.find((o) => o.recommended).value,
+    });
+    if (clack.isCancel(scope)) return { cancelled: true, target: target };
+    scopeGlobal = scope === "global";
+  }
   // agent-detect STEP (seeded delta: a STEP in THIS flow, via the clack ui layer) — the
   // user confirms or overrides the detected agent before any file is written.
   const picked = await clack.select({
@@ -216,13 +349,37 @@ async function runClackPreamble(clack, target, detected) {
   });
   if (clack.isCancel(picked)) return { cancelled: true, target: target };
   const profile = AGENT_PROFILES.find((p) => p.id === picked) || detected;
-  return { cancelled: false, target: String(chosen || target), profile: profile };
+  // LAST optional step — a one-line build intent for `/add` to read. Fully optional: a clack
+  // cancel or an empty answer SKIPS (intent ""); the install has already been confirmed, so this
+  // never aborts. A NOTE only — it never triggers init.
+  let intent = "";
+  const typed = await clack.text({
+    message: "What do you want to build first? (optional — Enter to skip)",
+    placeholder: "", defaultValue: "",
+  });
+  if (!clack.isCancel(typed) && typed) intent = String(typed).trim();
+  return { cancelled: false, target: String(chosen || target), profile: profile, global: scopeGlobal, intent: intent };
+}
+
+// Persist `intent` as a NOTE at <target>/.add/.intent for `/add` to read — iff non-empty.
+// DEFERRED-INIT: inert text only; never runs add.py/init, never touches state.json. Fail-soft
+// (a write error is swallowed — the note is best-effort, never a reason to fail the install).
+// Returns whether the note was written. Twin of _installer.py:_write_intent_note.
+function writeIntentNote(target, intent) {
+  const text = (intent || "").trim();
+  if (!text) return false;
+  try {
+    const addDir = path.join(target, ".add");
+    fs.mkdirSync(addDir, { recursive: true });        // .add/ exists post-drop; recursive mkdir is a no-op then
+    fs.writeFileSync(path.join(addDir, ".intent"), text + "\n");
+    return true;
+  } catch (_e) { return false; }
 }
 
 // The drop — now a RECONCILE: restore missing managed trees + refresh present ones
 // (sweep orphans) + report per-tree status. Byte-compatible handoff with the prior
 // installer. The interactive path resolves a target then calls straight into this.
-function dropFiles(args, target, profile) {
+function dropFiles(args, target, profile, intent) {
   profile = profile || detectAgent(process.env);
   log("Installing ADD into " + target);
   reconcile(args, target);
@@ -231,6 +388,9 @@ function dropFiles(args, target, profile) {
   // pointer init's sync-guidelines later supersedes) + tailor the closing next-step.
   // Best-effort + fail-soft — never aborts the successful drop above.
   writeAgentPointer(target, profile);
+
+  // Optional build-intent NOTE for `/add` to read — "" (skip / non-interactive) -> no-op.
+  writeIntentNote(target, intent);
 
   // NO step 4: the installer DROPS FILES ONLY. Initialisation is deferred to the AI
   // (via `/add`) or a CLI user — a pre-run plain `add.py init` would grandfather-lock
@@ -255,12 +415,18 @@ async function cmdInit(args) {
 
   let chosenTarget = target;
   let profile = detectAgent(process.env);     // default: non-interactive / fallback
+  let intent = "";                            // build-intent NOTE — stays "" on the non-interactive path
   if (interactive(args)) {
     let clack = null;
     try { clack = await loadClack(); }
     catch (_e) { warn("clack unavailable — falling back to plain-text install"); }
     if (clack) {
-      const outcome = await runClackPreamble(clack, target, profile);
+      // enriched seed (env > CLAUDE.md > installed CLI) for the agent-select default; the user
+      // still confirms/overrides before any write. The non-interactive write below stays env-only.
+      const detected = detectAgentEnriched(process.env, target);
+      // an explicit --global/--global-data already chose the scope — don't re-ask it.
+      const askScope = !(args.global || args.globalData);
+      const outcome = await runClackPreamble(clack, target, detected, askScope);
       if (outcome.cancelled) {
         // the exit code IS the contract; a closed-pipe stdout (EPIPE) must not
         // mask the cancel — guard the courtesy message, never let it throw.
@@ -271,13 +437,15 @@ async function cmdInit(args) {
       chosenTarget = path.resolve(outcome.target);
       if (!fs.existsSync(chosenTarget)) fail("target directory does not exist: " + chosenTarget);
       if (outcome.profile) profile = outcome.profile;   // honor the user's override
+      if (outcome.global) args.global = true;           // honor the interactive scope pick (additive)
+      intent = outcome.intent || "";                    // optional build-intent NOTE (written after the drop)
     }
   }
   if (args.globalData) args.global = true;   // --global-data implies --global (need a home)
   // OPT-IN global home, BEFORE the per-project drop (fail-closed if the home is unwritable
   // or its registry is corrupt — the package + the self-contained default stay usable).
   if (args.global) installGlobal(args, chosenTarget);
-  dropFiles(args, chosenTarget, profile);
+  dropFiles(args, chosenTarget, profile, intent);
   // OPT-IN data persist, AFTER the drop (one-way snapshot of existing user-data).
   if (args.globalData) installGlobalData(chosenTarget);
 }
@@ -597,4 +765,18 @@ async function main() {
   }
 }
 
-main().catch((e) => fail(e && e.message ? e.message : String(e)));
+// Run ONLY when invoked directly (the bin / npx entry). When `require()`d — the test harness
+// imports the pure detectors — main() must NOT fire (it would parse argv + install). This guard
+// changes no runtime behavior on the real CLI path; the non-interactive output stays byte-identical.
+if (require.main === module) {
+  main().catch((e) => fail(e && e.message ? e.message : String(e)));
+}
+
+module.exports = {
+  detectAgent: detectAgent,
+  detectAgentEnriched: detectAgentEnriched,
+  readinessLine: readinessLine,
+  whichSync: whichSync,
+  scopeOptions: scopeOptions,
+  writeIntentNote: writeIntentNote,
+};

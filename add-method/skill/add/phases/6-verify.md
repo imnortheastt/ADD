@@ -12,11 +12,20 @@ sufficient. Fill **§6** in TASK.md including the GATE RECORD.
 > or whenever residue is found, this phase is **human-led** and the checks below
 > are the human's.
 
+## Before you build — declare the build expectations
+
+Fill the §6 **Build expectations** block BEFORE you start Build: the OBSERVABLE outcomes a
+correct build must produce, derived from §2 SCENARIOS + §3 CONTRACT. At this gate, confirm each
+one against real evidence (the `confirmed by` column) — so verify proves the build is *correct*,
+not merely that the suite is green. An expectation with no evidence is not yet verified; passing
+tests on inputs you thought of never substitute for the outcome you promised.
+
 ## Part one — confirm the evidence
 
 - [ ] All tests pass.
 - [ ] Coverage did not decrease.
 - [ ] No test or contract was altered during build.
+- [ ] Every §6 Build expectation is confirmed by real evidence (not just a green test).
 
 If any is false, stop and return to Build — there is nothing to verify yet.
 

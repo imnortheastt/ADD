@@ -51,7 +51,7 @@ and `add.py` output disagree, the engine wins — fix the arc, not the engine.
 ## The five blocks, in order
 
 ```
-SUMMARY   one line: intent + target + where we are
+SUMMARY   one line: intent + target + where we are + what we done
 DECISION  what you need from the human (or "none — FYI")
 ⚠ FLAGS   lowest-confidence first, why + cost-if-wrong
 EVIDENCE  small table: tests · gates · parity · check — engine-sourced

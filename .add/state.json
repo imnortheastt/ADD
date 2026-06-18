@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "pty-clack-harness",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -936,10 +936,182 @@
       "created": "2026-06-17T02:07:27+00:00",
       "updated": "2026-06-17T02:07:27+00:00",
       "from_delta": "spec-delta-guards"
+    },
+    "onboarding-brand": {
+      "title": "Logo + feature showcase (interactive-only, byte-identical boundary)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "installer-smarts",
+      "depends_on": [],
+      "created": "2026-06-18T08:49:40+00:00",
+      "updated": "2026-06-18T10:14:36+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "881c46aeb63956c2510aee8f18801e5a",
+        "tests": {
+          "add-method/tooling/test_onboarding_brand.py": "a780cfc2b496b5d75a6dcf6b135eefcb"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py"
+        ],
+        "snapshot_md5": "00d13fa9c73602c467d3ead3a4930254"
+      }
+    },
+    "readiness-and-detect": {
+      "title": "Readiness pre-flight + smarter agent detection",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "installer-smarts",
+      "depends_on": [
+        "onboarding-brand"
+      ],
+      "created": "2026-06-18T08:49:40+00:00",
+      "updated": "2026-06-18T10:36:25+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9699e33043a34098c5bbe29dca127d10",
+        "tests": {
+          "add-method/tooling/test_readiness_detect.py": "074c2850cd749892c06ac60f8c327dd5"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py"
+        ],
+        "snapshot_md5": "9c17c5b5d3262bdc850b3064f0d608e5"
+      }
+    },
+    "global-first-scope": {
+      "title": "Global-first scope step (recommended, explicit pick)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "installer-smarts",
+      "depends_on": [
+        "onboarding-brand"
+      ],
+      "created": "2026-06-18T08:49:41+00:00",
+      "updated": "2026-06-18T11:02:57+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "37ce9d85404ea59a6d36d2bff9c069aa",
+        "tests": {
+          "add-method/tooling/test_global_scope.py": "3373ede829d41e4a53ab7d007a90c874"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py",
+          "add-method/tooling/test_installer_prompts.py",
+          "add-method/tooling/test_onboarding_brand.py",
+          "add-method/tooling/test_readiness_detect.py"
+        ],
+        "snapshot_md5": "99e04daa3ffbec8ce8451783617ef163"
+      }
+    },
+    "intent-handoff": {
+      "title": "Build-intent note handoff to /add (never init)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "installer-smarts",
+      "depends_on": [
+        "onboarding-brand"
+      ],
+      "created": "2026-06-18T08:49:41+00:00",
+      "updated": "2026-06-18T11:16:08+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "0793ec65fd9cac5b5b9f217a6c5b0c77",
+        "tests": {
+          "add-method/tooling/test_intent_handoff.py": "7ec00ae48929177c9d83b1227d49498d"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/bin/cli.js",
+          "add-method/src/add_method/_installer.py",
+          "add-method/skill/add/SKILL.md",
+          ".claude/skills/add/SKILL.md",
+          "add-method/src/add_method/_bundled/skill/add/SKILL.md",
+          "add-method/tooling/test_global_scope.py"
+        ],
+        "snapshot_md5": "86c1cdfd2412c9cd069733e6a4d82129"
+      }
+    },
+    "scope-complete-position": {
+      "title": "scope.md: full-template coverage + Position-the-goal step (E1+E2)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "scope-drafting-quality",
+      "depends_on": [],
+      "created": "2026-06-18T09:01:02+00:00",
+      "updated": "2026-06-18T09:44:46+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "b020a1cf9bc282873e945a2163ca8e36",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/skill/add/scope.md",
+          ".claude/skills/add/scope.md",
+          "add-method/src/add_method/_bundled/skill/add/scope.md"
+        ],
+        "snapshot_md5": "40e30b21f572ca994fe0623bb5d3015a"
+      },
+      "heal": {
+        "attempts": 1,
+        "history": [
+          {
+            "at": "2026-06-18T09:34:02+00:00",
+            "reason": "scope_violation: task 'scope-complete-position' touched outside its declared \u00a75 Scope \u2014 .claude/skills/add/phases/6-verify.md \u00b7 .claude/skills/add/scope.md \u00b7 add-method/skill/add/phases/6-verify.md \u00b7 add-method/skill/add/scope.md \u00b7 add-method/src/add_method/_bundled/skill/add/phases/6-verify.md (10 total)",
+            "source": "scope"
+          }
+        ]
+      }
+    },
+    "verify-build-expectations": {
+      "title": "TASK.md.tmpl \u00a76 + 6-verify.md: AI-filled build-expectations block",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "verify-expectations",
+      "depends_on": [],
+      "created": "2026-06-18T09:10:14+00:00",
+      "updated": "2026-06-18T09:45:47+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "10d9bad034e52274c22f3f17f9f199f5",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/templates/TASK.md.tmpl",
+          "add-method/src/add_method/_bundled/tooling/templates/TASK.md.tmpl",
+          "add-method/skill/add/phases/6-verify.md",
+          ".claude/skills/add/phases/6-verify.md",
+          "add-method/src/add_method/_bundled/skill/add/phases/6-verify.md",
+          "add-method/docs/08-step-6-verify.md",
+          "add-method/src/add_method/_bundled/docs/08-step-6-verify.md"
+        ],
+        "snapshot_md5": "40e30b21f572ca994fe0623bb5d3015a"
+      }
+    },
+    "pty-clack-harness": {
+      "title": "Reusable PTY test helper for clack interactive paths",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "installer-smarts-polish",
+      "depends_on": [],
+      "created": "2026-06-18T11:37:17+00:00",
+      "updated": "2026-06-18T11:37:17+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-17T14:17:17+00:00",
+  "updated": "2026-06-18T11:37:17+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1076,9 +1248,41 @@
       "status": "active",
       "created": "2026-06-17T02:07:15+00:00",
       "updated": "2026-06-17T02:07:15+00:00"
+    },
+    "installer-smarts": {
+      "title": "Smart onboarding installer",
+      "goal": "On first run in a real terminal, add init onboards the user (brand, feature showcase, readiness, global-first scope, optional intent handoff to /add) instead of a silent file-drop; non-interactive/CI stays byte-identical.",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-18T08:49:00+00:00",
+      "updated": "2026-06-18T11:17:44+00:00"
+    },
+    "scope-drafting-quality": {
+      "title": "Complete, well-positioned scope drafting",
+      "goal": "Scope-drafting yields a complete, correctly-positioned MILESTONE.md \u2014 the guide covers the whole template shape (with a draft well-formedness gate) and requires grounding the goal in current assets + the milestone map before the goal sentence is drafted.",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-18T09:01:02+00:00",
+      "updated": "2026-06-18T09:50:08+00:00"
+    },
+    "verify-expectations": {
+      "title": "Build-expectations in VERIFY",
+      "goal": "The \u00a76 VERIFY step lets the AI pre-declare observable build expectations (derived from \u00a72 scenarios + \u00a73 contract) that verify confirms \u2014 so a build is checked correct, not merely test-green.",
+      "stage": "mvp",
+      "status": "done",
+      "created": "2026-06-18T09:10:14+00:00",
+      "updated": "2026-06-18T09:50:08+00:00"
+    },
+    "installer-smarts-polish": {
+      "title": "Installer Smarts Polish",
+      "goal": "Close the PTY-only-reachable interactive-coverage gaps the installer-smarts gates disclosed: a reusable PTY test helper that drives clack select/confirm so the agent-select step and the clack happy-path prompts are exercised in CI (today they are node-syntax-checked + logic-unit-tested only).",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-18T11:35:30+00:00",
+      "updated": "2026-06-18T11:35:30+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "installer-smarts-polish",
   "archived": [
     {
       "slug": "v5",

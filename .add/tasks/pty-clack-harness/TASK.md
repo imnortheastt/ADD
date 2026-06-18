@@ -1,7 +1,7 @@
-# TASK: {{title}}
+# TASK: Reusable PTY test helper for clack interactive paths
 
-slug: {{slug}} · created: {{date}} · stage: {{stage}}
-autonomy: {{autonomy}}   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it, or run `add.py autonomy set`. -->
+slug: pty-clack-harness · created: 2026-06-18 · stage: mvp
+autonomy: auto   <!-- inherited from the project default (PROJECT.md); explicit level: manual < conservative < auto (visible · overridable) — lower below if a high-risk task needs it, or run `add.py autonomy set`. -->
 phase: ground   <!-- ground -> specify -> scenarios -> contract -> tests -> build -> verify -> observe -> done -->
 <!-- high-risk/method-defining scope? declare `risk: high` on the slug line above and lower the
      autonomy level to `manual` or `conservative` — the engine refuses an unguarded completion
@@ -24,7 +24,17 @@ Anchors the contract cites: <the symbols §3 will name>
 
 ## 1 · SPECIFY — the rules ▸ docs/03-step-1-specify.md
 
-Feature: <name>
+Feature: A reusable PTY test helper that drives clack select/confirm so the installer's
+interactive TUI paths are exercised in CI (not just node-syntax-checked + logic-unit-tested).
+Seeded (deduped) from two ARCHIVED SPEC deltas the engine can't `--from-delta` (their source
+tasks shipped in 1.7.0, so they are out of the live state registry — flipped to seeded by hand):
+  - [agent-detect] "extract a reusable PTY test helper that drives clack select/confirm so the
+    interactive agent-select step (D8) is covered in CI" — disclosed at its gate as PTY-only-reachable.
+  - [installer-prompts] "extract a reusable PTY test helper so interactive happy-paths are
+    automatable in CI" — the same need from the original installer milestone.
+The agent-select step + the clack happy-path prompts (intro → target → scope → agent → intent) are
+the keystroke paths a force-seam can't reach (`runClackPreamble` returns cancelled before the prompt
+when stdin isn't a TTY); a committed PTY harness driving real keystrokes closes that gap for both twins.
 Framings weighed: <chosen> (chosen) · <alternative> · <alternative>
 Must:
 <must>
