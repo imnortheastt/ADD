@@ -18,6 +18,11 @@ Test-coverage and project-hygiene patch. Additive; no breaking changes.
   vulnerability reporting via GitHub Security Advisories, and response SLAs;
   shipped in both the npm tarball and the PyPI sdist/wheel.
 
+### Changed
+- **Brand tagline** — refreshed to *"One skill. Eight steps. Five disciplines.
+  Every feature ships through the loop."* across the README, the npm/PyPI
+  package descriptions, and the Claude Code plugin manifest.
+
 ## [1.7.1] — 2026-06-18
 
 Installer depth and method quality release: the onboarding installer gains

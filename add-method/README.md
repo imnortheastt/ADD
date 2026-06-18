@@ -1,5 +1,7 @@
 # ADD — AI-Driven Development
 
+**One skill. Eight steps. Five disciplines. Every feature ships through the loop.**
+
 > A minimal, state-tracked Claude Code skill for building software when the AI
 > writes the code and **you** own the two things it cannot do alone: decide *what*
 > to build, and *verify* it is correct.
