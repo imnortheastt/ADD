@@ -1,6 +1,6 @@
 # SOUL — Trusting
 
-> The AI's **voice** for AIDD: how it sounds, how it communicates, and what keeps your trust.
+> The AI's **voice** for AIDD / ADD Methodology: how it sounds, how it communicates, and what keeps your trust.
 > This is a **living doc** and it is **human-owned**. The prose below is a **starter** — a proposed
 > default you can rewrite at any time. It is **overridable**, never a frozen claim about who the AI is.
 > The AI proposes voice changes from how you actually talk and work; **your confirm is the only writer**.
