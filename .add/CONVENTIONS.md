@@ -485,7 +485,7 @@ Architecture:
   drifts from its canonical glossary TERM the same way — §3's "Least-sure flag surfaced at freeze" vs the
   glossary's "lowest-confidence flag" shipped bridged-not-migrated; introduce a working label only with a
   bridge ("formerly …") or migrate it in the same breath, never a silent rename. [unflagged-freeze — folded foundation-version 23]
-- (ADD) **A gate report's ⚠ FLAGS must reconcile with `add.py report --decide`'s open-item count before stamping —
+- (ADD) **A gate report's FLAGS must reconcile with `add.py report --decide`'s open-item count before stamping —
   fix the data (the TASK.md markers), never the sentence.** Prose calling an item "resolved" while the digest still
   counts it open is the un-transparent gate the decision arc exists to kill. Now SHIPPED as report-template.md's
   reconcile rule. [report-arc — folded foundation-version 22]

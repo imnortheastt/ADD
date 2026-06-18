@@ -264,7 +264,7 @@ ENGINE_FILES = {
     "report-template.md": {
         "tags": {"constraints"},
         "narrative": (
-            "## The five blocks, in order",                            # holds the digest ``` fence
+            "## The report blocks, in order",                          # holds the digest ``` fence
         )},
     "setup-review.md": {
         "tags": {"constraints"},
