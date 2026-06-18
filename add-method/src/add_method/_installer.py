@@ -529,6 +529,23 @@ def _persist_data(home: Path, project_abspath) -> bool:
     return True
 
 
+def _seed_soul_md(target_path: Path, bundled_root: Path) -> None:
+    """Seed .add/SOUL.md from the bundled template if it does not yet exist.
+    Skip-if-exists (SOUL.md is user-owned — never clobber). Fail-soft: any
+    problem logs a warning and returns; the caller's return code is unaffected."""
+    dest = target_path / ".add" / "SOUL.md"
+    if dest.exists():
+        return
+    source = bundled_root / "tooling" / "templates" / "SOUL.md.tmpl"
+    if not source.exists():
+        _log("soul_seed_skipped: SOUL.md.tmpl not found in bundled tooling/templates/")
+        return
+    try:
+        dest.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+    except OSError as exc:
+        _log(f"soul_seed_skipped: could not write .add/SOUL.md — {exc}")
+
+
 def install(
     target: str = ".",
     force: bool = False,
@@ -626,6 +643,8 @@ def install(
     # RECONCILE: restore missing trees + refresh present ones (sweep orphans). Touches
     # ONLY the managed layer — state.json / PROJECT.md / milestones / tasks are never read.
     _reconcile(target_path, bundled_root)
+
+    _seed_soul_md(target_path, bundled_root)
 
     # Agent detection: write THE detected agent's integration file (a marker-delimited
     # pointer init's sync-guidelines later supersedes) + tailor the closing next-step.
@@ -884,6 +903,7 @@ def update(
     _reconcile(target_path, bundled_root)
     _run_migrations(state_file, cur_version, new_version)
     _write_stamp(add_dir, new_version, channel=channel)
+    _seed_soul_md(target_path, bundled_root)
 
     _log(
         f"ADD updated {cur_version or '(unstamped)'} -> {new_version} · "
