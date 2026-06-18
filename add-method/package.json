@@ -23,7 +23,8 @@
     "docs/",
     "README.md",
     "GETTING-STARTED.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "keywords": [
     "ai-driven-development",

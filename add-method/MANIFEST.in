@@ -9,6 +9,7 @@ graft src/add_method/_bundled
 include README.md
 include GETTING-STARTED.md
 include CHANGELOG.md
+include SECURITY.md
 include LICENSE
 
 # Global excludes — keep the distributions clean
