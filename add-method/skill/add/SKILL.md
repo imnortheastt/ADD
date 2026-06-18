@@ -112,7 +112,7 @@ See `run.md`.
 
 Whenever you present a decision point to the human in chat (intake · bundle approval · gate ·
 milestone close), follow `report-template.md` — open with the ARC (goal · done · plan,
-engine-sourced), then SUMMARY → DECISION → ⚠ FLAGS → EVIDENCE → NEXT, show-before-ask, never
+engine-sourced), then SUMMARY → DECISION → FLAGS → DECIDED → EVIDENCE → NEXT, show-before-ask, never
 pre-stamp a decision point — and the question is a summary, never the artifact.
 
 In **observe**, also emit **lessons learned** — learnings tagged by which of the five
