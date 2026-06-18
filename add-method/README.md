@@ -149,6 +149,13 @@ be upset to lose is "the code," you're still working the old way.
 Start at [`docs/README.md`](./docs/README.md) — Foundations → the six steps →
 operating it across a team → templates, prompts, and a full worked example.
 
+## What's next
+
+**Dynamic Agent Skills** — the next scope: skills that adapt at runtime to the
+project's current state, stage, and active phase rather than loading a static
+guide. The agent picks the right depth and tooling automatically as the project
+evolves.
+
 ## Develop
 
 ```bash
