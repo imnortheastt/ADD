@@ -1,5 +1,10 @@
 # Releases
 
+## 1.7.1 — 2026-06-18
+milestones: installer-smarts, scope-drafting-quality, verify-expectations, installer-soul-seed
+waivers: none
+evidence: ADD 1.7.1 — installer-smarts (brand-aware prompts, readiness detection, intent handoff via .add/.intent) + installer-soul-seed (SOUL.md seeded on init/update) + verify-expectations (Build-expectations block in §6 VERIFY) + scope-drafting-quality (scope drafting quality guard); suite 1324 green; tag v1.7.1 triggers npm/PyPI publish
+
 Append-only release ledger (newest-first) — date · version · milestones · waivers · evidence.
 A milestone is "released" iff it appears in a row here (membership is the attribution source).
 The engine records a row via `add.py release <version>`; the human owns the tag/publish.

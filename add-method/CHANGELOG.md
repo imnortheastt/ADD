@@ -4,6 +4,33 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.7.1] — 2026-06-18
+
+Installer depth and method quality release: the onboarding installer gains
+brand-aware prompts, readiness detection, and intent handoff; SOUL.md is now
+seeded on first install and update; scope drafting and build verification gain
+new depth guards. All additive; no breaking changes.
+
+### Added
+- **Brand-aware guided installer (`installer-smarts`)** — `add init` now prompts
+  for the user's brand/project name and detects whether ADD is already present
+  (readiness check); defaults to global scope and captures the user's first
+  intent, handing it off to the first `/add` session via `.add/.intent`.
+- **SOUL.md seeded on install and update (`installer-soul-seed`)** — `add init`
+  and `add update` now seed `.add/SOUL.md` from the bundled voice template if it
+  does not yet exist, so the voice file is present from the first session without
+  waiting for `add.py init`.
+- **Build expectations in VERIFY (`verify-expectations`)** — the §6 VERIFY step
+  gains a Build-expectations block: the AI pre-declares observable outcomes derived
+  from §2 scenarios + §3 contract, and verify confirms them — so a build is checked
+  correct, not merely test-green.
+
+### Changed
+- **Scope drafting quality guard (`scope-drafting-quality`)** — the scope guide now
+  requires the goal to be grounded in current project assets and the milestone map
+  before the goal sentence is drafted; a draft well-formedness gate catches
+  incomplete MILESTONE.md shapes early.
+
 ## [1.7.0] — 2026-06-18
 
 The installer & onboarding release: standing up — or repairing — ADD is now one

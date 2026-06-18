@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.1 — 2026-06-18
+
+- Smart onboarding installer — 0 carried · 0 key decision(s)
+- Complete, well-positioned scope drafting — 0 carried · 0 key decision(s)
+- Build-expectations in VERIFY — 0 carried · 0 key decision(s)
+- Installer seeds SOUL.md on install and update — 0 carried · 0 key decision(s)
+
 The canonical, release-maintained changelog lives with the package —
 one source of truth, updated on every version tag:
 
