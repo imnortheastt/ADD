@@ -63,7 +63,9 @@ python3 .add/tooling/add.py status
 (the `soul-self-improve` path proposes voice deltas the human confirms).
 
 - **No `.add/state.json` yet** (a fresh install drops tooling + docs but does *not* init — so `status` says
-  `no .add/ project found`) → enter **autonomous setup**: YOU run init yourself —
+  `no .add/ project found`) → enter **autonomous setup**: first, if `.add/.intent` exists, read it — the
+  one-line first-build intent the user gave the installer (a NOTE, never an init trigger) — and let it seed
+  your kickoff suggestion (`phases/0-setup.md`); then YOU run init yourself —
   `add.py init --name "<inferred>" --stage <picked> --await-lock` (don't tell the human to) — then read
   `phases/0-setup.md` and draft the foundation + first scope + first contract through to the human baseline approval.
 - **A task is active** → open `.add/tasks/<active>/TASK.md`, look at its `phase:`
