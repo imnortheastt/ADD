@@ -312,5 +312,65 @@ class RejectGuards(unittest.TestCase):
         self.assertEqual(canon.read_bytes(), dogfood.read_bytes())
 
 
+# ── behavior: §6 gains the AI-filled Build-expectations block (verify-build-expectations v1) ──
+class BuildExpectationsBlock(unittest.TestCase):
+    TASK_TMPL = (
+        _REPO / "add-method" / "tooling" / "templates" / "TASK.md.tmpl",
+        _REPO / ".add" / "tooling" / "templates" / "TASK.md.tmpl",
+        _REPO / "add-method" / "src" / "add_method" / "_bundled" / "tooling" / "templates" / "TASK.md.tmpl",
+    )
+    VERIFY_GUIDE = (
+        _REPO / "add-method" / "skill" / "add" / "phases" / "6-verify.md",
+        _REPO / ".claude" / "skills" / "add" / "phases" / "6-verify.md",
+        _REPO / "add-method" / "src" / "add_method" / "_bundled" / "skill" / "add" / "phases" / "6-verify.md",
+    )
+
+    def _section6(self) -> str:
+        tmpl = self.TASK_TMPL[0].read_text(encoding="utf-8")
+        return tmpl.split("## 6 · VERIFY")[1].split("## 7 · OBSERVE")[0]
+
+    def test_build_expectations_block_present_in_section6(self):
+        sec6 = self._section6()
+        self.assertIn("### Build expectations", sec6,
+                      "§6 must carry a '### Build expectations' block")
+        # the existing §6 parts must survive (the block is additive)
+        self.assertIn("### Deep checks", sec6, "Deep checks subsection retained")
+        self.assertIn("### GATE RECORD", sec6, "GATE RECORD retained")
+        self.assertIn("- [ ] all tests pass", sec6, "the §6 checklist retained")
+
+    def test_block_cue_is_observable_and_derived(self):
+        sec6 = self._section6()
+        block = sec6.split("### Build expectations")[1].split("### ")[0].lower()
+        self.assertIn("confirmed by", block,
+                      "each expectation row carries a 'confirmed by'")
+        self.assertIn("before build", block,
+                      "the block is filled before build")
+        self.assertTrue("scenario" in block and "contract" in block,
+                        "the cue must name the §2 scenarios + §3 contract derivation")
+
+    def test_engine_seams_untouched_by_the_block(self):
+        # the amended template still passes every parsed-seam guard (no parsed_seam_touched).
+        tmpl = self.TASK_TMPL[0].read_text(encoding="utf-8")
+        self.assertEqual([], form_tag_offenses(tmpl),
+                         "the new block must leave the amended template offense-free")
+
+    def test_verify_guide_cues_fill_and_confirm(self):
+        guide = self.VERIFY_GUIDE[0].read_text(encoding="utf-8").lower()
+        self.assertIn("build expectations", guide,
+                      "6-verify.md must reference the build-expectations block")
+        self.assertTrue("before build" in guide or "fill" in guide,
+                        "the guide cues filling the expectations before build")
+        self.assertIn("confirm", guide,
+                      "the guide cues confirming each expectation at the gate")
+
+    def test_template_and_guide_parity_three_trees(self):
+        for group, label in ((self.TASK_TMPL, "TASK.md.tmpl"), (self.VERIFY_GUIDE, "6-verify.md")):
+            present = [p for p in group if p.exists()]
+            if len(present) < 2:
+                self.skipTest(f"{label}: fewer than 2 trees present (fresh package)")
+            blobs = {p.read_bytes() for p in present}
+            self.assertEqual(1, len(blobs), f"{label} diverged across its parity trees")
+
+
 if __name__ == "__main__":
     unittest.main()

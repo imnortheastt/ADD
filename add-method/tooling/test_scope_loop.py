@@ -23,13 +23,25 @@ _REPO = _ADD_METHOD.parent
 
 CANONICAL_SCOPE = _ADD_METHOD / "skill" / "add" / "scope.md"
 DOGFOOD_SCOPE = _REPO / ".claude" / "skills" / "add" / "scope.md"
+BUNDLE_SCOPE = _ADD_METHOD / "src" / "add_method" / "_bundled" / "skill" / "add" / "scope.md"
 CANONICAL_SKILL = _ADD_METHOD / "skill" / "add" / "SKILL.md"
 DOGFOOD_SKILL = _REPO / ".claude" / "skills" / "add" / "SKILL.md"
 MILESTONES_DIR = _REPO / ".add" / "milestones"
 
 # The 4 intake outcomes (the 4 buckets) plus the split path the outcomes table must cover.
 OUTCOME_TOKENS = {"new-major", "sub-milestone", "task", "change-request", "split_required"}
-REJECT_CODES = {"not_classified", "dangling_criterion", "no_milestone"}
+# scope-complete-position (v1): duplicate_goal joins the closed set — a DRAFTING reject the
+# Position-the-goal step raises when a goal is already delivered by an existing milestone.
+REJECT_CODES = {"not_classified", "dangling_criterion", "no_milestone", "duplicate_goal"}
+
+# The 9 MILESTONE.md.tmpl sections scope.md's drafting section must name (E1). The header
+# fields goal + rationale count as named items; stage/status/created is a single header line.
+TEMPLATE_SECTIONS = (
+    "goal", "rationale", "scope", "shared decisions", "shared", "contracts",
+    "tasks", "exit criteria", "close", "release steps",
+)
+# Frozen tokens (TASK.md §3, scope-complete-position v1) — must appear verbatim in scope.md.
+FROZEN_TOKENS = ("Position the goal", "duplicate_goal", "drafted-blank", "well-formedness")
 
 
 def _md5(p: Path) -> str:
@@ -78,11 +90,14 @@ def _real_milestone_slugs():
 
 
 class ScopeLoopTest(unittest.TestCase):
-    def test_scope_exists_in_both_trees_with_md5_parity(self):
-        self.assertTrue(CANONICAL_SCOPE.exists(), f"missing {CANONICAL_SCOPE}")
-        self.assertTrue(DOGFOOD_SCOPE.exists(), f"missing {DOGFOOD_SCOPE}")
+    def test_scope_md5_parity_across_three_trees(self):
+        # E1/E2 land in all 3 parity trees — canonical, dogfood, AND the pip bundle.
+        for p in (CANONICAL_SCOPE, DOGFOOD_SCOPE, BUNDLE_SCOPE):
+            self.assertTrue(p.exists(), f"missing {p}")
         self.assertEqual(_md5(CANONICAL_SCOPE), _md5(DOGFOOD_SCOPE),
                          "scope.md differs between the canonical and dogfood skill trees")
+        self.assertEqual(_md5(CANONICAL_SCOPE), _md5(BUNDLE_SCOPE),
+                         "scope.md differs between the canonical tree and the pip _bundled copy")
 
     def test_documents_all_four_intake_outcomes(self):
         # The outcomes table must cover all 4 buckets + the split path (in its outcome column),
@@ -94,7 +109,8 @@ class ScopeLoopTest(unittest.TestCase):
         for tok in OUTCOME_TOKENS:
             self.assertIn(tok, joined, f"outcomes table does not document the '{tok}' outcome")
 
-    def test_documents_all_three_reject_codes(self):
+    def test_documents_all_reject_codes(self):
+        # duplicate_goal joins the closed set (scope-complete-position v1).
         text = CANONICAL_SCOPE.read_text(encoding="utf-8")
         for code in REJECT_CODES:
             self.assertIn(code, text, f"scope.md does not document the '{code}' reject code")
@@ -119,6 +135,51 @@ class ScopeLoopTest(unittest.TestCase):
         hit = [s for s in real if s in section]
         self.assertTrue(
             hit, f"worked example names no real milestone slug (have {sorted(real)})")
+
+    def test_frozen_tokens_present(self):
+        # The §3 frozen tokens must appear verbatim in scope.md.
+        text = CANONICAL_SCOPE.read_text(encoding="utf-8")
+        for tok in FROZEN_TOKENS:
+            self.assertIn(tok, text, f"scope.md is missing the frozen token '{tok}'")
+
+    def test_position_the_goal_is_the_first_drafting_step(self):
+        # E2a — a "Position the goal" step that grounds in assets AND cross-references the
+        # existing+archived milestone map, recorded in rationale.
+        text = CANONICAL_SCOPE.read_text(encoding="utf-8")
+        m = re.search(r"^#+\s*.*position the goal.*$", text, flags=re.IGNORECASE | re.MULTILINE)
+        self.assertIsNotNone(m, "scope.md has no 'Position the goal' step heading")
+        body = text[m.start():]
+        low = body.lower()
+        self.assertTrue(
+            re.search(r"asset|project\.md", low),
+            "the Position-the-goal step must ground the goal in current assets")
+        self.assertTrue(
+            re.search(r"archive|existing milestone|milestone.{0,20}goal|relationship", low),
+            "the Position-the-goal step must cross-reference the existing/archived milestone map")
+
+    def test_covers_all_nine_template_sections(self):
+        # E1a — the drafting section names all 9 MILESTONE.md.tmpl sections (incl. the three the
+        # guide was silent on: rationale, Close ship-review, Release steps).
+        text = CANONICAL_SCOPE.read_text(encoding="utf-8").lower()
+        for sec in TEMPLATE_SECTIONS:
+            self.assertIn(sec, text, f"scope.md never names the '{sec}' template section")
+
+    def test_marks_close_and_release_drafted_blank(self):
+        # E1b — Close ship-review + Release steps are explicitly drafted-blank, owned by the
+        # close/release flows (fold.md / release.md) — not filled at scope time.
+        text = CANONICAL_SCOPE.read_text(encoding="utf-8")
+        self.assertIn("drafted-blank", text,
+                      "scope.md must mark Close/Release sections drafted-blank")
+        low = text.lower()
+        self.assertTrue(
+            "fold.md" in low or "release.md" in low or "close" in low,
+            "scope.md must name the flow that owns the drafted-blank sections")
+
+    def test_well_formedness_gate_present(self):
+        # E1c — a draft well-formedness gate (a checklist a draft passes before it is proposed).
+        text = CANONICAL_SCOPE.read_text(encoding="utf-8")
+        self.assertIn("well-formedness", text,
+                      "scope.md must carry a draft well-formedness gate")
 
     def test_both_skill_md_link_scope_and_are_identical(self):
         for skill in (CANONICAL_SKILL, DOGFOOD_SKILL):
