@@ -4,6 +4,33 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.7.3] — 2026-06-18
+
+Multi-agent installer reach (`multi-agent-installer`). Additive; no breaking
+changes — the non-interactive byte stream is unchanged for existing agents and
+the engine (`add.py`) is byte-identical.
+
+### Added
+- **Seven new agent profiles in the installer** — `add init` now detects and
+  onboards **Cursor, Windsurf, Trae, GitHub Copilot, Cline, Aider, and Gemini
+  CLI** (best-effort env detection, overridable in the interactive picker), in
+  addition to Claude Code, Codex, and OpenCode. Each gets the context file it
+  actually auto-loads: `AGENTS.md` for most, `.clinerules` for Cline. Unknown
+  agents still degrade to the generic `AGENTS.md`. Mirrored byte-for-decision
+  across both installer twins (`bin/cli.js` + `src/add_method/_installer.py`).
+- **Gemini CLI settings wiring (`.gemini/settings.json`)** — because Gemini CLI
+  auto-loads `GEMINI.md` (not `AGENTS.md`), the installer now performs a
+  fail-soft, idempotent, key-preserving merge of `.gemini/settings.json` so its
+  `context.fileName` includes `AGENTS.md` — the installer's first JSON-config
+  write. Re-running is a no-op; a malformed or unwritable settings file warns and
+  is skipped without aborting the install.
+
+### Changed
+- **Onboarding docs name the full agent set** — the README ("Works with your
+  agent") and `GETTING-STARTED.md` now list all ten supported agents and how
+  each loads ADD; only Claude Code runs the `/add` skill natively, every other
+  agent follows the same loop through the phase guides via the CLI.
+
 ## [1.7.2] — 2026-06-18
 
 Test-coverage and project-hygiene patch. Additive; no breaking changes.

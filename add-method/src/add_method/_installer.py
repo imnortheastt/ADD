@@ -155,6 +155,50 @@ def _write_intent_note(target, intent: str) -> bool:
         return False                                    # design-for-failure: never abort the install
 
 
+def _write_gemini_settings(target) -> str:
+    """Merge <target>/.gemini/settings.json so context.fileName includes "AGENTS.md", the pointer
+    file ADD writes for the gemini profile. Gemini CLI defaults to GEMINI.md and lets GEMINI.md win
+    when both exist, so AGENTS.md must be named in the config to be loaded. Read-merge-write:
+    preserves every other key; idempotent (a second run is a no-op); fail-soft (an unparsable or
+    unwritable file warns + skips and is left byte-untouched — never raises, never aborts the drop).
+    Returns created|updated|unchanged|skipped. Twin of bin/cli.js:writeGeminiSettings."""
+    gemini_dir = Path(target) / ".gemini"
+    settings = gemini_dir / "settings.json"
+    try:
+        if settings.exists():
+            try:
+                data = json.loads(settings.read_text(encoding="utf-8"))
+            except (ValueError, OSError):
+                sys.stderr.write(f"warn: could not parse {settings} — leaving it untouched; skipped\n")
+                return "skipped"
+            if not isinstance(data, dict):
+                sys.stderr.write(f"warn: {settings} is not a JSON object — leaving it untouched; skipped\n")
+                return "skipped"
+            created = False
+        else:
+            data = {}
+            created = True
+        context = data.get("context")
+        if not isinstance(context, dict):
+            context = {}
+        names = context.get("fileName")
+        if isinstance(names, str):
+            names = [names]
+        elif not isinstance(names, list):
+            names = []
+        if "AGENTS.md" in names:
+            return "unchanged"                          # idempotent: nothing to add
+        names = names + ["AGENTS.md"]
+        context["fileName"] = names
+        data["context"] = context
+        gemini_dir.mkdir(parents=True, exist_ok=True)
+        settings.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        return "created" if created else "updated"
+    except OSError as e:
+        sys.stderr.write(f"warn: could not write {settings} — {e}; skipped\n")
+        return "skipped"                                # design-for-failure: never abort the install
+
+
 # --- brand + feature showcase (interactive path only; fail-soft) ----------------
 # The 7 post-ground ADD phases the showcase names — grounded in the method (the
 # PROJECT.md goal + the engine's phase flow), never invented marketing. The wordmark
@@ -260,6 +304,27 @@ AGENT_PROFILES = (
     {"id": "opencode", "label": "OpenCode", "integration_file": "AGENTS.md",
      "env": ("OPENCODE",), "env_prefix": "OPENCODE",
      "next_step": "Open OpenCode — it reads AGENTS.md; say what you want to build."},
+    {"id": "cursor", "label": "Cursor", "integration_file": "AGENTS.md",
+     "env": ("CURSOR_AGENT", "CURSOR_TRACE_ID"), "env_prefix": "CURSOR_",
+     "next_step": "Open Cursor — it reads AGENTS.md; say what you want to build."},
+    {"id": "windsurf", "label": "Windsurf", "integration_file": "AGENTS.md",
+     "env": ("WINDSURF", "WINDSURF_ENV"), "env_prefix": "WINDSURF_",
+     "next_step": "Open Windsurf — Cascade reads AGENTS.md; say what you want to build."},
+    {"id": "trae", "label": "Trae", "integration_file": "AGENTS.md",
+     "env": ("TRAE_AI_IDE",), "env_prefix": "TRAE_",
+     "next_step": "Open Trae — it reads AGENTS.md; say what you want to build."},
+    {"id": "copilot", "label": "GitHub Copilot", "integration_file": "AGENTS.md",
+     "env": ("COPILOT_AGENT",), "env_prefix": None,   # NOT a GITHUB_ prefix — too broad (CI sets GITHUB_*)
+     "next_step": "Open GitHub Copilot — it reads AGENTS.md; say what you want to build."},
+    {"id": "cline", "label": "Cline", "integration_file": ".clinerules",
+     "env": ("CLINE_ACTIVE",), "env_prefix": "CLINE_",
+     "next_step": "Open Cline — it reads .clinerules; say what you want to build."},
+    {"id": "aider", "label": "Aider", "integration_file": "AGENTS.md",
+     "env": (), "env_prefix": "AIDER_",
+     "next_step": "Open Aider — add AGENTS.md to its context (`.aider.conf.yml` `read:` or `--read AGENTS.md`), then say what you want to build."},
+    {"id": "gemini", "label": "Gemini CLI", "integration_file": "AGENTS.md",
+     "env": ("GEMINI_CLI", "GEMINI_SANDBOX"), "env_prefix": "GEMINI_",
+     "next_step": "Open Gemini CLI — ADD wired .gemini/settings.json to load AGENTS.md; say what you want to build."},
     {"id": "generic", "label": "your AI agent", "integration_file": "AGENTS.md",
      "env": (), "env_prefix": None, "next_step": _GENERIC_NEXT},
 )
@@ -308,7 +373,7 @@ def _detect_agent_enriched(env=None, target=None, which=None) -> dict:
             return by_id["claude"]                     # repo signal
     except OSError:
         pass
-    for agent_id in ("claude", "codex", "opencode"):
+    for agent_id in ("claude", "codex", "opencode", "cursor", "windsurf", "trae", "copilot", "cline", "aider"):
         try:
             if which(agent_id):
                 return by_id[agent_id]                 # machine signal (no spawn)
@@ -657,6 +722,11 @@ def install(
     else:
         profile = _detect_agent(env)
     _write_agent_pointer(target_path, profile)
+
+    # Gemini CLI auto-loads GEMINI.md, not AGENTS.md — so for the gemini profile we ALSO merge
+    # .gemini/settings.json (context.fileName) to load the AGENTS.md pointer. Fail-soft + idempotent.
+    if profile["id"] == "gemini":
+        _write_gemini_settings(target_path)
 
     # Optional build-intent NOTE for `/add` to read — a NOTE only (no init, no state.json).
     # "" on the non-interactive path or a skipped prompt -> no file written.

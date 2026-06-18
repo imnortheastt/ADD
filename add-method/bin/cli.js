@@ -91,6 +91,27 @@ const AGENT_PROFILES = [
   { id: "opencode", label: "OpenCode", integration_file: "AGENTS.md",
     env: ["OPENCODE"], envPrefix: "OPENCODE",
     next_step: "Open OpenCode — it reads AGENTS.md; say what you want to build." },
+  { id: "cursor", label: "Cursor", integration_file: "AGENTS.md",
+    env: ["CURSOR_AGENT", "CURSOR_TRACE_ID"], envPrefix: "CURSOR_",
+    next_step: "Open Cursor — it reads AGENTS.md; say what you want to build." },
+  { id: "windsurf", label: "Windsurf", integration_file: "AGENTS.md",
+    env: ["WINDSURF", "WINDSURF_ENV"], envPrefix: "WINDSURF_",
+    next_step: "Open Windsurf — Cascade reads AGENTS.md; say what you want to build." },
+  { id: "trae", label: "Trae", integration_file: "AGENTS.md",
+    env: ["TRAE_AI_IDE"], envPrefix: "TRAE_",
+    next_step: "Open Trae — it reads AGENTS.md; say what you want to build." },
+  { id: "copilot", label: "GitHub Copilot", integration_file: "AGENTS.md",
+    env: ["COPILOT_AGENT"], envPrefix: null,   // NOT a GITHUB_ prefix — too broad (CI sets GITHUB_*)
+    next_step: "Open GitHub Copilot — it reads AGENTS.md; say what you want to build." },
+  { id: "cline", label: "Cline", integration_file: ".clinerules",
+    env: ["CLINE_ACTIVE"], envPrefix: "CLINE_",
+    next_step: "Open Cline — it reads .clinerules; say what you want to build." },
+  { id: "aider", label: "Aider", integration_file: "AGENTS.md",
+    env: [], envPrefix: "AIDER_",
+    next_step: "Open Aider — add AGENTS.md to its context (`.aider.conf.yml` `read:` or `--read AGENTS.md`), then say what you want to build." },
+  { id: "gemini", label: "Gemini CLI", integration_file: "AGENTS.md",
+    env: ["GEMINI_CLI", "GEMINI_SANDBOX"], envPrefix: "GEMINI_",
+    next_step: "Open Gemini CLI — ADD wired .gemini/settings.json to load AGENTS.md; say what you want to build." },
   { id: "generic", label: "your AI agent", integration_file: "AGENTS.md",
     env: [], envPrefix: null, next_step: GENERIC_NEXT },
 ];
@@ -151,7 +172,7 @@ function detectAgentEnriched(env, target, which) {
   try {
     if (target && fs.existsSync(path.join(target, "CLAUDE.md"))) return byId.claude;   // repo signal
   } catch (_e) { /* fall through */ }
-  for (const id of ["claude", "codex", "opencode"]) {
+  for (const id of ["claude", "codex", "opencode", "cursor", "windsurf", "trae", "copilot", "cline", "aider"]) {
     try { if (which(id)) return byId[id]; } catch (_e) { /* probe absent */ }   // machine signal
   }
   return base;                                         // generic
@@ -376,6 +397,48 @@ function writeIntentNote(target, intent) {
   } catch (_e) { return false; }
 }
 
+// Merge <target>/.gemini/settings.json so context.fileName includes "AGENTS.md" — the pointer
+// ADD writes for the gemini profile. Gemini CLI defaults to GEMINI.md and lets it win when both
+// exist, so AGENTS.md must be named in the config to load. Read-merge-write: preserves every other
+// key; idempotent; fail-soft (an unparsable/unwritable file warns + skips, never aborts the drop).
+// Returns created|updated|unchanged|skipped. Twin of _installer.py:_write_gemini_settings.
+function writeGeminiSettings(target) {
+  const geminiDir = path.join(target, ".gemini");
+  const settings = path.join(geminiDir, "settings.json");
+  try {
+    let data = {};
+    let created = true;
+    if (fs.existsSync(settings)) {
+      created = false;
+      let raw;
+      try { raw = fs.readFileSync(settings, "utf8"); data = JSON.parse(raw); }
+      catch (_e) {
+        warn("could not parse " + settings + " — leaving it untouched; skipped");
+        return "skipped";
+      }
+      if (data === null || typeof data !== "object" || Array.isArray(data)) {
+        warn(settings + " is not a JSON object — leaving it untouched; skipped");
+        return "skipped";
+      }
+    }
+    let context = data.context;
+    if (context === null || typeof context !== "object" || Array.isArray(context)) context = {};
+    let names = context.fileName;
+    if (typeof names === "string") names = [names];
+    else if (!Array.isArray(names)) names = [];
+    if (names.includes("AGENTS.md")) return "unchanged";   // idempotent
+    names = names.concat(["AGENTS.md"]);
+    context.fileName = names;
+    data.context = context;
+    fs.mkdirSync(geminiDir, { recursive: true });
+    fs.writeFileSync(settings, JSON.stringify(data, null, 2) + "\n");
+    return created ? "created" : "updated";
+  } catch (e) {
+    warn("could not write " + settings + " — " + (e && e.message ? e.message : e) + "; skipped");
+    return "skipped";                                      // design-for-failure: never abort the install
+  }
+}
+
 // The drop — now a RECONCILE: restore missing managed trees + refresh present ones
 // (sweep orphans) + report per-tree status. Byte-compatible handoff with the prior
 // installer. The interactive path resolves a target then calls straight into this.
@@ -388,6 +451,10 @@ function dropFiles(args, target, profile, intent) {
   // pointer init's sync-guidelines later supersedes) + tailor the closing next-step.
   // Best-effort + fail-soft — never aborts the successful drop above.
   writeAgentPointer(target, profile);
+
+  // Gemini CLI auto-loads GEMINI.md, not AGENTS.md — so for the gemini profile we ALSO merge
+  // .gemini/settings.json (context.fileName) to load the AGENTS.md pointer. Fail-soft + idempotent.
+  if (profile.id === "gemini") writeGeminiSettings(target);
 
   // Optional build-intent NOTE for `/add` to read — "" (skip / non-interactive) -> no-op.
   writeIntentNote(target, intent);
@@ -779,4 +846,5 @@ module.exports = {
   whichSync: whichSync,
   scopeOptions: scopeOptions,
   writeIntentNote: writeIntentNote,
+  writeGeminiSettings: writeGeminiSettings,
 };

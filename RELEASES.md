@@ -1,5 +1,10 @@
 # Releases
 
+## 1.7.3 — 2026-06-18
+milestones: multi-agent-installer
+waivers: none
+evidence: npm @pilotspace/add@1.7.3 + PyPI pilotspace-add 1.7.3 (post-tag)
+
 ## 1.7.2 — 2026-06-18
 milestones: installer-smarts-polish
 waivers: none

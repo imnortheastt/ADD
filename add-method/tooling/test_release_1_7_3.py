@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Red/green tests for the 1.7.2 release readiness (PTY-coverage + security-policy patch).
+"""Red/green tests for the 1.7.3 release readiness (multi-agent installer reach).
 
-In-repo readiness only — the live-registry halves (npm/PyPI serving 1.7.2) are
+In-repo readiness only — the live-registry halves (npm/PyPI serving 1.7.3) are
 verify-gate EVIDENCE gathered after the human-gated tag push, never unit tests.
 Run:
-    python3 -m unittest test_release_1_7_2 -v
+    python3 -m unittest test_release_1_7_3 -v
 """
 import hashlib
 import json
@@ -21,17 +21,17 @@ CHANGELOG = PKG / "CHANGELOG.md"
 CI_YML = REPO / ".github" / "workflows" / "ci.yml"
 PUBLISH_YML = REPO / ".github" / "workflows" / "publish.yml"
 
-VERSION = "1.7.2"
-PRIOR_VERSIONS = ("1.7.1", "1.7.0", "1.6.0", "1.5.0", "1.4.0", "1.3.0", "1.2.0", "1.1.0", "1.0.0")   # the changelog must keep its lineage
+VERSION = "1.7.3"
+PRIOR_VERSIONS = ("1.7.2", "1.7.1", "1.7.0", "1.6.0", "1.5.0", "1.4.0", "1.3.0", "1.2.0", "1.1.0", "1.0.0")   # the changelog must keep its lineage
 from engine_pin import ENGINE_MD5
 CANONICAL_AUDIT = "run: python3 .add/tooling/add.py audit"
-# the headline capabilities the release notes must name (installer-smarts-polish:
-# PTY harness via tooling/pty_clack.py; the SECURITY.md security policy)
-FEATURE_ANCHORS = ("pty_clack.py", "SECURITY.md", "installer-smarts-polish")
+# the headline capabilities the release notes must name (multi-agent-installer:
+# six+ new agent profiles + the Gemini settings.json wiring)
+FEATURE_ANCHORS = ("multi-agent-installer", "Cursor", "Gemini CLI", ".gemini/settings.json")
 
 
 class ChangelogTest(unittest.TestCase):
-    def test_changelog_has_1_7_2_entry(self):
+    def test_changelog_has_1_7_3_entry(self):
         self.assertTrue(CHANGELOG.is_file(), "CHANGELOG.md missing")
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertIn(f"## [{VERSION}]", text)
@@ -40,7 +40,7 @@ class ChangelogTest(unittest.TestCase):
                           f"the {prior} lineage entry must survive the bump")
         entry = text.split(f"## [{VERSION}]", 1)[1].split("## [", 1)[0]
         for anchor in FEATURE_ANCHORS:
-            self.assertIn(anchor, entry, f"1.7.2 entry must name: {anchor}")
+            self.assertIn(anchor, entry, f"1.7.3 entry must name: {anchor}")
 
     def test_changelog_ships_in_both_channels(self):
         files = json.loads((PKG / "package.json").read_text(encoding="utf-8"))["files"]
@@ -51,7 +51,7 @@ class ChangelogTest(unittest.TestCase):
 
 
 class SecurityPolicyShipsTest(unittest.TestCase):
-    """SECURITY.md must travel with both published distributions (1.7.2 headline)."""
+    """SECURITY.md must keep travelling with both published distributions."""
 
     def test_security_md_present(self):
         self.assertTrue((PKG / "SECURITY.md").is_file(),
@@ -79,9 +79,26 @@ class WorkflowHygieneTest(unittest.TestCase):
 
 
 class ReleaseShapeTest(unittest.TestCase):
-    # NOTE: 1.7.2 is superseded by 1.7.3 — the live-version-agreement assertions
-    # (versions/plugin/runtime == VERSION) moved to test_release_1_7_3.py. This file
-    # keeps only the permanent invariants (changelog lineage, anchors, engine pin).
+    def test_versions_agree_at_1_7_3(self):
+        pkg = json.loads((PKG / "package.json").read_text(encoding="utf-8"))["version"]
+        py = re.search(r'(?m)^version\s*=\s*"([^"]+)"',
+                       (PKG / "pyproject.toml").read_text(encoding="utf-8")).group(1)
+        self.assertEqual((pkg, py), (VERSION, VERSION),
+                         "publish.yml's guard would fail this release closed")
+
+    def test_plugin_version_agrees(self):
+        plugin = json.loads(
+            (PKG / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8")
+        )["version"]
+        self.assertEqual(plugin, VERSION,
+                         "the Claude Code plugin manifest must match the shipped version")
+
+    def test_runtime_version_agrees(self):
+        init = (PKG / "src" / "add_method" / "__init__.py").read_text(encoding="utf-8")
+        runtime = re.search(r'(?m)^__version__\s*=\s*"([^"]+)"', init).group(1)
+        self.assertEqual(runtime, VERSION,
+                         "add_method.__version__ must match the shipped version")
+
     def test_getting_started_mentions_guide_line(self):
         text = (PKG / "GETTING-STARTED.md").read_text(encoding="utf-8")
         self.assertIn("guide  :", text,

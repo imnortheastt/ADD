@@ -177,6 +177,79 @@ class InstallFlowTest(unittest.TestCase):
                         "the managed-layer drop must be intact")
 
 
+# --- multi-agent-installer: the six new profiles ----------------------------
+# Each agent's representative env signal -> expected (id, integration_file).
+NEW_AGENTS = {
+    "cursor":   ({"CURSOR_AGENT": "1"},  "AGENTS.md"),
+    "windsurf": ({"WINDSURF": "1"},      "AGENTS.md"),
+    "trae":     ({"TRAE_AI_IDE": "1"},   "AGENTS.md"),
+    "copilot":  ({"COPILOT_AGENT": "1"}, "AGENTS.md"),
+    "cline":    ({"CLINE_ACTIVE": "1"},  ".clinerules"),
+    "aider":    ({"AIDER_MODEL": "1"},   "AGENTS.md"),   # detected via the AIDER_ prefix
+}
+
+
+class NewAgentProfilesTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="new-agent-"))
+
+    def test_detect_each_new_agent_from_env(self):                # one Must
+        for agent_id, (env, _file) in NEW_AGENTS.items():
+            with self.subTest(agent=agent_id):
+                self.assertEqual(_installer._detect_agent(env)["id"], agent_id)
+
+    def test_integration_file_mapping(self):                      # one Must
+        for agent_id, (env, expected_file) in NEW_AGENTS.items():
+            with self.subTest(agent=agent_id):
+                self.assertEqual(_installer._detect_agent(env)["integration_file"], expected_file)
+
+    def test_unknown_and_empty_still_generic(self):               # detection invariants preserved
+        self.assertEqual(_installer._detect_agent({})["id"], "generic")
+        self.assertEqual(_installer._detect_agent({"CURSOR_AGENT": ""})["id"], "generic")
+
+    def test_next_step_names_the_agent(self):                     # one Must
+        for agent_id, (env, _file) in NEW_AGENTS.items():
+            with self.subTest(agent=agent_id):
+                self.assertTrue(_installer._detect_agent(env)["next_step"].strip(),
+                                "every new profile carries a next_step")
+        aider = _installer._detect_agent(NEW_AGENTS["aider"][0])
+        self.assertIn("aider.conf", aider["next_step"].lower().replace(" ", ""),
+                      "aider's next_step must name the config step it needs")
+
+    def test_enriched_cli_probe_picks_new_agent(self):            # one Must (machine signal)
+        prof = _installer._detect_agent_enriched({}, target=None, which=lambda c: c == "cursor")
+        self.assertEqual(prof["id"], "cursor")
+        # env signal still wins over the CLI probe
+        prof2 = _installer._detect_agent_enriched({"WINDSURF": "1"}, target=None,
+                                                  which=lambda c: c == "cursor")
+        self.assertEqual(prof2["id"], "windsurf")
+
+    def test_pointer_written_for_new_agent(self):                 # After
+        cursor = _installer._detect_agent(NEW_AGENTS["cursor"][0])
+        action = _installer._write_agent_pointer(self.tmp, cursor)
+        self.assertEqual(action, "created")
+        text = (self.tmp / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertEqual(text.count(add_engine._GUIDE_BEGIN), 1)
+
+    def test_cline_writes_clinerules(self):                       # integration_file mapping
+        cline = _installer._detect_agent(NEW_AGENTS["cline"][0])
+        _installer._write_agent_pointer(self.tmp, cline)
+        self.assertTrue((self.tmp / ".clinerules").exists(),
+                        "cline's pointer goes to .clinerules")
+
+    def test_unwritable_target_does_not_abort_drop(self):         # Reject integration_unwritable
+        bundled = _make_bundled(self.tmp / "pkg")
+        proj = self.tmp / "proj"
+        proj.mkdir()
+        (proj / "AGENTS.md").mkdir()                              # a dir where a file is expected
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = _installer.install(target=str(proj), bundled=str(bundled),
+                                      non_interactive=True, env=NEW_AGENTS["cursor"][0])
+        self.assertEqual(code, 0, "a failed pointer write must not abort the drop")
+        self.assertTrue((proj / ".claude" / "skills" / "add" / "SKILL.md").exists())
+
+
 # --- npm: real packaged sources via subprocess ------------------------------
 
 @unittest.skipUnless(NODE, "node not on PATH — npx-side agent-detect checks skipped (honest skip)")
@@ -195,6 +268,19 @@ class NpmAgentTest(unittest.TestCase):
             self.assertTrue((Path(tmp) / "CLAUDE.md").exists(),
                             "a Claude install must write CLAUDE.md")
             self.assertIn("/add", res.stdout)
+
+    def test_detect_each_new_agent_npm(self):                     # multi-agent-installer (twin parity, live cli.js)
+        for agent_id, (env_extra, expected_file) in NEW_AGENTS.items():
+            with self.subTest(agent=agent_id), tempfile.TemporaryDirectory(prefix="new-agent-npm-") as tmp:
+                env = dict(os.environ)
+                for k in ("CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT", "CI"):
+                    env.pop(k, None)               # claude/CI must not pre-empt the agent signal
+                env.update(env_extra)
+                res = subprocess.run([NODE, str(CLI_JS), "init", "--yes"], cwd=tmp,
+                                     capture_output=True, text=True, timeout=120, env=env)
+                self.assertEqual(res.returncode, 0, res.stderr)
+                self.assertTrue((Path(tmp) / expected_file).exists(),
+                                f"{agent_id} install must write {expected_file}")
 
     def test_unknown_generic_npm(self):                           # D4, D10
         with tempfile.TemporaryDirectory(prefix="agent-npm-") as tmp:
@@ -218,6 +304,13 @@ class ParityTest(unittest.TestCase):
         for token in ("claude", "codex", "opencode", "generic", "CLAUDECODE", "AGENTS.md", "CLAUDE.md"):
             self.assertIn(token, js, f"cli.js profile registry must mention '{token}'")
             self.assertIn(token, py, f"_installer.py profile registry must mention '{token}'")
+
+    def test_parity_six_new_profiles(self):                       # multi-agent-installer
+        js = CLI_JS.read_text(encoding="utf-8")
+        py = (_SRC / "add_method" / "_installer.py").read_text(encoding="utf-8")
+        for token in ("cursor", "windsurf", "trae", "copilot", "cline", "aider", ".clinerules"):
+            self.assertIn(token, js, f"cli.js must enumerate the new profile token '{token}'")
+            self.assertIn(token, py, f"_installer.py must enumerate the new profile token '{token}'")
 
 
 if __name__ == "__main__":

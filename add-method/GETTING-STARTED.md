@@ -135,8 +135,11 @@ python3 .add/tooling/add.py status
 `add.py status` is the resume point: project stage, active task, current phase.
 And `add.py guide` tells you what the current phase needs — its `guide  :` line
 names the exact phase-guide file to read (`.claude/skills/add/phases/…` — plain
-markdown), which is how **any** agent — Claude, Cursor, Copilot, Codex — follows
-ADD through the CLI alone.
+markdown), which is how **any agent** — Claude Code, Codex, OpenCode, Cursor,
+Windsurf, Trae, Gemini CLI, GitHub Copilot, Cline, Aider — follows ADD through the
+CLI alone. The installer detects which one you're in and drops the file it reads
+(`CLAUDE.md`, `AGENTS.md`, or `.clinerules`; for Gemini CLI it also wires
+`.gemini/settings.json`).
 
 > Tip: shorten typing with an alias — `alias add="python3 .add/tooling/add.py"` —
 > then you can run `add status`, `add guide`, etc. These are override and resume

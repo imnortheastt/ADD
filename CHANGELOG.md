@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.3 — 2026-06-18
+
+- Multi-agent installer reach — 0 carried · 0 key decision(s)
+
 ## 1.7.2 — 2026-06-18
 
 - Installer Smarts Polish — 5 carried · 0 key decision(s)

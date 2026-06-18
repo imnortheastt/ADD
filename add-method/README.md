@@ -117,6 +117,13 @@ ADD is AI-first: you talk to the agent; it drives the method. In Claude Code, ru
 
 > `/add` — *"I want to let users transfer money between their own accounts."*
 
+**Works with your agent.** The installer detects which coding agent you're in and
+drops the context file it reads — so ADD drives through the CLI under **Claude Code,
+Codex, OpenCode, Cursor, Windsurf, Trae, Gemini CLI, GitHub Copilot, Cline, and
+Aider** (anything else falls back to a generic `AGENTS.md`). Only Claude Code runs
+the `/add` skill natively; every other agent follows the same loop through the
+phase guides via `add.py status` / `guide`.
+
 The agent orients from `state.json`, **sizes your request into a milestone** (you
 confirm the shape), then drafts each feature's **specification bundle** — Spec +
 Scenarios + Contract + Tests as one bundle — and you give **one approval at the
