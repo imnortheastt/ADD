@@ -4,6 +4,11 @@ Append-only release ledger (newest-first) — date · version · milestones · w
 A milestone is "released" iff it appears in a row here (membership is the attribution source).
 The engine records a row via `add.py release <version>`; the human owns the tag/publish.
 
+## 1.7.0 — 2026-06-18
+milestones: delta-resolution, udd-design-loop, decision-suggestions, ship-review, installer-experience
+waivers: none
+evidence: ADD 1.7.0 — installer-experience (guided/agent-aware/self-healing/global onramp via @clack/prompts + --global/--global-data) + delta-resolution + decision-suggestions + ship-review + udd-design-loop attribution; suite 1266 green; tag v1.7.0 triggers npm/PyPI publish
+
 ## 1.6.0 — 2026-06-16
 milestones: release-altitude
 waivers: none
