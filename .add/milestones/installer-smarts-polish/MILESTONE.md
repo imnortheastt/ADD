@@ -28,30 +28,30 @@ Out: No change to installer BEHAVIOR (the twins are frozen — this is test-harn
 - PTY-helper API (how a test drives select/confirm + asserts the rendered flow) -> owning task pty-clack-harness
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] pty-clack-harness   depends-on: none   — Reusable PTY test helper driving clack select/confirm; CI-covers the agent-select step + the clack happy-path prompts. (seeded backlog — at ground)
+- [x] pty-clack-harness   depends-on: none   — Reusable PTY test helper driving clack select/confirm; CI-covers the agent-select step + the clack happy-path prompts. (DONE · gate PASS)
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] The clack agent-select step and the happy-path prompt sequence are exercised by a committed CI test (no longer PTY-manual-only)   (verify: python3 -m unittest discover add-method/tooling)   (← pty-clack-harness)
+- [x] The clack agent-select step and the happy-path prompt sequence are exercised by a committed CI test (no longer PTY-manual-only)   (verify: python3 -m unittest discover add-method/tooling)   (← pty-clack-harness)
 
 ## Close — ship review   (AI fills when every task is done — the evidence behind the engine gate, read before the boxes are checked)
 > Whole-milestone, cross-task review the AI fills in. It is the evidence behind the EXISTING engine
 > gate (milestone-done / checking the Exit-criteria boxes) — NOT a new approval. Tool-agnostic.
 
 ### Ship by domain   (what changed, per bounded context)
-- tooling : <add.py / state.json / templates — what shipped, or "untouched">
-- skill   : <SKILL.md / phases/* / guides — what shipped, or "untouched">
-- book    : <docs/* — what shipped, or "untouched">
+- tooling : NEW `tooling/pty_clack.py` (test-only stdlib-PTY harness: `drive_clack` + `PtyRun`/`PtyTimeout` + keystroke constants) and NEW `tooling/test_pty_clack.py` (6 tests). `add.py` / `state.json` / templates UNTOUCHED; no new runtime/dev dependency (package.json unchanged).
+- skill   : untouched.
+- book    : untouched.
 
 ### Cross-task evidence   (one row per task)
-- <slug> : gate=<PASS|RISK-ACCEPTED> · tests=<n green> · residue=<none|note>
+- pty-clack-harness : gate=PASS · tests=6 green (suite 1319→1325, +6) · residue=none — adversarial earned-green verdict EARNED-WITH-CONCERNS with all 3 concerns closed; the build/verify edits to the task's own new test were human-reviewed + re-baselined; installer twins frozen, no behavior change.
 
 ### Goal met?   (map the evidence back to this milestone's Exit criteria — read before the Exit-criteria boxes are checked)
-- [ ] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
-- goal: <restate the milestone goal — and the one evidence line that proves the ship meets it>
+- [x] the single Exit criterion is satisfied by the pty-clack-harness evidence row: a committed CI test drives the REAL clack TUI through a pseudo-terminal — the agent-select step (D8, override via DOWN → codex AGENTS.md) AND the happy-path sequence (target→confirm→scope→agent→intent, all 5 prompts asserted rendered, brain drops), plus cancel-writes-nothing and the prompt/child timeout guards.
+- goal: close the PTY-only-reachable clack-coverage gaps the installer-smarts gates disclosed — proven by `python3 -m unittest discover -s tooling` running the 6 PTY tests green (the agent-select + happy-path are no longer PTY-manual-only).
 
 ## Release steps   (AI-DEFINED — fill the ordered steps to ship this milestone; engine records, human gate)
 > The AI writes the release steps for THIS milestone here (hints, not engine commands). MERGE is one
 > small step among them. These feed the release scope (release.md) when the cut is bundled.
-- [ ] <step — e.g. open a PR from the Close ship-review above; the human reviews + merges>
-- [ ] <step — e.g. export the ship-review to a hand-off doc, e.g. `pandoc CLOSE.md -o close.docx`>
-- [ ] <step — e.g. tag / publish / deploy  (human-run, per release.md)>
+- [ ] commit the two new files (`tooling/pty_clack.py` + `tooling/test_pty_clack.py`) + the TASK/MILESTONE records on a feature branch (test-harness only; no engine/version bump)
+- [ ] open a PR from the Close ship-review above; the human reviews + merges (CI must run setup-node + npm ci so the real clack is present for the PTY tests — same node-deps gap that bit ci.yml/publish.yml before)
+- [ ] this milestone is test-coverage only — fold into the NEXT release bundle (no standalone version cut); it rides whenever the next release is drawn (per release.md)

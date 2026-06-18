@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "pty-clack-harness",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1099,19 +1099,10 @@
         ],
         "snapshot_md5": "40e30b21f572ca994fe0623bb5d3015a"
       }
-    },
-    "pty-clack-harness": {
-      "title": "Reusable PTY test helper for clack interactive paths",
-      "phase": "ground",
-      "gate": "none",
-      "milestone": "installer-smarts-polish",
-      "depends_on": [],
-      "created": "2026-06-18T11:37:17+00:00",
-      "updated": "2026-06-18T11:37:17+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-18T11:37:17+00:00",
+  "updated": "2026-06-18T13:12:11+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1272,17 +1263,9 @@
       "status": "done",
       "created": "2026-06-18T09:10:14+00:00",
       "updated": "2026-06-18T09:50:08+00:00"
-    },
-    "installer-smarts-polish": {
-      "title": "Installer Smarts Polish",
-      "goal": "Close the PTY-only-reachable interactive-coverage gaps the installer-smarts gates disclosed: a reusable PTY test helper that drives clack select/confirm so the agent-select step and the clack happy-path prompts are exercised in CI (today they are node-syntax-checked + logic-unit-tested only).",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-18T11:35:30+00:00",
-      "updated": "2026-06-18T11:35:30+00:00"
     }
   },
-  "active_milestone": "installer-smarts-polish",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1623,6 +1606,15 @@
         "global-data"
       ],
       "archived": "2026-06-17"
+    },
+    {
+      "slug": "installer-smarts-polish",
+      "title": "Installer Smarts Polish",
+      "tasks": 1,
+      "task_slugs": [
+        "pty-clack-harness"
+      ],
+      "archived": "2026-06-18"
     }
   ]
 }
