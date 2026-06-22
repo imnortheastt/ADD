@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "multi-active-commands",
+  "active_task": "parallel-status-view",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1218,14 +1218,32 @@
     },
     "parallel-status-view": {
       "title": "status renders the active set as parallel streams",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "state-model-reshape",
       "depends_on": [
         "multi-active-commands"
       ],
       "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T03:59:16+00:00"
+      "updated": "2026-06-22T06:05:44+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "b3558387e57d0d09dc9c4b5663e98ee3",
+        "tests": {
+          "add-method/tooling/test_parallel_status_view.py": "96c38aef94201b7ac72d4219273d8f67"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_parallel_status_view.py",
+          "add-method/tooling/test_wave_status_hint.py"
+        ],
+        "snapshot_md5": "1632d3d7ba25a92d7ed97d568a47a7ab"
+      }
     },
     "engine-repin-parity": {
       "title": "Consolidated 3-tree parity audit + ENGINE_MD5 + parity-test hardening",
@@ -1240,7 +1258,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T05:52:29+00:00",
+  "updated": "2026-06-22T06:05:44+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1785,6 +1803,6 @@
     "state-model-reshape"
   ],
   "active_tasks": {
-    "state-model-reshape": "multi-active-commands"
+    "state-model-reshape": "parallel-status-view"
   }
 }

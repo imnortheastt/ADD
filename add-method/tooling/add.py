@@ -1160,6 +1160,8 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(json.dumps({
             "project": state.get("project"), "stage": state.get("stage"),
             "active_task": _active_task(state),
+            "active_milestones": list(state.get("active_milestones") or []),
+            "active_tasks": dict(state.get("active_tasks") or {}),
             "milestones": ms_list,
             "tasks": [{"slug": s, "phase": t.get("phase"), "gate": t.get("gate"),
                        "milestone": t.get("milestone")} for s, t in tasks.items()],
@@ -1216,7 +1218,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         for mslug, m in milestones.items():
             members = [t for t in tasks.values() if t.get("milestone") == mslug]
             done = sum(1 for t in members if _task_done(t))
-            mark = "*" if mslug == active_ms else " "
+            mark = "*" if mslug in (state.get("active_milestones") or []) else " "
             print(f"  {mark} {mslug:<20} {done}/{len(members)} tasks done"
                   f"   status={m.get('status', 'active')}")
         # graduation cue (v22): project-global + read-only. Fires only when every milestone
@@ -1243,6 +1245,22 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(f"  → {RELEASABLE_CUE.format(n=len(_rel))}")
 
     print(f"active  : {active or '(none)'}")
+    # parallel streams (parallel-status-view): when >=2 milestones are active, render each as its
+    # own stream (active task + phase) so a user working N fronts reads them all at once. ADDITIVE —
+    # the N<=1 output above is byte-identical (the standing additive-cue convention); presentation
+    # only, no command DECISION changes. Reads the SET/map via the task-2 seam shape.
+    _ams = state.get("active_milestones") or []
+    if len(_ams) >= 2:
+        _primary = _active_milestone(state)
+        _order = ([_primary] if _primary in _ams else []) + [m for m in _ams if m != _primary]
+        _atasks = state.get("active_tasks") or {}
+        print(f"streams : {len(_ams)} active milestones")
+        for _m in _order:
+            _tk = _atasks.get(_m)
+            _ph = (tasks.get(_tk) or {}).get("phase", "-") if _tk else "-"
+            _mk = "▸" if _m == _primary else " "
+            _tag = "  (primary)" if _m == _primary else ""
+            print(f"  {_mk} {_m:<20} task={_tk or '(none)'}  phase={_ph}{_tag}")
     # surface the active task's autonomy level (task explicit-autonomy-dial) so the human
     # reads the throttle every session; "unset" when no explicit `autonomy:` line is present.
     if active and active in tasks:
