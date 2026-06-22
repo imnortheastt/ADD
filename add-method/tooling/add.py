@@ -1257,6 +1257,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         grad_ready, grad_met, grad_total = _graduation_ready(root, state)
         print(json.dumps({
             "project": state.get("project"), "stage": state.get("stage"),
+            "actor": _whoami(state),
             "active_task": _active_task(state),
             "active_milestones": list(state.get("active_milestones") or []),
             "active_tasks": dict(state.get("active_tasks") or {}),
@@ -1277,6 +1278,11 @@ def cmd_status(args: argparse.Namespace) -> None:
     # project autonomy default (task init-auto-default): the posture new tasks INHERIT,
     # read LIVE from PROJECT.md so the human sees the project-wide throttle every session.
     print(f"project autonomy: {_project_autonomy(root)}   (default — new tasks inherit)")
+    # git-native actor (user-identity): who ADD sees you as this session — the identity every
+    # human-owned stamp records. Always present (the resolver is TOTAL). Read-only, no write.
+    _who = _whoami(state)
+    _who_email = f" <{_who['email']}>" if _who.get("email") else ""
+    print(f"actor   : {_who['name']}{_who_email} (source: {_who['source']})")
     print(f"stage   : {state.get('stage', '(unknown)')}")
     # project GOAL + active-milestone goal (v20) — the loop's orientation anchor, read
     # LIVE from PROJECT.md / MILESTONE.md (never state.json). Additive: every existing
@@ -2510,6 +2516,10 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
         _die(f"milestone_goal_unmet: milestone '{slug}' has {met}/{total} exit criteria met "
              f"— check the remaining boxes in MILESTONE.md (the goal-gate holds the loop "
              f"open) or propose the next tasks (add.py deltas)")
+    # Stamp WHO closed it BEFORE rendering the retro, so the persisted exit report records
+    # the closer (identity-in-status: the retro IS the report `report <ms>` re-renders, so both
+    # must reflect the same final state). In-memory only here — save_state below commits it.
+    state["milestones"][slug]["done_actor"] = _actor_stamp(state)
     # Fail-closed: render+persist the exit report (RETRO.md) BEFORE committing the
     # status flip, so a write failure rolls back naturally (status never commits ->
     # no done-without-retro state). The retro step is read-only on state.json.
@@ -2518,7 +2528,6 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     except OSError:
         _die("retro_write_failed")
     state["milestones"][slug]["status"] = "done"
-    state["milestones"][slug]["done_actor"] = _actor_stamp(state)   # WHO closed the milestone
     state["milestones"][slug]["updated"] = _now()
     save_state(root, state)
     waived = [s for s, t in members.items() if t.get("gate") == "RISK-ACCEPTED"]
@@ -3482,6 +3491,7 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
             "phase_index": PHASES.index(phase) if phase in PHASES else 0,
             "done": _task_done(t),
             "gate": gate,
+            "gate_actor": t.get("gate_actor"),   # WHO recorded the verdict (None when unstamped)
             "tests": n_tests,
             "tests_declared": t_declared,
             "observe": observe,
@@ -3497,7 +3507,8 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
 
     return {
         "milestone": {"slug": mslug, "title": title, "goal": goal,
-                      "status": ms.get("status", "active")},
+                      "status": ms.get("status", "active"),
+                      "done_actor": ms.get("done_actor")},   # WHO closed it (None when unstamped/open)
         "summary": {
             "tasks_done": sum(1 for r in task_rows if r["done"]),
             "tasks_total": len(task_rows),
@@ -3679,6 +3690,15 @@ def render_task_detail(root: Path, state: dict, mslug: str, slug: str, *,
     return "\n".join(L)
 
 
+def _fmt_actor(actor: dict | None) -> str:
+    """Format a recorded actor stamp `{name,email,source}` as `name [<email>]` for the
+    report surface — "" when absent (user-identity: present-only render, no placeholder)."""
+    if not actor:
+        return ""
+    email = f" <{actor['email']}>" if actor.get("email") else ""
+    return f"{actor.get('name', '')}{email}"
+
+
 def render_report(root: Path, state: dict, mslug: str, *,
                   width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
     """Format the FACTS (report_data) as the text DASHBOARD — verdict-first header,
@@ -3713,6 +3733,9 @@ def render_report(root: Path, state: dict, mslug: str, *,
     L.append(f" {'GATES':<9} {gate_txt:<18} {'WAIVERS':<9} {waiver_txt}")
     L.append("")
     L.extend(_wrap(m["goal"], W - 7, " goal  "))
+    # who closed the milestone (user-identity) — present-only, never a placeholder
+    if m.get("done_actor"):
+        L.append(f" closed by {_fmt_actor(m['done_actor'])}")
     L.append("")
     if d["tasks"]:
         L.append(f" {'TASK':<27} {'PHASE':<9} {'GATE':<4} {'TESTS':<5} PROGRESS")
@@ -3727,6 +3750,14 @@ def render_report(root: Path, state: dict, mslug: str, *,
                  f"{g['pending']} pending   spec→…→done")
         if any(r.get("tests_declared") for r in d["tasks"]):
             L.append(" † counted at the §4-declared path")
+        # who recorded each verdict (user-identity) — present-only audit trail
+        gated = [r for r in d["tasks"] if r.get("gate_actor")]
+        if gated:
+            L.append("")
+            L.append(" GATED BY")
+            for r in gated:
+                short = _GATE_SHORT.get(r["gate"], r["gate"])
+                L.append(f"   {_clip(r['slug'], 24):<24} {short:<4} {_fmt_actor(r['gate_actor'])}")
     else:
         L.append(" (no tasks yet)")
     L.append("")

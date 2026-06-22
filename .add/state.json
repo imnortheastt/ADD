@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "actor-identity",
+  "active_task": "identity-in-status",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1194,18 +1194,41 @@
     },
     "identity-in-status": {
       "title": "surface the actor in status + json/report",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "user-identity",
       "depends_on": [
         "actor-stamping"
       ],
       "created": "2026-06-22T06:39:02+00:00",
-      "updated": "2026-06-22T06:39:02+00:00"
+      "updated": "2026-06-22T08:23:02+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "f6a658f4b5e939d440d62629d9a3d7b1",
+        "tests": {
+          "add-method/tooling/test_identity_in_status.py": "d40ca3a769e4d9a7aa85318a6e1ecddc"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_identity_in_status.py",
+          "add-method/tooling/test_wave_status_hint.py"
+        ],
+        "snapshot_md5": "7a7bfbdb468ee3af5a2db6eb343e2dac"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T07:59:26+00:00",
+  "updated": "2026-06-22T08:23:02+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1763,6 +1786,6 @@
     "user-identity"
   ],
   "active_tasks": {
-    "user-identity": "actor-identity"
+    "user-identity": "identity-in-status"
   }
 }
