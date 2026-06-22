@@ -264,4 +264,4 @@ the retry path (evidence: prod herd spikes)`). See the `add` skill's `deltas.md`
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] a global find-and-replace that routes accessors will also rewrite the accessor's OWN body into self-recursion — introduce the helper, then route, then re-fix the two helper bodies (evidence: the _active_milestone/_active_task RecursionError caught at first test run, this task)
+- [ADD · folded] a global find-and-replace that routes accessors will also rewrite the accessor's OWN body into self-recursion — introduce the helper, then route, then re-fix the two helper bodies (evidence: the _active_milestone/_active_task RecursionError caught at first test run, this task) [folded foundation-version 41]

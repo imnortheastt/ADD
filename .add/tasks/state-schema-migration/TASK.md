@@ -273,4 +273,4 @@ the retry path (evidence: prod herd spikes)`). See the `add` skill's `deltas.md`
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
-- [ADD · open] an engine-editing milestone should run a verify-gate independent review by default — it caught a false self-audit WIRING claim (a third undocumented load seam) that a manual refute-read had passed over (evidence: python-expert review nit 2, this task)
+- [ADD · folded] an engine-editing milestone should run a verify-gate independent review by default — it caught a false self-audit WIRING claim (a third undocumented load seam) that a manual refute-read had passed over (evidence: python-expert review nit 2, this task) [folded foundation-version 41]
