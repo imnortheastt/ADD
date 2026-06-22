@@ -43,34 +43,39 @@ Out: WRITE/assignment UX (bulk assign, reassign flows) — M3 already shipped as
   output (the other two surfaces reuse existing render seams; this one is the new surface) -> owning task `my-work-lens`
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] my-work-lens       depends-on: none            — a read-only "my work" surface: across ALL active milestones, list the not-done tasks owned-by/assigned-to the resolved actor (`_whoami`, `--actor` override); text + `--json`. The new surface — freeze its actor-match + shape first.
-- [ ] per-stream-owner   depends-on: none            — show each active stream's owner/lead in the existing `streams:` status block + report (the carried M1 delta); additive, byte-identical when a stream has no owner. Reuses `_fmt_ownership`/`_fmt_actor`.
-- [ ] cross-active-waves depends-on: my-work-lens    — widen `waves`/`ready` to report the schedulable/ready frontier across EVERY active milestone, not just the single active one; DAG semantics unchanged, only the milestone scope widens. Additive/byte-identical at N<=1 active.
+- [x] my-work-lens       depends-on: none            — a read-only "my work" surface: across ALL active milestones, list the not-done tasks owned-by/assigned-to the resolved actor (`_whoami`, `--actor` override); text + `--json`. The new surface — freeze its actor-match + shape first.
+- [x] per-stream-owner   depends-on: none            — show each active stream's owner/lead in the existing `streams:` status block + report (the carried M1 delta); additive, byte-identical when a stream has no owner. Reuses `_fmt_ownership`/`_fmt_actor`.
+- [x] cross-active-waves depends-on: my-work-lens    — widen `waves`/`ready` to report the schedulable/ready frontier across EVERY active milestone, not just the single active one; DAG semantics unchanged, only the milestone scope widens. Additive/byte-identical at N<=1 active.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] a teammate can see, in one command across all active milestones, the not-done tasks that are theirs (owner or assignee) — and inspect another actor's queue via `--actor` — in text and JSON   (← my-work-lens)
-- [ ] the `streams:` status block + report name each active stream's owner/lead, and stay byte-identical when a stream has no owner   (← per-stream-owner)
-- [ ] `waves`/`ready` report the ready frontier across every active milestone (not just the single active one), with N<=1-active output unchanged   (← cross-active-waves)
+- [x] a teammate can see, in one command across all active milestones, the not-done tasks that are theirs (owner or assignee) — and inspect another actor's queue via `--actor` — in text and JSON   (← my-work-lens) (verify: `python3 -m unittest test_my_work_lens` — 8 green incl. owned+assigned, exclusions, --actor, --json, email-first/name-fallback)
+- [x] the `streams:` status block + report name each active stream's owner/lead, and stay byte-identical when a stream has no owner   (← per-stream-owner) (verify: `python3 -m unittest test_per_stream_owner` — 6 green incl. owned stream, no-owner/blank-name byte-identity, json parity, N<=1)
+- [x] `waves`/`ready` report the ready frontier across every active milestone (not just the single active one), with N<=1-active output unchanged   (← cross-active-waves) (verify: `python3 -m unittest test_cross_active_waves` — 7 green incl. spans-active, single-byte-identical, --milestone, streams-json, scalar-gate rejection, ready annotation)
 
 ## Close — ship review   (AI fills when every task is done — the evidence behind the engine gate, read before the boxes are checked)
 > Whole-milestone, cross-task review the AI fills in. It is the evidence behind the EXISTING engine
 > gate (milestone-done / checking the Exit-criteria boxes) — NOT a new approval. Tool-agnostic.
 
 ### Ship by domain   (what changed, per bounded context)
-- tooling : <add.py / state.json / templates — what shipped, or "untouched">
-- skill   : <SKILL.md / phases/* / guides — what shipped, or "untouched">
-- book    : <docs/* — what shipped, or "untouched">
+- tooling : add.py gained THREE read-only surfaces over the multi-active state — `mine` (`_actor_matches` + `_my_work`, a per-actor "my work" lens across all `active_milestones`, text + `--json`, `--actor` override), per-stream owner in the human `streams:` status block (reuses `_fmt_actor`, name-guarded so a blank-name/no-owner stream stays byte-identical) + `owner`/`assignee` on each status-`--json` milestone entry, and cross-active `waves`/`ready` (extracted `_wave_block_lines`; `waves` with no `--milestone` spans every active milestone — `active streams:` header + per-block fences — `ready` annotates each task `[milestone]`). All 3 add.py copies in lockstep, ENGINE_MD5 re-pinned per task (b102fb61→1c7a8f58→…→69c46d6c). `mine` added to `test_min_pillar` LIFECYCLE census. No state-schema change, no new write seam, no decision reads owner/assignee.
+- skill   : untouched (presentation-only surfaces; the streams/loop/run guides already describe the multi-active model).
+- book    : untouched.
 
 ### Cross-task evidence   (one row per task)
-- <slug> : gate=<PASS|RISK-ACCEPTED> · tests=<n green> · residue=<none|note>
+- my-work-lens       : gate=PASS · tests=8 green (test_my_work_lens) · residue=none
+- per-stream-owner   : gate=PASS · tests=6 green (test_per_stream_owner) · residue=none
+- cross-active-waves : gate=PASS · tests=7 green (test_cross_active_waves) · residue=none
 
 ### Goal met?   (map the evidence back to this milestone's Exit criteria — read before the Exit-criteria boxes are checked)
-- [ ] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
-- goal: <restate the milestone goal — and the one evidence line that proves the ship meets it>
+- [x] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
+  - EC1 (per-actor "my work" across all active milestones, `--actor`, text+JSON) ← my-work-lens row (8 green) + tooling `mine` surface
+  - EC2 (`streams:` block names each active stream's owner, byte-identical with no owner) ← per-stream-owner row (6 green) + tooling streams-owner fragment
+  - EC3 (`waves`/`ready` span every active milestone, N<=1 unchanged) ← cross-active-waves row (7 green) + tooling `_wave_block_lines`/`ready` annotation
+- goal: a team running several active milestones at once sees, in one place, what is theirs and what is schedulable across all streams — proved live on a 2-active-milestone scratch project: `waves` emitted `active streams: 2` with both stream blocks, `ready` annotated `[m1]`/`[m2]`, and `mine` listed only the resolved actor's open tasks across both streams.
 
 ## Release steps   (AI-DEFINED — fill the ordered steps to ship this milestone; engine records, human gate)
 > The AI writes the release steps for THIS milestone here (hints, not engine commands). MERGE is one
 > small step among them. These feed the release scope (release.md) when the cut is bundled.
-- [ ] <step — e.g. open a PR from the Close ship-review above; the human reviews + merges>
-- [ ] <step — e.g. export the ship-review to a hand-off doc, e.g. `pandoc CLOSE.md -o close.docx`>
-- [ ] <step — e.g. tag / publish / deploy  (human-run, per release.md)>
+- [ ] this milestone is the LAST of the **team-collaboration** major (5/5) — it ships on the shared PR #47 (`feat/fold-suggestion-seams`) alongside its four siblings; the human reviews + merges that PR.
+- [ ] the whole team-collaboration major is then releasable — bundle all 5 closed milestones into one cut via release.md (`add.py status` will show `→ releasable: N closed since last release`); draft notes from the consolidated foundation deltas, meet the readiness floor (security HARD-STOP un-forceable), human confirms → `add.py release <version>`.
+- [ ] tag / publish (npm + PyPI) + cut the GH release — human-run, per release.md.
