@@ -2240,6 +2240,71 @@ def cmd_check(args: argparse.Namespace) -> None:
         raise SystemExit(1)
 
 
+def _doctor_findings(root: Path) -> list[str]:
+    """Read-only diagnosis of state.json: each item is "<problem> — fix: <fix>".
+
+    Reads the RAW text with its OWN try/except — NEVER through the dying load_state — so a
+    conflicted/corrupt state is REPORTED, not aborted on (the proactive counterpart to the
+    merge-guard load guard, which fails fast at the first problem). Reports the FIRST blocking
+    class then stops (can't parse deeper): missing/unreadable file -> conflict markers -> bad
+    JSON. On a PARSEABLE state (normalized through `_migrate_state` so the canonical multi-active
+    shape is judged) it appends EVERY referential violation. PURE: reads only, returns the list."""
+    try:
+        text = (root / STATE_FILE).read_text(encoding="utf-8")
+    except OSError:
+        return ["state.json missing/unreadable — fix: restore it from git/backup"]
+    if _CONFLICT_MARKER_RE.search(text):
+        return ["state.json has unresolved git merge markers — fix: resolve "
+                "<<<<<<< / ======= / >>>>>>> (or git checkout --ours/--theirs), then re-run doctor"]
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        return ["state.json is not valid JSON — fix: restore it from git/backup"]
+
+    state = _migrate_state(parsed)
+    findings: list[str] = []
+    milestones = state.get("milestones") if isinstance(state.get("milestones"), dict) else {}
+    tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
+
+    active_ms = state.get("active_milestones") if isinstance(state.get("active_milestones"), list) else []
+    active_tasks = state.get("active_tasks") if isinstance(state.get("active_tasks"), dict) else {}
+    for am in active_ms:
+        if am not in milestones:
+            findings.append(f"active milestone '{am}' has no record — fix: deactivate it or "
+                            "recreate the milestone")
+    for ms, t in active_tasks.items():
+        if not t:
+            continue
+        if t not in tasks:
+            findings.append(f"active task '{t}' (milestone '{ms}') has no record — fix: use a "
+                            "real task or clear the active pointer")
+        elif (tasks[t].get("milestone") if isinstance(tasks[t], dict) else None) != ms:
+            findings.append(f"active task '{t}' is mislabeled under '{ms}' — fix: re-use it "
+                            "under its own milestone")
+    for slug, t in tasks.items():
+        m = t.get("milestone") if isinstance(t, dict) else None
+        if m is not None and m not in milestones:
+            findings.append(f"task '{slug}' references missing milestone '{m}' — fix: set its "
+                            "milestone to a real one (or none)")
+    return findings
+
+
+def cmd_doctor(args: argparse.Namespace) -> None:
+    """Read-only `add.py doctor`: PASS + exit 0 on a healthy state, else report each problem +
+    fix to stdout and exit non-zero. NEVER mutates state (detect, never auto-resolve)."""
+    root = find_root()
+    if root is None:
+        _die("no_project")
+    findings = _doctor_findings(root)
+    if not findings:
+        print("doctor: PASS — state.json is healthy (parseable · conflict-free · references intact)")
+        return
+    print(f"doctor: {len(findings)} problem(s):")
+    for f in findings:
+        print(f"  ✗ {f}")
+    raise SystemExit(1)
+
+
 # ---------------------------------------------------------------------------
 # wave-ledger fork-base enforcement (engine-merge-base-enforcement)
 #
@@ -5573,6 +5638,10 @@ def build_parser() -> argparse.ArgumentParser:
     pck = sub.add_parser("check", help="read-only integrity check of the .add project")
     pck.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pck.set_defaults(func=cmd_check)
+
+    pdoc = sub.add_parser("doctor", help="read-only diagnosis of state.json integrity + "
+                                         "referential consistency (run after a git merge)")
+    pdoc.set_defaults(func=cmd_doctor)
 
     pwv = sub.add_parser("wave-verify",
                          help="read-only merge-time gate: every WAVE.md roster echo must match "

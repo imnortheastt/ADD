@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "merge-guard",
+  "active_task": "state-doctor",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1158,10 +1158,42 @@
         "email": "tindang.ht97@gmail.com",
         "source": "git"
       }
+    },
+    "state-doctor": {
+      "title": "add.py doctor \u2014 validate state integrity + referential consistency",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "git-merge-safety",
+      "depends_on": [
+        "merge-guard"
+      ],
+      "created": "2026-06-22T09:42:29+00:00",
+      "updated": "2026-06-22T12:25:28+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "30e8242a22154223f6c89dfb4a94c408",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/test_state_doctor.py"
+        ],
+        "snapshot_md5": "199c7166772dfb463871f7a46da9354e"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T09:41:38+00:00",
+  "updated": "2026-06-22T12:25:28+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1740,6 +1772,6 @@
     "git-merge-safety"
   ],
   "active_tasks": {
-    "git-merge-safety": "merge-guard"
+    "git-merge-safety": "state-doctor"
   }
 }

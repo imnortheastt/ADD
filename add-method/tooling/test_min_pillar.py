@@ -85,6 +85,8 @@ LIFECYCLE = [
     ["gate", "PASS", "t"],                                    # re-complete so milestone-done stays valid
     ["status"],
     ["check"],
+    ["doctor"],                                # read-only state.json integrity diagnosis (reads
+                                               # state only, never docs/; healthy board -> exit 0)
     ["wave-verify"],                           # merge-time fork-base gate: read-only; no WAVE.md
                                                # on this board -> wave_not_found (expected nonzero,
                                                # tolerated below; reads WAVE.md/state, never docs/)
