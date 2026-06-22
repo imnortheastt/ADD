@@ -44,32 +44,33 @@ Out: MERGE-FRIENDLY SERIALIZATION (sort_keys / deterministic reorder so independ
   is recognized as a conflict, not generic corruption), and the exact actionable message -> owning task `merge-guard`
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] merge-guard    depends-on: none           — detect git conflict markers in state.json at load → fail with a merge-specific `state_conflicted` message (markers + reconciliation steps), distinct from generic `state_invalid`; the load-time safety net. risk:high.
-- [ ] state-doctor   depends-on: merge-guard     — a read-only `add.py doctor` command that validates state integrity + referential consistency (parseable · conflict-free · active refs → real records · task.milestone exists) and reports PASS or each problem + its fix; never mutates state. risk:high.
+- [x] merge-guard    depends-on: none           — detect git conflict markers in state.json at load → fail with a merge-specific `state_conflicted` message (markers + reconciliation steps), distinct from generic `state_invalid`; the load-time safety net. risk:high.
+- [x] state-doctor   depends-on: merge-guard     — a read-only `add.py doctor` command that validates state integrity + referential consistency (parseable · conflict-free · active refs → real records · task.milestone exists) and reports PASS or each problem + its fix; never mutates state. risk:high.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] a state.json with git conflict markers makes every state-loading command fail with a clear `state_conflicted` message (file + how to reconcile), not a crash or a generic "corrupt"   (← merge-guard)
-- [ ] `add.py doctor` validates a healthy state as PASS and reports each specific problem + fix on a conflicted/inconsistent state, mutating nothing   (← state-doctor)
+- [x] a state.json with git conflict markers makes every state-loading command fail with a clear `state_conflicted` message (file + how to reconcile), not a crash or a generic "corrupt"   (← merge-guard) (verify: `python3 -m unittest test_merge_guard` — 7 green incl. status/json/check paths + non-false-positive)
+- [x] `add.py doctor` validates a healthy state as PASS and reports each specific problem + fix on a conflicted/inconsistent state, mutating nothing   (← state-doctor) (verify: `python3 -m unittest test_state_doctor` — 9 green incl. PASS, conflict, bad-JSON, 3 referential, type-corrupt robustness)
 
 ## Close — ship review   (AI fills when every task is done — the evidence behind the engine gate, read before the boxes are checked)
 > Whole-milestone, cross-task review the AI fills in. It is the evidence behind the EXISTING engine
 > gate (milestone-done / checking the Exit-criteria boxes) — NOT a new approval. Tool-agnostic.
 
 ### Ship by domain   (what changed, per bounded context)
-- tooling : <add.py / state.json / templates — what shipped, or "untouched">
-- skill   : <SKILL.md / phases/* / guides — what shipped, or "untouched">
-- book    : <docs/* — what shipped, or "untouched">
+- tooling : add.py gains a merge-AWARE load guard (`_CONFLICT_MARKER_RE` + `_state_text_or_die`, routed through all 3 state-read sites → merge-specific `state_conflicted`) and a read-only `doctor` command (`_doctor_findings` + `cmd_doctor` + `doctor` subparser) that REPORTS integrity/referential problems or PASS, mutating nothing. `test_min_pillar` LIFECYCLE census gains `["doctor"]`. All 3 add.py copies byte-identical; ENGINE_MD5 re-pinned per task. New suites: test_merge_guard (7), test_state_doctor (9).
+- skill   : untouched (no phase/guide change — the guard + diagnostic are engine behavior, surfaced via existing `add.py` commands).
+- book    : untouched (no new chapter — design-for-failure + detect-never-auto-resolve are existing method principles this milestone instantiates in code).
 
 ### Cross-task evidence   (one row per task)
-- <slug> : gate=<PASS|RISK-ACCEPTED> · tests=<n green> · residue=<none|note>
+- merge-guard  : gate=PASS · tests=7 green (status/json/check conflict paths + non-false-positive + healthy) · residue=none
+- state-doctor : gate=PASS · tests=9 green (PASS · conflict · bad-JSON · 3 referential · mislabeled · type-corrupt robustness) · residue=none — 2 refute-read nits fixed in-build (type-robustness + vacuous assert), not waived
 
 ### Goal met?   (map the evidence back to this milestone's Exit criteria — read before the Exit-criteria boxes are checked)
-- [ ] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
-- goal: <restate the milestone goal — and the one evidence line that proves the ship meets it>
+- [x] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which) — criterion 1 ← merge-guard row (state_conflicted on every load path); criterion 2 ← state-doctor row (PASS + per-problem report, read-only)
+- goal: a team merging parallel branches never silently corrupts .add/state.json — ADD recognizes a conflicted/inconsistent state at load AND via `doctor`, and guides reconciliation instead of crashing or proceeding on bad data. Proof: a marker'd state.json now fails LOUD with `state_conflicted` (file + reconcile steps) on every load path, and `add.py doctor` reports each integrity/referential problem with a fix while leaving the file byte-identical — the two halves (fail-fast guard + proactive full-picture diagnosis) close exactly the live parallel-writer clobber that motivated the milestone.
 
 ## Release steps   (AI-DEFINED — fill the ordered steps to ship this milestone; engine records, human gate)
 > The AI writes the release steps for THIS milestone here (hints, not engine commands). MERGE is one
 > small step among them. These feed the release scope (release.md) when the cut is bundled.
-- [ ] <step — e.g. open a PR from the Close ship-review above; the human reviews + merges>
-- [ ] <step — e.g. export the ship-review to a hand-off doc, e.g. `pandoc CLOSE.md -o close.docx`>
-- [ ] <step — e.g. tag / publish / deploy  (human-run, per release.md)>
+- [ ] continue the team-collaboration major on PR #47 (feat/fold-suggestion-seams) — this milestone's two commits ride that PR alongside M1–M3; no separate PR.
+- [ ] when the major's last sibling (multi-active-UX) closes, bundle the whole major into one release cut (release.md) — git-merge-safety is one closed milestone among the major's set, attributed in RELEASES.md.
+- [ ] human-run at the cut: bump the 4 version sources in lockstep + tag → CI-gated publish (npm + PyPI), per the release-gate recipe.
