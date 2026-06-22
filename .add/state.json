@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "multi-file-commit",
+  "active_task": "delta-match-selector",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -938,13 +938,32 @@
     },
     "delta-match-selector": {
       "title": "Delta Match Selector",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "delta-resolution-polish",
       "depends_on": [],
       "created": "2026-06-17T02:07:27+00:00",
-      "updated": "2026-06-17T02:07:27+00:00",
-      "from_delta": "seed-and-drop"
+      "updated": "2026-06-22T16:52:05+00:00",
+      "from_delta": "seed-and-drop",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "640f0d891ae1dfcecc1f7d2c974b3fce",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py"
+        ],
+        "snapshot_md5": "9b8ad18ad77407c7be95239bf2442e90"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     },
     "compact-force-override": {
       "title": "Compact Force Override",
@@ -1152,7 +1171,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T16:34:54+00:00",
+  "updated": "2026-06-22T16:52:05+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1744,6 +1763,6 @@
     "delta-resolution-polish"
   ],
   "active_tasks": {
-    "delta-resolution-polish": "multi-file-commit"
+    "delta-resolution-polish": "delta-match-selector"
   }
 }

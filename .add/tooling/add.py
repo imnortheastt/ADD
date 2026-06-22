@@ -770,16 +770,25 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     # seeded flip NOW (before any write); the slug-free check above has already passed, so
     # the only writes below are the new TASK.md, then the prior flip, then state.
     from_delta = getattr(args, "from_delta", None)
+    match = getattr(args, "match", None)
+    if match and not from_delta:                            # --match targets the PRIOR's delta
+        _die("match_requires_from_delta: --match needs --from-delta <prior> (it selects the "
+             "prior task's open SPEC delta to seed)")
     feature_override = prior_md = flipped_prior = None
     if from_delta:
         prior = _resolve_task(state, from_delta)            # unknown prior -> _die
         prior_md = root / "tasks" / prior / "TASK.md"
         prior_text = prior_md.read_text(encoding="utf-8")
-        delta_text = _first_open_spec_text(prior_text)
-        if delta_text is None:
+        status, idx, delta_text = _select_spec_delta(prior_text, match)
+        if status == "no_open":
             _die(f"no_open_spec_delta: task '{prior}' has no open SPEC delta to seed")
+        if status == "no_match":
+            _die(f"no_matching_spec_delta: no open SPEC delta in '{prior}' matches --match '{match}'")
+        if status == "ambiguous":
+            _die(f"ambiguous_spec_match: --match '{match}' matches multiple open SPEC deltas in "
+                 f"'{prior}' — narrow it")
         feature_override = f"{delta_text} (from {prior} spec-delta)"
-        flipped_prior = _resolve_spec_delta(prior_text, "seeded", pointer=slug)
+        flipped_prior = _resolve_spec_delta(prior_text, "seeded", pointer=slug, line_index=idx)
 
     (tdir / "tests").mkdir(parents=True, exist_ok=True)
     (tdir / "src").mkdir(parents=True, exist_ok=True)
@@ -841,11 +850,19 @@ def cmd_drop_delta(args: argparse.Namespace) -> None:
     state = load_state(root)
     slug = _resolve_task(state, args.slug)                  # unknown task -> _die
     task_md = root / "tasks" / slug / "TASK.md"
-    new_text = _resolve_spec_delta(task_md.read_text(encoding="utf-8"), "dropped")
-    if new_text is None:
+    text = task_md.read_text(encoding="utf-8")
+    match = getattr(args, "match", None)
+    status, idx, _disp = _select_spec_delta(text, match)
+    if status == "no_open":
         _die(f"no_open_spec_delta: task '{slug}' has no open SPEC delta to drop")
+    if status == "no_match":
+        _die(f"no_matching_spec_delta: no open SPEC delta in '{slug}' matches --match '{match}'")
+    if status == "ambiguous":
+        _die(f"ambiguous_spec_match: --match '{match}' matches multiple open SPEC deltas in "
+             f"'{slug}' — narrow it")
+    new_text = _resolve_spec_delta(text, "dropped", line_index=idx)
     _atomic_write(task_md, new_text)
-    print(f"dropped the first open SPEC delta in '{slug}' -> [SPEC · dropped]")
+    print(f"dropped the {'matched' if match else 'first'} open SPEC delta in '{slug}' -> [SPEC · dropped]")
     print(_next_footer(root, state))
 
 
@@ -4701,40 +4718,61 @@ def _collect_open_spec_deltas(root: Path) -> list[dict]:
 _SPEC_OPEN_TOKEN_RE = re.compile(r"(\[\s*SPEC\s*·\s*)open(\s*\])")
 
 
-def _resolve_spec_delta(text: str, new_status: str, pointer: str | None = None) -> str | None:
-    """Flip the FIRST `[SPEC · open]` line in `text` to `new_status`; return the new text.
+def _resolve_spec_delta(text: str, new_status: str, pointer: str | None = None,
+                        line_index: int | None = None) -> str | None:
+    """Flip ONE `[SPEC · open]` line in `text` to `new_status`; return the new text.
 
-    PURE — no IO. Only the status token changes (+ a trailing ` [→ <pointer>]` provenance
-    stamp when seeding); the entry's text and `(evidence: …)` are byte-preserved. Returns
-    None when there is NO open SPEC delta — the caller then refuses and writes nothing
-    (validate-all-then-write). Mirrors the `_autonomy_decl_line` pure-transform pattern."""
+    PURE — no IO. With `line_index` (a splitlines(keepends=True) index, as `_select_spec_delta`
+    returns) flip THAT line; without it, flip the FIRST open delta (back-compat). Only the status
+    token changes (+ a trailing ` [→ <pointer>]` provenance stamp when seeding); the entry's text
+    and `(evidence: …)` are byte-preserved. Returns None when there is NO open SPEC delta to flip —
+    the caller then refuses and writes nothing. Mirrors the `_autonomy_decl_line` pure-transform."""
     lines = text.splitlines(keepends=True)
-    for i, ln in enumerate(lines):
+    target = line_index
+    if target is None:                             # back-compat: the FIRST open delta
+        for i, ln in enumerate(lines):
+            m = _SPEC_DELTA_RE.match(ln.rstrip("\n"))
+            if m and m.group(2) == "open":
+                target = i
+                break
+        if target is None:
+            return None
+    ln = lines[target]
+    eol = ln[len(ln.rstrip("\n")):]                # preserve the exact line ending
+    body = _SPEC_OPEN_TOKEN_RE.sub(rf"\g<1>{new_status}\g<2>", ln.rstrip("\n"), count=1)
+    if pointer:
+        body = f"{body} [→ {pointer}]"
+    lines[target] = body + eol
+    return "".join(lines)
+
+
+def _select_spec_delta(text: str, match: str | None = None) -> tuple[str, int | None, str | None]:
+    """Pick the open SPEC delta to resolve (delta-match-selector). PURE — no IO.
+
+    `match=None` -> the FIRST open delta. `match=<substr>` -> the UNIQUE open delta whose display
+    text (status token + `(evidence: …)` excluded) contains <substr>, case-insensitive. Returns
+    (status, line_index, display_text) where status is one of: "ok" (line_index/display set),
+    "no_open" (no open delta at all), "no_match" (--match hit zero), "ambiguous" (--match hit >1).
+    line_index is a splitlines(keepends=True) index, the same `_resolve_spec_delta` flips."""
+    opens: list[tuple[int, str]] = []
+    for i, ln in enumerate(text.splitlines(keepends=True)):
         m = _SPEC_DELTA_RE.match(ln.rstrip("\n"))
         if not m or m.group(2) != "open":
             continue
-        eol = ln[len(ln.rstrip("\n")):]            # preserve the exact line ending
-        body = _SPEC_OPEN_TOKEN_RE.sub(rf"\g<1>{new_status}\g<2>", ln.rstrip("\n"), count=1)
-        if pointer:
-            body = f"{body} [→ {pointer}]"
-        lines[i] = body + eol
-        return "".join(lines)
-    return None
-
-
-def _first_open_spec_text(text: str) -> str | None:
-    """The first OPEN SPEC delta's text (evidence stripped) in `text`, or None.
-
-    Used to pre-fill a seeded task's §1 Feature line from the SAME in-memory text the
-    flip operates on (one read, consistent selection)."""
-    for unit in _spec_delta_entries(text):
-        m = _SPEC_DELTA_RE.match(unit[0])
-        if m.group(2) != "open":
-            continue
-        tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
-        em = _EVIDENCE_RE.match(tail)
-        return em.group(1).strip() if em else tail
-    return None
+        tail = m.group(3).strip()
+        cut = tail.find("(evidence:")             # exclude the evidence tail even if its paren is unclosed
+        opens.append((i, (tail[:cut].strip() if cut != -1 else tail)))
+    if not opens:
+        return ("no_open", None, None)
+    if match is None:
+        return ("ok", opens[0][0], opens[0][1])
+    needle = match.lower()
+    hits = [(i, d) for i, d in opens if needle in d.lower()]
+    if not hits:
+        return ("no_match", None, None)
+    if len(hits) > 1:
+        return ("ambiguous", None, None)
+    return ("ok", hits[0][0], hits[0][1])
 
 
 # ── add.py fold — mechanized competency-lesson consolidation ────────────────────────────────
@@ -5642,14 +5680,20 @@ def build_parser() -> argparse.ArgumentParser:
     pn.add_argument("--depends-on", dest="depends_on", default=None,
                     help="comma-separated task slugs this task depends on")
     pn.add_argument("--from-delta", dest="from_delta", default=None, metavar="PRIOR",
-                    help="SEED PRIOR's first open SPEC delta into this task (pre-fills §1 "
+                    help="SEED PRIOR's open SPEC delta into this task (pre-fills §1 "
                          "Feature, flips the source -> [SPEC · seeded] [→ this])")
+    pn.add_argument("--match", default=None, metavar="SUBSTR",
+                    help="with --from-delta: target the UNIQUE open SPEC delta whose text "
+                         "contains SUBSTR (case-insensitive) instead of the first")
     pn.add_argument("--force", action="store_true", help="overwrite TASK.md if present")
     pn.set_defaults(func=cmd_new_task)
 
     pdd = sub.add_parser("drop-delta",
-                         help="dismiss a task's first open SPEC delta -> [SPEC · dropped]")
-    pdd.add_argument("slug", help="task whose first open SPEC delta to drop")
+                         help="dismiss a task's open SPEC delta -> [SPEC · dropped]")
+    pdd.add_argument("slug", help="task whose open SPEC delta to drop")
+    pdd.add_argument("--match", default=None, metavar="SUBSTR",
+                     help="target the UNIQUE open SPEC delta whose text contains SUBSTR "
+                          "(case-insensitive) instead of the first")
     pdd.set_defaults(func=cmd_drop_delta)
 
     pm = sub.add_parser("new-milestone", help="scaffold a milestone (SDD living doc)")
