@@ -395,6 +395,17 @@ def _render_actor_line(state: dict) -> str:
     return f"{a['name']}{email} ({a['source']})"
 
 
+def _parse_actor_arg(s: str) -> dict:
+    """Parse an `assign --owner`/`--assignee` value into a {name, email, source: "assigned"}
+    actor (ownership-assignment). "Name <email>" -> both; a bare "Name" -> email None. TOTAL:
+    a malformed value (no closing bracket) never raises — the whole stripped string is the name.
+    `source` is "assigned" — a human typed this name (not git-resolved nor an ADD override)."""
+    m = re.match(r"^\s*(.*?)\s*<([^>]*)>\s*$", s)
+    if m:
+        return {"name": m.group(1), "email": m.group(2) or None, "source": "assigned"}
+    return {"name": s.strip(), "email": None, "source": "assigned"}
+
+
 def load_state(root: Path) -> dict:
     """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
     dies with a clean 'state_invalid' message (never a raw traceback), so every
@@ -1207,6 +1218,68 @@ def cmd_whoami(args: argparse.Namespace) -> None:
         return
     email = f" <{who['email']}>" if who.get("email") else ""
     print(f"actor : {who['name']}{email} (source: {who['source']})")
+
+
+def _ownership_record(state: dict, slug: str) -> dict | None:
+    """Resolve the record a slug names for ownership — a TASK first, else a MILESTONE
+    (tasks win, matching cmd_use/report precedent). None if neither exists."""
+    rec = state.get("tasks", {}).get(slug)
+    if rec is not None:
+        return rec
+    return state.get("milestones", {}).get(slug)
+
+
+def cmd_assign(args: argparse.Namespace) -> None:
+    """Assign an OWNER (accountable) and/or ASSIGNEE (working it) to a task or milestone
+    (ownership-assignment). No role flag -> set BOTH to the resolved self (_whoami); --owner/
+    --assignee "Name <email>" -> set that role only (partial update). Descriptive, never a gate.
+    Validate-before-mutate: a reject leaves state.json byte-identical (no partial write)."""
+    root = _require_root()
+    state = load_state(root)
+    rec = _ownership_record(state, args.slug)
+    if rec is None:
+        _die("unknown_slug")
+    # parse + validate ALL flags BEFORE the first write — a blank name is rejected on the
+    # PARSED name (so "<>" or " <a@x.io>", whose name parses empty, is caught like "   ").
+    parsed_owner = _parse_actor_arg(args.owner) if args.owner is not None else None
+    parsed_assignee = _parse_actor_arg(args.assignee) if args.assignee is not None else None
+    if parsed_owner is not None and not parsed_owner["name"].strip():
+        _die("owner_name_blank")
+    if parsed_assignee is not None and not parsed_assignee["name"].strip():
+        _die("assignee_name_blank")
+    if parsed_owner is None and parsed_assignee is None:
+        who = _whoami(state)
+        rec["owner"] = dict(who)
+        rec["assignee"] = dict(who)
+    else:
+        if parsed_owner is not None:
+            rec["owner"] = parsed_owner
+        if parsed_assignee is not None:
+            rec["assignee"] = parsed_assignee
+    save_state(root, state)
+    parts = [f"{role}: {rec[role]['name']}" for role in ("owner", "assignee") if role in rec]
+    print(f"assigned {args.slug} -> " + " · ".join(parts))
+
+
+def cmd_unassign(args: argparse.Namespace) -> None:
+    """Clear the OWNER and/or ASSIGNEE of a task or milestone (ownership-assignment). No role
+    flag -> clear BOTH; --owner/--assignee -> clear that role only. Reject not_assigned if the
+    targeted role(s) are already absent. Validate-before-mutate (a reject changes nothing)."""
+    root = _require_root()
+    state = load_state(root)
+    rec = _ownership_record(state, args.slug)
+    if rec is None:
+        _die("unknown_slug")
+    if args.owner or args.assignee:
+        roles = [r for r in ("owner", "assignee") if getattr(args, r)]
+    else:
+        roles = ["owner", "assignee"]
+    if not all(r in rec for r in roles):   # every targeted role must exist (frozen: "both must exist")
+        _die("not_assigned")
+    for r in roles:
+        rec.pop(r, None)
+    save_state(root, state)
+    print(f"unassigned {args.slug} ({', '.join(roles)})")
 
 
 def _has_production_roadmap(state: dict) -> bool:
@@ -5308,6 +5381,22 @@ def build_parser() -> argparse.ArgumentParser:
     pwho.add_argument("--email", default=None, help="set the override email (with --name)")
     pwho.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
     pwho.set_defaults(func=cmd_whoami)
+
+    pas = sub.add_parser("assign",
+                         help="assign an owner/assignee to a task or milestone (no flag = self)")
+    pas.add_argument("slug")
+    pas.add_argument("--owner", default=None, metavar="\"Name <email>\"",
+                     help="set the accountable owner (default with no flag: self)")
+    pas.add_argument("--assignee", default=None, metavar="\"Name <email>\"",
+                     help="set the working assignee (default with no flag: self)")
+    pas.set_defaults(func=cmd_assign)
+
+    pun = sub.add_parser("unassign",
+                         help="clear the owner/assignee of a task or milestone (no flag = both)")
+    pun.add_argument("slug")
+    pun.add_argument("--owner", action="store_true", help="clear only the owner")
+    pun.add_argument("--assignee", action="store_true", help="clear only the assignee")
+    pun.set_defaults(func=cmd_unassign)
 
     pn = sub.add_parser("new-task", help="scaffold a new task (TASK.md + tests/ + src/)")
     pn.add_argument("slug")
