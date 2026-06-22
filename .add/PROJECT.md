@@ -5,13 +5,14 @@
 > manual. Map to the AIDD diagram: Domain = DDD · Spec = SDD (living document) ·
 > UI/UX = UDD. When a loop reveals a gap here, come back and update this file.
 
-slug: AIDD-Book · stage: mvp · updated: 2026-06-16 · foundation-version: 42
+slug: AIDD-Book · stage: mvp · updated: 2026-06-16 · foundation-version: 43
 autonomy: auto   <!-- project default — new tasks inherit this rung (manual < conservative < auto); lower a single task in its TASK.md header when it needs a human gate. -->
 goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec-and-tests-first development through the CLI alone while the human owns direction and verification — installable as @pilotspace/add / pilotspace-add, with less doc-time than GSD and no lost context across sessions
 
 ---
 
 ## Domain (DDD) — the language and the boundaries
+- (DDD) "owner/assignee" (mutable, directive) is a genuinely distinct concept from the "actor stamp" (immutable, historical) even though they share the `{name,email,source}` shape — a new `source:"assigned"` value marks human-typed provenance vs git/os/override resolution (evidence: ownership-model reused the shape but needed the 4th source value to stay honest).  [folded foundation-version 43 · from ownership-model]
 - (DDD) the managed↔user-data boundary is now a REUSED domain concept: heal-reconcile/global-install copy the MANAGED layer, global-data copies its COMPLEMENT (user-data) — naming the boundary once (an explicit include/exclude rule) let both sides share it (evidence: `_is_user_data` is the inverse of MANAGED).  [folded foundation-version 38 · from global-data]
 - Core concepts: **task** (one feature), **milestone** (depth-bounded group of
   tasks), **phase** (specify→…→observe→done), **gate** (PASS·RISK-ACCEPTED·HARD-STOP),
@@ -261,6 +262,7 @@ goal: ship ADD as a lean, trustworthy AI-driven method — any agent drives spec
 ## Key Decisions (append-only — newest-first; compaction door per compact-foundation.md)
 | date | decision | why | outcome |
 |------|----------|-----|---------|
+| 2026-06-22 | fold all → foundation-version 43 (DDD 1 · TDD 1 · ADD 1) | consolidate captured OBSERVE lessons into the versioned foundation | 3 lessons open→folded; +3 routed bullets; 42→43 |
 | 2026-06-22 | fold all → foundation-version 42 (ADD 3) | consolidate captured OBSERVE lessons into the versioned foundation | 3 lessons open→folded; +3 routed bullets; 41→42 |
 | 2026-06-22 | fold all → foundation-version 41 (TDD 3 · ADD 5) | consolidate captured OBSERVE lessons into the versioned foundation | 8 lessons open→folded; +8 routed bullets; 40→41 |
 | 2026-06-18 | fold --task pty-clack-harness → foundation-version 40 (TDD 2 · ADD 3) | consolidate captured OBSERVE lessons into the versioned foundation | 5 lessons open→folded; +5 routed bullets; 39→40 |

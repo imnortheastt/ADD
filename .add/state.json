@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ownership-surface",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1130,69 +1130,10 @@
         ],
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
-    },
-    "ownership-model": {
-      "title": "owner/assignee fields + assign/unassign commands",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "ownership-assignment",
-      "depends_on": [],
-      "created": "2026-06-22T08:49:37+00:00",
-      "updated": "2026-06-22T09:04:42+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "91ba04d76244319c6fd904b991942962",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_min_pillar.py"
-        ],
-        "snapshot_md5": "037cb860b70aa032af0d25923970c081"
-      },
-      "gate_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
-    },
-    "ownership-surface": {
-      "title": "surface owner/assignee in status + report + json",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "ownership-assignment",
-      "depends_on": [
-        "ownership-model"
-      ],
-      "created": "2026-06-22T09:05:19+00:00",
-      "updated": "2026-06-22T09:19:00+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "b49a47b19f90aabeb39018f2181d6e3d",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py"
-        ],
-        "snapshot_md5": "23dcd04599d8443972940ca1385010bb"
-      },
-      "gate_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T09:20:22+00:00",
+  "updated": "2026-06-22T09:20:39+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1369,22 +1310,9 @@
       "status": "done",
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
-    },
-    "ownership-assignment": {
-      "title": "Ownership & assignment",
-      "goal": "a user can assign an owner and assignee to any task or milestone (to self or a named actor) and SEE who owns and works what in status and report \u2014 descriptive only, unassigned records unchanged",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-22T08:48:45+00:00",
-      "updated": "2026-06-22T09:20:22+00:00",
-      "done_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
     }
   },
-  "active_milestone": "ownership-assignment",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1760,12 +1688,18 @@
         "identity-in-status"
       ],
       "archived": "2026-06-22"
+    },
+    {
+      "slug": "ownership-assignment",
+      "title": "Ownership & assignment",
+      "tasks": 2,
+      "task_slugs": [
+        "ownership-model",
+        "ownership-surface"
+      ],
+      "archived": "2026-06-22"
     }
   ],
-  "active_milestones": [
-    "ownership-assignment"
-  ],
-  "active_tasks": {
-    "ownership-assignment": "ownership-surface"
-  }
+  "active_milestones": [],
+  "active_tasks": {}
 }
