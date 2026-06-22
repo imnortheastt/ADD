@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "actor-identity",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1130,10 +1130,41 @@
         ],
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
+    },
+    "actor-identity": {
+      "title": "git-native whoami resolver + actor model",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "user-identity",
+      "depends_on": [],
+      "created": "2026-06-22T06:39:02+00:00",
+      "updated": "2026-06-22T06:39:02+00:00"
+    },
+    "actor-stamping": {
+      "title": "stamp the structured actor on every human seam",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "user-identity",
+      "depends_on": [
+        "actor-identity"
+      ],
+      "created": "2026-06-22T06:39:02+00:00",
+      "updated": "2026-06-22T06:39:02+00:00"
+    },
+    "identity-in-status": {
+      "title": "surface the actor in status + json/report",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "user-identity",
+      "depends_on": [
+        "actor-stamping"
+      ],
+      "created": "2026-06-22T06:39:02+00:00",
+      "updated": "2026-06-22T06:39:02+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T06:36:19+00:00",
+  "updated": "2026-06-22T06:39:23+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1310,9 +1341,17 @@
       "status": "done",
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
+    },
+    "user-identity": {
+      "title": "User Identity",
+      "goal": "ADD resolves a git-native actor (whoami: git config user.name/email, OS-user fallback) and stamps WHO performed each human-owned action \u2014 contract freeze, verify gate, milestone-done, lock, release \u2014 as a structured actor field alongside today's free-text, giving a multi-user team an auditable who-decided-what trail. Descriptive only (no access enforcement); solo behavior unchanged; the byte-pinned engine edited in lockstep across all 3 copies.",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-22T06:38:16+00:00",
+      "updated": "2026-06-22T06:38:16+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "user-identity",
   "archived": [
     {
       "slug": "v5",
@@ -1679,6 +1718,10 @@
       "archived": "2026-06-22"
     }
   ],
-  "active_milestones": [],
-  "active_tasks": {}
+  "active_milestones": [
+    "user-identity"
+  ],
+  "active_tasks": {
+    "user-identity": "actor-identity"
+  }
 }
