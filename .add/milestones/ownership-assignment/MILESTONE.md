@@ -51,32 +51,33 @@ Out: ACCESS ENFORCEMENT / owner-only gates / separation-of-duties — the assign
   existing decision untouched -> owning task `ownership-model`
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] ownership-model    depends-on: none              — the `owner`/`assignee` fields on task + milestone records + `assign`/`unassign` write commands (default-self or `--owner`/`--assignee` named; bare `unassign` clears both); freeze the data-model contract. risk:high.
-- [ ] ownership-surface  depends-on: ownership-model   — surface owner/assignee present-only in `status` (current focus) + `report` (per-task + milestone) + the `--json`/report-data machine facts; additive, unassigned output byte-identical. risk:high.
+- [x] ownership-model    depends-on: none              — the `owner`/`assignee` fields on task + milestone records + `assign`/`unassign` write commands (default-self or `--owner`/`--assignee` named; bare `unassign` clears both); freeze the data-model contract. risk:high.
+- [x] ownership-surface  depends-on: ownership-model   — surface owner/assignee present-only in `status` (current focus) + `report` (per-task + milestone) + the `--json`/report-data machine facts; additive, unassigned output byte-identical. risk:high.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `add.py assign <task|milestone>` records owner+assignee (default self, or `--owner`/`--assignee "Name <email>"`); `unassign` clears them (bare = both); a record with neither stays valid   (← ownership-model)
-- [ ] `status`, `report`, and `--json` surface the owner/assignee present-only; a record with neither renders no owner/assignee (solo/unassigned output unchanged)   (← ownership-surface)
+- [x] `add.py assign <task|milestone>` records owner+assignee (default self, or `--owner`/`--assignee "Name <email>"`); `unassign` clears them (bare = both); a record with neither stays valid   (← ownership-model) (verify: test_ownership_model.py — 12 green)
+- [x] `status`, `report`, and `--json` surface the owner/assignee present-only; a record with neither renders no owner/assignee (solo/unassigned output unchanged)   (← ownership-surface) (verify: test_ownership_surface.py — 7 green)
 
 ## Close — ship review   (AI fills when every task is done — the evidence behind the engine gate, read before the boxes are checked)
 > Whole-milestone, cross-task review the AI fills in. It is the evidence behind the EXISTING engine
 > gate (milestone-done / checking the Exit-criteria boxes) — NOT a new approval. Tool-agnostic.
 
 ### Ship by domain   (what changed, per bounded context)
-- tooling : <add.py / state.json / templates — what shipped, or "untouched">
-- skill   : <SKILL.md / phases/* / guides — what shipped, or "untouched">
-- book    : <docs/* — what shipped, or "untouched">
+- tooling : add.py — NEW `_parse_actor_arg` (parse "Name <email>" → actor, source "assigned") + `_ownership_record` (task-first slug resolver) + `cmd_assign`/`cmd_unassign` (validate-before-mutate write commands) + the `assign`/`unassign` subparsers; NEW `_fmt_ownership` + read-only surfaces (report_data task-row + milestone owner/assignee, render_report `owned by`/`OWNED BY` blocks, cmd_status `owned   :` line, `status --json` per-task owner/assignee). engine_pin.py re-pinned 4× (2206226f → 5a709f28 → f1256114 → 369b2a86); all 3 add.py copies byte-identical. state.json: new optional `owner`/`assignee` on task + milestone records (no migration — absent = unassigned). test_min_pillar LIFECYCLE gained assign/unassign (census).
+- skill   : untouched (the loop drives this method-on-method; no guide change).
+- book    : untouched.
 
 ### Cross-task evidence   (one row per task)
-- <slug> : gate=<PASS|RISK-ACCEPTED> · tests=<n green> · residue=<none|note>
+- ownership-model   : gate=PASS · tests=12 green (test_ownership_model.py) · residue=note — adversarial review found + FIXED one BLOCKING defect pre-gate (blank-name write via `--owner "<>"`); a §7 SPEC delta carried forward (tighten `_parse_actor_arg` double-bracket mis-parse)
+- ownership-surface : gate=PASS · tests=7 green (test_ownership_surface.py) · residue=none (review MERGE 0.93, 0 blocking; one NIT applied — blank-name render guard)
 
 ### Goal met?   (map the evidence back to this milestone's Exit criteria — read before the Exit-criteria boxes are checked)
-- [ ] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
-- goal: <restate the milestone goal — and the one evidence line that proves the ship meets it>
+- [x] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which): criterion 1 ← ownership-model row; criterion 2 ← ownership-surface row
+- goal: a user can assign an owner+assignee to any task or milestone and SEE who owns/works what — proven on the real project: `assign ownership-surface --owner "Tin Dang <…>" --assignee "Tin Dang"` then `status` shows `owned   : owner: Tin Dang <…> · assignee: Tin Dang` and `report ownership-assignment` renders an `owned by` milestone line + an `OWNED BY` block; `unassign` returns the record to clean. Descriptive only (no enforcement); unassigned output byte-identical; full suite 1480 OK.
 
 ## Release steps   (AI-DEFINED — fill the ordered steps to ship this milestone; engine records, human gate)
 > The AI writes the release steps for THIS milestone here (hints, not engine commands). MERGE is one
 > small step among them. These feed the release scope (release.md) when the cut is bundled.
-- [ ] <step — e.g. open a PR from the Close ship-review above; the human reviews + merges>
-- [ ] <step — e.g. export the ship-review to a hand-off doc, e.g. `pandoc CLOSE.md -o close.docx`>
-- [ ] <step — e.g. tag / publish / deploy  (human-run, per release.md)>
+- [ ] fold the open §7 deltas (the `_parse_actor_arg` double-bracket SPEC delta + the ADD/TDD/DDD competency lessons) into the foundation via `add.py fold`, then archive this milestone.
+- [ ] the milestone rides PR #47 (feat/fold-suggestion-seams) alongside milestones 1 (state-model-reshape) + 2 (user-identity); the human reviews + merges that PR — MERGE is the ship step here.
+- [ ] tag / publish is deferred to the next release cut (release.md), which bundles the team-collaboration major; not a per-milestone publish.

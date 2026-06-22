@@ -1192,7 +1192,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T09:19:00+00:00",
+  "updated": "2026-06-22T09:20:22+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1374,9 +1374,14 @@
       "title": "Ownership & assignment",
       "goal": "a user can assign an owner and assignee to any task or milestone (to self or a named actor) and SEE who owns and works what in status and report \u2014 descriptive only, unassigned records unchanged",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-22T08:48:45+00:00",
-      "updated": "2026-06-22T08:48:45+00:00"
+      "updated": "2026-06-22T09:20:22+00:00",
+      "done_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "active_milestone": "ownership-assignment",
