@@ -1385,7 +1385,8 @@ def cmd_status(args: argparse.Namespace) -> None:
             members = [t for t in tasks.values() if t.get("milestone") == mslug]
             ms_list.append({"slug": mslug, "status": m.get("status", "active"),
                             "done": sum(1 for t in members if _task_done(t)),
-                            "total": len(members)})
+                            "total": len(members),
+                            "owner": m.get("owner"), "assignee": m.get("assignee")})
         grad_ready, grad_met, grad_total = _graduation_ready(root, state)
         print(json.dumps({
             "project": state.get("project"), "stage": state.get("stage"),
@@ -1498,7 +1499,14 @@ def cmd_status(args: argparse.Namespace) -> None:
             _ph = (tasks.get(_tk) or {}).get("phase", "-") if _tk else "-"
             _mk = "▸" if _m == _primary else " "
             _tag = "  (primary)" if _m == _primary else ""
-            print(f"  {_mk} {_m:<20} task={_tk or '(none)'}  phase={_ph}{_tag}")
+            # per-stream owner (per-stream-owner): the milestone's lead, present-only — a stream
+            # whose milestone has no owner (or a blank-name owner) renders byte-identically
+            # (additive-cue convention). Guard on the name like `_fmt_ownership`, so a hand-edited
+            # blank-name record never emits an `owner:` fragment.
+            _owner_rec = (milestones.get(_m) or {}).get("owner") or {}
+            _so = _fmt_actor(_owner_rec) if _owner_rec.get("name") else ""
+            _own_frag = f"  · owner: {_so}" if _so else ""
+            print(f"  {_mk} {_m:<20} task={_tk or '(none)'}  phase={_ph}{_tag}{_own_frag}")
     # surface the active task's autonomy level (task explicit-autonomy-dial) so the human
     # reads the throttle every session; "unset" when no explicit `autonomy:` line is present.
     if active and active in tasks:

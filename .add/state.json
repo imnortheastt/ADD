@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "my-work-lens",
+  "active_task": "per-stream-owner",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1160,10 +1160,39 @@
         "email": "tindang.ht97@gmail.com",
         "source": "git"
       }
+    },
+    "per-stream-owner": {
+      "title": "show each active stream's owner in the streams block + report",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "multi-active-UX",
+      "depends_on": [],
+      "created": "2026-06-22T13:04:57+00:00",
+      "updated": "2026-06-22T13:15:04+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "f90a70cae594871b3b6e4f18f622ba87",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_per_stream_owner.py"
+        ],
+        "snapshot_md5": "09efba74fe4bebc319ab56a4c9ea92e1"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T13:04:28+00:00",
+  "updated": "2026-06-22T13:15:04+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1752,6 +1781,6 @@
     "multi-active-UX"
   ],
   "active_tasks": {
-    "multi-active-UX": "my-work-lens"
+    "multi-active-UX": "per-stream-owner"
   }
 }
