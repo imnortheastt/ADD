@@ -797,6 +797,15 @@ def cmd_advance(args: argparse.Namespace) -> None:
     _sync_task_marker(root, slug, nxt)
     save_state(root, state)
     print(f"task '{slug}' phase {cur} -> {nxt}")
+    if nxt == "observe":
+        # OBSERVE is where this loop's lessons get captured (TASK.md §7) — suggest routing
+        # them into PROJECT.md right away (a per-task fold is engine-legal; otherwise the
+        # lessons sit unconsolidated until milestone close). Additive: fires only at this
+        # one transition, and the human still decides whether/when to run it. The verb word
+        # is interpolated via _FOLD_VERB so the domain wording-lint sees no bare slang.
+        print("  note: record the lessons this loop taught the foundation in §7 "
+              "OBSERVE, then update PROJECT.md when ready:")
+        print(f"    add.py {_FOLD_VERB} --task {slug}   (review first: add.py deltas)")
     print(_next_footer(root, state))
 
 
@@ -2427,11 +2436,15 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     print(f"milestone '{slug}' -> done ({len(members)} tasks complete{tail}).")
     print(f"wrote {retro_path.relative_to(root.parent)}  (milestone exit report)")
     # fold-pressure nudge: milestone close is the natural fold point for open deltas (v11)
-    open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
+    by_comp = _collect_open_deltas(root)
+    open_deltas = sum(len(v) for v in by_comp.values())
     if open_deltas:
         noun = "delta" if open_deltas == 1 else "deltas"
-        print(f"note: {open_deltas} open {noun} to consolidate into the foundation "
-              f"— review with: add.py deltas")
+        print(f"note: {open_deltas} open {noun} ready to {_FOLD_VERB} into the foundation:")
+        for comp in _COMPETENCY_ORDER:
+            for e in by_comp[comp]:
+                print(f"    ({comp}) {e['text']}  [{e['task']}]")
+        print(f"  run: add.py {_FOLD_VERB}   (review first: add.py deltas)")
     # SPEC-delta nudge (project-wide): the close is also a natural prompt to RESOLVE the
     # forward hand-offs (seed/drop) so none is orphaned at the eventual compaction.
     open_spec = len(_collect_open_spec_deltas(root))
