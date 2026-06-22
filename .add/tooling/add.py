@@ -267,6 +267,47 @@ def _migrate_state(state: dict) -> dict:
     return migrated
 
 
+# --- active milestone/task accessor seam (multi-active foundation) -----------
+#
+# Every engine call site reads & writes the active milestone(s)/task through these
+# four helpers, so multi-active SEMANTICS can land in one place later. Today they
+# preserve single-active behavior exactly: reads return the scalar mirror, writes
+# keep the scalar AND the new active_milestones/active_tasks structures in sync.
+
+def _active_milestone(state: dict) -> str | None:
+    """The primary active milestone — the N<=1 scalar mirror (== active_milestones[0])."""
+    return state.get("active_milestone")
+
+
+def _active_task(state: dict, milestone: str | None = None) -> str | None:
+    """The active task: per-milestone when `milestone` is given (partial-state -> None),
+    else the global/primary scalar active task. Total — never raises."""
+    if milestone is None:
+        return state.get("active_task")
+    return (state.get("active_tasks") or {}).get(milestone)
+
+
+def _set_active_milestone(state: dict, slug: str | None) -> None:
+    """Set the primary active milestone, keeping `active_milestones` consistent (N<=1 sync)."""
+    state["active_milestone"] = slug
+    state["active_milestones"] = [] if slug is None else [slug]
+
+
+def _set_active_task(state: dict, slug: str | None, milestone: str | None = None) -> None:
+    """Set the active task, keeping the scalar mirror AND the per-milestone map in sync.
+    With no owning active milestone the active task is scalar-only (the migration's orphan
+    rule); clearing (slug is None) pops the milestone's entry."""
+    state["active_task"] = slug
+    ms = milestone if milestone is not None else _active_milestone(state)
+    tasks_map = state.setdefault("active_tasks", {})
+    if ms is None:
+        return
+    if slug is None:
+        tasks_map.pop(ms, None)
+    else:
+        tasks_map[ms] = slug
+
+
 def load_state(root: Path) -> dict:
     """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
     dies with a clean 'state_invalid' message (never a raw traceback), so every
@@ -532,7 +573,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         _die(f"task '{slug}' already exists (use --force to overwrite TASK.md)")
 
     # link to a milestone (explicit, or the active one) — validate before any write
-    milestone = getattr(args, "milestone", None) or state.get("active_milestone")
+    milestone = getattr(args, "milestone", None) or _active_milestone(state)
     if milestone and milestone not in state.get("milestones", {}):
         _die("unknown_milestone")
     depends_on = _parse_deps(getattr(args, "depends_on", None))
@@ -584,7 +625,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     }
     if from_delta:
         state["tasks"][slug]["from_delta"] = from_delta     # lineage: seeded from <prior>
-    state["active_task"] = slug
+    _set_active_task(state, slug, milestone)
     save_state(root, state)
     print(f"created task '{slug}' -> {task_md}")
     if milestone:
@@ -651,7 +692,7 @@ def _archived_task_slugs(state: dict) -> set[str]:
 
 
 def _resolve_task(state: dict, slug: str | None) -> str:
-    slug = slug or state.get("active_task")
+    slug = slug or _active_task(state)
     if not slug:
         _die("no task specified and no active task set")
     if slug not in state["tasks"]:
@@ -1094,7 +1135,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         grad_ready, grad_met, grad_total = _graduation_ready(root, state)
         print(json.dumps({
             "project": state.get("project"), "stage": state.get("stage"),
-            "active_task": state.get("active_task"),
+            "active_task": _active_task(state),
             "milestones": ms_list,
             "tasks": [{"slug": s, "phase": t.get("phase"), "gate": t.get("gate"),
                        "milestone": t.get("milestone")} for s, t in tasks.items()],
@@ -1103,7 +1144,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         return
     root = _require_root()
     state = load_state(root)
-    active = state.get("active_task")
+    active = _active_task(state)
     tasks = state.get("tasks", {})
     # Compute once: True when setup is present AND locked is False (the lock-gate window).
     # Reuses the canonical helper — do NOT write a parallel predicate.
@@ -1117,7 +1158,7 @@ def cmd_status(args: argparse.Namespace) -> None:
     # LIVE from PROJECT.md / MILESTONE.md (never state.json). Additive: every existing
     # line stays put. A missing source degrades to a sentinel — one never blanks the other.
     print(f"goal    : {_project_goal(root)}")
-    _active_ms = state.get("active_milestone")
+    _active_ms = _active_milestone(state)
     if _active_ms:
         print(f"m-goal  : {_milestone_doc(root, _active_ms)[1]}   (← {_active_ms})")
         # goal-ready (task goal-auto-ready-gate): is the active milestone's goal AUTO-READY
@@ -1145,7 +1186,7 @@ def cmd_status(args: argparse.Namespace) -> None:
 
     # milestone rollup (only when milestones are in use)
     milestones = state.get("milestones") or {}
-    active_ms = state.get("active_milestone")
+    active_ms = _active_milestone(state)
     if milestones:
         print("milestones:")
         for mslug, m in milestones.items():
@@ -1270,7 +1311,7 @@ def cmd_guide(args: argparse.Namespace) -> None:
     """
     if getattr(args, "json", False):
         json_root, state = _load_state_for_json()
-        slug = args.slug or state.get("active_task")
+        slug = args.slug or _active_task(state)
         if not slug:
             print(json.dumps({"task": None, "phase": None, "owner": "human", "stop": True,
                               "next_step": "start your first feature -> add.py new-task <slug>",
@@ -1290,7 +1331,7 @@ def cmd_guide(args: argparse.Namespace) -> None:
         return
     root = _require_root()
     state = load_state(root)
-    slug = args.slug or state.get("active_task")
+    slug = args.slug or _active_task(state)
     if not slug:
         print("active : (none)")
         print('next   : start your first feature -> add.py new-task <slug> --title "..."')
@@ -1865,7 +1906,7 @@ def cmd_check(args: argparse.Namespace) -> None:
     # zero-criteria milestone is shaping's nudge, not this one's. LIVE-ONLY: the OPEN active
     # milestone only — a done-but-not-yet-archived one (still the active pointer until
     # archive clears it) and closed/archived predecessors are never retro-flagged (Must #4).
-    _active_ms = state.get("active_milestone")
+    _active_ms = _active_milestone(state)
     if _active_ms in milestones and milestones[_active_ms].get("status") != "done":
         _cited, _total = _exit_criteria_cited(root, _active_ms)
         if _total >= 1 and _cited < _total:
@@ -1880,7 +1921,7 @@ def cmd_check(args: argparse.Namespace) -> None:
     # FROZEN AND its §0 GROUND map is ungrounded (the precise "froze without grounding" gap, so
     # no nag during pre-freeze drafting). A pre-ground / legacy task (no §0 -> _grounded_state
     # None) is EXEMPT, never retro-flagged. Rides the existing `warnings` array — no new key.
-    _at = state.get("active_task")
+    _at = _active_task(state)
     if _at in tasks:
         _raw = _raw_phase_bodies(root, _at)
         if _contract_frozen(_raw.get(3, "")) and _grounded_state(_raw) is False:
@@ -2112,7 +2153,7 @@ def cmd_new_milestone(args: argparse.Namespace) -> None:
         "title": title, "goal": args.goal or "", "stage": args.stage,
         "status": "active", "created": _now(), "updated": _now(),
     }
-    state["active_milestone"] = slug
+    _set_active_milestone(state, slug)
     save_state(root, state)
     print(f"created milestone '{slug}' -> {mfile}")
     print("active milestone set.")
@@ -2263,7 +2304,7 @@ def cmd_waves(args: argparse.Namespace) -> None:
         _, state = _load_state_for_json()
     else:
         state = load_state(_require_root())
-    mslug = getattr(args, "milestone", None) or state.get("active_milestone")
+    mslug = getattr(args, "milestone", None) or _active_milestone(state)
     if not mslug:
         _die("no_active_milestone: no active milestone and no --milestone given")
     if mslug not in (state.get("milestones") or {}):
@@ -2402,10 +2443,10 @@ def cmd_archive_milestone(args: argparse.Namespace) -> None:
     del state["milestones"][slug]
     for s in members:
         del tasks[s]
-    if state.get("active_milestone") == slug:
-        state["active_milestone"] = None
-    if state.get("active_task") in members:
-        state["active_task"] = None
+    if _active_task(state) in members:
+        _set_active_task(state, None, slug)   # clear the task while its milestone is still known (pops active_tasks[slug])
+    if _active_milestone(state) == slug:
+        _set_active_milestone(state, None)
     save_state(root, state)
     print(f"archived milestone '{slug}' ({len(members)} tasks) — removed from active state.")
     print("files on disk are untouched; see `add.py status` for the archived rollup.")
@@ -2514,7 +2555,7 @@ def cmd_use(args: argparse.Namespace) -> None:
     slug = args.slug
     if slug not in state.get("tasks", {}):
         _die("unknown_task")
-    state["active_task"] = slug
+    _set_active_task(state, slug)
     save_state(root, state)
     print(f"active task -> '{slug}' (phase={state['tasks'][slug]['phase']})")
     print(_next_footer(root, state))
@@ -3797,7 +3838,7 @@ def _decide_next_pair(state: dict, d: dict) -> tuple[str, bool]:
             return (f"goal not met ({met}/{total} exit criteria) — propose next tasks "
                     f"from open deltas / the unscaffolded plan (add.py deltas)"), True
         return f"consolidate learnings + archive-milestone {ms}", True
-    active = state.get("active_task")
+    active = _active_task(state)
     order = sorted(rows, key=lambda r: 0 if r["slug"] == active else 1)  # stable
     for r in order:
         if r["done"]:
@@ -3839,7 +3880,7 @@ def _next_footer(root: Path, state: dict) -> str:
     The fail-soft line carries NO marker — never assert a driver that could not be computed.
     """
     try:
-        slug = state.get("active_task")
+        slug = _active_task(state)
         t = (state.get("tasks") or {}).get(slug) if slug else None
         if t and t.get("gate", "none") == "none" and t.get("phase") != "done":
             phase = t.get("phase")
@@ -3848,7 +3889,7 @@ def _next_footer(root: Path, state: dict) -> str:
                        if phase == "verify" else "add.py advance")
             marker = _driver_marker(_driver_stop(root, state, slug, phase))
             return f"next: {command} — {why}{marker}"
-        mslug = state.get("active_milestone")
+        mslug = _active_milestone(state)
         if mslug:
             d = report_data(root, state, mslug)
             text, human_stop = _decide_next_pair(state, d)
@@ -4959,13 +5000,13 @@ def cmd_report(args: argparse.Namespace) -> None:
         else:
             _die(f"unknown_milestone: '{name}' is not a milestone")
     elif getattr(args, "decide", False):          # bare --decide -> the ACTIVE TASK
-        slug = state.get("active_task")
+        slug = _active_task(state)
         if not slug or slug not in tasks:
             _die("no_active_task — name one: add.py report <milestone> <task> --decide")
         drill_task = slug
         mslug = tasks[slug].get("milestone") or ""
     else:                                         # no positional -> active milestone
-        mslug = state.get("active_milestone")
+        mslug = _active_milestone(state)
         if not mslug:
             _die("no_active_milestone: no milestone given and none is active; "
                  "try `add.py report <milestone>`")

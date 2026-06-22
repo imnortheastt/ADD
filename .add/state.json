@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "state-schema-migration",
+  "active_task": "active-accessors",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1159,14 +1159,31 @@
     },
     "active-accessors": {
       "title": "Active milestone/task accessor seam; route all call sites",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "state-model-reshape",
       "depends_on": [
         "state-schema-migration"
       ],
       "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T03:59:16+00:00"
+      "updated": "2026-06-22T05:25:16+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e4282aaccce82a1b5d3a32d4fabcaae0",
+        "tests": {
+          "add-method/tooling/test_active_accessors.py": "82c056995687ca5f21a0773f460dec32"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_active_accessors.py"
+        ],
+        "snapshot_md5": "23e6bf884891dfb0c60802a9a95a9738"
+      }
     },
     "multi-active-commands": {
       "title": "activate/deactivate/use over the active set",
@@ -1203,7 +1220,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T04:56:39+00:00",
+  "updated": "2026-06-22T05:25:16+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
