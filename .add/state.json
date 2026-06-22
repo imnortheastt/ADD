@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "parallel-status-view",
+  "active_task": "engine-repin-parity",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1247,18 +1247,31 @@
     },
     "engine-repin-parity": {
       "title": "Consolidated 3-tree parity audit + ENGINE_MD5 + parity-test hardening",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "state-model-reshape",
       "depends_on": [
         "parallel-status-view"
       ],
       "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T03:59:16+00:00"
+      "updated": "2026-06-22T06:18:15+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "9fbc0c738903368e6973f2ceb757df92",
+        "tests": {
+          "add-method/tooling/test_engine_repin_parity.py": "4ca0692fec47b8509d7c13a630858d1b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/test_engine_repin_parity.py"
+        ],
+        "snapshot_md5": "61bf55561a2083f88302b575bcf6b352"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T06:05:44+00:00",
+  "updated": "2026-06-22T06:18:15+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1803,6 +1816,6 @@
     "state-model-reshape"
   ],
   "active_tasks": {
-    "state-model-reshape": "parallel-status-view"
+    "state-model-reshape": "engine-repin-parity"
   }
 }
