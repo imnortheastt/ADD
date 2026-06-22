@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "per-stream-owner",
+  "active_task": "cross-active-waves",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1189,10 +1189,41 @@
         "email": "tindang.ht97@gmail.com",
         "source": "git"
       }
+    },
+    "cross-active-waves": {
+      "title": "widen waves/ready to the frontier across all active milestones",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "multi-active-UX",
+      "depends_on": [
+        "my-work-lens"
+      ],
+      "created": "2026-06-22T13:17:48+00:00",
+      "updated": "2026-06-22T13:26:33+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "bb5b503f57522a932a6618aea8b6d4f4",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_cross_active_waves.py"
+        ],
+        "snapshot_md5": "d4d5aa5e68099133cc430e4f84f6b78f"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T13:15:04+00:00",
+  "updated": "2026-06-22T13:26:33+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1781,6 +1812,6 @@
     "multi-active-UX"
   ],
   "active_tasks": {
-    "multi-active-UX": "per-stream-owner"
+    "multi-active-UX": "cross-active-waves"
   }
 }

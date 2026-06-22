@@ -2582,7 +2582,11 @@ def cmd_ready(args: argparse.Namespace) -> None:
     for slug in ready:
         deps = tasks[slug].get("depends_on") or []
         suffix = f"  (after {', '.join(deps)})" if deps else ""
-        print(f"  {slug}{suffix}")
+        # cross-active legibility (cross-active-waves): name the stream each ready task belongs
+        # to, present-only — a milestone-less task gets no bracket (byte-identical).
+        _ms = tasks[slug].get("milestone")
+        ms_frag = f"  [{_ms}]" if _ms else ""
+        print(f"  {slug}{ms_frag}{suffix}")
 
 
 def _wave_schedule(state: dict, mslug: str) -> dict:
@@ -2676,36 +2680,17 @@ def _wave_schedule(state: dict, mslug: str) -> dict:
             "tiers": tiers, "blocked": blocked_sorted}
 
 
-def cmd_waves(args: argparse.Namespace) -> None:
-    """READ-ONLY DAG scheduler: print the active milestone's topological waves, critical
-    path, advisory tier hint, and blocked set. Writes nothing; emits no `next:` footer."""
-    is_json = getattr(args, "json", False)
-    if is_json:
-        _, state = _load_state_for_json()
-    else:
-        state = load_state(_require_root())
-    mslug = getattr(args, "milestone", None) or _active_milestone(state)
-    if not mslug:
-        _die("no_active_milestone: no active milestone and no --milestone given")
-    if mslug not in (state.get("milestones") or {}):
-        _die(f"unknown_milestone: '{mslug}' is not a milestone in this project")
-    sched = _wave_schedule(state, mslug)
-    if "cycle" in sched:
-        _die(f"dependency_cycle: not-done deps form a cycle "
-             f"({' -> '.join(sched['cycle'])}) — no valid schedule")
-
-    if is_json:
-        print(json.dumps({"milestone": mslug, **sched}))
-        return
-
-    print(f"milestone: {mslug}")
+def _wave_block_lines(state: dict, mslug: str, sched: dict) -> list[str]:
+    """The exact text lines `waves` renders for ONE milestone's schedule (cross-active-waves
+    extracts this so a single target stays byte-identical and N targets each get a block)."""
+    lines = [f"milestone: {mslug}"]
     if not sched["waves"]:
         if sched["blocked"]:
             for s in sched["blocked"]:
-                print(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
+                lines.append(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
         else:
-            print("all tasks done — nothing to schedule")
-        return
+            lines.append("all tasks done — nothing to schedule")
+        return lines
     scheduled_set = {x for w in sched["waves"] for x in w}
     for i, wave in enumerate(sched["waves"], start=1):
         parts = []
@@ -2713,14 +2698,62 @@ def cmd_waves(args: argparse.Namespace) -> None:
             md = sorted(d for d in (state["tasks"][s].get("depends_on") or [])
                         if d in scheduled_set)
             parts.append(f"{s} (deps: {', '.join(md)})" if md else s)
-        print(f"wave {i}: {', '.join(parts)}")
+        lines.append(f"wave {i}: {', '.join(parts)}")
     crit = sched["critical_path"]
-    print(f"critical path: {' → '.join(crit)}  ({sched['critical_path_len']} tasks)")
+    lines.append(f"critical path: {' → '.join(crit)}  ({sched['critical_path_len']} tasks)")
     tops = [s for s, tier in sched["tiers"].items() if tier == "top"]
     mids = [s for s, tier in sched["tiers"].items() if tier == "mid"]
-    print(f"tier hint: top → {', '.join(tops)}; mid → {', '.join(mids) or '(none)'}")
+    lines.append(f"tier hint: top → {', '.join(tops)}; mid → {', '.join(mids) or '(none)'}")
     for s in sched["blocked"]:
-        print(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
+        lines.append(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
+    return lines
+
+
+def cmd_waves(args: argparse.Namespace) -> None:
+    """READ-ONLY DAG scheduler: print the topological waves, critical path, advisory tier hint,
+    and blocked set. With no --milestone it spans EVERY active milestone (cross-active-waves);
+    a single target / --milestone renders byte-identically. Writes nothing; no `next:` footer."""
+    is_json = getattr(args, "json", False)
+    if is_json:
+        _, state = _load_state_for_json()
+    else:
+        state = load_state(_require_root())
+    mslug_arg = getattr(args, "milestone", None)
+    if mslug_arg:
+        targets = [mslug_arg]                          # explicit single target — unchanged
+    else:
+        primary = _active_milestone(state)             # the SCALAR is the gate (test relies on it)
+        if not primary:
+            _die("no_active_milestone: no active milestone and no --milestone given")
+        # additively widen to the other active milestones (cross-active); primary first
+        targets = [primary] + [m for m in (state.get("active_milestones") or [])
+                               if m != primary]
+    scheds = []
+    for t in targets:
+        if t not in (state.get("milestones") or {}):
+            _die(f"unknown_milestone: '{t}' is not a milestone in this project")
+        sched = _wave_schedule(state, t)
+        if "cycle" in sched:
+            _die(f"dependency_cycle: not-done deps form a cycle "
+                 f"({' -> '.join(sched['cycle'])}) — no valid schedule")
+        scheds.append(sched)
+
+    if is_json:
+        if len(targets) == 1:
+            print(json.dumps({"milestone": targets[0], **scheds[0]}))   # unchanged shape
+        else:
+            print(json.dumps({"streams": [{"milestone": t, **s}
+                                          for t, s in zip(targets, scheds)]}))
+        return
+
+    if len(targets) == 1:
+        print("\n".join(_wave_block_lines(state, targets[0], scheds[0])))   # byte-identical
+        return
+    print(f"active streams: {len(targets)}")
+    for i, (t, s) in enumerate(zip(targets, scheds)):
+        if i:
+            print()
+        print("\n".join(_wave_block_lines(state, t, s)))
 
 
 def cmd_milestone_done(args: argparse.Namespace) -> None:
