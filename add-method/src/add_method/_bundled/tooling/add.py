@@ -238,12 +238,42 @@ def _require_root() -> Path:
     return root
 
 
+def _migrate_state(state: dict) -> dict:
+    """Forward-migrate a single-active state to the multi-active schema (team-collaboration
+    foundation). PURE · idempotent · TOTAL · never raises · no I/O.
+
+    A state lacking the `active_milestones` key gains it — DERIVED from the scalar
+    `active_milestone` (grandfather-by-missing-key, mirroring `_setup_locked`): None -> [],
+    "x" -> ["x"]. A per-milestone active-task map `active_tasks` is added; the old global
+    `active_task` is placed under its owning active milestone only when it genuinely belongs
+    there, else it stays as the top-level scalar fallback (orphan rule, FROZEN decision (a)).
+    The scalar `active_milestone` / `active_task` keys are KEPT as the N<=1 mirror so the
+    not-yet-routed readers keep working. An already-migrated state (key present) is returned
+    unchanged — never re-derived, never clobbered. Corrupt parsing stays the loader's job.
+
+    PURE in the observable sense: the caller's dict is NEVER mutated — a state that needs
+    migrating is upgraded on a fresh top-level copy (nested objects are shared but only read)."""
+    if not isinstance(state, dict) or "active_milestones" in state:
+        return state
+    migrated = dict(state)
+    active_ms = migrated.get("active_milestone")
+    migrated["active_milestones"] = [] if active_ms is None else [active_ms]
+    active_task = migrated.get("active_task")
+    tasks = migrated.get("tasks") or {}
+    owns = (active_ms is not None and active_task is not None
+            and isinstance(tasks.get(active_task), dict)
+            and tasks[active_task].get("milestone") == active_ms)
+    migrated["active_tasks"] = {active_ms: active_task} if owns else {}
+    return migrated
+
+
 def load_state(root: Path) -> dict:
     """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
     dies with a clean 'state_invalid' message (never a raw traceback), so every
-    command that loads state degrades gracefully (design-for-failure)."""
+    command that loads state degrades gracefully (design-for-failure). The parsed
+    state is forward-migrated to the multi-active schema before it is returned."""
     try:
-        return json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+        return _migrate_state(json.loads((root / STATE_FILE).read_text(encoding="utf-8")))
     except (json.JSONDecodeError, OSError) as e:
         _die(f"state_invalid: {root / STATE_FILE} is corrupt or unreadable "
              f"({e.__class__.__name__}) — restore it from git or a backup")
@@ -252,12 +282,13 @@ def load_state(root: Path) -> dict:
 def _load_state_for_json() -> tuple[Path, dict]:
     """Fail-closed state load for `--json` paths: a missing project or unparseable
     state.json -> `no_state` on stderr + exit 1, with EMPTY stdout (never a partial
-    JSON object a harness might parse). Built from State only — reads no docs/ chapter."""
+    JSON object a harness might parse). Built from State only — reads no docs/ chapter.
+    The parsed state is forward-migrated to the multi-active schema before it is returned."""
     root = find_root()
     if root is None:
         _die("no_state")
     try:
-        return root, json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+        return root, _migrate_state(json.loads((root / STATE_FILE).read_text(encoding="utf-8")))
     except (json.JSONDecodeError, OSError):
         _die("no_state")
 
@@ -453,6 +484,8 @@ def cmd_init(args: argparse.Namespace) -> None:
         "stage": args.stage,
         "active_task": None,
         "active_milestone": None,
+        "active_milestones": [],
+        "active_tasks": {},
         "tasks": {},
         "milestones": {},
         "created": _now(),

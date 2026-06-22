@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "onboarding-docs-refresh",
+  "active_task": "state-schema-migration",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1131,95 +1131,79 @@
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
     },
-    "agents-md-profiles": {
-      "title": "Add cursor/windsurf/trae/copilot/cline/aider profiles to both twins",
+    "state-schema-migration": {
+      "title": "Multi-active state.json schema + idempotent fail-soft migration",
       "phase": "done",
       "gate": "PASS",
-      "milestone": "multi-agent-installer",
+      "milestone": "state-model-reshape",
       "depends_on": [],
-      "created": "2026-06-18T16:12:00+00:00",
-      "updated": "2026-06-18T16:35:23+00:00",
+      "created": "2026-06-22T03:59:16+00:00",
+      "updated": "2026-06-22T04:56:39+00:00",
       "flag_verified": true,
       "tripwire": {
-        "contract_md5": "d7ce9288e20e25592573f3c803777dd5",
+        "contract_md5": "2638b832590b66db7f229e4c5c0a876d",
         "tests": {
-          "add-method/tooling/test_agent_detect.py": "b3961b5e53cbce340e3ce886b371137d"
+          "add-method/tooling/test_multi_active_state.py": "82525126824d67b292b08590e230205a"
         }
       },
       "scope": {
         "declared": [
-          "add-method/bin/cli.js",
-          "add-method/src/add_method/_installer.py",
-          "add-method/tooling/test_agent_detect.py"
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_multi_active_state.py"
         ],
-        "snapshot_md5": "c494036eb19fabe029f7d91b63e90a3e"
+        "snapshot_md5": "ac5a2bda09a31fe598a287be0bdb1413"
       }
     },
-    "gemini-settings-config": {
-      "title": "Gemini profile + .gemini/settings.json context.fileName merge",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "multi-agent-installer",
+    "active-accessors": {
+      "title": "Active milestone/task accessor seam; route all call sites",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "state-model-reshape",
       "depends_on": [
-        "agents-md-profiles"
+        "state-schema-migration"
       ],
-      "created": "2026-06-18T16:12:00+00:00",
-      "updated": "2026-06-18T16:42:45+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "0832d241094f7b1669800b2b2d2d64bc",
-        "tests": {
-          "add-method/tooling/test_gemini_settings.py": "d183fd8ef0619385a76f9bf78c37565e"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/bin/cli.js",
-          "add-method/src/add_method/_installer.py",
-          "add-method/tooling/test_gemini_settings.py"
-        ],
-        "snapshot_md5": "2b5780d25a6245e64a904f713d4e12f2"
-      }
+      "created": "2026-06-22T03:59:16+00:00",
+      "updated": "2026-06-22T03:59:16+00:00"
     },
-    "onboarding-docs-refresh": {
-      "title": "Surface expanded agent set in README/GETTING-STARTED/help",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "multi-agent-installer",
+    "multi-active-commands": {
+      "title": "activate/deactivate/use over the active set",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "state-model-reshape",
       "depends_on": [
-        "agents-md-profiles"
+        "active-accessors"
       ],
-      "created": "2026-06-18T16:12:00+00:00",
-      "updated": "2026-06-18T16:48:12+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "61cbcf8d4631a957708ddeecb87bdcf1",
-        "tests": {
-          "add-method/tooling/test_supported_agents_docs.py": "85f51f8865daa8de366bf84898e8d615"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/README.md",
-          "add-method/GETTING-STARTED.md",
-          "add-method/tooling/test_supported_agents_docs.py"
-        ],
-        "snapshot_md5": "1c2502c286f1d347272fdc131c2fdee1"
-      },
-      "heal": {
-        "attempts": 1,
-        "history": [
-          {
-            "at": "2026-06-18T16:47:18+00:00",
-            "reason": "tamper_detected:build_tampered:add-method/tooling/test_supported_agents_docs.py",
-            "source": "tamper"
-          }
-        ]
-      }
+      "created": "2026-06-22T03:59:16+00:00",
+      "updated": "2026-06-22T03:59:16+00:00"
+    },
+    "parallel-status-view": {
+      "title": "status renders the active set as parallel streams",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "state-model-reshape",
+      "depends_on": [
+        "multi-active-commands"
+      ],
+      "created": "2026-06-22T03:59:16+00:00",
+      "updated": "2026-06-22T03:59:16+00:00"
+    },
+    "engine-repin-parity": {
+      "title": "Consolidated 3-tree parity audit + ENGINE_MD5 + parity-test hardening",
+      "phase": "ground",
+      "gate": "none",
+      "milestone": "state-model-reshape",
+      "depends_on": [
+        "parallel-status-view"
+      ],
+      "created": "2026-06-22T03:59:16+00:00",
+      "updated": "2026-06-22T03:59:16+00:00"
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-18T16:49:16+00:00",
+  "updated": "2026-06-22T04:56:39+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1397,16 +1381,16 @@
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
     },
-    "multi-agent-installer": {
-      "title": "Multi-agent installer reach",
-      "goal": "On install, ADD onboards six more AI agents \u2014 Cursor, Windsurf, Trae, Gemini CLI, GitHub Copilot, Cline/Aider \u2014 by writing each one's context file so it loads ADD on first run.",
+    "state-model-reshape": {
+      "title": "Multi-active state model + migration (team-collaboration foundation)",
+      "goal": "ADD's engine tracks N truly-parallel active milestones \u2014 state.json holds a SET of active milestones, each with its own active task \u2014 with a backward-compatible migration from the single-active schema and the ENGINE_MD5 pin deliberately re-established.",
       "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-18T16:11:14+00:00",
-      "updated": "2026-06-18T16:49:16+00:00"
+      "status": "active",
+      "created": "2026-06-22T03:44:03+00:00",
+      "updated": "2026-06-22T03:44:03+00:00"
     }
   },
-  "active_milestone": "multi-agent-installer",
+  "active_milestone": "state-model-reshape",
   "archived": [
     {
       "slug": "v5",
@@ -1747,6 +1731,23 @@
         "global-data"
       ],
       "archived": "2026-06-17"
+    },
+    {
+      "slug": "multi-agent-installer",
+      "title": "Multi-agent installer reach",
+      "tasks": 3,
+      "task_slugs": [
+        "agents-md-profiles",
+        "gemini-settings-config",
+        "onboarding-docs-refresh"
+      ],
+      "archived": "2026-06-22"
     }
-  ]
+  ],
+  "active_milestones": [
+    "state-model-reshape"
+  ],
+  "active_tasks": {
+    "state-model-reshape": "state-schema-migration"
+  }
 }
