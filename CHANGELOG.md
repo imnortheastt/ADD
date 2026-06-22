@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.8.0 — 2026-06-23
+
+- Multi-active state model + migration (team-collaboration foundation) — 8 carried · 0 key decision(s)
+- User Identity — 3 carried · 0 key decision(s)
+- Ownership & assignment — 3 carried · 0 key decision(s)
+- Git-merge safety — 4 carried · 0 key decision(s)
+- Multi Active Ux — 6 carried · 0 key decision(s)
+- Delta Resolution Polish — 0 carried · 0 key decision(s)
+
 ## 1.7.3 — 2026-06-18
 
 - Multi-agent installer reach — 0 carried · 0 key decision(s)
