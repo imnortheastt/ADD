@@ -59,6 +59,7 @@ LIFECYCLE = [
     ["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"],
     ["new-task", "t", "--title", "Feature"],   # auto-linked to mvp
     ["autonomy"],                              # read-only dial view of active task t (reads TASK/PROJECT/state, never docs/)
+    ["whoami"],                                # read-only actor resolve (git config -> OS user; reads state, never docs/)
     ["status"],
     ["guide"],
     ["stage", "mvp"],

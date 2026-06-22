@@ -1133,12 +1133,30 @@
     },
     "actor-identity": {
       "title": "git-native whoami resolver + actor model",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "user-identity",
       "depends_on": [],
       "created": "2026-06-22T06:39:02+00:00",
-      "updated": "2026-06-22T06:39:02+00:00"
+      "updated": "2026-06-22T07:28:08+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "e9481b02a8b9a5e160461f75ae7c3a34",
+        "tests": {
+          "add-method/tooling/test_actor_identity.py": "7d8c2644e0a12a81f9375678a980d59b"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_actor_identity.py",
+          "add-method/tooling/test_min_pillar.py"
+        ],
+        "snapshot_md5": "2c0c1cec5db4a5c3974ea3e3c1f0fc6e"
+      }
     },
     "actor-stamping": {
       "title": "stamp the structured actor on every human seam",
@@ -1164,7 +1182,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T06:39:23+00:00",
+  "updated": "2026-06-22T07:28:08+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",

@@ -17,6 +17,8 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.request
@@ -330,6 +332,51 @@ def _deactivate_milestone(state: dict, slug: str) -> None:
         new = ms_list[-1] if ms_list else None
         state["active_milestone"] = new
         state["active_task"] = (state.get("active_tasks") or {}).get(new) if new else None
+
+
+def _git_config(key: str) -> str | None:
+    """Read one `git config --get <key>`, STRICTLY fail-soft: the engine's FIRST git call,
+    so it never raises, never hangs, never shells. Returns the trimmed value, or None when
+    git is absent / errors / times out / the value is empty."""
+    if shutil.which("git") is None:
+        return None
+    try:
+        out = subprocess.run(
+            ["git", "config", "--get", key],
+            capture_output=True, text=True, timeout=2,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError, ValueError):
+        # OSError: git vanished between which() and run() / spawn error · SubprocessError:
+        # TimeoutExpired · ValueError: a non-UTF-8 config value (latin-1 legacy name) makes
+        # text=True decoding raise UnicodeDecodeError (a ValueError) — all fail soft to None.
+        return None
+    return out or None
+
+
+def _os_user() -> str:
+    """The guaranteed non-empty OS floor. getpass.getuser() reads LOGNAME/USER/... then
+    falls back to the passwd database — but in a bare container (no env var AND no passwd
+    entry) CPython raises KeyError (OSError only on 3.13+). Catch broadly and return a
+    sentinel so _whoami stays TOTAL: it always yields a non-empty name, never crashes."""
+    try:
+        return getpass.getuser() or "unknown"
+    except (KeyError, OSError):
+        return "unknown"
+
+
+def _whoami(state: dict) -> dict:
+    """Resolve the current git-native ACTOR -> {name, email, source}. Priority:
+    (1) an `actor_override` (whoami --set) with a non-blank name -> source 'override';
+    (2) `git config user.name`/`user.email` -> source 'git';
+    (3) the OS user (_os_user) -> source 'os', the guaranteed non-empty floor.
+    Total: always returns a dict with a non-empty name; `email` may be None."""
+    ov = state.get("actor_override")
+    if ov and (ov.get("name") or "").strip():
+        return {"name": ov["name"], "email": ov.get("email"), "source": "override"}
+    name = _git_config("user.name")
+    if name:
+        return {"name": name, "email": _git_config("user.email"), "source": "git"}
+    return {"name": _os_user(), "email": None, "source": "os"}
 
 
 def load_state(root: Path) -> dict:
@@ -1118,6 +1165,30 @@ def cmd_lock(args: argparse.Namespace) -> None:
     else:
         print(f"locked setup ({','.join(layers)}) by {who} @ {when}")
         print(_next_footer(root, state))
+
+
+def cmd_whoami(args: argparse.Namespace) -> None:
+    """Show / set / unset the git-native ACTOR — the identity every human-owned stamp reads.
+    No flags: print the resolved actor (override -> git -> os). --name/--email: store an
+    override. --unset: clear it. Validates before mutating (a reject leaves state unchanged)."""
+    root = _require_root()
+    state = load_state(root)
+    if args.unset:
+        if "actor_override" not in state:
+            _die("no_actor_override")
+        del state["actor_override"]
+        save_state(root, state)
+    elif args.name is not None:
+        if not args.name.strip():
+            _die("actor_name_blank")
+        state["actor_override"] = {"name": args.name, "email": args.email or None}
+        save_state(root, state)
+    who = _whoami(state)
+    if getattr(args, "json", False):
+        print(json.dumps(who, separators=(",", ":")))
+        return
+    email = f" <{who['email']}>" if who.get("email") else ""
+    print(f"actor : {who['name']}{email} (source: {who['source']})")
 
 
 def _has_production_roadmap(state: dict) -> bool:
@@ -5170,6 +5241,17 @@ def build_parser() -> argparse.ArgumentParser:
     pl.add_argument("--force", action="store_true", help="re-lock an already-locked project")
     pl.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
     pl.set_defaults(func=cmd_lock)
+
+    pwho = sub.add_parser("whoami",
+                          help="show / set the git-native actor (git config -> OS user; --name to override)")
+    # --name (set) and --unset (clear) are mutually exclusive — argparse rejects the
+    # contradiction (exit 2) before any state read, so neither silently wins.
+    pwho_mut = pwho.add_mutually_exclusive_group()
+    pwho_mut.add_argument("--name", default=None, help="set an actor override (name)")
+    pwho_mut.add_argument("--unset", action="store_true", help="clear the actor override")
+    pwho.add_argument("--email", default=None, help="set the override email (with --name)")
+    pwho.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
+    pwho.set_defaults(func=cmd_whoami)
 
     pn = sub.add_parser("new-task", help="scaffold a new task (TASK.md + tests/ + src/)")
     pn.add_argument("slug")
