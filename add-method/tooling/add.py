@@ -175,29 +175,59 @@ def _atomic_write(path: Path, text: str) -> None:
 
 
 def _atomic_write_many(writes: list[tuple[Path, str]]) -> None:
-    """Two-phase commit across several files — design-for-failure for a multi-file write.
+    """True all-or-nothing commit across N files — design-for-failure for a multi-file write.
 
-    Phase 1 STAGES every (path, text) to a sibling temp file; the realistic IO failures
-    (disk full, permission denied) surface HERE, before any visible file changes — and on any
-    failure every staged temp is removed, so NOTHING is committed. Phase 2 then `os.replace`s
-    each staged temp into place (same-dir renames are atomic and effectively never fail once the
-    temp is written). This narrows the partial-write window of N independent `_atomic_write`s to
-    the rename loop, honouring a caller's "any failure -> write nothing" across the whole set.
+    Phase 1 STAGES every (path, text) to a sibling `.tmp`, flushing + fsync-ing each, so the
+    realistic IO failures (disk full, permission denied) surface HERE, before any target changes —
+    and on any stage failure every staged temp is removed, so NOTHING is committed. Phase 2 then
+    COMMITS each file by renaming any existing target ASIDE to a sibling `.bak`, then `os.replace`-ing
+    the staged `.tmp` into place. If ANY commit rename raises, every file already committed is rolled
+    back IN REVERSE (remove the landed new file, rename its `.bak` back, or leave it absent) and the
+    original error re-raised — so the whole set is all-or-nothing: either every file holds its new
+    text, or every file holds its prior content. Restoring is an atomic rename of an already-written
+    `.bak` (no content held in memory, no re-write), the cheapest recovery under failing IO. Leftover
+    `.tmp`/`.bak` siblings are removed on every exit path.
     """
     staged: list[tuple[str, Path]] = []
+    committed: list[list] = []                    # [path, bak_or_None, new_landed] per committed file
     try:
-        for path, text in writes:
+        for path, text in writes:                 # phase 1: stage every temp (fsync'd before any commit)
             path.parent.mkdir(parents=True, exist_ok=True)
             fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
+            staged.append((tmp, path))            # track BEFORE write so a write/fsync failure still cleans it
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 fh.write(text)
-            staged.append((tmp, path))
-        for tmp, path in staged:                  # phase 2: commit via atomic renames
-            os.replace(tmp, path)
+                fh.flush()
+                os.fsync(fh.fileno())
+        try:
+            for tmp, path in staged:              # phase 2: commit via rename-aside
+                bak = None
+                existed = path.exists()
+                if existed:
+                    fd2, bak = tempfile.mkstemp(dir=str(path.parent), suffix=".bak")
+                    os.close(fd2)
+                committed.append([path, bak, False])   # track .bak NOW so cleanup never leaks it
+                if existed:
+                    os.replace(path, bak)         # move the existing target aside
+                os.replace(tmp, path)             # move the new file in
+                committed[-1][2] = True
+        except OSError:
+            for path, bak, landed in reversed(committed):   # roll back, newest-first
+                try:
+                    if landed and path.exists():
+                        os.unlink(path)           # drop the new file we put in
+                    if bak is not None and not path.exists():
+                        os.replace(bak, path)     # restore the prior target (atomic rename)
+                except OSError:
+                    pass                          # best-effort restore under already-failing IO
+            raise
     finally:
-        for tmp, _ in staged:                     # leftover temps (a failed/aborted stage) never persist
+        for tmp, _ in staged:                     # leftover .tmp (failed/aborted stage) never persists
             if os.path.exists(tmp):
                 os.unlink(tmp)
+        for path, bak, landed in committed:       # leftover .bak (success, or orphaned post-rollback)
+            if bak is not None and os.path.exists(bak):
+                os.unlink(bak)
 
 
 def _templates_dir() -> Path:
@@ -740,16 +770,25 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     # seeded flip NOW (before any write); the slug-free check above has already passed, so
     # the only writes below are the new TASK.md, then the prior flip, then state.
     from_delta = getattr(args, "from_delta", None)
+    match = getattr(args, "match", None)
+    if match and not from_delta:                            # --match targets the PRIOR's delta
+        _die("match_requires_from_delta: --match needs --from-delta <prior> (it selects the "
+             "prior task's open SPEC delta to seed)")
     feature_override = prior_md = flipped_prior = None
     if from_delta:
         prior = _resolve_task(state, from_delta)            # unknown prior -> _die
         prior_md = root / "tasks" / prior / "TASK.md"
         prior_text = prior_md.read_text(encoding="utf-8")
-        delta_text = _first_open_spec_text(prior_text)
-        if delta_text is None:
+        status, idx, delta_text = _select_spec_delta(prior_text, match)
+        if status == "no_open":
             _die(f"no_open_spec_delta: task '{prior}' has no open SPEC delta to seed")
+        if status == "no_match":
+            _die(f"no_matching_spec_delta: no open SPEC delta in '{prior}' matches --match '{match}'")
+        if status == "ambiguous":
+            _die(f"ambiguous_spec_match: --match '{match}' matches multiple open SPEC deltas in "
+                 f"'{prior}' — narrow it")
         feature_override = f"{delta_text} (from {prior} spec-delta)"
-        flipped_prior = _resolve_spec_delta(prior_text, "seeded", pointer=slug)
+        flipped_prior = _resolve_spec_delta(prior_text, "seeded", pointer=slug, line_index=idx)
 
     (tdir / "tests").mkdir(parents=True, exist_ok=True)
     (tdir / "src").mkdir(parents=True, exist_ok=True)
@@ -763,9 +802,10 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     if feature_override:                                     # pre-fill §1 from the seeded delta
         rendered = re.sub(r"(?m)^Feature:.*$",
                           lambda _m: f"Feature: {feature_override}", rendered, count=1)
-    _atomic_write(task_md, rendered)
+    seed_writes: list[tuple[Path, str]] = [(task_md, rendered)]
     if flipped_prior is not None:                           # consume the source delta -> seeded
-        _atomic_write(prior_md, flipped_prior)
+        seed_writes.append((prior_md, flipped_prior))
+    _atomic_write_many(seed_writes)                         # new TASK.md + consumed source as one commit
     if _project_autonomy_token(root) == "?":
         print("warning: garbled_project_autonomy — PROJECT.md declares an unrecognized "
               f"autonomy token; new task seeded fail-safe '{autonomy}' "
@@ -810,11 +850,19 @@ def cmd_drop_delta(args: argparse.Namespace) -> None:
     state = load_state(root)
     slug = _resolve_task(state, args.slug)                  # unknown task -> _die
     task_md = root / "tasks" / slug / "TASK.md"
-    new_text = _resolve_spec_delta(task_md.read_text(encoding="utf-8"), "dropped")
-    if new_text is None:
+    text = task_md.read_text(encoding="utf-8")
+    match = getattr(args, "match", None)
+    status, idx, _disp = _select_spec_delta(text, match)
+    if status == "no_open":
         _die(f"no_open_spec_delta: task '{slug}' has no open SPEC delta to drop")
+    if status == "no_match":
+        _die(f"no_matching_spec_delta: no open SPEC delta in '{slug}' matches --match '{match}'")
+    if status == "ambiguous":
+        _die(f"ambiguous_spec_match: --match '{match}' matches multiple open SPEC deltas in "
+             f"'{slug}' — narrow it")
+    new_text = _resolve_spec_delta(text, "dropped", line_index=idx)
     _atomic_write(task_md, new_text)
-    print(f"dropped the first open SPEC delta in '{slug}' -> [SPEC · dropped]")
+    print(f"dropped the {'matched' if match else 'first'} open SPEC delta in '{slug}' -> [SPEC · dropped]")
     print(_next_footer(root, state))
 
 
@@ -2916,10 +2964,15 @@ def cmd_compact(args: argparse.Namespace) -> None:
     # hand-off that resolves into a task, not a foundation lesson — an open one ANYWHERE would
     # be orphaned at the next compaction. Deliberately broader than the member-scoped competency
     # guard above. Still validate-before-move: refuses BEFORE the first rename.
+    # --force overrides THIS guard ONLY (never a structural reject above) — the escape hatch
+    # for a settled milestone blocked by an unrelated open SPEC delta elsewhere. Bypass is
+    # loud (warns + records `force_bypassed_spec_deltas`), never silent.
+    forced = getattr(args, "force", False)
     spec_offenders = sorted({d["task"] for d in _collect_open_spec_deltas(root)})
-    if spec_offenders:
+    if spec_offenders and not forced:
         _die("open_spec_deltas_unresolved: resolve every open SPEC delta first "
-             "(`add.py deltas`; seed with `new-task --from-delta`, or `drop-delta`) — "
+             "(`add.py deltas`; seed with `new-task --from-delta`, or `drop-delta`; "
+             "or re-run with --force to compact past them) — "
              "open in: " + " · ".join(spec_offenders))
     # every precondition passed — move (same-filesystem renames, never a delete)
     def _files(d: Path) -> int:
@@ -2937,7 +2990,12 @@ def cmd_compact(args: argparse.Namespace) -> None:
         moved.append((f"tasks/{t}/", n))
     # state write is the LAST step: additive stamp only — task_slugs untouched
     entry["compacted"] = date.today().isoformat()
+    if spec_offenders:                       # forced is implied (un-forced would have _die'd)
+        entry["force_bypassed_spec_deltas"] = spec_offenders
     save_state(root, state)
+    if spec_offenders:
+        print("⚠ --force bypassed open SPEC delta(s) in: " + " · ".join(spec_offenders) +
+              " — recorded as force_bypassed_spec_deltas; resolve them before the next release.")
     total = sum(n for _, n in moved)
     print(f"compacted milestone '{slug}' -> .add/archive/{slug}/ "
           f"({len(members)} task dirs, {total} files moved)")
@@ -4670,40 +4728,61 @@ def _collect_open_spec_deltas(root: Path) -> list[dict]:
 _SPEC_OPEN_TOKEN_RE = re.compile(r"(\[\s*SPEC\s*·\s*)open(\s*\])")
 
 
-def _resolve_spec_delta(text: str, new_status: str, pointer: str | None = None) -> str | None:
-    """Flip the FIRST `[SPEC · open]` line in `text` to `new_status`; return the new text.
+def _resolve_spec_delta(text: str, new_status: str, pointer: str | None = None,
+                        line_index: int | None = None) -> str | None:
+    """Flip ONE `[SPEC · open]` line in `text` to `new_status`; return the new text.
 
-    PURE — no IO. Only the status token changes (+ a trailing ` [→ <pointer>]` provenance
-    stamp when seeding); the entry's text and `(evidence: …)` are byte-preserved. Returns
-    None when there is NO open SPEC delta — the caller then refuses and writes nothing
-    (validate-all-then-write). Mirrors the `_autonomy_decl_line` pure-transform pattern."""
+    PURE — no IO. With `line_index` (a splitlines(keepends=True) index, as `_select_spec_delta`
+    returns) flip THAT line; without it, flip the FIRST open delta (back-compat). Only the status
+    token changes (+ a trailing ` [→ <pointer>]` provenance stamp when seeding); the entry's text
+    and `(evidence: …)` are byte-preserved. Returns None when there is NO open SPEC delta to flip —
+    the caller then refuses and writes nothing. Mirrors the `_autonomy_decl_line` pure-transform."""
     lines = text.splitlines(keepends=True)
-    for i, ln in enumerate(lines):
+    target = line_index
+    if target is None:                             # back-compat: the FIRST open delta
+        for i, ln in enumerate(lines):
+            m = _SPEC_DELTA_RE.match(ln.rstrip("\n"))
+            if m and m.group(2) == "open":
+                target = i
+                break
+        if target is None:
+            return None
+    ln = lines[target]
+    eol = ln[len(ln.rstrip("\n")):]                # preserve the exact line ending
+    body = _SPEC_OPEN_TOKEN_RE.sub(rf"\g<1>{new_status}\g<2>", ln.rstrip("\n"), count=1)
+    if pointer:
+        body = f"{body} [→ {pointer}]"
+    lines[target] = body + eol
+    return "".join(lines)
+
+
+def _select_spec_delta(text: str, match: str | None = None) -> tuple[str, int | None, str | None]:
+    """Pick the open SPEC delta to resolve (delta-match-selector). PURE — no IO.
+
+    `match=None` -> the FIRST open delta. `match=<substr>` -> the UNIQUE open delta whose display
+    text (status token + `(evidence: …)` excluded) contains <substr>, case-insensitive. Returns
+    (status, line_index, display_text) where status is one of: "ok" (line_index/display set),
+    "no_open" (no open delta at all), "no_match" (--match hit zero), "ambiguous" (--match hit >1).
+    line_index is a splitlines(keepends=True) index, the same `_resolve_spec_delta` flips."""
+    opens: list[tuple[int, str]] = []
+    for i, ln in enumerate(text.splitlines(keepends=True)):
         m = _SPEC_DELTA_RE.match(ln.rstrip("\n"))
         if not m or m.group(2) != "open":
             continue
-        eol = ln[len(ln.rstrip("\n")):]            # preserve the exact line ending
-        body = _SPEC_OPEN_TOKEN_RE.sub(rf"\g<1>{new_status}\g<2>", ln.rstrip("\n"), count=1)
-        if pointer:
-            body = f"{body} [→ {pointer}]"
-        lines[i] = body + eol
-        return "".join(lines)
-    return None
-
-
-def _first_open_spec_text(text: str) -> str | None:
-    """The first OPEN SPEC delta's text (evidence stripped) in `text`, or None.
-
-    Used to pre-fill a seeded task's §1 Feature line from the SAME in-memory text the
-    flip operates on (one read, consistent selection)."""
-    for unit in _spec_delta_entries(text):
-        m = _SPEC_DELTA_RE.match(unit[0])
-        if m.group(2) != "open":
-            continue
-        tail = " ".join([m.group(3).strip(), *unit[1:]]).strip()
-        em = _EVIDENCE_RE.match(tail)
-        return em.group(1).strip() if em else tail
-    return None
+        tail = m.group(3).strip()
+        cut = tail.find("(evidence:")             # exclude the evidence tail even if its paren is unclosed
+        opens.append((i, (tail[:cut].strip() if cut != -1 else tail)))
+    if not opens:
+        return ("no_open", None, None)
+    if match is None:
+        return ("ok", opens[0][0], opens[0][1])
+    needle = match.lower()
+    hits = [(i, d) for i, d in opens if needle in d.lower()]
+    if not hits:
+        return ("no_match", None, None)
+    if len(hits) > 1:
+        return ("ambiguous", None, None)
+    return ("ok", hits[0][0], hits[0][1])
 
 
 # ── add.py fold — mechanized competency-lesson consolidation ────────────────────────────────
@@ -4873,13 +4952,9 @@ def cmd_fold(args: argparse.Namespace) -> None:
     proj_text = _prepend_key_decision_row(proj_text, row)
     proj_text = re.sub(r"foundation-version:\s*\d+", f"foundation-version: {new_v}", proj_text, count=1)
 
-    # ── all bodies built; commit via a two-phase write (stage every temp, then rename-all). A
-    #    phase-1 temp-write failure — the REALISTIC one (disk-full / permission) — leaves NOTHING
-    #    written. A phase-2 mid-rename failure (near-impossible on same-dir renames) can leave the
-    #    foundation advanced while a TASK.md stays unflipped; files are ordered foundation-FIRST so
-    #    the lesson then stays visibly `open` and a re-run re-transcribes (DUPLICATING, never
-    #    losing — manual fixup), rather than a silently-flipped-but-untranscribed loss. A true
-    #    all-or-nothing N-file commit is the multi-file-commit follow-up task. ────────────────────
+    # ── all bodies built; commit ALL via the all-or-nothing multi-file primitive: a stage failure
+    #    (disk-full / permission) writes nothing, and a mid-commit rename failure rolls back every
+    #    already-committed file — so the foundation never advances while a TASK.md stays unflipped. ─
     writes: list[tuple[Path, str]] = [(project_md, proj_text)]
     touched = ["PROJECT.md"]
     if conv_text != conventions_text:
@@ -5401,19 +5476,11 @@ def cmd_release(args: argparse.Namespace) -> None:
                              _render_releases_row(args.version, day, bundle, waiver_slugs,
                                                   getattr(args, "evidence", None),
                                                   _render_actor_line(state)))
-    _atomic_write(changelog_path, new_cl)
-    try:
-        _atomic_write(releases_path, new_rel)         # the attribution commit point
+    try:                                              # CHANGELOG + RELEASES as one all-or-nothing commit
+        _atomic_write_many([(changelog_path, new_cl), (releases_path, new_rel)])
     except OSError as e:
-        if cl_before is not None:                     # ROLLBACK (design-for-failure)
-            _atomic_write(changelog_path, cl_before)
-        else:
-            try:
-                changelog_path.unlink()
-            except OSError:
-                pass
-        _die(f"release_write_failed: the ledger write failed ({e}); CHANGELOG was rolled back — "
-             "nothing was recorded. Retry the release.")
+        _die(f"release_write_failed: the ledger write failed ({e}); nothing was recorded — both "
+             "files were rolled back to their prior content. Retry the release.")
 
     # NO save_state — attribution lives in RELEASES.md (the cue re-reads it), never state.json
     ms = ", ".join(m["slug"] for m in bundle) if bundle else "none"
@@ -5623,14 +5690,20 @@ def build_parser() -> argparse.ArgumentParser:
     pn.add_argument("--depends-on", dest="depends_on", default=None,
                     help="comma-separated task slugs this task depends on")
     pn.add_argument("--from-delta", dest="from_delta", default=None, metavar="PRIOR",
-                    help="SEED PRIOR's first open SPEC delta into this task (pre-fills §1 "
+                    help="SEED PRIOR's open SPEC delta into this task (pre-fills §1 "
                          "Feature, flips the source -> [SPEC · seeded] [→ this])")
+    pn.add_argument("--match", default=None, metavar="SUBSTR",
+                    help="with --from-delta: target the UNIQUE open SPEC delta whose text "
+                         "contains SUBSTR (case-insensitive) instead of the first")
     pn.add_argument("--force", action="store_true", help="overwrite TASK.md if present")
     pn.set_defaults(func=cmd_new_task)
 
     pdd = sub.add_parser("drop-delta",
-                         help="dismiss a task's first open SPEC delta -> [SPEC · dropped]")
-    pdd.add_argument("slug", help="task whose first open SPEC delta to drop")
+                         help="dismiss a task's open SPEC delta -> [SPEC · dropped]")
+    pdd.add_argument("slug", help="task whose open SPEC delta to drop")
+    pdd.add_argument("--match", default=None, metavar="SUBSTR",
+                     help="target the UNIQUE open SPEC delta whose text contains SUBSTR "
+                          "(case-insensitive) instead of the first")
     pdd.set_defaults(func=cmd_drop_delta)
 
     pm = sub.add_parser("new-milestone", help="scaffold a milestone (SDD living doc)")
@@ -5684,6 +5757,9 @@ def build_parser() -> argparse.ArgumentParser:
                          help="heavy archive: move an archived milestone's files into "
                               ".add/archive/<slug>/ (recoverable reverse move)")
     pco.add_argument("slug")
+    pco.add_argument("--force", action="store_true",
+                     help="compact past an unrelated open SPEC delta (the open_spec_deltas_unresolved "
+                          "guard ONLY; never a structural reject) — bypass is warned + recorded")
     pco.set_defaults(func=cmd_compact)
 
     pp = sub.add_parser("phase", help="set a task's phase explicitly")
