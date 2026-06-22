@@ -37,11 +37,19 @@ Out: NO new delta TYPES or grammar (delta-resolution already shipped seed/drop +
   on a mid-write failure, and the error code(s); fold/seed/release all call it, so freeze its shape first -> owning task `multi-file-commit`
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] multi-file-commit     depends-on: none   — the all-or-nothing multi-file write primitive (stage→fsync→rename-all + rollback); fold/seed/release adopt it. The risky shared contract — freeze first.
-- [ ] delta-match-selector  depends-on: none   — `--match <substr>` on `new-task --from-delta` + `drop-delta` to target one open SPEC delta among several; reject 0-match / ambiguous.
-- [ ] compact-force-override depends-on: none  — `compact --force` escape hatch for an urgent compaction blocked by an UNRELATED open SPEC delta; guard still reports, override recorded.
+- [x] multi-file-commit     depends-on: none   — the all-or-nothing multi-file write primitive (stage→fsync→rename-all + rollback); fold/seed/release adopt it. The risky shared contract — freeze first.
+- [x] delta-match-selector  depends-on: none   — `--match <substr>` on `new-task --from-delta` + `drop-delta` to target one open SPEC delta among several; reject 0-match / ambiguous.
+- [x] compact-force-override depends-on: none  — `compact --force` escape hatch for an urgent compaction blocked by an UNRELATED open SPEC delta; guard still reports, override recorded.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `fold`/`seed`/`release` write N files all-or-nothing — an injected mid-write failure leaves the prior state intact (no partial residue), proven by a failure-injection test   (← multi-file-commit)
-- [ ] a specific open SPEC delta is targetable via `--match <substr>` on `new-task --from-delta` and `drop-delta`; a 0-match or ambiguous `--match` is rejected with a named error   (← delta-match-selector)
-- [ ] `compact --force` completes an urgent compaction despite an UNRELATED open SPEC delta, with the override recorded; without `--force` the guard still blocks   (← compact-force-override)
+- [x] `fold`/`seed`/`release` write N files all-or-nothing — an injected mid-write failure leaves the prior state intact (no partial residue), proven by a failure-injection test   (← multi-file-commit) (verify: `python3 -m unittest test_multi_file_commit`)
+- [x] a specific open SPEC delta is targetable via `--match <substr>` on `new-task --from-delta` and `drop-delta`; a 0-match or ambiguous `--match` is rejected with a named error   (← delta-match-selector) (verify: `python3 -m unittest test_delta_match_selector`)
+- [x] `compact --force` completes an urgent compaction despite an UNRELATED open SPEC delta, with the override recorded; without `--force` the guard still blocks   (← compact-force-override) (verify: `python3 -m unittest test_compact_force_override`)
+
+## Close — ship review (filled at milestone-done)
+Ship by domain (engine / delta-resolution machinery):
+- multi-file-commit — `_atomic_write_many` hardened to stage→fsync→rename-aside→rename-all with all-or-nothing rollback; `fold`/`release`/`seed` route through it. Evidence: `test_multi_file_commit` 11/11 (PrimitiveTest + AdoptionTest + per-caller atomicity + EnginePin). Gate PASS (conservative, human-gated).
+- delta-match-selector — `--match <substr>` on `new-task --from-delta` and `drop-delta`; first-open default preserved byte-identical; 0-match→`no_matching_spec_delta`, >1→`ambiguous_spec_match`. Evidence: `test_delta_match_selector` 9/9. Gate PASS (auto).
+- compact-force-override — `compact --force` overrides the `open_spec_deltas_unresolved` block ONLY (never a structural guard), bypass warned + recorded as `force_bypassed_spec_deltas`. Evidence: `test_compact_force_override` 6/6. Gate PASS (auto).
+
+Goal-met map: all 3 forward SPEC deltas from delta-resolution resolved → 3/3 exit criteria green, each citing a passing suite. Full suite 1543 passed / 0 failed; `add.py check` 377/0; `audit` clean. Engine 3-copy parity + ENGINE_MD5 (3f82050…) held throughout. Each task had an independent refute-read (verdicts SOUND, nits fixed in-build).

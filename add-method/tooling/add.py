@@ -2964,10 +2964,15 @@ def cmd_compact(args: argparse.Namespace) -> None:
     # hand-off that resolves into a task, not a foundation lesson — an open one ANYWHERE would
     # be orphaned at the next compaction. Deliberately broader than the member-scoped competency
     # guard above. Still validate-before-move: refuses BEFORE the first rename.
+    # --force overrides THIS guard ONLY (never a structural reject above) — the escape hatch
+    # for a settled milestone blocked by an unrelated open SPEC delta elsewhere. Bypass is
+    # loud (warns + records `force_bypassed_spec_deltas`), never silent.
+    forced = getattr(args, "force", False)
     spec_offenders = sorted({d["task"] for d in _collect_open_spec_deltas(root)})
-    if spec_offenders:
+    if spec_offenders and not forced:
         _die("open_spec_deltas_unresolved: resolve every open SPEC delta first "
-             "(`add.py deltas`; seed with `new-task --from-delta`, or `drop-delta`) — "
+             "(`add.py deltas`; seed with `new-task --from-delta`, or `drop-delta`; "
+             "or re-run with --force to compact past them) — "
              "open in: " + " · ".join(spec_offenders))
     # every precondition passed — move (same-filesystem renames, never a delete)
     def _files(d: Path) -> int:
@@ -2985,7 +2990,12 @@ def cmd_compact(args: argparse.Namespace) -> None:
         moved.append((f"tasks/{t}/", n))
     # state write is the LAST step: additive stamp only — task_slugs untouched
     entry["compacted"] = date.today().isoformat()
+    if spec_offenders:                       # forced is implied (un-forced would have _die'd)
+        entry["force_bypassed_spec_deltas"] = spec_offenders
     save_state(root, state)
+    if spec_offenders:
+        print("⚠ --force bypassed open SPEC delta(s) in: " + " · ".join(spec_offenders) +
+              " — recorded as force_bypassed_spec_deltas; resolve them before the next release.")
     total = sum(n for _, n in moved)
     print(f"compacted milestone '{slug}' -> .add/archive/{slug}/ "
           f"({len(members)} task dirs, {total} files moved)")
@@ -5747,6 +5757,9 @@ def build_parser() -> argparse.ArgumentParser:
                          help="heavy archive: move an archived milestone's files into "
                               ".add/archive/<slug>/ (recoverable reverse move)")
     pco.add_argument("slug")
+    pco.add_argument("--force", action="store_true",
+                     help="compact past an unrelated open SPEC delta (the open_spec_deltas_unresolved "
+                          "guard ONLY; never a structural reject) — bypass is warned + recorded")
     pco.set_defaults(func=cmd_compact)
 
     pp = sub.add_parser("phase", help="set a task's phase explicitly")

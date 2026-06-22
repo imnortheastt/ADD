@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "delta-match-selector",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -907,74 +907,6 @@
         ]
       }
     },
-    "multi-file-commit": {
-      "title": "Multi File Commit",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "delta-resolution-polish",
-      "depends_on": [],
-      "created": "2026-06-17T02:07:27+00:00",
-      "updated": "2026-06-22T16:34:54+00:00",
-      "from_delta": "fold-command",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "9fbac2d751a48f8a4ded2f9b1c477c33",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py"
-        ],
-        "snapshot_md5": "d16e180b2c58fecfcedff92d0826681e"
-      },
-      "gate_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
-    },
-    "delta-match-selector": {
-      "title": "Delta Match Selector",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "delta-resolution-polish",
-      "depends_on": [],
-      "created": "2026-06-17T02:07:27+00:00",
-      "updated": "2026-06-22T16:52:05+00:00",
-      "from_delta": "seed-and-drop",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "640f0d891ae1dfcecc1f7d2c974b3fce",
-        "tests": {}
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py"
-        ],
-        "snapshot_md5": "9b8ad18ad77407c7be95239bf2442e90"
-      },
-      "gate_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
-    },
-    "compact-force-override": {
-      "title": "Compact Force Override",
-      "phase": "ground",
-      "gate": "none",
-      "milestone": "delta-resolution-polish",
-      "depends_on": [],
-      "created": "2026-06-17T02:07:27+00:00",
-      "updated": "2026-06-17T02:07:27+00:00",
-      "from_delta": "spec-delta-guards"
-    },
     "onboarding-brand": {
       "title": "Logo + feature showcase (interactive-only, byte-identical boundary)",
       "phase": "done",
@@ -1171,7 +1103,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T16:52:05+00:00",
+  "updated": "2026-06-22T17:06:08+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1301,14 +1233,6 @@
       "created": "2026-06-16T14:27:44+00:00",
       "updated": "2026-06-17T02:08:18+00:00"
     },
-    "delta-resolution-polish": {
-      "title": "Delta Resolution Polish",
-      "goal": "polish the delta-resolution machinery from the deltas the first milestone surfaced: a true multi-file commit primitive (all-or-nothing across N files), a --match selector to target a specific open SPEC delta, and a compact --force override for an unrelated open SPEC delta",
-      "stage": "mvp",
-      "status": "active",
-      "created": "2026-06-17T02:07:15+00:00",
-      "updated": "2026-06-17T02:07:15+00:00"
-    },
     "installer-smarts": {
       "title": "Smart onboarding installer",
       "goal": "On first run in a real terminal, add init onboards the user (brand, feature showcase, readiness, global-first scope, optional intent handoff to /add) instead of a silent file-drop; non-interactive/CI stays byte-identical.",
@@ -1350,7 +1274,7 @@
       "updated": "2026-06-18T13:58:42+00:00"
     }
   },
-  "active_milestone": "delta-resolution-polish",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1757,12 +1681,19 @@
         "cross-active-waves"
       ],
       "archived": "2026-06-22"
+    },
+    {
+      "slug": "delta-resolution-polish",
+      "title": "Delta Resolution Polish",
+      "tasks": 3,
+      "task_slugs": [
+        "multi-file-commit",
+        "delta-match-selector",
+        "compact-force-override"
+      ],
+      "archived": "2026-06-23"
     }
   ],
-  "active_milestones": [
-    "delta-resolution-polish"
-  ],
-  "active_tasks": {
-    "delta-resolution-polish": "delta-match-selector"
-  }
+  "active_milestones": [],
+  "active_tasks": {}
 }
