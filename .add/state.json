@@ -1271,7 +1271,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T06:18:15+00:00",
+  "updated": "2026-06-22T06:19:35+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1453,9 +1453,9 @@
       "title": "Multi-active state model + migration (team-collaboration foundation)",
       "goal": "ADD's engine tracks N truly-parallel active milestones \u2014 state.json holds a SET of active milestones, each with its own active task \u2014 with a backward-compatible migration from the single-active schema and the ENGINE_MD5 pin deliberately re-established.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-22T03:44:03+00:00",
-      "updated": "2026-06-22T03:44:03+00:00"
+      "updated": "2026-06-22T06:19:35+00:00"
     }
   },
   "active_milestone": "state-model-reshape",

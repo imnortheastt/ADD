@@ -57,31 +57,40 @@ Out: User IDENTITY / actor stamping (`whoami`) — sibling `user-identity`. Task
 - [ ] engine-repin-parity     depends-on: parallel-status-view   — Consolidated parity AUDIT: assert all 3 add.py copies byte-identical, ENGINE_MD5 current, and harden the parity test to cover the new multi-active invariants. risk:high.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] An existing single-active `.add/` project loads and auto-migrates to the multi-active schema with zero data loss; re-running the migration is a no-op   (← state-schema-migration)
-- [ ] Every engine command reads/writes the active milestone(s) and active task through the accessor seam; with one active milestone the engine's decisions are identical to today   (← active-accessors)
-- [ ] A user can activate ≥2 milestones at once and switch the active task within each; activating an unknown or done milestone is refused   (← multi-active-commands)
-- [ ] `status` shows the active set as parallel streams, each with its own active task + phase   (← parallel-status-view)
-- [ ] All THREE add.py copies stay byte-identical and ENGINE_MD5 is current and green; the parity test asserts the new multi-active invariants (the engine edit is pinned, not bypassed)   (← engine-repin-parity)
+- [x] An existing single-active `.add/` project loads and auto-migrates to the multi-active schema with zero data loss; re-running the migration is a no-op   (← state-schema-migration)
+- [x] Every engine command reads/writes the active milestone(s) and active task through the accessor seam; with one active milestone the engine's decisions are identical to today   (← active-accessors)
+- [x] A user can activate ≥2 milestones at once and switch the active task within each; activating an unknown or done milestone is refused   (← multi-active-commands)
+- [x] `status` shows the active set as parallel streams, each with its own active task + phase   (← parallel-status-view)
+- [x] All THREE add.py copies stay byte-identical and ENGINE_MD5 is current and green; the parity test asserts the new multi-active invariants (the engine edit is pinned, not bypassed)   (← engine-repin-parity)
 
 ## Close — ship review   (AI fills when every task is done — the evidence behind the engine gate, read before the boxes are checked)
 > Whole-milestone, cross-task review the AI fills in. It is the evidence behind the EXISTING engine
 > gate (milestone-done / checking the Exit-criteria boxes) — NOT a new approval. Tool-agnostic.
 
 ### Ship by domain   (what changed, per bounded context)
-- tooling : <add.py / state.json / templates — what shipped, or "untouched">
-- skill   : <SKILL.md / phases/* / guides — what shipped, or "untouched">
-- book    : <docs/* — what shipped, or "untouched">
+- tooling : add.py (all 3 byte-identical copies) — the multi-active state model: `_migrate_state` (pure/idempotent/total forward migration wired into both load seams) · born-migrated `cmd_init` · the accessor seam (`_active_milestone`/`_active_task`/`_set_active_milestone`/`_set_active_task`) with every ~20 call site routed through it · the SET writers `_activate_milestone`/`_deactivate_milestone` + the `activate`/`deactivate` verbs + a milestone-aware `use` + archive routed to deactivate · the `status` parallel-`streams :` render + the additive `status --json` keys (active_milestones/active_tasks). engine_pin.py re-pinned per task (25c6fcc5 → … → fa8e9818). state.json gains `active_milestones` (list) + `active_tasks` (map); the scalars stay as the N≤1 mirror.
+- skill   : untouched — no SKILL.md / phases/* / guide change (the 0–7 phase flow is unchanged, as scoped Out).
+- book    : untouched — no docs/* change (this is an engine-state foundation; the team-collaboration narrative lands with the later UX slices).
 
 ### Cross-task evidence   (one row per task)
-- <slug> : gate=<PASS|RISK-ACCEPTED> · tests=<n green> · residue=<none|note>
+- state-schema-migration : gate=PASS · tests=11 green (test_multi_active_state) · residue=none (review nit PURE-copy fixed in-verify)
+- active-accessors       : gate=PASS · tests=10 green (test_active_accessors) · residue=none (review nit stale-active_tasks-after-archive fixed in-verify; nit-2 cmd_use cross-milestone seeded → consumed by multi-active-commands)
+- multi-active-commands  : gate=PASS · tests=13 green (test_multi_active_commands) · residue=none (review BLOCK: non-primary-archive stale scalar — fixed red→green in-verify; NOTE cmd_use re-activates a done milestone → §7 SPEC delta)
+- parallel-status-view   : gate=PASS · tests=10 green (test_parallel_status_view) · residue=none (review MERGE-WITH-NITS: N=1 byte-identity unproven → 3 hardening assertions added)
+- engine-repin-parity    : gate=PASS · tests=7 green (test_engine_repin_parity) · residue=none (review MERGE: 2 docstring over-claims + 1 derivation NOTE closed; file-level audit proven to bite on real drift, restored)
 
 ### Goal met?   (map the evidence back to this milestone's Exit criteria — read before the Exit-criteria boxes are checked)
-- [ ] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
-- goal: <restate the milestone goal — and the one evidence line that proves the ship meets it>
+- [x] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
+  - migration/zero-loss/no-op ← state-schema-migration (11) + engine-repin-parity test_legacy_migrates_idempotent
+  - accessor seam · N≤1 identical ← active-accessors (10) + the full suite as the byte-for-decision oracle (no test weakened across the milestone)
+  - activate ≥2 · switch task · refuse unknown/done ← multi-active-commands (13: test_activate_reaches_n2 · test_use_switches_task_in_milestone · the 3 reject tests)
+  - status parallel streams ← parallel-status-view (10: test_two_active_render_as_streams) + the eyeballed CLI run
+  - 3 copies byte-identical · pin current · invariants asserted ← engine-repin-parity (7: ParityAudit + MultiActiveInvariants)
+- goal: ADD's engine now tracks N truly-parallel active milestones (a SET + per-milestone active task) with a backward-compatible, idempotent migration and a deliberately re-established ENGINE_MD5 pin — proven by `add.py activate m1` reaching N=2 with `status` rendering parallel streams while the full 1427-test suite (the N≤1 oracle) stays green and all 3 engine copies match the current pin.
 
 ## Release steps   (AI-DEFINED — fill the ordered steps to ship this milestone; engine records, human gate)
 > The AI writes the release steps for THIS milestone here (hints, not engine commands). MERGE is one
 > small step among them. These feed the release scope (release.md) when the cut is bundled.
-- [ ] <step — e.g. open a PR from the Close ship-review above; the human reviews + merges>
-- [ ] <step — e.g. export the ship-review to a hand-off doc, e.g. `pandoc CLOSE.md -o close.docx`>
-- [ ] <step — e.g. tag / publish / deploy  (human-run, per release.md)>
+- [ ] open a PR from this milestone's 5 commits (state-schema-migration → engine-repin-parity) for human review + merge to main (admin-merge via the TinDang97 gh account; push as TinDang97 over HTTPS — tindangtts is pull-only)
+- [ ] this is milestone 1 of the team-collaboration major — do NOT release solo; bundle the cut with the sibling slices (user-identity · ownership-assignment · git-merge-safety · multi-active-UX) OR cut a foundation release once the human decides the SET-model is independently shippable (per release.md; the engine records, the human tags/publishes)
+- [ ] on release: bump the 4 version sources in lockstep + migrate the forward-pinned test_release_X_Y_Z.py (see the release-gate pattern); the security HARD-STOP floor is un-forceable
