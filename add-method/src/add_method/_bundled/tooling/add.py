@@ -308,6 +308,30 @@ def _set_active_task(state: dict, slug: str | None, milestone: str | None = None
         tasks_map[ms] = slug
 
 
+def _activate_milestone(state: dict, slug: str) -> None:
+    """Add a milestone to the active SET (idempotent) and make it the primary focus,
+    syncing the scalar active_task to that milestone's entry. Does NOT remove other members
+    (this is how a user reaches N>=2 active milestones)."""
+    ms_list = state.setdefault("active_milestones", [])
+    if slug not in ms_list:
+        ms_list.append(slug)
+    state["active_milestone"] = slug
+    state["active_task"] = (state.get("active_tasks") or {}).get(slug)
+
+
+def _deactivate_milestone(state: dict, slug: str) -> None:
+    """Remove a milestone from the active SET, pop its active-task entry, and (if it was the
+    primary) repoint the primary to the most-recent remaining member (or None when empty)."""
+    ms_list = state.setdefault("active_milestones", [])
+    if slug in ms_list:
+        ms_list.remove(slug)
+    (state.setdefault("active_tasks", {})).pop(slug, None)
+    if state.get("active_milestone") == slug:
+        new = ms_list[-1] if ms_list else None
+        state["active_milestone"] = new
+        state["active_task"] = (state.get("active_tasks") or {}).get(new) if new else None
+
+
 def load_state(root: Path) -> dict:
     """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
     dies with a clean 'state_invalid' message (never a raw traceback), so every
@@ -2443,10 +2467,9 @@ def cmd_archive_milestone(args: argparse.Namespace) -> None:
     del state["milestones"][slug]
     for s in members:
         del tasks[s]
-    if _active_task(state) in members:
-        _set_active_task(state, None, slug)   # clear the task while its milestone is still known (pops active_tasks[slug])
-    if _active_milestone(state) == slug:
-        _set_active_milestone(state, None)
+    _deactivate_milestone(state, slug)   # drop from the active SET + pop its task entry, repointing the primary focus
+    if _active_task(state) in members:   # N<=1 oracle: a NON-primary archive (new-milestone replace-to-focus leaves
+        state["active_task"] = None      # active_task pointing at m1's task while primary is m2) would dangle at a deleted task
     save_state(root, state)
     print(f"archived milestone '{slug}' ({len(members)} tasks) — removed from active state.")
     print("files on disk are untouched; see `add.py status` for the archived rollup.")
@@ -2546,16 +2569,54 @@ def cmd_set_milestone(args: argparse.Namespace) -> None:
     print(_next_footer(root, state))
 
 
+def cmd_activate(args: argparse.Namespace) -> None:
+    """Add a milestone to the active working SET and focus it — how a user works N milestones
+    in parallel. Idempotent (re-activating just refocuses). Validates before mutating."""
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    if slug not in state.get("milestones", {}):
+        _die("unknown_milestone")
+    if state["milestones"][slug].get("status") == "done":
+        _die("milestone_done")
+    _activate_milestone(state, slug)
+    save_state(root, state)
+    print(f"activated '{slug}' — active: {', '.join(state['active_milestones'])}")
+    print(_next_footer(root, state))
+
+
+def cmd_deactivate(args: argparse.Namespace) -> None:
+    """Remove a milestone from the active working SET (its files + status are untouched);
+    repoints the primary focus to a remaining member. Validates before mutating."""
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    if slug not in (state.get("active_milestones") or []):
+        _die("milestone_not_active")
+    _deactivate_milestone(state, slug)
+    save_state(root, state)
+    remaining = state.get("active_milestones") or []
+    print(f"deactivated '{slug}' — active: {', '.join(remaining) if remaining else '(none)'}")
+    print(_next_footer(root, state))
+
+
 def cmd_use(args: argparse.Namespace) -> None:
     """Set the active task to an EXISTING task (switch focus) without scaffolding a new
     one or hand-editing state.json. advance/gate/phase still take an explicit slug; `use`
-    just moves the default focus, closing the only gap that forced manual state edits."""
+    just moves the default focus, closing the only gap that forced manual state edits.
+    Milestone-aware: focuses the task's OWN milestone (activating it into the set) so the
+    active task is switched WITHIN that milestone, not mislabeled under a stale primary."""
     root = _require_root()
     state = load_state(root)
     slug = args.slug
     if slug not in state.get("tasks", {}):
         _die("unknown_task")
-    _set_active_task(state, slug)
+    ms = state["tasks"][slug].get("milestone")
+    if ms is not None and ms in state.get("milestones", {}):
+        _activate_milestone(state, ms)        # focus the task's milestone (adds to the set if needed)
+        _set_active_task(state, slug, ms)
+    else:
+        _set_active_task(state, slug)         # milestone-less task: scalar only (back-compat)
     save_state(root, state)
     print(f"active task -> '{slug}' (phase={state['tasks'][slug]['phase']})")
     print(_next_footer(root, state))
@@ -5127,6 +5188,16 @@ def build_parser() -> argparse.ArgumentParser:
     pu = sub.add_parser("use", help="set the active task to an existing one (switch focus)")
     pu.add_argument("slug")
     pu.set_defaults(func=cmd_use)
+
+    pac = sub.add_parser("activate",
+                         help="add a milestone to the active working SET and focus it (parallel milestones)")
+    pac.add_argument("slug")
+    pac.set_defaults(func=cmd_activate)
+
+    pdac = sub.add_parser("deactivate",
+                          help="remove a milestone from the active working SET (its files stay on disk)")
+    pdac.add_argument("slug")
+    pdac.set_defaults(func=cmd_deactivate)
 
     pam = sub.add_parser("archive-milestone",
                          help="collapse a done milestone out of active state (files stay on disk)")

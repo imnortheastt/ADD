@@ -64,6 +64,9 @@ LIFECYCLE = [
     ["stage", "mvp"],
     ["set-milestone", "t", "none"], ["set-milestone", "t", "mvp"],
     ["use", "t"],                              # set active_task to an existing slug (read/writes state, not docs/)
+    ["activate", "mvp"],                        # multi-active SET writer: mvp already active -> idempotent refocus (reads/writes state, never docs/)
+    ["deactivate", "mvp"],                      # multi-active SET writer: drop mvp from the active set (pops its task entry; reads/writes state, never docs/)
+    ["use", "t"],                              # re-focus t -> milestone-aware use re-activates mvp + restores active_task for the rest of the run
     ["phase", "specify", "t"],
     ["advance", "t"], ["advance", "t"], ["advance", "t"],
     ["advance", "t"], ["advance", "t"],        # specify -> ... -> verify

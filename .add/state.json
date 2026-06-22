@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "active-accessors",
+  "active_task": "multi-active-commands",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1187,14 +1187,34 @@
     },
     "multi-active-commands": {
       "title": "activate/deactivate/use over the active set",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "state-model-reshape",
       "depends_on": [
         "active-accessors"
       ],
       "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T03:59:16+00:00"
+      "updated": "2026-06-22T05:52:29+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "0dd2574bad3fcfd6ef3fa1525752f78a",
+        "tests": {
+          "add-method/tooling/test_multi_active_commands.py": "2574a6d6ec65215de22347ad4baeb76c"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_multi_active_commands.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/test_next_footer_engine.py",
+          "add-method/tooling/test_gate_owner_marker.py"
+        ],
+        "snapshot_md5": "a105be80d4ecdadd9f10b13af663e1ac"
+      }
     },
     "parallel-status-view": {
       "title": "status renders the active set as parallel streams",
@@ -1220,7 +1240,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T05:25:16+00:00",
+  "updated": "2026-06-22T05:52:29+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1765,6 +1785,6 @@
     "state-model-reshape"
   ],
   "active_tasks": {
-    "state-model-reshape": "state-schema-migration"
+    "state-model-reshape": "multi-active-commands"
   }
 }
