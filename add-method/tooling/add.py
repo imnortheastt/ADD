@@ -175,29 +175,59 @@ def _atomic_write(path: Path, text: str) -> None:
 
 
 def _atomic_write_many(writes: list[tuple[Path, str]]) -> None:
-    """Two-phase commit across several files — design-for-failure for a multi-file write.
+    """True all-or-nothing commit across N files — design-for-failure for a multi-file write.
 
-    Phase 1 STAGES every (path, text) to a sibling temp file; the realistic IO failures
-    (disk full, permission denied) surface HERE, before any visible file changes — and on any
-    failure every staged temp is removed, so NOTHING is committed. Phase 2 then `os.replace`s
-    each staged temp into place (same-dir renames are atomic and effectively never fail once the
-    temp is written). This narrows the partial-write window of N independent `_atomic_write`s to
-    the rename loop, honouring a caller's "any failure -> write nothing" across the whole set.
+    Phase 1 STAGES every (path, text) to a sibling `.tmp`, flushing + fsync-ing each, so the
+    realistic IO failures (disk full, permission denied) surface HERE, before any target changes —
+    and on any stage failure every staged temp is removed, so NOTHING is committed. Phase 2 then
+    COMMITS each file by renaming any existing target ASIDE to a sibling `.bak`, then `os.replace`-ing
+    the staged `.tmp` into place. If ANY commit rename raises, every file already committed is rolled
+    back IN REVERSE (remove the landed new file, rename its `.bak` back, or leave it absent) and the
+    original error re-raised — so the whole set is all-or-nothing: either every file holds its new
+    text, or every file holds its prior content. Restoring is an atomic rename of an already-written
+    `.bak` (no content held in memory, no re-write), the cheapest recovery under failing IO. Leftover
+    `.tmp`/`.bak` siblings are removed on every exit path.
     """
     staged: list[tuple[str, Path]] = []
+    committed: list[list] = []                    # [path, bak_or_None, new_landed] per committed file
     try:
-        for path, text in writes:
+        for path, text in writes:                 # phase 1: stage every temp (fsync'd before any commit)
             path.parent.mkdir(parents=True, exist_ok=True)
             fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
+            staged.append((tmp, path))            # track BEFORE write so a write/fsync failure still cleans it
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 fh.write(text)
-            staged.append((tmp, path))
-        for tmp, path in staged:                  # phase 2: commit via atomic renames
-            os.replace(tmp, path)
+                fh.flush()
+                os.fsync(fh.fileno())
+        try:
+            for tmp, path in staged:              # phase 2: commit via rename-aside
+                bak = None
+                existed = path.exists()
+                if existed:
+                    fd2, bak = tempfile.mkstemp(dir=str(path.parent), suffix=".bak")
+                    os.close(fd2)
+                committed.append([path, bak, False])   # track .bak NOW so cleanup never leaks it
+                if existed:
+                    os.replace(path, bak)         # move the existing target aside
+                os.replace(tmp, path)             # move the new file in
+                committed[-1][2] = True
+        except OSError:
+            for path, bak, landed in reversed(committed):   # roll back, newest-first
+                try:
+                    if landed and path.exists():
+                        os.unlink(path)           # drop the new file we put in
+                    if bak is not None and not path.exists():
+                        os.replace(bak, path)     # restore the prior target (atomic rename)
+                except OSError:
+                    pass                          # best-effort restore under already-failing IO
+            raise
     finally:
-        for tmp, _ in staged:                     # leftover temps (a failed/aborted stage) never persist
+        for tmp, _ in staged:                     # leftover .tmp (failed/aborted stage) never persists
             if os.path.exists(tmp):
                 os.unlink(tmp)
+        for path, bak, landed in committed:       # leftover .bak (success, or orphaned post-rollback)
+            if bak is not None and os.path.exists(bak):
+                os.unlink(bak)
 
 
 def _templates_dir() -> Path:
@@ -763,9 +793,10 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     if feature_override:                                     # pre-fill §1 from the seeded delta
         rendered = re.sub(r"(?m)^Feature:.*$",
                           lambda _m: f"Feature: {feature_override}", rendered, count=1)
-    _atomic_write(task_md, rendered)
+    seed_writes: list[tuple[Path, str]] = [(task_md, rendered)]
     if flipped_prior is not None:                           # consume the source delta -> seeded
-        _atomic_write(prior_md, flipped_prior)
+        seed_writes.append((prior_md, flipped_prior))
+    _atomic_write_many(seed_writes)                         # new TASK.md + consumed source as one commit
     if _project_autonomy_token(root) == "?":
         print("warning: garbled_project_autonomy — PROJECT.md declares an unrecognized "
               f"autonomy token; new task seeded fail-safe '{autonomy}' "
@@ -4873,13 +4904,9 @@ def cmd_fold(args: argparse.Namespace) -> None:
     proj_text = _prepend_key_decision_row(proj_text, row)
     proj_text = re.sub(r"foundation-version:\s*\d+", f"foundation-version: {new_v}", proj_text, count=1)
 
-    # ── all bodies built; commit via a two-phase write (stage every temp, then rename-all). A
-    #    phase-1 temp-write failure — the REALISTIC one (disk-full / permission) — leaves NOTHING
-    #    written. A phase-2 mid-rename failure (near-impossible on same-dir renames) can leave the
-    #    foundation advanced while a TASK.md stays unflipped; files are ordered foundation-FIRST so
-    #    the lesson then stays visibly `open` and a re-run re-transcribes (DUPLICATING, never
-    #    losing — manual fixup), rather than a silently-flipped-but-untranscribed loss. A true
-    #    all-or-nothing N-file commit is the multi-file-commit follow-up task. ────────────────────
+    # ── all bodies built; commit ALL via the all-or-nothing multi-file primitive: a stage failure
+    #    (disk-full / permission) writes nothing, and a mid-commit rename failure rolls back every
+    #    already-committed file — so the foundation never advances while a TASK.md stays unflipped. ─
     writes: list[tuple[Path, str]] = [(project_md, proj_text)]
     touched = ["PROJECT.md"]
     if conv_text != conventions_text:
@@ -5401,19 +5428,11 @@ def cmd_release(args: argparse.Namespace) -> None:
                              _render_releases_row(args.version, day, bundle, waiver_slugs,
                                                   getattr(args, "evidence", None),
                                                   _render_actor_line(state)))
-    _atomic_write(changelog_path, new_cl)
-    try:
-        _atomic_write(releases_path, new_rel)         # the attribution commit point
+    try:                                              # CHANGELOG + RELEASES as one all-or-nothing commit
+        _atomic_write_many([(changelog_path, new_cl), (releases_path, new_rel)])
     except OSError as e:
-        if cl_before is not None:                     # ROLLBACK (design-for-failure)
-            _atomic_write(changelog_path, cl_before)
-        else:
-            try:
-                changelog_path.unlink()
-            except OSError:
-                pass
-        _die(f"release_write_failed: the ledger write failed ({e}); CHANGELOG was rolled back — "
-             "nothing was recorded. Retry the release.")
+        _die(f"release_write_failed: the ledger write failed ({e}); nothing was recorded — both "
+             "files were rolled back to their prior content. Retry the release.")
 
     # NO save_state — attribution lives in RELEASES.md (the cue re-reads it), never state.json
     ms = ", ".join(m["slug"] for m in bundle) if bundle else "none"
