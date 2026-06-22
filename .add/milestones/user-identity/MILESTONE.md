@@ -43,34 +43,36 @@ Out: OWNERSHIP / assignment fields (who OWNS a task/milestone) — sibling `owne
   rule that keeps the free-text format byte-identical) -> owning task `actor-stamping`
 
 ## Tasks (breadth-first decomposition; detail lives in each TASK.md)
-- [ ] actor-identity    depends-on: none            — `_whoami` resolver (git config → OS-user fallback, fail-soft) returning `{name,email,source}` + `add.py whoami` (show; `--set`/`--unset` override stored in state); freeze the resolution contract. risk:high.
-- [ ] actor-stamping    depends-on: actor-identity   — one stamp seam records the structured actor on every human seam (contract freeze · verify gate · milestone-done · lock · release) ALONGSIDE the unchanged free-text; backward-compatible read. risk:high.
-- [ ] identity-in-status depends-on: actor-stamping  — surface the resolved actor in `status` (a `you : <name> <email> (source)` line) + the structured actor in the relevant `--json` / report surfaces; additive, solo output byte-identical when unset. risk:high.
+- [x] actor-identity    depends-on: none            — `_whoami` resolver (git config → OS-user fallback, fail-soft) returning `{name,email,source}` + `add.py whoami` (show; `--set`/`--unset` override stored in state); freeze the resolution contract. risk:high.
+- [x] actor-stamping    depends-on: actor-identity   — one stamp seam records the structured actor on every human seam (contract freeze · verify gate · milestone-done · lock · release) ALONGSIDE the unchanged free-text; backward-compatible read. risk:high.
+- [x] identity-in-status depends-on: actor-stamping  — surface the resolved actor in `status` (a `actor : <name> <email> (source)` line) + the structured actor in the relevant `--json` / report surfaces; additive, solo output byte-identical when unset. risk:high.
 
 ## Exit criteria (observable; map each to the task that delivers it)
-- [ ] `add.py whoami` reports the current git-native actor (git config name/email, OS-user fallback); `--set`/`--unset` overrides it   (← actor-identity)
-- [ ] a contract freeze, a verify gate, a milestone-done, a lock, and a release each record a STRUCTURED actor alongside the unchanged free-text stamp; a legacy un-stamped record stays valid   (← actor-stamping)
-- [ ] `status` shows the current actor and the structured actor reaches the `--json`/report surface; with no actor configured the output degrades cleanly (solo unchanged)   (← identity-in-status)
+- [x] `add.py whoami` reports the current git-native actor (git config name/email, OS-user fallback); `--set`/`--unset` overrides it   (← actor-identity) (verify: test_actor_identity.py — 17 green)
+- [x] a verify gate, a milestone-done, a lock, and a release each record a STRUCTURED actor alongside the unchanged free-text stamp; a legacy un-stamped record stays valid   (← actor-stamping) (verify: test_actor_stamping.py — 9 green; freeze excluded — it has no engine write seam, carried as a §7 SPEC delta)
+- [x] `status` shows the current actor and the structured actor reaches the `--json`/report surface; with no actor configured the output degrades cleanly (solo unchanged)   (← identity-in-status) (verify: test_identity_in_status.py — 5 green)
 
 ## Close — ship review   (AI fills when every task is done — the evidence behind the engine gate, read before the boxes are checked)
 > Whole-milestone, cross-task review the AI fills in. It is the evidence behind the EXISTING engine
 > gate (milestone-done / checking the Exit-criteria boxes) — NOT a new approval. Tool-agnostic.
 
 ### Ship by domain   (what changed, per bounded context)
-- tooling : <add.py / state.json / templates — what shipped, or "untouched">
-- skill   : <SKILL.md / phases/* / guides — what shipped, or "untouched">
-- book    : <docs/* — what shipped, or "untouched">
+- tooling : add.py — NEW `_whoami`/`_git_config`/`_os_user` resolver + `whoami` command (--set/--unset/--email override in state); NEW `_actor_stamp`/`_render_actor_line` + structured-actor writes on 4 engine seams (cmd_lock `setup.actor`, cmd_gate `gate_actor`, cmd_milestone_done `done_actor`, cmd_release RELEASES.md `actor:` row); NEW `_fmt_actor` + read-only surfaces (status human `actor   :` line, `status --json` `actor` key, report `closed by`/`GATED BY` blocks); cmd_milestone_done done_actor reorder (before _write_retro). engine_pin.py re-pinned 3× (6f28abab → d8b9c699 → 2206226f); all 3 add.py copies byte-identical. state.json: new `setup.actor` + per-task `gate_actor` + per-milestone `done_actor`.
+- skill   : untouched (the loop drives this method-on-method; no guide change needed).
+- book    : untouched.
 
 ### Cross-task evidence   (one row per task)
-- <slug> : gate=<PASS|RISK-ACCEPTED> · tests=<n green> · residue=<none|note>
+- actor-identity    : gate=PASS · tests=17 green (test_actor_identity.py) · residue=none (2 BLOCKING review findings fixed pre-gate: UnicodeDecodeError catch + getpass KeyError floor)
+- actor-stamping    : gate=PASS · tests=9 green (test_actor_stamping.py) · residue=note — freeze has NO engine write seam, so the structured actor covers 4 of the 5 named human seams; the 5th (contract freeze) is carried as a §7 SPEC delta (add an engine freeze write command)
+- identity-in-status : gate=PASS · tests=5 green (test_identity_in_status.py) · residue=none (independent python-expert refute-read MERGE 0.92, 0 blocking; one NIT applied)
 
 ### Goal met?   (map the evidence back to this milestone's Exit criteria — read before the Exit-criteria boxes are checked)
-- [ ] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which)
-- goal: <restate the milestone goal — and the one evidence line that proves the ship meets it>
+- [x] each Exit criterion above is satisfied by a Cross-task evidence row or a Ship-by-domain change (cite which): criterion 1 ← actor-identity row; criterion 2 ← actor-stamping row (freeze carve-out disclosed); criterion 3 ← identity-in-status row
+- goal: ADD resolves a git-native actor and stamps WHO performed each engine-written human-owned action, surfacing the trail in status + report — proven on the real project: `add.py status` shows `actor   : Tin Dang <tindang.ht97@gmail.com> (source: git)` and `add.py report user-identity` renders a `GATED BY` block attributing actor-stamping's PASS to the resolved actor while back-compat-omitting actor-identity (gated before stamping existed). Descriptive only; solo behavior byte-identical; full suite 1461 OK.
 
 ## Release steps   (AI-DEFINED — fill the ordered steps to ship this milestone; engine records, human gate)
 > The AI writes the release steps for THIS milestone here (hints, not engine commands). MERGE is one
 > small step among them. These feed the release scope (release.md) when the cut is bundled.
-- [ ] <step — e.g. open a PR from the Close ship-review above; the human reviews + merges>
-- [ ] <step — e.g. export the ship-review to a hand-off doc, e.g. `pandoc CLOSE.md -o close.docx`>
-- [ ] <step — e.g. tag / publish / deploy  (human-run, per release.md)>
+- [ ] fold the open §7 deltas (the freeze-write-command SPEC delta + the 2 ADD competency deltas) into the foundation via `add.py fold`, then archive this milestone.
+- [ ] the milestone rides PR #47 (feat/fold-suggestion-seams) alongside state-model-reshape (milestone 1); the human reviews + merges that PR — MERGE is the ship step here.
+- [ ] tag / publish is deferred to the next release cut (release.md), which bundles this milestone with the rest of the team-collaboration major; not a per-milestone publish.

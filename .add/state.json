@@ -1228,7 +1228,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T08:23:02+00:00",
+  "updated": "2026-06-22T08:25:09+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1410,9 +1410,14 @@
       "title": "User Identity",
       "goal": "ADD resolves a git-native actor (whoami: git config user.name/email, OS-user fallback) and stamps WHO performed each human-owned action \u2014 contract freeze, verify gate, milestone-done, lock, release \u2014 as a structured actor field alongside today's free-text, giving a multi-user team an auditable who-decided-what trail. Descriptive only (no access enforcement); solo behavior unchanged; the byte-pinned engine edited in lockstep across all 3 copies.",
       "stage": "mvp",
-      "status": "active",
+      "status": "done",
       "created": "2026-06-22T06:38:16+00:00",
-      "updated": "2026-06-22T06:38:16+00:00"
+      "updated": "2026-06-22T08:25:09+00:00",
+      "done_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "active_milestone": "user-identity",
