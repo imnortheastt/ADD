@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "identity-in-status",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1130,105 +1130,10 @@
         ],
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
-    },
-    "actor-identity": {
-      "title": "git-native whoami resolver + actor model",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "user-identity",
-      "depends_on": [],
-      "created": "2026-06-22T06:39:02+00:00",
-      "updated": "2026-06-22T07:28:08+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "e9481b02a8b9a5e160461f75ae7c3a34",
-        "tests": {
-          "add-method/tooling/test_actor_identity.py": "7d8c2644e0a12a81f9375678a980d59b"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_actor_identity.py",
-          "add-method/tooling/test_min_pillar.py"
-        ],
-        "snapshot_md5": "2c0c1cec5db4a5c3974ea3e3c1f0fc6e"
-      }
-    },
-    "actor-stamping": {
-      "title": "stamp the structured actor on every human seam",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "user-identity",
-      "depends_on": [
-        "actor-identity"
-      ],
-      "created": "2026-06-22T06:39:02+00:00",
-      "updated": "2026-06-22T07:59:26+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "0cfeba93dcf17c276084ad017968c395",
-        "tests": {
-          "add-method/tooling/test_actor_stamping.py": "041451ac059cc6235bf9e5756c73023c"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_actor_stamping.py",
-          "add-method/tooling/test_retro.py"
-        ],
-        "snapshot_md5": "3275b7e2be16c9b8b737556d29deb87f"
-      },
-      "gate_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
-    },
-    "identity-in-status": {
-      "title": "surface the actor in status + json/report",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "user-identity",
-      "depends_on": [
-        "actor-stamping"
-      ],
-      "created": "2026-06-22T06:39:02+00:00",
-      "updated": "2026-06-22T08:23:02+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "f6a658f4b5e939d440d62629d9a3d7b1",
-        "tests": {
-          "add-method/tooling/test_identity_in_status.py": "d40ca3a769e4d9a7aa85318a6e1ecddc"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_identity_in_status.py",
-          "add-method/tooling/test_wave_status_hint.py"
-        ],
-        "snapshot_md5": "7a7bfbdb468ee3af5a2db6eb343e2dac"
-      },
-      "gate_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T08:25:09+00:00",
+  "updated": "2026-06-22T08:26:17+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1405,22 +1310,9 @@
       "status": "done",
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
-    },
-    "user-identity": {
-      "title": "User Identity",
-      "goal": "ADD resolves a git-native actor (whoami: git config user.name/email, OS-user fallback) and stamps WHO performed each human-owned action \u2014 contract freeze, verify gate, milestone-done, lock, release \u2014 as a structured actor field alongside today's free-text, giving a multi-user team an auditable who-decided-what trail. Descriptive only (no access enforcement); solo behavior unchanged; the byte-pinned engine edited in lockstep across all 3 copies.",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-22T06:38:16+00:00",
-      "updated": "2026-06-22T08:25:09+00:00",
-      "done_actor": {
-        "name": "Tin Dang",
-        "email": "tindang.ht97@gmail.com",
-        "source": "git"
-      }
     }
   },
-  "active_milestone": "user-identity",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1785,12 +1677,19 @@
         "engine-repin-parity"
       ],
       "archived": "2026-06-22"
+    },
+    {
+      "slug": "user-identity",
+      "title": "User Identity",
+      "tasks": 3,
+      "task_slugs": [
+        "actor-identity",
+        "actor-stamping",
+        "identity-in-status"
+      ],
+      "archived": "2026-06-22"
     }
   ],
-  "active_milestones": [
-    "user-identity"
-  ],
-  "active_tasks": {
-    "user-identity": "identity-in-status"
-  }
+  "active_milestones": [],
+  "active_tasks": {}
 }

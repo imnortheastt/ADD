@@ -252,4 +252,4 @@ the retry path (evidence: prod herd spikes)`). See the `add` skill's `deltas.md`
 What did this loop teach the foundation? One line each, tagged by competency
 (`DDD · SDD · UDD · TDD · ADD`), status `open`, with evidence. See the `add` skill's `deltas.md`.
 <!-- e.g.  - [DDD · open] the model missed multi-tenancy (evidence: scenario_x failed) -->
-- [ADD · open] the descriptive-additive stamp still rippled an exact-diff invariant test (test_retro `changed <= {status,updated}`) — an "additive" record write needs a census sweep for tests that pin a record's EXACT key-set, not just its values (evidence: test_close_state_diff_is_status_only went red until done_actor was ratified into the allowed set)
+- [ADD · folded] the descriptive-additive stamp still rippled an exact-diff invariant test (test_retro `changed <= {status,updated}`) — an "additive" record write needs a census sweep for tests that pin a record's EXACT key-set, not just its values (evidence: test_close_state_diff_is_status_only went red until done_actor was ratified into the allowed set) [folded foundation-version 42]
