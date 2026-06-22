@@ -4,6 +4,43 @@ All notable changes to the ADD method (`@pilotspace/add` on npm,
 `pilotspace-add` on PyPI) are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow semver.
 
+## [1.8.0] — 2026-06-23
+
+Team collaboration: ADD becomes git-native and multi-user, with N
+parallel-active milestones, plus a polish pass on the delta-resolution
+machinery. Additive and backward-compatible — `add.py` ships a one-way state
+migration (single-active → multi-active), and the non-interactive byte stream
+for existing single-user flows is preserved. Bundles six closed milestones.
+
+### Added
+- **Multi-active milestones (`team-collaboration`)** — work N milestones in
+  parallel: `add.py activate` / `deactivate` manage an active working SET,
+  `add.py mine` is a my-work lens over owned tasks, the `streams:` block shows a
+  per-stream owner, and waves can span all active milestones.
+- **Git-native user identity** — `add.py whoami` resolves the actor from git
+  config; tasks carry an owner.
+- **Ownership & assignment** — `add.py assign` / `unassign` attach a task to an
+  owner; ownership renders across status and reports.
+- **Git-merge safety** — merge-base enforcement guards a stale worker base; the
+  drift vectors a parallel-wave merge can introduce are pinned suite fixtures.
+- **Multi-file commit primitive** — `_atomic_write_many` is now true
+  all-or-nothing: stage every temp → fsync → rename-aside → rename-all, with
+  rollback-on-any-failure restoring prior bytes. `fold`, `release`, and the
+  delta seed all route through it, closing the prior mid-rename residual window.
+- **`--match <substr>` selector** — `add.py new-task --from-delta` and
+  `add.py drop-delta` accept `--match` to target ONE open SPEC delta among
+  several; a 0-match or ambiguous match is a named reject. First-open behavior
+  is byte-identical when `--match` is absent.
+- **`compact --force`** — `add.py compact --force` overrides the project-wide
+  `open_spec_deltas_unresolved` block ONLY (never a structural guard) so an
+  urgent compaction is not blocked by an UNRELATED open SPEC delta; the bypass
+  is warned and recorded as `force_bypassed_spec_deltas`.
+
+### Notes
+- One version tag publishes both channels: `@pilotspace/add` (npm) and
+  `pilotspace-add` (PyPI). The engine (`add.py`) is mirrored byte-identical
+  across all three trees with `ENGINE_MD5` re-pinned.
+
 ## [1.7.3] — 2026-06-18
 
 Multi-agent installer reach (`multi-agent-installer`). Additive; no breaking
