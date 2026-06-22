@@ -1336,7 +1336,9 @@ def cmd_status(args: argparse.Namespace) -> None:
             "active_tasks": dict(state.get("active_tasks") or {}),
             "milestones": ms_list,
             "tasks": [{"slug": s, "phase": t.get("phase"), "gate": t.get("gate"),
-                       "milestone": t.get("milestone")} for s, t in tasks.items()],
+                       "milestone": t.get("milestone"),
+                       "owner": t.get("owner"), "assignee": t.get("assignee")}
+                      for s, t in tasks.items()],
             "graduation_ready": grad_ready,
             "stage_criteria": {"met": grad_met, "total": grad_total}}))
         return
@@ -1442,6 +1444,11 @@ def cmd_status(args: argparse.Namespace) -> None:
     # reads the throttle every session; "unset" when no explicit `autonomy:` line is present.
     if active and active in tasks:
         print(f"autonomy: {_autonomy_level(_task_header(root, active)) or 'unset'}")
+        # owner/assignee of the active task (ownership-assignment) — present-only, never a
+        # placeholder; an unassigned active task adds no line (additive-cue convention).
+        _own = _fmt_ownership(tasks[active])
+        if _own:
+            print(f"owned   : {_own}")
         # grounded (task ground-bundle-wiring): does the active task's §0 GROUND map cite the
         # anchors §3 names? measure-not-block, human-readable only (never the JSON surface). A
         # pre-ground / legacy task (no §0) -> _task_grounded None -> NO line, so the surface is
@@ -3565,6 +3572,8 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
             "done": _task_done(t),
             "gate": gate,
             "gate_actor": t.get("gate_actor"),   # WHO recorded the verdict (None when unstamped)
+            "owner": t.get("owner"),             # WHO is accountable (None when unassigned)
+            "assignee": t.get("assignee"),       # WHO is working it (None when unassigned)
             "tests": n_tests,
             "tests_declared": t_declared,
             "observe": observe,
@@ -3581,7 +3590,9 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
     return {
         "milestone": {"slug": mslug, "title": title, "goal": goal,
                       "status": ms.get("status", "active"),
-                      "done_actor": ms.get("done_actor")},   # WHO closed it (None when unstamped/open)
+                      "done_actor": ms.get("done_actor"),    # WHO closed it (None when unstamped/open)
+                      "owner": ms.get("owner"),              # WHO is accountable for the milestone
+                      "assignee": ms.get("assignee")},       # WHO is working it (None when unassigned)
         "summary": {
             "tasks_done": sum(1 for r in task_rows if r["done"]),
             "tasks_total": len(task_rows),
@@ -3772,6 +3783,15 @@ def _fmt_actor(actor: dict | None) -> str:
     return f"{actor.get('name', '')}{email}"
 
 
+def _fmt_ownership(rec: dict) -> str:
+    """Format a record's owner/assignee as `owner: <name> · assignee: <name>` for the
+    surface (ownership-assignment) — present-only: each role appears only when set, and
+    "" when neither is. Reuses _fmt_actor to render each `{name,email,source}` actor."""
+    bits = [f"{role}: {_fmt_actor(rec[role])}" for role in ("owner", "assignee")
+            if rec.get(role) and rec[role].get("name")]   # skip a hand-edited blank-name record
+    return " · ".join(bits)
+
+
 def render_report(root: Path, state: dict, mslug: str, *,
                   width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
     """Format the FACTS (report_data) as the text DASHBOARD — verdict-first header,
@@ -3809,6 +3829,10 @@ def render_report(root: Path, state: dict, mslug: str, *,
     # who closed the milestone (user-identity) — present-only, never a placeholder
     if m.get("done_actor"):
         L.append(f" closed by {_fmt_actor(m['done_actor'])}")
+    # who owns/works the milestone (ownership-assignment) — present-only
+    _ms_own = _fmt_ownership(m)
+    if _ms_own:
+        L.append(f" owned by {_ms_own}")
     L.append("")
     if d["tasks"]:
         L.append(f" {'TASK':<27} {'PHASE':<9} {'GATE':<4} {'TESTS':<5} PROGRESS")
@@ -3831,6 +3855,13 @@ def render_report(root: Path, state: dict, mslug: str, *,
             for r in gated:
                 short = _GATE_SHORT.get(r["gate"], r["gate"])
                 L.append(f"   {_clip(r['slug'], 24):<24} {short:<4} {_fmt_actor(r['gate_actor'])}")
+        # who owns/works each task (ownership-assignment) — present-only, mirror of GATED BY
+        owned = [r for r in d["tasks"] if r.get("owner") or r.get("assignee")]
+        if owned:
+            L.append("")
+            L.append(" OWNED BY")
+            for r in owned:
+                L.append(f"   {_clip(r['slug'], 24):<24} {_fmt_ownership(r)}")
     else:
         L.append(" (no tasks yet)")
     L.append("")

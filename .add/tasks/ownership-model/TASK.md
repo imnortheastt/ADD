@@ -274,7 +274,7 @@ Forward changes for the next loop — each re-enters at Specify as the next task
 each, tagged `[SPEC · open|seeded|dropped]`, with evidence (e.g. `[SPEC · open] rate-limit
 the retry path (evidence: prod herd spikes)`). See the `add` skill's `deltas.md`.
 - [SPEC · open] `_parse_actor_arg` silently mis-parses a double-bracket value (`"Alice <b> <c>"` → name `"Alice <b>"`, email `"c"`) — total + non-raising but wrong; tighten the grammar or reject a value with >1 `<...>` group (evidence: adversarial-review NIT on ownership-model).
-- [SPEC · open] the ownership SURFACE (owner/assignee in status + report + --json) is the sibling task `ownership-surface` — already planned; this delta just records the seam this task left open (state written, not yet shown).
+- [SPEC · open] the ownership SURFACE (owner/assignee in status + report + --json) is the sibling task `ownership-surface` — already planned; this delta records the seam this task left open (evidence: assign/unassign write owner/assignee to state but no command yet SHOWS them).
 
 ### Competency deltas
 What did this loop teach the foundation? One line each, tagged by competency

@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "ownership-model",
+  "active_task": "ownership-surface",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1159,10 +1159,40 @@
         "email": "tindang.ht97@gmail.com",
         "source": "git"
       }
+    },
+    "ownership-surface": {
+      "title": "surface owner/assignee in status + report + json",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "ownership-assignment",
+      "depends_on": [
+        "ownership-model"
+      ],
+      "created": "2026-06-22T09:05:19+00:00",
+      "updated": "2026-06-22T09:19:00+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "b49a47b19f90aabeb39018f2181d6e3d",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py"
+        ],
+        "snapshot_md5": "23dcd04599d8443972940ca1385010bb"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T09:04:42+00:00",
+  "updated": "2026-06-22T09:19:00+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1731,6 +1761,6 @@
     "ownership-assignment"
   ],
   "active_tasks": {
-    "ownership-assignment": "ownership-model"
+    "ownership-assignment": "ownership-surface"
   }
 }
