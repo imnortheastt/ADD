@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "my-work-lens",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1130,10 +1130,40 @@
         ],
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
+    },
+    "my-work-lens": {
+      "title": "my work \u2014 per-actor task lens across all active milestones",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "multi-active-UX",
+      "depends_on": [],
+      "created": "2026-06-22T12:49:04+00:00",
+      "updated": "2026-06-22T13:04:28+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "2adbcfc1dcc15ca0271790dd7831d449",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_min_pillar.py",
+          "add-method/tooling/test_my_work_lens.py"
+        ],
+        "snapshot_md5": "2aed45e2641a89b497ff81eb81ad9512"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T12:26:50+00:00",
+  "updated": "2026-06-22T13:04:28+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1310,9 +1340,17 @@
       "status": "done",
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
+    },
+    "multi-active-UX": {
+      "title": "Multi Active Ux",
+      "goal": "a team running several active milestones at once sees, in one place, what is theirs to work on and what is schedulable across all streams \u2014 ADD surfaces a per-actor 'my work' view, a per-stream owner, and a cross-active waves/ready frontier, instead of a single-milestone-at-a-time lens",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-22T12:48:15+00:00",
+      "updated": "2026-06-22T12:48:15+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "multi-active-UX",
   "archived": [
     {
       "slug": "v5",
@@ -1710,6 +1748,10 @@
       "archived": "2026-06-22"
     }
   ],
-  "active_milestones": [],
-  "active_tasks": {}
+  "active_milestones": [
+    "multi-active-UX"
+  ],
+  "active_tasks": {
+    "multi-active-UX": "my-work-lens"
+  }
 }

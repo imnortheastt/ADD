@@ -406,6 +406,46 @@ def _parse_actor_arg(s: str) -> dict:
     return {"name": s.strip(), "email": None, "source": "assigned"}
 
 
+def _actor_matches(rec_actor: dict | None, me: dict) -> bool:
+    """Does a recorded owner/assignee actor identify the SAME person as `me` (multi-active-UX)?
+    Email-first (the stabler key): when BOTH carry a non-empty email, emails decide; otherwise
+    fall back to name-equality. Both comparisons are stripped + case-insensitive. TOTAL — a None,
+    non-dict, or blank-name record returns False (an unowned/garbage slot is no one's)."""
+    if not isinstance(rec_actor, dict):
+        return False
+    rec_name = (rec_actor.get("name") or "").strip()
+    if not rec_name:
+        return False
+    rec_email = (rec_actor.get("email") or "").strip()
+    me_email = (me.get("email") or "").strip()
+    if rec_email and me_email:
+        return rec_email.lower() == me_email.lower()
+    return rec_name.lower() == (me.get("name") or "").strip().lower()
+
+
+def _my_work(state: dict, me: dict) -> list[dict]:
+    """The "my work" lens (multi-active-UX): across ALL active milestones, the NOT-done tasks
+    whose owner OR assignee is `me`. Returns ordered rows {slug, milestone, phase, role} with
+    role in {owner, assignee, both}, sorted by active-milestone order then slug. PURE · no I/O."""
+    active = list(state.get("active_milestones") or [])
+    active_set = set(active)
+    tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
+    rows: list[dict] = []
+    for slug, t in tasks.items():
+        if not isinstance(t, dict) or t.get("milestone") not in active_set or _task_done(t):
+            continue
+        owns = _actor_matches(t.get("owner"), me)
+        assigned = _actor_matches(t.get("assignee"), me)
+        if not (owns or assigned):
+            continue
+        role = "both" if owns and assigned else ("owner" if owns else "assignee")
+        rows.append({"slug": slug, "milestone": t.get("milestone"),
+                     "phase": t.get("phase"), "role": role})
+    order = {m: i for i, m in enumerate(active)}
+    rows.sort(key=lambda r: (order.get(r["milestone"], len(order)), r["slug"]))
+    return rows
+
+
 # A git conflict marker BEGINS a line with 7 of `<`, `=`, or `>` (`(?m)^…`). An unresolved
 # merge writes these into state.json, making it invalid JSON; the line-anchor keeps a
 # legitimate value (always on an INDENTED JSON line) from false-tripping the guard.
@@ -2303,6 +2343,28 @@ def cmd_doctor(args: argparse.Namespace) -> None:
     for f in findings:
         print(f"  ✗ {f}")
     raise SystemExit(1)
+
+
+def cmd_mine(args: argparse.Namespace) -> None:
+    """Read-only `add.py mine`: across all active milestones, the not-done tasks owned-by or
+    assigned-to the resolved actor (`_whoami`, or `--actor "Name <email>"`). Text or `--json`.
+    An empty queue is a plain exit-0 line, not an error. NEVER writes state."""
+    root = find_root()
+    if root is None:
+        _die("no_project")
+    state = load_state(root)
+    me = _parse_actor_arg(args.actor) if getattr(args, "actor", None) else _whoami(state)
+    rows = _my_work(state, me)
+    if getattr(args, "json", False):
+        print(json.dumps({"actor": me, "tasks": rows}))
+        return
+    who = _fmt_actor(me) or me.get("name", "you")
+    if not rows:
+        print(f"mine: no open tasks for {who} across active milestones")
+        return
+    print(f"mine: {who} — {len(rows)} open task(s) across active milestones:")
+    for r in rows:
+        print(f"  {r['slug']:<24} [{r['milestone']}]  phase={r['phase']}  ({r['role']})")
 
 
 # ---------------------------------------------------------------------------
@@ -5642,6 +5704,13 @@ def build_parser() -> argparse.ArgumentParser:
     pdoc = sub.add_parser("doctor", help="read-only diagnosis of state.json integrity + "
                                          "referential consistency (run after a git merge)")
     pdoc.set_defaults(func=cmd_doctor)
+
+    pmine = sub.add_parser("mine", help="read-only: my not-done tasks (owner or assignee) "
+                                        "across all active milestones")
+    pmine.add_argument("--actor", default=None, metavar="\"Name <email>\"",
+                       help="inspect another actor's queue instead of your own")
+    pmine.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
+    pmine.set_defaults(func=cmd_mine)
 
     pwv = sub.add_parser("wave-verify",
                          help="read-only merge-time gate: every WAVE.md roster echo must match "
