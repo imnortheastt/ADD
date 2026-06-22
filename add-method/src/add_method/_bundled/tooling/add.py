@@ -406,13 +406,32 @@ def _parse_actor_arg(s: str) -> dict:
     return {"name": s.strip(), "email": None, "source": "assigned"}
 
 
+# A git conflict marker BEGINS a line with 7 of `<`, `=`, or `>` (`(?m)^…`). An unresolved
+# merge writes these into state.json, making it invalid JSON; the line-anchor keeps a
+# legitimate value (always on an INDENTED JSON line) from false-tripping the guard.
+_CONFLICT_MARKER_RE = re.compile(r"(?m)^(<{7}|={7}|>{7})")
+
+
+def _state_text_or_die(root: Path) -> str:
+    """Read state.json's raw text, failing CLOSED with a merge-SPECIFIC `state_conflicted`
+    message when it carries git conflict markers (an unresolved merge — the major's #1 failure
+    mode). A genuine read OSError is NOT swallowed: it propagates to the caller, which maps it
+    to its own existing code (state_invalid / no_state). The guard only READS — never writes."""
+    text = (root / STATE_FILE).read_text(encoding="utf-8")
+    if _CONFLICT_MARKER_RE.search(text):
+        _die(f"state_conflicted: {root / STATE_FILE} has unresolved git merge markers "
+             f"(<<<<<<< / ======= / >>>>>>>) — resolve them (or "
+             f"`git checkout --ours/--theirs {STATE_FILE}`), then run `add.py doctor` to verify")
+    return text
+
+
 def load_state(root: Path) -> dict:
-    """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
-    dies with a clean 'state_invalid' message (never a raw traceback), so every
-    command that loads state degrades gracefully (design-for-failure). The parsed
-    state is forward-migrated to the multi-active schema before it is returned."""
+    """Load + parse state.json, failing CLOSED. A git-conflicted file dies with a merge-specific
+    'state_conflicted'; any other corrupt/unreadable file dies with a clean 'state_invalid'
+    message (never a raw traceback), so every command that loads state degrades gracefully
+    (design-for-failure). The parsed state is forward-migrated to the multi-active schema."""
     try:
-        return _migrate_state(json.loads((root / STATE_FILE).read_text(encoding="utf-8")))
+        return _migrate_state(json.loads(_state_text_or_die(root)))
     except (json.JSONDecodeError, OSError) as e:
         _die(f"state_invalid: {root / STATE_FILE} is corrupt or unreadable "
              f"({e.__class__.__name__}) — restore it from git or a backup")
@@ -427,7 +446,7 @@ def _load_state_for_json() -> tuple[Path, dict]:
     if root is None:
         _die("no_state")
     try:
-        return root, _migrate_state(json.loads((root / STATE_FILE).read_text(encoding="utf-8")))
+        return root, _migrate_state(json.loads(_state_text_or_die(root)))
     except (json.JSONDecodeError, OSError):
         _die("no_state")
 
@@ -2032,7 +2051,7 @@ def cmd_check(args: argparse.Namespace) -> None:
         if root is None:
             _die("no_project")
         try:
-            state = json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+            state = json.loads(_state_text_or_die(root))
         except (json.JSONDecodeError, OSError):
             _die("state_invalid")
 

@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": null,
+  "active_task": "merge-guard",
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1130,10 +1130,38 @@
         ],
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
+    },
+    "merge-guard": {
+      "title": "conflict-aware state load guard (state_conflicted)",
+      "phase": "done",
+      "gate": "PASS",
+      "milestone": "git-merge-safety",
+      "depends_on": [],
+      "created": "2026-06-22T09:32:27+00:00",
+      "updated": "2026-06-22T09:41:38+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "dfd4cb80c3d8cf1e24df3a41c09d9e9a",
+        "tests": {}
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py"
+        ],
+        "snapshot_md5": "553768132b970493f5a6260d3e95c276"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T09:20:39+00:00",
+  "updated": "2026-06-22T09:41:38+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1310,9 +1338,17 @@
       "status": "done",
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
+    },
+    "git-merge-safety": {
+      "title": "Git-merge safety",
+      "goal": "a team merging parallel branches never silently corrupts .add/state.json \u2014 ADD recognizes a conflicted or inconsistent state at load and via a doctor command, and guides reconciliation instead of crashing or proceeding on bad data",
+      "stage": "mvp",
+      "status": "active",
+      "created": "2026-06-22T09:31:41+00:00",
+      "updated": "2026-06-22T09:31:41+00:00"
     }
   },
-  "active_milestone": null,
+  "active_milestone": "git-merge-safety",
   "archived": [
     {
       "slug": "v5",
@@ -1700,6 +1736,10 @@
       "archived": "2026-06-22"
     }
   ],
-  "active_milestones": [],
-  "active_tasks": {}
+  "active_milestones": [
+    "git-merge-safety"
+  ],
+  "active_tasks": {
+    "git-merge-safety": "merge-guard"
+  }
 }
