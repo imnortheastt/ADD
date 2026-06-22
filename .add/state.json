@@ -1,7 +1,7 @@
 {
   "project": "AIDD / ADD Methodology",
   "stage": "mvp",
-  "active_task": "engine-repin-parity",
+  "active_task": null,
   "tasks": {
     "add-check": {
       "title": "add.py check: validate .add project integrity",
@@ -1130,148 +1130,10 @@
         ],
         "snapshot_md5": "a3541073baafacd97a03b9c0d560afe7"
       }
-    },
-    "state-schema-migration": {
-      "title": "Multi-active state.json schema + idempotent fail-soft migration",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "state-model-reshape",
-      "depends_on": [],
-      "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T04:56:39+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "2638b832590b66db7f229e4c5c0a876d",
-        "tests": {
-          "add-method/tooling/test_multi_active_state.py": "82525126824d67b292b08590e230205a"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_multi_active_state.py"
-        ],
-        "snapshot_md5": "ac5a2bda09a31fe598a287be0bdb1413"
-      }
-    },
-    "active-accessors": {
-      "title": "Active milestone/task accessor seam; route all call sites",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "state-model-reshape",
-      "depends_on": [
-        "state-schema-migration"
-      ],
-      "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T05:25:16+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "e4282aaccce82a1b5d3a32d4fabcaae0",
-        "tests": {
-          "add-method/tooling/test_active_accessors.py": "82c056995687ca5f21a0773f460dec32"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_active_accessors.py"
-        ],
-        "snapshot_md5": "23e6bf884891dfb0c60802a9a95a9738"
-      }
-    },
-    "multi-active-commands": {
-      "title": "activate/deactivate/use over the active set",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "state-model-reshape",
-      "depends_on": [
-        "active-accessors"
-      ],
-      "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T05:52:29+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "0dd2574bad3fcfd6ef3fa1525752f78a",
-        "tests": {
-          "add-method/tooling/test_multi_active_commands.py": "2574a6d6ec65215de22347ad4baeb76c"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_multi_active_commands.py",
-          "add-method/tooling/test_min_pillar.py",
-          "add-method/tooling/test_next_footer_engine.py",
-          "add-method/tooling/test_gate_owner_marker.py"
-        ],
-        "snapshot_md5": "a105be80d4ecdadd9f10b13af663e1ac"
-      }
-    },
-    "parallel-status-view": {
-      "title": "status renders the active set as parallel streams",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "state-model-reshape",
-      "depends_on": [
-        "multi-active-commands"
-      ],
-      "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T06:05:44+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "b3558387e57d0d09dc9c4b5663e98ee3",
-        "tests": {
-          "add-method/tooling/test_parallel_status_view.py": "96c38aef94201b7ac72d4219273d8f67"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/add.py",
-          ".add/tooling/add.py",
-          "add-method/src/add_method/_bundled/tooling/add.py",
-          "add-method/tooling/engine_pin.py",
-          "add-method/tooling/test_parallel_status_view.py",
-          "add-method/tooling/test_wave_status_hint.py"
-        ],
-        "snapshot_md5": "1632d3d7ba25a92d7ed97d568a47a7ab"
-      }
-    },
-    "engine-repin-parity": {
-      "title": "Consolidated 3-tree parity audit + ENGINE_MD5 + parity-test hardening",
-      "phase": "done",
-      "gate": "PASS",
-      "milestone": "state-model-reshape",
-      "depends_on": [
-        "parallel-status-view"
-      ],
-      "created": "2026-06-22T03:59:16+00:00",
-      "updated": "2026-06-22T06:18:15+00:00",
-      "flag_verified": true,
-      "tripwire": {
-        "contract_md5": "9fbc0c738903368e6973f2ceb757df92",
-        "tests": {
-          "add-method/tooling/test_engine_repin_parity.py": "4ca0692fec47b8509d7c13a630858d1b"
-        }
-      },
-      "scope": {
-        "declared": [
-          "add-method/tooling/test_engine_repin_parity.py"
-        ],
-        "snapshot_md5": "61bf55561a2083f88302b575bcf6b352"
-      }
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T06:19:35+00:00",
+  "updated": "2026-06-22T06:36:19+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
@@ -1448,17 +1310,9 @@
       "status": "done",
       "created": "2026-06-18T13:48:30+00:00",
       "updated": "2026-06-18T13:58:42+00:00"
-    },
-    "state-model-reshape": {
-      "title": "Multi-active state model + migration (team-collaboration foundation)",
-      "goal": "ADD's engine tracks N truly-parallel active milestones \u2014 state.json holds a SET of active milestones, each with its own active task \u2014 with a backward-compatible migration from the single-active schema and the ENGINE_MD5 pin deliberately re-established.",
-      "stage": "mvp",
-      "status": "done",
-      "created": "2026-06-22T03:44:03+00:00",
-      "updated": "2026-06-22T06:19:35+00:00"
     }
   },
-  "active_milestone": "state-model-reshape",
+  "active_milestone": null,
   "archived": [
     {
       "slug": "v5",
@@ -1810,12 +1664,21 @@
         "onboarding-docs-refresh"
       ],
       "archived": "2026-06-22"
+    },
+    {
+      "slug": "state-model-reshape",
+      "title": "Multi-active state model + migration (team-collaboration foundation)",
+      "tasks": 5,
+      "task_slugs": [
+        "state-schema-migration",
+        "active-accessors",
+        "multi-active-commands",
+        "parallel-status-view",
+        "engine-repin-parity"
+      ],
+      "archived": "2026-06-22"
     }
   ],
-  "active_milestones": [
-    "state-model-reshape"
-  ],
-  "active_tasks": {
-    "state-model-reshape": "engine-repin-parity"
-  }
+  "active_milestones": [],
+  "active_tasks": {}
 }
