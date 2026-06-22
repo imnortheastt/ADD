@@ -17,6 +17,8 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.request
@@ -238,12 +240,238 @@ def _require_root() -> Path:
     return root
 
 
-def load_state(root: Path) -> dict:
-    """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
-    dies with a clean 'state_invalid' message (never a raw traceback), so every
-    command that loads state degrades gracefully (design-for-failure)."""
+def _migrate_state(state: dict) -> dict:
+    """Forward-migrate a single-active state to the multi-active schema (team-collaboration
+    foundation). PURE · idempotent · TOTAL · never raises · no I/O.
+
+    A state lacking the `active_milestones` key gains it — DERIVED from the scalar
+    `active_milestone` (grandfather-by-missing-key, mirroring `_setup_locked`): None -> [],
+    "x" -> ["x"]. A per-milestone active-task map `active_tasks` is added; the old global
+    `active_task` is placed under its owning active milestone only when it genuinely belongs
+    there, else it stays as the top-level scalar fallback (orphan rule, FROZEN decision (a)).
+    The scalar `active_milestone` / `active_task` keys are KEPT as the N<=1 mirror so the
+    not-yet-routed readers keep working. An already-migrated state (key present) is returned
+    unchanged — never re-derived, never clobbered. Corrupt parsing stays the loader's job.
+
+    PURE in the observable sense: the caller's dict is NEVER mutated — a state that needs
+    migrating is upgraded on a fresh top-level copy (nested objects are shared but only read)."""
+    if not isinstance(state, dict) or "active_milestones" in state:
+        return state
+    migrated = dict(state)
+    active_ms = migrated.get("active_milestone")
+    migrated["active_milestones"] = [] if active_ms is None else [active_ms]
+    active_task = migrated.get("active_task")
+    tasks = migrated.get("tasks") or {}
+    owns = (active_ms is not None and active_task is not None
+            and isinstance(tasks.get(active_task), dict)
+            and tasks[active_task].get("milestone") == active_ms)
+    migrated["active_tasks"] = {active_ms: active_task} if owns else {}
+    return migrated
+
+
+# --- active milestone/task accessor seam (multi-active foundation) -----------
+#
+# Every engine call site reads & writes the active milestone(s)/task through these
+# four helpers, so multi-active SEMANTICS can land in one place later. Today they
+# preserve single-active behavior exactly: reads return the scalar mirror, writes
+# keep the scalar AND the new active_milestones/active_tasks structures in sync.
+
+def _active_milestone(state: dict) -> str | None:
+    """The primary active milestone — the N<=1 scalar mirror (== active_milestones[0])."""
+    return state.get("active_milestone")
+
+
+def _active_task(state: dict, milestone: str | None = None) -> str | None:
+    """The active task: per-milestone when `milestone` is given (partial-state -> None),
+    else the global/primary scalar active task. Total — never raises."""
+    if milestone is None:
+        return state.get("active_task")
+    return (state.get("active_tasks") or {}).get(milestone)
+
+
+def _set_active_milestone(state: dict, slug: str | None) -> None:
+    """Set the primary active milestone, keeping `active_milestones` consistent (N<=1 sync)."""
+    state["active_milestone"] = slug
+    state["active_milestones"] = [] if slug is None else [slug]
+
+
+def _set_active_task(state: dict, slug: str | None, milestone: str | None = None) -> None:
+    """Set the active task, keeping the scalar mirror AND the per-milestone map in sync.
+    With no owning active milestone the active task is scalar-only (the migration's orphan
+    rule); clearing (slug is None) pops the milestone's entry."""
+    state["active_task"] = slug
+    ms = milestone if milestone is not None else _active_milestone(state)
+    tasks_map = state.setdefault("active_tasks", {})
+    if ms is None:
+        return
+    if slug is None:
+        tasks_map.pop(ms, None)
+    else:
+        tasks_map[ms] = slug
+
+
+def _activate_milestone(state: dict, slug: str) -> None:
+    """Add a milestone to the active SET (idempotent) and make it the primary focus,
+    syncing the scalar active_task to that milestone's entry. Does NOT remove other members
+    (this is how a user reaches N>=2 active milestones)."""
+    ms_list = state.setdefault("active_milestones", [])
+    if slug not in ms_list:
+        ms_list.append(slug)
+    state["active_milestone"] = slug
+    state["active_task"] = (state.get("active_tasks") or {}).get(slug)
+
+
+def _deactivate_milestone(state: dict, slug: str) -> None:
+    """Remove a milestone from the active SET, pop its active-task entry, and (if it was the
+    primary) repoint the primary to the most-recent remaining member (or None when empty)."""
+    ms_list = state.setdefault("active_milestones", [])
+    if slug in ms_list:
+        ms_list.remove(slug)
+    (state.setdefault("active_tasks", {})).pop(slug, None)
+    if state.get("active_milestone") == slug:
+        new = ms_list[-1] if ms_list else None
+        state["active_milestone"] = new
+        state["active_task"] = (state.get("active_tasks") or {}).get(new) if new else None
+
+
+def _git_config(key: str) -> str | None:
+    """Read one `git config --get <key>`, STRICTLY fail-soft: the engine's FIRST git call,
+    so it never raises, never hangs, never shells. Returns the trimmed value, or None when
+    git is absent / errors / times out / the value is empty."""
+    if shutil.which("git") is None:
+        return None
     try:
-        return json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+        out = subprocess.run(
+            ["git", "config", "--get", key],
+            capture_output=True, text=True, timeout=2,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError, ValueError):
+        # OSError: git vanished between which() and run() / spawn error · SubprocessError:
+        # TimeoutExpired · ValueError: a non-UTF-8 config value (latin-1 legacy name) makes
+        # text=True decoding raise UnicodeDecodeError (a ValueError) — all fail soft to None.
+        return None
+    return out or None
+
+
+def _os_user() -> str:
+    """The guaranteed non-empty OS floor. getpass.getuser() reads LOGNAME/USER/... then
+    falls back to the passwd database — but in a bare container (no env var AND no passwd
+    entry) CPython raises KeyError (OSError only on 3.13+). Catch broadly and return a
+    sentinel so _whoami stays TOTAL: it always yields a non-empty name, never crashes."""
+    try:
+        return getpass.getuser() or "unknown"
+    except (KeyError, OSError):
+        return "unknown"
+
+
+def _whoami(state: dict) -> dict:
+    """Resolve the current git-native ACTOR -> {name, email, source}. Priority:
+    (1) an `actor_override` (whoami --set) with a non-blank name -> source 'override';
+    (2) `git config user.name`/`user.email` -> source 'git';
+    (3) the OS user (_os_user) -> source 'os', the guaranteed non-empty floor.
+    Total: always returns a dict with a non-empty name; `email` may be None."""
+    ov = state.get("actor_override")
+    if ov and (ov.get("name") or "").strip():
+        return {"name": ov["name"], "email": ov.get("email"), "source": "override"}
+    name = _git_config("user.name")
+    if name:
+        return {"name": name, "email": _git_config("user.email"), "source": "git"}
+    return {"name": _os_user(), "email": None, "source": "os"}
+
+
+def _actor_stamp(state: dict) -> dict:
+    """The SINGLE source of the structured-actor stamp every engine-WRITTEN human action
+    records — lock · gate · milestone-done · release (user-identity actor-stamping). It IS
+    `_whoami(state)`: a TOTAL {name,email,source} (always a non-empty name), so a stamp can
+    never fail or block a write. Descriptive only — no command's decision reads it."""
+    return _whoami(state)
+
+
+def _render_actor_line(state: dict) -> str:
+    """Render the actor stamp as one human-readable line: name, an optional angle-bracketed
+    email, then the source in parens — used on the RELEASES.md row (no state.json write)."""
+    a = _actor_stamp(state)
+    email = f" <{a['email']}>" if a.get("email") else ""
+    return f"{a['name']}{email} ({a['source']})"
+
+
+def _parse_actor_arg(s: str) -> dict:
+    """Parse an `assign --owner`/`--assignee` value into a {name, email, source: "assigned"}
+    actor (ownership-assignment). "Name <email>" -> both; a bare "Name" -> email None. TOTAL:
+    a malformed value (no closing bracket) never raises — the whole stripped string is the name.
+    `source` is "assigned" — a human typed this name (not git-resolved nor an ADD override)."""
+    m = re.match(r"^\s*(.*?)\s*<([^>]*)>\s*$", s)
+    if m:
+        return {"name": m.group(1), "email": m.group(2) or None, "source": "assigned"}
+    return {"name": s.strip(), "email": None, "source": "assigned"}
+
+
+def _actor_matches(rec_actor: dict | None, me: dict) -> bool:
+    """Does a recorded owner/assignee actor identify the SAME person as `me` (multi-active-UX)?
+    Email-first (the stabler key): when BOTH carry a non-empty email, emails decide; otherwise
+    fall back to name-equality. Both comparisons are stripped + case-insensitive. TOTAL — a None,
+    non-dict, or blank-name record returns False (an unowned/garbage slot is no one's)."""
+    if not isinstance(rec_actor, dict):
+        return False
+    rec_name = (rec_actor.get("name") or "").strip()
+    if not rec_name:
+        return False
+    rec_email = (rec_actor.get("email") or "").strip()
+    me_email = (me.get("email") or "").strip()
+    if rec_email and me_email:
+        return rec_email.lower() == me_email.lower()
+    return rec_name.lower() == (me.get("name") or "").strip().lower()
+
+
+def _my_work(state: dict, me: dict) -> list[dict]:
+    """The "my work" lens (multi-active-UX): across ALL active milestones, the NOT-done tasks
+    whose owner OR assignee is `me`. Returns ordered rows {slug, milestone, phase, role} with
+    role in {owner, assignee, both}, sorted by active-milestone order then slug. PURE · no I/O."""
+    active = list(state.get("active_milestones") or [])
+    active_set = set(active)
+    tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
+    rows: list[dict] = []
+    for slug, t in tasks.items():
+        if not isinstance(t, dict) or t.get("milestone") not in active_set or _task_done(t):
+            continue
+        owns = _actor_matches(t.get("owner"), me)
+        assigned = _actor_matches(t.get("assignee"), me)
+        if not (owns or assigned):
+            continue
+        role = "both" if owns and assigned else ("owner" if owns else "assignee")
+        rows.append({"slug": slug, "milestone": t.get("milestone"),
+                     "phase": t.get("phase"), "role": role})
+    order = {m: i for i, m in enumerate(active)}
+    rows.sort(key=lambda r: (order.get(r["milestone"], len(order)), r["slug"]))
+    return rows
+
+
+# A git conflict marker BEGINS a line with 7 of `<`, `=`, or `>` (`(?m)^…`). An unresolved
+# merge writes these into state.json, making it invalid JSON; the line-anchor keeps a
+# legitimate value (always on an INDENTED JSON line) from false-tripping the guard.
+_CONFLICT_MARKER_RE = re.compile(r"(?m)^(<{7}|={7}|>{7})")
+
+
+def _state_text_or_die(root: Path) -> str:
+    """Read state.json's raw text, failing CLOSED with a merge-SPECIFIC `state_conflicted`
+    message when it carries git conflict markers (an unresolved merge — the major's #1 failure
+    mode). A genuine read OSError is NOT swallowed: it propagates to the caller, which maps it
+    to its own existing code (state_invalid / no_state). The guard only READS — never writes."""
+    text = (root / STATE_FILE).read_text(encoding="utf-8")
+    if _CONFLICT_MARKER_RE.search(text):
+        _die(f"state_conflicted: {root / STATE_FILE} has unresolved git merge markers "
+             f"(<<<<<<< / ======= / >>>>>>>) — resolve them (or "
+             f"`git checkout --ours/--theirs {STATE_FILE}`), then run `add.py doctor` to verify")
+    return text
+
+
+def load_state(root: Path) -> dict:
+    """Load + parse state.json, failing CLOSED. A git-conflicted file dies with a merge-specific
+    'state_conflicted'; any other corrupt/unreadable file dies with a clean 'state_invalid'
+    message (never a raw traceback), so every command that loads state degrades gracefully
+    (design-for-failure). The parsed state is forward-migrated to the multi-active schema."""
+    try:
+        return _migrate_state(json.loads(_state_text_or_die(root)))
     except (json.JSONDecodeError, OSError) as e:
         _die(f"state_invalid: {root / STATE_FILE} is corrupt or unreadable "
              f"({e.__class__.__name__}) — restore it from git or a backup")
@@ -252,12 +480,13 @@ def load_state(root: Path) -> dict:
 def _load_state_for_json() -> tuple[Path, dict]:
     """Fail-closed state load for `--json` paths: a missing project or unparseable
     state.json -> `no_state` on stderr + exit 1, with EMPTY stdout (never a partial
-    JSON object a harness might parse). Built from State only — reads no docs/ chapter."""
+    JSON object a harness might parse). Built from State only — reads no docs/ chapter.
+    The parsed state is forward-migrated to the multi-active schema before it is returned."""
     root = find_root()
     if root is None:
         _die("no_state")
     try:
-        return root, json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+        return root, _migrate_state(json.loads(_state_text_or_die(root)))
     except (json.JSONDecodeError, OSError):
         _die("no_state")
 
@@ -453,6 +682,8 @@ def cmd_init(args: argparse.Namespace) -> None:
         "stage": args.stage,
         "active_task": None,
         "active_milestone": None,
+        "active_milestones": [],
+        "active_tasks": {},
         "tasks": {},
         "milestones": {},
         "created": _now(),
@@ -499,7 +730,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
         _die(f"task '{slug}' already exists (use --force to overwrite TASK.md)")
 
     # link to a milestone (explicit, or the active one) — validate before any write
-    milestone = getattr(args, "milestone", None) or state.get("active_milestone")
+    milestone = getattr(args, "milestone", None) or _active_milestone(state)
     if milestone and milestone not in state.get("milestones", {}):
         _die("unknown_milestone")
     depends_on = _parse_deps(getattr(args, "depends_on", None))
@@ -551,7 +782,7 @@ def cmd_new_task(args: argparse.Namespace) -> None:
     }
     if from_delta:
         state["tasks"][slug]["from_delta"] = from_delta     # lineage: seeded from <prior>
-    state["active_task"] = slug
+    _set_active_task(state, slug, milestone)
     save_state(root, state)
     print(f"created task '{slug}' -> {task_md}")
     if milestone:
@@ -618,7 +849,7 @@ def _archived_task_slugs(state: dict) -> set[str]:
 
 
 def _resolve_task(state: dict, slug: str | None) -> str:
-    slug = slug or state.get("active_task")
+    slug = slug or _active_task(state)
     if not slug:
         _die("no task specified and no active task set")
     if slug not in state["tasks"]:
@@ -699,6 +930,15 @@ def cmd_advance(args: argparse.Namespace) -> None:
     _sync_task_marker(root, slug, nxt)
     save_state(root, state)
     print(f"task '{slug}' phase {cur} -> {nxt}")
+    if nxt == "observe":
+        # OBSERVE is where this loop's lessons get captured (TASK.md §7) — suggest routing
+        # them into PROJECT.md right away (a per-task fold is engine-legal; otherwise the
+        # lessons sit unconsolidated until milestone close). Additive: fires only at this
+        # one transition, and the human still decides whether/when to run it. The verb word
+        # is interpolated via _FOLD_VERB so the domain wording-lint sees no bare slang.
+        print("  note: record the lessons this loop taught the foundation in §7 "
+              "OBSERVE, then update PROJECT.md when ready:")
+        print(f"    add.py {_FOLD_VERB} --task {slug}   (review first: add.py deltas)")
     print(_next_footer(root, state))
 
 
@@ -835,6 +1075,7 @@ def cmd_gate(args: argparse.Namespace) -> None:
         state["tasks"][slug]["phase"] = "done"
         _sync_task_marker(root, slug, "done")
     state["tasks"][slug]["gate"] = args.outcome
+    state["tasks"][slug]["gate_actor"] = _actor_stamp(state)   # WHO recorded the verdict (every outcome)
     state["tasks"][slug]["updated"] = _now()
     save_state(root, state)
     print(f"task '{slug}' gate -> {args.outcome}")
@@ -1002,7 +1243,8 @@ def cmd_lock(args: argparse.Namespace) -> None:
     who = args.by or getpass.getuser()
     when = _now()
     # ONE atomic write — no partial lock state.
-    state["setup"] = {"locked": True, "locked_at": when, "locked_by": who, "layers": layers}
+    state["setup"] = {"locked": True, "locked_at": when, "locked_by": who, "layers": layers,
+                      "actor": _actor_stamp(state)}   # structured actor alongside the free-text locked_by
     save_state(root, state)
     if getattr(args, "json", False):
         print(json.dumps(
@@ -1011,6 +1253,92 @@ def cmd_lock(args: argparse.Namespace) -> None:
     else:
         print(f"locked setup ({','.join(layers)}) by {who} @ {when}")
         print(_next_footer(root, state))
+
+
+def cmd_whoami(args: argparse.Namespace) -> None:
+    """Show / set / unset the git-native ACTOR — the identity every human-owned stamp reads.
+    No flags: print the resolved actor (override -> git -> os). --name/--email: store an
+    override. --unset: clear it. Validates before mutating (a reject leaves state unchanged)."""
+    root = _require_root()
+    state = load_state(root)
+    if args.unset:
+        if "actor_override" not in state:
+            _die("no_actor_override")
+        del state["actor_override"]
+        save_state(root, state)
+    elif args.name is not None:
+        if not args.name.strip():
+            _die("actor_name_blank")
+        state["actor_override"] = {"name": args.name, "email": args.email or None}
+        save_state(root, state)
+    who = _whoami(state)
+    if getattr(args, "json", False):
+        print(json.dumps(who, separators=(",", ":")))
+        return
+    email = f" <{who['email']}>" if who.get("email") else ""
+    print(f"actor : {who['name']}{email} (source: {who['source']})")
+
+
+def _ownership_record(state: dict, slug: str) -> dict | None:
+    """Resolve the record a slug names for ownership — a TASK first, else a MILESTONE
+    (tasks win, matching cmd_use/report precedent). None if neither exists."""
+    rec = state.get("tasks", {}).get(slug)
+    if rec is not None:
+        return rec
+    return state.get("milestones", {}).get(slug)
+
+
+def cmd_assign(args: argparse.Namespace) -> None:
+    """Assign an OWNER (accountable) and/or ASSIGNEE (working it) to a task or milestone
+    (ownership-assignment). No role flag -> set BOTH to the resolved self (_whoami); --owner/
+    --assignee "Name <email>" -> set that role only (partial update). Descriptive, never a gate.
+    Validate-before-mutate: a reject leaves state.json byte-identical (no partial write)."""
+    root = _require_root()
+    state = load_state(root)
+    rec = _ownership_record(state, args.slug)
+    if rec is None:
+        _die("unknown_slug")
+    # parse + validate ALL flags BEFORE the first write — a blank name is rejected on the
+    # PARSED name (so "<>" or " <a@x.io>", whose name parses empty, is caught like "   ").
+    parsed_owner = _parse_actor_arg(args.owner) if args.owner is not None else None
+    parsed_assignee = _parse_actor_arg(args.assignee) if args.assignee is not None else None
+    if parsed_owner is not None and not parsed_owner["name"].strip():
+        _die("owner_name_blank")
+    if parsed_assignee is not None and not parsed_assignee["name"].strip():
+        _die("assignee_name_blank")
+    if parsed_owner is None and parsed_assignee is None:
+        who = _whoami(state)
+        rec["owner"] = dict(who)
+        rec["assignee"] = dict(who)
+    else:
+        if parsed_owner is not None:
+            rec["owner"] = parsed_owner
+        if parsed_assignee is not None:
+            rec["assignee"] = parsed_assignee
+    save_state(root, state)
+    parts = [f"{role}: {rec[role]['name']}" for role in ("owner", "assignee") if role in rec]
+    print(f"assigned {args.slug} -> " + " · ".join(parts))
+
+
+def cmd_unassign(args: argparse.Namespace) -> None:
+    """Clear the OWNER and/or ASSIGNEE of a task or milestone (ownership-assignment). No role
+    flag -> clear BOTH; --owner/--assignee -> clear that role only. Reject not_assigned if the
+    targeted role(s) are already absent. Validate-before-mutate (a reject changes nothing)."""
+    root = _require_root()
+    state = load_state(root)
+    rec = _ownership_record(state, args.slug)
+    if rec is None:
+        _die("unknown_slug")
+    if args.owner or args.assignee:
+        roles = [r for r in ("owner", "assignee") if getattr(args, r)]
+    else:
+        roles = ["owner", "assignee"]
+    if not all(r in rec for r in roles):   # every targeted role must exist (frozen: "both must exist")
+        _die("not_assigned")
+    for r in roles:
+        rec.pop(r, None)
+    save_state(root, state)
+    print(f"unassigned {args.slug} ({', '.join(roles)})")
 
 
 def _has_production_roadmap(state: dict) -> bool:
@@ -1057,20 +1385,26 @@ def cmd_status(args: argparse.Namespace) -> None:
             members = [t for t in tasks.values() if t.get("milestone") == mslug]
             ms_list.append({"slug": mslug, "status": m.get("status", "active"),
                             "done": sum(1 for t in members if _task_done(t)),
-                            "total": len(members)})
+                            "total": len(members),
+                            "owner": m.get("owner"), "assignee": m.get("assignee")})
         grad_ready, grad_met, grad_total = _graduation_ready(root, state)
         print(json.dumps({
             "project": state.get("project"), "stage": state.get("stage"),
-            "active_task": state.get("active_task"),
+            "actor": _whoami(state),
+            "active_task": _active_task(state),
+            "active_milestones": list(state.get("active_milestones") or []),
+            "active_tasks": dict(state.get("active_tasks") or {}),
             "milestones": ms_list,
             "tasks": [{"slug": s, "phase": t.get("phase"), "gate": t.get("gate"),
-                       "milestone": t.get("milestone")} for s, t in tasks.items()],
+                       "milestone": t.get("milestone"),
+                       "owner": t.get("owner"), "assignee": t.get("assignee")}
+                      for s, t in tasks.items()],
             "graduation_ready": grad_ready,
             "stage_criteria": {"met": grad_met, "total": grad_total}}))
         return
     root = _require_root()
     state = load_state(root)
-    active = state.get("active_task")
+    active = _active_task(state)
     tasks = state.get("tasks", {})
     # Compute once: True when setup is present AND locked is False (the lock-gate window).
     # Reuses the canonical helper — do NOT write a parallel predicate.
@@ -1079,12 +1413,17 @@ def cmd_status(args: argparse.Namespace) -> None:
     # project autonomy default (task init-auto-default): the posture new tasks INHERIT,
     # read LIVE from PROJECT.md so the human sees the project-wide throttle every session.
     print(f"project autonomy: {_project_autonomy(root)}   (default — new tasks inherit)")
+    # git-native actor (user-identity): who ADD sees you as this session — the identity every
+    # human-owned stamp records. Always present (the resolver is TOTAL). Read-only, no write.
+    _who = _whoami(state)
+    _who_email = f" <{_who['email']}>" if _who.get("email") else ""
+    print(f"actor   : {_who['name']}{_who_email} (source: {_who['source']})")
     print(f"stage   : {state.get('stage', '(unknown)')}")
     # project GOAL + active-milestone goal (v20) — the loop's orientation anchor, read
     # LIVE from PROJECT.md / MILESTONE.md (never state.json). Additive: every existing
     # line stays put. A missing source degrades to a sentinel — one never blanks the other.
     print(f"goal    : {_project_goal(root)}")
-    _active_ms = state.get("active_milestone")
+    _active_ms = _active_milestone(state)
     if _active_ms:
         print(f"m-goal  : {_milestone_doc(root, _active_ms)[1]}   (← {_active_ms})")
         # goal-ready (task goal-auto-ready-gate): is the active milestone's goal AUTO-READY
@@ -1112,13 +1451,13 @@ def cmd_status(args: argparse.Namespace) -> None:
 
     # milestone rollup (only when milestones are in use)
     milestones = state.get("milestones") or {}
-    active_ms = state.get("active_milestone")
+    active_ms = _active_milestone(state)
     if milestones:
         print("milestones:")
         for mslug, m in milestones.items():
             members = [t for t in tasks.values() if t.get("milestone") == mslug]
             done = sum(1 for t in members if _task_done(t))
-            mark = "*" if mslug == active_ms else " "
+            mark = "*" if mslug in (state.get("active_milestones") or []) else " "
             print(f"  {mark} {mslug:<20} {done}/{len(members)} tasks done"
                   f"   status={m.get('status', 'active')}")
         # graduation cue (v22): project-global + read-only. Fires only when every milestone
@@ -1145,10 +1484,38 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(f"  → {RELEASABLE_CUE.format(n=len(_rel))}")
 
     print(f"active  : {active or '(none)'}")
+    # parallel streams (parallel-status-view): when >=2 milestones are active, render each as its
+    # own stream (active task + phase) so a user working N fronts reads them all at once. ADDITIVE —
+    # the N<=1 output above is byte-identical (the standing additive-cue convention); presentation
+    # only, no command DECISION changes. Reads the SET/map via the task-2 seam shape.
+    _ams = state.get("active_milestones") or []
+    if len(_ams) >= 2:
+        _primary = _active_milestone(state)
+        _order = ([_primary] if _primary in _ams else []) + [m for m in _ams if m != _primary]
+        _atasks = state.get("active_tasks") or {}
+        print(f"streams : {len(_ams)} active milestones")
+        for _m in _order:
+            _tk = _atasks.get(_m)
+            _ph = (tasks.get(_tk) or {}).get("phase", "-") if _tk else "-"
+            _mk = "▸" if _m == _primary else " "
+            _tag = "  (primary)" if _m == _primary else ""
+            # per-stream owner (per-stream-owner): the milestone's lead, present-only — a stream
+            # whose milestone has no owner (or a blank-name owner) renders byte-identically
+            # (additive-cue convention). Guard on the name like `_fmt_ownership`, so a hand-edited
+            # blank-name record never emits an `owner:` fragment.
+            _owner_rec = (milestones.get(_m) or {}).get("owner") or {}
+            _so = _fmt_actor(_owner_rec) if _owner_rec.get("name") else ""
+            _own_frag = f"  · owner: {_so}" if _so else ""
+            print(f"  {_mk} {_m:<20} task={_tk or '(none)'}  phase={_ph}{_tag}{_own_frag}")
     # surface the active task's autonomy level (task explicit-autonomy-dial) so the human
     # reads the throttle every session; "unset" when no explicit `autonomy:` line is present.
     if active and active in tasks:
         print(f"autonomy: {_autonomy_level(_task_header(root, active)) or 'unset'}")
+        # owner/assignee of the active task (ownership-assignment) — present-only, never a
+        # placeholder; an unassigned active task adds no line (additive-cue convention).
+        _own = _fmt_ownership(tasks[active])
+        if _own:
+            print(f"owned   : {_own}")
         # grounded (task ground-bundle-wiring): does the active task's §0 GROUND map cite the
         # anchors §3 names? measure-not-block, human-readable only (never the JSON surface). A
         # pre-ground / legacy task (no §0) -> _task_grounded None -> NO line, so the surface is
@@ -1237,7 +1604,7 @@ def cmd_guide(args: argparse.Namespace) -> None:
     """
     if getattr(args, "json", False):
         json_root, state = _load_state_for_json()
-        slug = args.slug or state.get("active_task")
+        slug = args.slug or _active_task(state)
         if not slug:
             print(json.dumps({"task": None, "phase": None, "owner": "human", "stop": True,
                               "next_step": "start your first feature -> add.py new-task <slug>",
@@ -1257,7 +1624,7 @@ def cmd_guide(args: argparse.Namespace) -> None:
         return
     root = _require_root()
     state = load_state(root)
-    slug = args.slug or state.get("active_task")
+    slug = args.slug or _active_task(state)
     if not slug:
         print("active : (none)")
         print('next   : start your first feature -> add.py new-task <slug> --title "..."')
@@ -1732,7 +2099,7 @@ def cmd_check(args: argparse.Namespace) -> None:
         if root is None:
             _die("no_project")
         try:
-            state = json.loads((root / STATE_FILE).read_text(encoding="utf-8"))
+            state = json.loads(_state_text_or_die(root))
         except (json.JSONDecodeError, OSError):
             _die("state_invalid")
 
@@ -1832,7 +2199,7 @@ def cmd_check(args: argparse.Namespace) -> None:
     # zero-criteria milestone is shaping's nudge, not this one's. LIVE-ONLY: the OPEN active
     # milestone only — a done-but-not-yet-archived one (still the active pointer until
     # archive clears it) and closed/archived predecessors are never retro-flagged (Must #4).
-    _active_ms = state.get("active_milestone")
+    _active_ms = _active_milestone(state)
     if _active_ms in milestones and milestones[_active_ms].get("status") != "done":
         _cited, _total = _exit_criteria_cited(root, _active_ms)
         if _total >= 1 and _cited < _total:
@@ -1847,7 +2214,7 @@ def cmd_check(args: argparse.Namespace) -> None:
     # FROZEN AND its §0 GROUND map is ungrounded (the precise "froze without grounding" gap, so
     # no nag during pre-freeze drafting). A pre-ground / legacy task (no §0 -> _grounded_state
     # None) is EXEMPT, never retro-flagged. Rides the existing `warnings` array — no new key.
-    _at = state.get("active_task")
+    _at = _active_task(state)
     if _at in tasks:
         _raw = _raw_phase_bodies(root, _at)
         if _contract_frozen(_raw.get(3, "")) and _grounded_state(_raw) is False:
@@ -1919,6 +2286,93 @@ def cmd_check(args: argparse.Namespace) -> None:
         print(summary)
     if failed:
         raise SystemExit(1)
+
+
+def _doctor_findings(root: Path) -> list[str]:
+    """Read-only diagnosis of state.json: each item is "<problem> — fix: <fix>".
+
+    Reads the RAW text with its OWN try/except — NEVER through the dying load_state — so a
+    conflicted/corrupt state is REPORTED, not aborted on (the proactive counterpart to the
+    merge-guard load guard, which fails fast at the first problem). Reports the FIRST blocking
+    class then stops (can't parse deeper): missing/unreadable file -> conflict markers -> bad
+    JSON. On a PARSEABLE state (normalized through `_migrate_state` so the canonical multi-active
+    shape is judged) it appends EVERY referential violation. PURE: reads only, returns the list."""
+    try:
+        text = (root / STATE_FILE).read_text(encoding="utf-8")
+    except OSError:
+        return ["state.json missing/unreadable — fix: restore it from git/backup"]
+    if _CONFLICT_MARKER_RE.search(text):
+        return ["state.json has unresolved git merge markers — fix: resolve "
+                "<<<<<<< / ======= / >>>>>>> (or git checkout --ours/--theirs), then re-run doctor"]
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        return ["state.json is not valid JSON — fix: restore it from git/backup"]
+
+    state = _migrate_state(parsed)
+    findings: list[str] = []
+    milestones = state.get("milestones") if isinstance(state.get("milestones"), dict) else {}
+    tasks = state.get("tasks") if isinstance(state.get("tasks"), dict) else {}
+
+    active_ms = state.get("active_milestones") if isinstance(state.get("active_milestones"), list) else []
+    active_tasks = state.get("active_tasks") if isinstance(state.get("active_tasks"), dict) else {}
+    for am in active_ms:
+        if am not in milestones:
+            findings.append(f"active milestone '{am}' has no record — fix: deactivate it or "
+                            "recreate the milestone")
+    for ms, t in active_tasks.items():
+        if not t:
+            continue
+        if t not in tasks:
+            findings.append(f"active task '{t}' (milestone '{ms}') has no record — fix: use a "
+                            "real task or clear the active pointer")
+        elif (tasks[t].get("milestone") if isinstance(tasks[t], dict) else None) != ms:
+            findings.append(f"active task '{t}' is mislabeled under '{ms}' — fix: re-use it "
+                            "under its own milestone")
+    for slug, t in tasks.items():
+        m = t.get("milestone") if isinstance(t, dict) else None
+        if m is not None and m not in milestones:
+            findings.append(f"task '{slug}' references missing milestone '{m}' — fix: set its "
+                            "milestone to a real one (or none)")
+    return findings
+
+
+def cmd_doctor(args: argparse.Namespace) -> None:
+    """Read-only `add.py doctor`: PASS + exit 0 on a healthy state, else report each problem +
+    fix to stdout and exit non-zero. NEVER mutates state (detect, never auto-resolve)."""
+    root = find_root()
+    if root is None:
+        _die("no_project")
+    findings = _doctor_findings(root)
+    if not findings:
+        print("doctor: PASS — state.json is healthy (parseable · conflict-free · references intact)")
+        return
+    print(f"doctor: {len(findings)} problem(s):")
+    for f in findings:
+        print(f"  ✗ {f}")
+    raise SystemExit(1)
+
+
+def cmd_mine(args: argparse.Namespace) -> None:
+    """Read-only `add.py mine`: across all active milestones, the not-done tasks owned-by or
+    assigned-to the resolved actor (`_whoami`, or `--actor "Name <email>"`). Text or `--json`.
+    An empty queue is a plain exit-0 line, not an error. NEVER writes state."""
+    root = find_root()
+    if root is None:
+        _die("no_project")
+    state = load_state(root)
+    me = _parse_actor_arg(args.actor) if getattr(args, "actor", None) else _whoami(state)
+    rows = _my_work(state, me)
+    if getattr(args, "json", False):
+        print(json.dumps({"actor": me, "tasks": rows}))
+        return
+    who = _fmt_actor(me) or me.get("name", "you")
+    if not rows:
+        print(f"mine: no open tasks for {who} across active milestones")
+        return
+    print(f"mine: {who} — {len(rows)} open task(s) across active milestones:")
+    for r in rows:
+        print(f"  {r['slug']:<24} [{r['milestone']}]  phase={r['phase']}  ({r['role']})")
 
 
 # ---------------------------------------------------------------------------
@@ -2079,7 +2533,7 @@ def cmd_new_milestone(args: argparse.Namespace) -> None:
         "title": title, "goal": args.goal or "", "stage": args.stage,
         "status": "active", "created": _now(), "updated": _now(),
     }
-    state["active_milestone"] = slug
+    _set_active_milestone(state, slug)
     save_state(root, state)
     print(f"created milestone '{slug}' -> {mfile}")
     print("active milestone set.")
@@ -2128,7 +2582,11 @@ def cmd_ready(args: argparse.Namespace) -> None:
     for slug in ready:
         deps = tasks[slug].get("depends_on") or []
         suffix = f"  (after {', '.join(deps)})" if deps else ""
-        print(f"  {slug}{suffix}")
+        # cross-active legibility (cross-active-waves): name the stream each ready task belongs
+        # to, present-only — a milestone-less task gets no bracket (byte-identical).
+        _ms = tasks[slug].get("milestone")
+        ms_frag = f"  [{_ms}]" if _ms else ""
+        print(f"  {slug}{ms_frag}{suffix}")
 
 
 def _wave_schedule(state: dict, mslug: str) -> dict:
@@ -2222,36 +2680,17 @@ def _wave_schedule(state: dict, mslug: str) -> dict:
             "tiers": tiers, "blocked": blocked_sorted}
 
 
-def cmd_waves(args: argparse.Namespace) -> None:
-    """READ-ONLY DAG scheduler: print the active milestone's topological waves, critical
-    path, advisory tier hint, and blocked set. Writes nothing; emits no `next:` footer."""
-    is_json = getattr(args, "json", False)
-    if is_json:
-        _, state = _load_state_for_json()
-    else:
-        state = load_state(_require_root())
-    mslug = getattr(args, "milestone", None) or state.get("active_milestone")
-    if not mslug:
-        _die("no_active_milestone: no active milestone and no --milestone given")
-    if mslug not in (state.get("milestones") or {}):
-        _die(f"unknown_milestone: '{mslug}' is not a milestone in this project")
-    sched = _wave_schedule(state, mslug)
-    if "cycle" in sched:
-        _die(f"dependency_cycle: not-done deps form a cycle "
-             f"({' -> '.join(sched['cycle'])}) — no valid schedule")
-
-    if is_json:
-        print(json.dumps({"milestone": mslug, **sched}))
-        return
-
-    print(f"milestone: {mslug}")
+def _wave_block_lines(state: dict, mslug: str, sched: dict) -> list[str]:
+    """The exact text lines `waves` renders for ONE milestone's schedule (cross-active-waves
+    extracts this so a single target stays byte-identical and N targets each get a block)."""
+    lines = [f"milestone: {mslug}"]
     if not sched["waves"]:
         if sched["blocked"]:
             for s in sched["blocked"]:
-                print(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
+                lines.append(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
         else:
-            print("all tasks done — nothing to schedule")
-        return
+            lines.append("all tasks done — nothing to schedule")
+        return lines
     scheduled_set = {x for w in sched["waves"] for x in w}
     for i, wave in enumerate(sched["waves"], start=1):
         parts = []
@@ -2259,14 +2698,62 @@ def cmd_waves(args: argparse.Namespace) -> None:
             md = sorted(d for d in (state["tasks"][s].get("depends_on") or [])
                         if d in scheduled_set)
             parts.append(f"{s} (deps: {', '.join(md)})" if md else s)
-        print(f"wave {i}: {', '.join(parts)}")
+        lines.append(f"wave {i}: {', '.join(parts)}")
     crit = sched["critical_path"]
-    print(f"critical path: {' → '.join(crit)}  ({sched['critical_path_len']} tasks)")
+    lines.append(f"critical path: {' → '.join(crit)}  ({sched['critical_path_len']} tasks)")
     tops = [s for s, tier in sched["tiers"].items() if tier == "top"]
     mids = [s for s, tier in sched["tiers"].items() if tier == "mid"]
-    print(f"tier hint: top → {', '.join(tops)}; mid → {', '.join(mids) or '(none)'}")
+    lines.append(f"tier hint: top → {', '.join(tops)}; mid → {', '.join(mids) or '(none)'}")
     for s in sched["blocked"]:
-        print(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
+        lines.append(f"blocked: {s} (waiting on {', '.join(sched['blocked'][s])})")
+    return lines
+
+
+def cmd_waves(args: argparse.Namespace) -> None:
+    """READ-ONLY DAG scheduler: print the topological waves, critical path, advisory tier hint,
+    and blocked set. With no --milestone it spans EVERY active milestone (cross-active-waves);
+    a single target / --milestone renders byte-identically. Writes nothing; no `next:` footer."""
+    is_json = getattr(args, "json", False)
+    if is_json:
+        _, state = _load_state_for_json()
+    else:
+        state = load_state(_require_root())
+    mslug_arg = getattr(args, "milestone", None)
+    if mslug_arg:
+        targets = [mslug_arg]                          # explicit single target — unchanged
+    else:
+        primary = _active_milestone(state)             # the SCALAR is the gate (test relies on it)
+        if not primary:
+            _die("no_active_milestone: no active milestone and no --milestone given")
+        # additively widen to the other active milestones (cross-active); primary first
+        targets = [primary] + [m for m in (state.get("active_milestones") or [])
+                               if m != primary]
+    scheds = []
+    for t in targets:
+        if t not in (state.get("milestones") or {}):
+            _die(f"unknown_milestone: '{t}' is not a milestone in this project")
+        sched = _wave_schedule(state, t)
+        if "cycle" in sched:
+            _die(f"dependency_cycle: not-done deps form a cycle "
+                 f"({' -> '.join(sched['cycle'])}) — no valid schedule")
+        scheds.append(sched)
+
+    if is_json:
+        if len(targets) == 1:
+            print(json.dumps({"milestone": targets[0], **scheds[0]}))   # unchanged shape
+        else:
+            print(json.dumps({"streams": [{"milestone": t, **s}
+                                          for t, s in zip(targets, scheds)]}))
+        return
+
+    if len(targets) == 1:
+        print("\n".join(_wave_block_lines(state, targets[0], scheds[0])))   # byte-identical
+        return
+    print(f"active streams: {len(targets)}")
+    for i, (t, s) in enumerate(zip(targets, scheds)):
+        if i:
+            print()
+        print("\n".join(_wave_block_lines(state, t, s)))
 
 
 def cmd_milestone_done(args: argparse.Namespace) -> None:
@@ -2296,6 +2783,10 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
         _die(f"milestone_goal_unmet: milestone '{slug}' has {met}/{total} exit criteria met "
              f"— check the remaining boxes in MILESTONE.md (the goal-gate holds the loop "
              f"open) or propose the next tasks (add.py deltas)")
+    # Stamp WHO closed it BEFORE rendering the retro, so the persisted exit report records
+    # the closer (identity-in-status: the retro IS the report `report <ms>` re-renders, so both
+    # must reflect the same final state). In-memory only here — save_state below commits it.
+    state["milestones"][slug]["done_actor"] = _actor_stamp(state)
     # Fail-closed: render+persist the exit report (RETRO.md) BEFORE committing the
     # status flip, so a write failure rolls back naturally (status never commits ->
     # no done-without-retro state). The retro step is read-only on state.json.
@@ -2311,11 +2802,15 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     print(f"milestone '{slug}' -> done ({len(members)} tasks complete{tail}).")
     print(f"wrote {retro_path.relative_to(root.parent)}  (milestone exit report)")
     # fold-pressure nudge: milestone close is the natural fold point for open deltas (v11)
-    open_deltas = sum(len(v) for v in _collect_open_deltas(root).values())
+    by_comp = _collect_open_deltas(root)
+    open_deltas = sum(len(v) for v in by_comp.values())
     if open_deltas:
         noun = "delta" if open_deltas == 1 else "deltas"
-        print(f"note: {open_deltas} open {noun} to consolidate into the foundation "
-              f"— review with: add.py deltas")
+        print(f"note: {open_deltas} open {noun} ready to {_FOLD_VERB} into the foundation:")
+        for comp in _COMPETENCY_ORDER:
+            for e in by_comp[comp]:
+                print(f"    ({comp}) {e['text']}  [{e['task']}]")
+        print(f"  run: add.py {_FOLD_VERB}   (review first: add.py deltas)")
     # SPEC-delta nudge (project-wide): the close is also a natural prompt to RESOLVE the
     # forward hand-offs (seed/drop) so none is orphaned at the eventual compaction.
     open_spec = len(_collect_open_spec_deltas(root))
@@ -2369,10 +2864,9 @@ def cmd_archive_milestone(args: argparse.Namespace) -> None:
     del state["milestones"][slug]
     for s in members:
         del tasks[s]
-    if state.get("active_milestone") == slug:
-        state["active_milestone"] = None
-    if state.get("active_task") in members:
-        state["active_task"] = None
+    _deactivate_milestone(state, slug)   # drop from the active SET + pop its task entry, repointing the primary focus
+    if _active_task(state) in members:   # N<=1 oracle: a NON-primary archive (new-milestone replace-to-focus leaves
+        state["active_task"] = None      # active_task pointing at m1's task while primary is m2) would dangle at a deleted task
     save_state(root, state)
     print(f"archived milestone '{slug}' ({len(members)} tasks) — removed from active state.")
     print("files on disk are untouched; see `add.py status` for the archived rollup.")
@@ -2472,16 +2966,54 @@ def cmd_set_milestone(args: argparse.Namespace) -> None:
     print(_next_footer(root, state))
 
 
+def cmd_activate(args: argparse.Namespace) -> None:
+    """Add a milestone to the active working SET and focus it — how a user works N milestones
+    in parallel. Idempotent (re-activating just refocuses). Validates before mutating."""
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    if slug not in state.get("milestones", {}):
+        _die("unknown_milestone")
+    if state["milestones"][slug].get("status") == "done":
+        _die("milestone_done")
+    _activate_milestone(state, slug)
+    save_state(root, state)
+    print(f"activated '{slug}' — active: {', '.join(state['active_milestones'])}")
+    print(_next_footer(root, state))
+
+
+def cmd_deactivate(args: argparse.Namespace) -> None:
+    """Remove a milestone from the active working SET (its files + status are untouched);
+    repoints the primary focus to a remaining member. Validates before mutating."""
+    root = _require_root()
+    state = load_state(root)
+    slug = args.slug
+    if slug not in (state.get("active_milestones") or []):
+        _die("milestone_not_active")
+    _deactivate_milestone(state, slug)
+    save_state(root, state)
+    remaining = state.get("active_milestones") or []
+    print(f"deactivated '{slug}' — active: {', '.join(remaining) if remaining else '(none)'}")
+    print(_next_footer(root, state))
+
+
 def cmd_use(args: argparse.Namespace) -> None:
     """Set the active task to an EXISTING task (switch focus) without scaffolding a new
     one or hand-editing state.json. advance/gate/phase still take an explicit slug; `use`
-    just moves the default focus, closing the only gap that forced manual state edits."""
+    just moves the default focus, closing the only gap that forced manual state edits.
+    Milestone-aware: focuses the task's OWN milestone (activating it into the set) so the
+    active task is switched WITHIN that milestone, not mislabeled under a stale primary."""
     root = _require_root()
     state = load_state(root)
     slug = args.slug
     if slug not in state.get("tasks", {}):
         _die("unknown_task")
-    state["active_task"] = slug
+    ms = state["tasks"][slug].get("milestone")
+    if ms is not None and ms in state.get("milestones", {}):
+        _activate_milestone(state, ms)        # focus the task's milestone (adds to the set if needed)
+        _set_active_task(state, slug, ms)
+    else:
+        _set_active_task(state, slug)         # milestone-less task: scalar only (back-compat)
     save_state(root, state)
     print(f"active task -> '{slug}' (phase={state['tasks'][slug]['phase']})")
     print(_next_footer(root, state))
@@ -3226,6 +3758,9 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
             "phase_index": PHASES.index(phase) if phase in PHASES else 0,
             "done": _task_done(t),
             "gate": gate,
+            "gate_actor": t.get("gate_actor"),   # WHO recorded the verdict (None when unstamped)
+            "owner": t.get("owner"),             # WHO is accountable (None when unassigned)
+            "assignee": t.get("assignee"),       # WHO is working it (None when unassigned)
             "tests": n_tests,
             "tests_declared": t_declared,
             "observe": observe,
@@ -3241,7 +3776,10 @@ def report_data(root: Path, state: dict, mslug: str) -> dict:
 
     return {
         "milestone": {"slug": mslug, "title": title, "goal": goal,
-                      "status": ms.get("status", "active")},
+                      "status": ms.get("status", "active"),
+                      "done_actor": ms.get("done_actor"),    # WHO closed it (None when unstamped/open)
+                      "owner": ms.get("owner"),              # WHO is accountable for the milestone
+                      "assignee": ms.get("assignee")},       # WHO is working it (None when unassigned)
         "summary": {
             "tasks_done": sum(1 for r in task_rows if r["done"]),
             "tasks_total": len(task_rows),
@@ -3423,6 +3961,24 @@ def render_task_detail(root: Path, state: dict, mslug: str, slug: str, *,
     return "\n".join(L)
 
 
+def _fmt_actor(actor: dict | None) -> str:
+    """Format a recorded actor stamp `{name,email,source}` as `name [<email>]` for the
+    report surface — "" when absent (user-identity: present-only render, no placeholder)."""
+    if not actor:
+        return ""
+    email = f" <{actor['email']}>" if actor.get("email") else ""
+    return f"{actor.get('name', '')}{email}"
+
+
+def _fmt_ownership(rec: dict) -> str:
+    """Format a record's owner/assignee as `owner: <name> · assignee: <name>` for the
+    surface (ownership-assignment) — present-only: each role appears only when set, and
+    "" when neither is. Reuses _fmt_actor to render each `{name,email,source}` actor."""
+    bits = [f"{role}: {_fmt_actor(rec[role])}" for role in ("owner", "assignee")
+            if rec.get(role) and rec[role].get("name")]   # skip a hand-edited blank-name record
+    return " · ".join(bits)
+
+
 def render_report(root: Path, state: dict, mslug: str, *,
                   width: int = _DEFAULT_WIDTH, ascii: bool = False) -> str:
     """Format the FACTS (report_data) as the text DASHBOARD — verdict-first header,
@@ -3457,6 +4013,13 @@ def render_report(root: Path, state: dict, mslug: str, *,
     L.append(f" {'GATES':<9} {gate_txt:<18} {'WAIVERS':<9} {waiver_txt}")
     L.append("")
     L.extend(_wrap(m["goal"], W - 7, " goal  "))
+    # who closed the milestone (user-identity) — present-only, never a placeholder
+    if m.get("done_actor"):
+        L.append(f" closed by {_fmt_actor(m['done_actor'])}")
+    # who owns/works the milestone (ownership-assignment) — present-only
+    _ms_own = _fmt_ownership(m)
+    if _ms_own:
+        L.append(f" owned by {_ms_own}")
     L.append("")
     if d["tasks"]:
         L.append(f" {'TASK':<27} {'PHASE':<9} {'GATE':<4} {'TESTS':<5} PROGRESS")
@@ -3471,6 +4034,21 @@ def render_report(root: Path, state: dict, mslug: str, *,
                  f"{g['pending']} pending   spec→…→done")
         if any(r.get("tests_declared") for r in d["tasks"]):
             L.append(" † counted at the §4-declared path")
+        # who recorded each verdict (user-identity) — present-only audit trail
+        gated = [r for r in d["tasks"] if r.get("gate_actor")]
+        if gated:
+            L.append("")
+            L.append(" GATED BY")
+            for r in gated:
+                short = _GATE_SHORT.get(r["gate"], r["gate"])
+                L.append(f"   {_clip(r['slug'], 24):<24} {short:<4} {_fmt_actor(r['gate_actor'])}")
+        # who owns/works each task (ownership-assignment) — present-only, mirror of GATED BY
+        owned = [r for r in d["tasks"] if r.get("owner") or r.get("assignee")]
+        if owned:
+            L.append("")
+            L.append(" OWNED BY")
+            for r in owned:
+                L.append(f"   {_clip(r['slug'], 24):<24} {_fmt_ownership(r)}")
     else:
         L.append(" (no tasks yet)")
     L.append("")
@@ -3764,7 +4342,7 @@ def _decide_next_pair(state: dict, d: dict) -> tuple[str, bool]:
             return (f"goal not met ({met}/{total} exit criteria) — propose next tasks "
                     f"from open deltas / the unscaffolded plan (add.py deltas)"), True
         return f"consolidate learnings + archive-milestone {ms}", True
-    active = state.get("active_task")
+    active = _active_task(state)
     order = sorted(rows, key=lambda r: 0 if r["slug"] == active else 1)  # stable
     for r in order:
         if r["done"]:
@@ -3806,7 +4384,7 @@ def _next_footer(root: Path, state: dict) -> str:
     The fail-soft line carries NO marker — never assert a driver that could not be computed.
     """
     try:
-        slug = state.get("active_task")
+        slug = _active_task(state)
         t = (state.get("tasks") or {}).get(slug) if slug else None
         if t and t.get("gate", "none") == "none" and t.get("phase") != "done":
             phase = t.get("phase")
@@ -3815,7 +4393,7 @@ def _next_footer(root: Path, state: dict) -> str:
                        if phase == "verify" else "add.py advance")
             marker = _driver_marker(_driver_stop(root, state, slug, phase))
             return f"next: {command} — {why}{marker}"
-        mslug = state.get("active_milestone")
+        mslug = _active_milestone(state)
         if mslug:
             d = report_data(root, state, mslug)
             text, human_stop = _decide_next_pair(state, d)
@@ -4764,13 +5342,18 @@ def _render_changelog_block(version: str, day: str, bundle: list[dict],
 
 
 def _render_releases_row(version: str, day: str, bundle: list[dict],
-                         waiver_slugs: list[str], evidence: str | None) -> str:
-    """One append-only RELEASES.md row — the attribution source (`milestones:` membership)."""
+                         waiver_slugs: list[str], evidence: str | None,
+                         actor: str | None = None) -> str:
+    """One append-only RELEASES.md row — the attribution source (`milestones:` membership).
+    The `actor:` line records WHO cut the release (structured-actor stamping); absent on a
+    legacy row (back-compat) when no actor is supplied."""
     ms = ", ".join(m["slug"] for m in bundle) if bundle else "none"
     wv = ", ".join(waiver_slugs) if waiver_slugs else "none"
+    actor_line = f"actor: {actor}\n" if actor else ""
     return (f"## {version} — {day}\n"
             f"milestones: {ms}\n"
             f"waivers: {wv}\n"
+            f"{actor_line}"
             f"evidence: {evidence or 'recorded by add.py release'}\n\n")
 
 
@@ -4816,7 +5399,8 @@ def cmd_release(args: argparse.Namespace) -> None:
                             _render_changelog_block(args.version, day, bundle, changed_by_slug))
     new_rel = _prepend_block(rel_before, "# Releases",
                              _render_releases_row(args.version, day, bundle, waiver_slugs,
-                                                  getattr(args, "evidence", None)))
+                                                  getattr(args, "evidence", None),
+                                                  _render_actor_line(state)))
     _atomic_write(changelog_path, new_cl)
     try:
         _atomic_write(releases_path, new_rel)         # the attribution commit point
@@ -4926,13 +5510,13 @@ def cmd_report(args: argparse.Namespace) -> None:
         else:
             _die(f"unknown_milestone: '{name}' is not a milestone")
     elif getattr(args, "decide", False):          # bare --decide -> the ACTIVE TASK
-        slug = state.get("active_task")
+        slug = _active_task(state)
         if not slug or slug not in tasks:
             _die("no_active_task — name one: add.py report <milestone> <task> --decide")
         drill_task = slug
         mslug = tasks[slug].get("milestone") or ""
     else:                                         # no positional -> active milestone
-        mslug = state.get("active_milestone")
+        mslug = _active_milestone(state)
         if not mslug:
             _die("no_active_milestone: no milestone given and none is active; "
                  "try `add.py report <milestone>`")
@@ -5005,6 +5589,33 @@ def build_parser() -> argparse.ArgumentParser:
     pl.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
     pl.set_defaults(func=cmd_lock)
 
+    pwho = sub.add_parser("whoami",
+                          help="show / set the git-native actor (git config -> OS user; --name to override)")
+    # --name (set) and --unset (clear) are mutually exclusive — argparse rejects the
+    # contradiction (exit 2) before any state read, so neither silently wins.
+    pwho_mut = pwho.add_mutually_exclusive_group()
+    pwho_mut.add_argument("--name", default=None, help="set an actor override (name)")
+    pwho_mut.add_argument("--unset", action="store_true", help="clear the actor override")
+    pwho.add_argument("--email", default=None, help="set the override email (with --name)")
+    pwho.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
+    pwho.set_defaults(func=cmd_whoami)
+
+    pas = sub.add_parser("assign",
+                         help="assign an owner/assignee to a task or milestone (no flag = self)")
+    pas.add_argument("slug")
+    pas.add_argument("--owner", default=None, metavar="\"Name <email>\"",
+                     help="set the accountable owner (default with no flag: self)")
+    pas.add_argument("--assignee", default=None, metavar="\"Name <email>\"",
+                     help="set the working assignee (default with no flag: self)")
+    pas.set_defaults(func=cmd_assign)
+
+    pun = sub.add_parser("unassign",
+                         help="clear the owner/assignee of a task or milestone (no flag = both)")
+    pun.add_argument("slug")
+    pun.add_argument("--owner", action="store_true", help="clear only the owner")
+    pun.add_argument("--assignee", action="store_true", help="clear only the assignee")
+    pun.set_defaults(func=cmd_unassign)
+
     pn = sub.add_parser("new-task", help="scaffold a new task (TASK.md + tests/ + src/)")
     pn.add_argument("slug")
     pn.add_argument("--title", default=None)
@@ -5053,6 +5664,16 @@ def build_parser() -> argparse.ArgumentParser:
     pu = sub.add_parser("use", help="set the active task to an existing one (switch focus)")
     pu.add_argument("slug")
     pu.set_defaults(func=cmd_use)
+
+    pac = sub.add_parser("activate",
+                         help="add a milestone to the active working SET and focus it (parallel milestones)")
+    pac.add_argument("slug")
+    pac.set_defaults(func=cmd_activate)
+
+    pdac = sub.add_parser("deactivate",
+                          help="remove a milestone from the active working SET (its files stay on disk)")
+    pdac.add_argument("slug")
+    pdac.set_defaults(func=cmd_deactivate)
 
     pam = sub.add_parser("archive-milestone",
                          help="collapse a done milestone out of active state (files stay on disk)")
@@ -5120,6 +5741,17 @@ def build_parser() -> argparse.ArgumentParser:
     pck = sub.add_parser("check", help="read-only integrity check of the .add project")
     pck.add_argument("--json", action="store_true", help="machine-readable JSON output")
     pck.set_defaults(func=cmd_check)
+
+    pdoc = sub.add_parser("doctor", help="read-only diagnosis of state.json integrity + "
+                                         "referential consistency (run after a git merge)")
+    pdoc.set_defaults(func=cmd_doctor)
+
+    pmine = sub.add_parser("mine", help="read-only: my not-done tasks (owner or assignee) "
+                                        "across all active milestones")
+    pmine.add_argument("--actor", default=None, metavar="\"Name <email>\"",
+                       help="inspect another actor's queue instead of your own")
+    pmine.add_argument("--json", action="store_true", help="emit one JSON object instead of text")
+    pmine.set_defaults(func=cmd_mine)
 
     pwv = sub.add_parser("wave-verify",
                          help="read-only merge-time gate: every WAVE.md roster echo must match "

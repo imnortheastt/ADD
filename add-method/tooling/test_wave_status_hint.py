@@ -94,14 +94,19 @@ class WaveStatusHintTest(unittest.TestCase):
         obj = json.loads(out)
         # v4-1 machine-state-json froze these base keys. v22 (human-ratified change-request,
         # 2026-06-08) re-interprets the surface as ADDITIVE: the base keys stay immutable
-        # (present, never moved/removed) and ONLY the two stage-graduation keys may extend it —
-        # so existing consumers keep working (additive = backward-safe, cf. v8-1 check --json).
+        # (present, never moved/removed) and ONLY sanctioned keys may extend it — so existing
+        # consumers keep working (additive = backward-safe, cf. v8-1 check --json). Ratified
+        # additive keys: the v22 stage-graduation pair, plus the state-model-reshape multi-active
+        # pair (parallel-status-view, 2026-06-22) exposing the active SET + per-milestone task map,
+        # plus the user-identity actor object (identity-in-status, 2026-06-22) = _whoami(state).
         base = {"project", "stage", "active_task", "milestones", "tasks"}
+        sanctioned = {"graduation_ready", "stage_criteria", "active_milestones", "active_tasks",
+                      "actor"}
         keys = set(obj.keys())
         self.assertTrue(base <= keys,
                         "frozen_json_surface_touched: a base machine-state key was moved/removed")
-        self.assertEqual(keys - base, {"graduation_ready", "stage_criteria"},
-                         "json_surface_unsanctioned_key: only the ratified v22 additive keys "
+        self.assertEqual(keys - base, sanctioned,
+                         "json_surface_unsanctioned_key: only the ratified additive keys "
                          "may extend status --json")
 
 

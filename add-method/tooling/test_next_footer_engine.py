@@ -238,6 +238,7 @@ class FooterFailSoftTest(_Board):
         self._gate("alpha", "PASS")                      # alpha done, active=alpha
         st = self._state()
         st["active_milestone"] = None                    # the report path would _die on this
+        st["tasks"]["alpha"]["milestone"] = None         # milestone-less -> milestone-aware use stays scalar-only (no re-activation)
         self._set_state(st)
         out, err, code = self._run("use", "alpha")       # a mutating verb, Arm B, no milestone
         self.assertEqual(code, 0, f"the verb still completes: {err}")
