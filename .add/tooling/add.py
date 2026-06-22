@@ -379,6 +379,22 @@ def _whoami(state: dict) -> dict:
     return {"name": _os_user(), "email": None, "source": "os"}
 
 
+def _actor_stamp(state: dict) -> dict:
+    """The SINGLE source of the structured-actor stamp every engine-WRITTEN human action
+    records — lock · gate · milestone-done · release (user-identity actor-stamping). It IS
+    `_whoami(state)`: a TOTAL {name,email,source} (always a non-empty name), so a stamp can
+    never fail or block a write. Descriptive only — no command's decision reads it."""
+    return _whoami(state)
+
+
+def _render_actor_line(state: dict) -> str:
+    """Render the actor stamp as one human-readable line: name, an optional angle-bracketed
+    email, then the source in parens — used on the RELEASES.md row (no state.json write)."""
+    a = _actor_stamp(state)
+    email = f" <{a['email']}>" if a.get("email") else ""
+    return f"{a['name']}{email} ({a['source']})"
+
+
 def load_state(root: Path) -> dict:
     """Load + parse state.json, failing CLOSED. A corrupt or unreadable state file
     dies with a clean 'state_invalid' message (never a raw traceback), so every
@@ -989,6 +1005,7 @@ def cmd_gate(args: argparse.Namespace) -> None:
         state["tasks"][slug]["phase"] = "done"
         _sync_task_marker(root, slug, "done")
     state["tasks"][slug]["gate"] = args.outcome
+    state["tasks"][slug]["gate_actor"] = _actor_stamp(state)   # WHO recorded the verdict (every outcome)
     state["tasks"][slug]["updated"] = _now()
     save_state(root, state)
     print(f"task '{slug}' gate -> {args.outcome}")
@@ -1156,7 +1173,8 @@ def cmd_lock(args: argparse.Namespace) -> None:
     who = args.by or getpass.getuser()
     when = _now()
     # ONE atomic write — no partial lock state.
-    state["setup"] = {"locked": True, "locked_at": when, "locked_by": who, "layers": layers}
+    state["setup"] = {"locked": True, "locked_at": when, "locked_by": who, "layers": layers,
+                      "actor": _actor_stamp(state)}   # structured actor alongside the free-text locked_by
     save_state(root, state)
     if getattr(args, "json", False):
         print(json.dumps(
@@ -2500,6 +2518,7 @@ def cmd_milestone_done(args: argparse.Namespace) -> None:
     except OSError:
         _die("retro_write_failed")
     state["milestones"][slug]["status"] = "done"
+    state["milestones"][slug]["done_actor"] = _actor_stamp(state)   # WHO closed the milestone
     state["milestones"][slug]["updated"] = _now()
     save_state(root, state)
     waived = [s for s, t in members.items() if t.get("gate") == "RISK-ACCEPTED"]
@@ -5001,13 +5020,18 @@ def _render_changelog_block(version: str, day: str, bundle: list[dict],
 
 
 def _render_releases_row(version: str, day: str, bundle: list[dict],
-                         waiver_slugs: list[str], evidence: str | None) -> str:
-    """One append-only RELEASES.md row — the attribution source (`milestones:` membership)."""
+                         waiver_slugs: list[str], evidence: str | None,
+                         actor: str | None = None) -> str:
+    """One append-only RELEASES.md row — the attribution source (`milestones:` membership).
+    The `actor:` line records WHO cut the release (structured-actor stamping); absent on a
+    legacy row (back-compat) when no actor is supplied."""
     ms = ", ".join(m["slug"] for m in bundle) if bundle else "none"
     wv = ", ".join(waiver_slugs) if waiver_slugs else "none"
+    actor_line = f"actor: {actor}\n" if actor else ""
     return (f"## {version} — {day}\n"
             f"milestones: {ms}\n"
             f"waivers: {wv}\n"
+            f"{actor_line}"
             f"evidence: {evidence or 'recorded by add.py release'}\n\n")
 
 
@@ -5053,7 +5077,8 @@ def cmd_release(args: argparse.Namespace) -> None:
                             _render_changelog_block(args.version, day, bundle, changed_by_slug))
     new_rel = _prepend_block(rel_before, "# Releases",
                              _render_releases_row(args.version, day, bundle, waiver_slugs,
-                                                  getattr(args, "evidence", None)))
+                                                  getattr(args, "evidence", None),
+                                                  _render_actor_line(state)))
     _atomic_write(changelog_path, new_cl)
     try:
         _atomic_write(releases_path, new_rel)         # the attribution commit point

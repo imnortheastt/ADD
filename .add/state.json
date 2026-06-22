@@ -1160,14 +1160,37 @@
     },
     "actor-stamping": {
       "title": "stamp the structured actor on every human seam",
-      "phase": "ground",
-      "gate": "none",
+      "phase": "done",
+      "gate": "PASS",
       "milestone": "user-identity",
       "depends_on": [
         "actor-identity"
       ],
       "created": "2026-06-22T06:39:02+00:00",
-      "updated": "2026-06-22T06:39:02+00:00"
+      "updated": "2026-06-22T07:59:26+00:00",
+      "flag_verified": true,
+      "tripwire": {
+        "contract_md5": "0cfeba93dcf17c276084ad017968c395",
+        "tests": {
+          "add-method/tooling/test_actor_stamping.py": "041451ac059cc6235bf9e5756c73023c"
+        }
+      },
+      "scope": {
+        "declared": [
+          "add-method/tooling/add.py",
+          ".add/tooling/add.py",
+          "add-method/src/add_method/_bundled/tooling/add.py",
+          "add-method/tooling/engine_pin.py",
+          "add-method/tooling/test_actor_stamping.py",
+          "add-method/tooling/test_retro.py"
+        ],
+        "snapshot_md5": "3275b7e2be16c9b8b737556d29deb87f"
+      },
+      "gate_actor": {
+        "name": "Tin Dang",
+        "email": "tindang.ht97@gmail.com",
+        "source": "git"
+      }
     },
     "identity-in-status": {
       "title": "surface the actor in status + json/report",
@@ -1182,7 +1205,7 @@
     }
   },
   "created": "2026-05-28T15:39:04+00:00",
-  "updated": "2026-06-22T07:28:08+00:00",
+  "updated": "2026-06-22T07:59:26+00:00",
   "milestones": {
     "v1-1": {
       "title": "v1.1 \u2014 adoption & ergonomics",
