@@ -103,6 +103,41 @@ class FoldNudgeTest(unittest.TestCase):
         self.assertNotIn("add.py deltas", out,
                          "no fold nudge when there are no open deltas")
 
+    # --- milestone-done: PREVIEW the deltas + emit the ready-to-run fold command --
+    def test_milestone_done_previews_deltas_and_fold_command(self):
+        """The enhanced close prompt lists each open delta by competency tag and
+        prints the exact `add.py fold` command — not just a bare count."""
+        self._complete_task_in_milestone("mvp", "t")
+        self._add_delta("t", "- [DDD \u00b7 open] domain gap found (evidence: prod signal)")
+        code, out, _ = _run(["milestone-done", "mvp"])
+        self.assertEqual(code, 0)
+        self.assertIn("(DDD)", out, "preview must tag the delta by competency")
+        self.assertIn("domain gap found", out, "preview must show the delta text")
+        self.assertIn("add.py fold", out, "must emit the ready-to-run fold command")
+        self.assertIn("add.py deltas", out, "must still point at the review command")
+
+    # --- observe transition: suggest folding into PROJECT.md DURING implement -----
+    def test_advance_into_observe_suggests_fold(self):
+        """Advancing a task INTO observe - the phase that captures competency
+        deltas - suggests folding them into PROJECT.md (add.py fold --task <slug>)."""
+        add.main(["new-task", "a"])             # fresh project is grandfathered-locked
+        add.main(["phase", "verify", "a"])      # escape hatch to the edge of observe
+        code, out, _ = _run(["advance", "a"])   # verify -> observe
+        self.assertEqual(code, 0)
+        self.assertIn("observe", out)
+        self.assertIn("add.py fold --task a", out,
+                      "entering observe must suggest the per-task fold")
+        self.assertIn("PROJECT.md", out, "the suggestion names the foundation it updates")
+
+    def test_advance_into_non_observe_silent_on_fold(self):
+        """The fold suggestion fires ONLY at the observe transition - advancing
+        into any other phase stays silent on folding (additive, no noise)."""
+        add.main(["new-task", "a"])             # at ground
+        code, out, _ = _run(["advance", "a"])   # ground -> specify
+        self.assertEqual(code, 0)
+        self.assertNotIn("add.py fold", out,
+                         "non-observe transitions must not suggest folding")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

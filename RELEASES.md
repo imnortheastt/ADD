@@ -1,5 +1,11 @@
 # Releases
 
+## 1.8.0 — 2026-06-23
+milestones: state-model-reshape, user-identity, ownership-assignment, git-merge-safety, multi-active-UX, delta-resolution-polish
+waivers: none
+actor: Tin Dang <tindang.ht97@gmail.com> (git)
+evidence: suite 1543/0 · check 377/0 · audit clean · 6 milestones
+
 ## 1.7.3 — 2026-06-18
 milestones: multi-agent-installer
 waivers: none

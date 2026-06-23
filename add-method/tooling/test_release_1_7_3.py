@@ -79,26 +79,9 @@ class WorkflowHygieneTest(unittest.TestCase):
 
 
 class ReleaseShapeTest(unittest.TestCase):
-    def test_versions_agree_at_1_7_3(self):
-        pkg = json.loads((PKG / "package.json").read_text(encoding="utf-8"))["version"]
-        py = re.search(r'(?m)^version\s*=\s*"([^"]+)"',
-                       (PKG / "pyproject.toml").read_text(encoding="utf-8")).group(1)
-        self.assertEqual((pkg, py), (VERSION, VERSION),
-                         "publish.yml's guard would fail this release closed")
-
-    def test_plugin_version_agrees(self):
-        plugin = json.loads(
-            (PKG / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )["version"]
-        self.assertEqual(plugin, VERSION,
-                         "the Claude Code plugin manifest must match the shipped version")
-
-    def test_runtime_version_agrees(self):
-        init = (PKG / "src" / "add_method" / "__init__.py").read_text(encoding="utf-8")
-        runtime = re.search(r'(?m)^__version__\s*=\s*"([^"]+)"', init).group(1)
-        self.assertEqual(runtime, VERSION,
-                         "add_method.__version__ must match the shipped version")
-
+    # NOTE: 1.7.3 is superseded by 1.8.0 — the live-version-agreement assertions
+    # (versions/plugin/runtime == VERSION) moved to test_release_1_8_0.py. This file
+    # keeps only the lineage + shipped-doc checks, which stay true across bumps.
     def test_getting_started_mentions_guide_line(self):
         text = (PKG / "GETTING-STARTED.md").read_text(encoding="utf-8")
         self.assertIn("guide  :", text,

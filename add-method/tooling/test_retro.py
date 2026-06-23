@@ -112,8 +112,10 @@ class RetroArtifactTest(unittest.TestCase):
         after = self._state()
         mb, ma = before["milestones"]["v9"], after["milestones"]["v9"]
         changed = {k for k in set(mb) | set(ma) if mb.get(k) != ma.get(k)}
-        self.assertTrue(changed <= {"status", "updated"},
-                        f"close mutated more than status/updated: {changed}")
+        # done_actor: the milestone close stamps WHO closed it (user-identity actor-stamping) —
+        # a descriptive structured-actor record alongside the status flip, not a decision change.
+        self.assertTrue(changed <= {"status", "updated", "done_actor"},
+                        f"close mutated more than status/updated/done_actor: {changed}")
         self.assertEqual(ma["status"], "done")
         self.assertEqual(before["tasks"], after["tasks"])  # member tasks untouched
 

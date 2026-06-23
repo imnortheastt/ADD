@@ -59,11 +59,17 @@ LIFECYCLE = [
     ["new-milestone", "mvp", "--goal", "g", "--stage", "mvp"],
     ["new-task", "t", "--title", "Feature"],   # auto-linked to mvp
     ["autonomy"],                              # read-only dial view of active task t (reads TASK/PROJECT/state, never docs/)
+    ["whoami"],                                # read-only actor resolve (git config -> OS user; reads state, never docs/)
+    ["assign", "t"],                            # ownership writer: set owner+assignee on t to self (reads/writes state, never docs/)
+    ["unassign", "t"],                          # ownership writer: clear owner+assignee on t (reads/writes state, never docs/)
     ["status"],
     ["guide"],
     ["stage", "mvp"],
     ["set-milestone", "t", "none"], ["set-milestone", "t", "mvp"],
     ["use", "t"],                              # set active_task to an existing slug (read/writes state, not docs/)
+    ["activate", "mvp"],                        # multi-active SET writer: mvp already active -> idempotent refocus (reads/writes state, never docs/)
+    ["deactivate", "mvp"],                      # multi-active SET writer: drop mvp from the active set (pops its task entry; reads/writes state, never docs/)
+    ["use", "t"],                              # re-focus t -> milestone-aware use re-activates mvp + restores active_task for the rest of the run
     ["phase", "specify", "t"],
     ["advance", "t"], ["advance", "t"], ["advance", "t"],
     ["advance", "t"], ["advance", "t"],        # specify -> ... -> verify
@@ -79,6 +85,10 @@ LIFECYCLE = [
     ["gate", "PASS", "t"],                                    # re-complete so milestone-done stays valid
     ["status"],
     ["check"],
+    ["doctor"],                                # read-only state.json integrity diagnosis (reads
+                                               # state only, never docs/; healthy board -> exit 0)
+    ["mine"],                                  # read-only per-actor lens across active milestones
+                                               # (reads state only, never docs/; empty -> exit 0)
     ["wave-verify"],                           # merge-time fork-base gate: read-only; no WAVE.md
                                                # on this board -> wave_not_found (expected nonzero,
                                                # tolerated below; reads WAVE.md/state, never docs/)
